@@ -1,7 +1,13 @@
 #ifndef MODULARROBOT_HPP_
 #define MODULARROBOT_HPP_
 
-#include "robot.hpp"
+#include <rsRobots/robot.hpp>
+
+namespace rsXML {
+	class Conn;
+}
+
+namespace rsRobots {
 
 // connector
 struct Connector {
@@ -12,8 +18,8 @@ struct Connector {
 	int d_side, d_type;
 };
 
-class DLLIMPORT ModularRobot : virtual public Robot {
-		friend class RoboSim;
+class ModularRobot : virtual public rsRobots::Robot {
+		//friend class RoboSim;
 
 	// common public api
 	public:
@@ -35,7 +41,7 @@ class DLLIMPORT ModularRobot : virtual public Robot {
 	// virual functions for inherited classes
 	protected:
 		virtual int addConnector(int, int, double) = 0;
-		virtual int build(XMLRobot*, dMatrix3, double*, dBodyID, XMLConn*) = 0;
+		virtual int build(rsXML::Robot*, dMatrix3, double*, dBodyID, rsXML::Conn*) = 0;
 		virtual int fixBodyToConnector(dBodyID, int) = 0;
 		virtual int fixConnectorToBody(int, dBodyID, int = -1) = 0;
 		virtual int getConnectorParams(int, int, dMatrix3, double*) = 0;
@@ -43,7 +49,7 @@ class DLLIMPORT ModularRobot : virtual public Robot {
 
 	// virtual functions from Robot class
 	protected:
-		virtual int build(XMLRobot*, int = 1) { return 0; };
+		virtual int build(rsXML::Robot*, int = 1) { return 0; };
 		virtual int buildIndividual(double, double, double, dMatrix3, double*) { return 0; };
 		virtual double getAngle(int) { return 0; };
 		virtual int initParams(int, int) { return 0; };
@@ -77,6 +83,8 @@ class DLLIMPORT ModularRobot : virtual public Robot {
 		double _conn_radius;				// dimension: connector radius
 		double _smallwheel_radius;			// dimension: small wheel radius
 };
+
+} // namepsace rsRobots
 
 #endif // MODULARROBOT_HPP_
 

@@ -1,5 +1,5 @@
-#ifndef MACROS_HPP_
-#define MACROS_HPP_
+#ifndef RS_MACROS_HPP_
+#define RS_MACROS_HPP_
 
 #define EPSILON DBL_EPSILON
 #define RECORD_ANGLE_ALLOC_SIZE 16
@@ -8,7 +8,6 @@
 #define angle2distance(radius, angle) ((radius) * (angle * 0.01745329251994329547))
 #define distance2angle(radius, distance) (((distance)/(radius))*57.29577951308232286465)
 #define DEPRECATED(from, to) fprintf(_stderr, "Warning: The function \"%s()\" is deprecated. Please use \"%s()\"\n" , from, to)
-#define ENABLE_GRAPHICS 0
 
 #ifdef _WIN32
 #define DLLIMPORT __declspec(dllexport)
@@ -78,85 +77,8 @@
 	}
 #endif
 
-// robot types
-typedef enum robot_type_e {
-	MOBOT,
-	LINKBOTI,
-	LINKBOTL,
-	LINKBOTT,
-	NXT,
-	CUBUS,
-	NUM_TYPES
-} robotType_t;
-
-// robot joints
-typedef enum robot_joint_id_e {
-	JOINT1,
-	JOINT2,
-	JOINT3,
-	JOINT4,
-	JOINT5,
-	JOINT6
-} robotJointId_t;
-
-// all robot connectors
-typedef enum robot_connector_e {
-	BIGWHEEL,
-	BRIDGE,
-	CASTER,
-	CUBE,
-	FACEPLATE,
-	GRIPPER,
-	L,
-	OMNIDRIVE,
-	SIMPLE,
-	SMALLWHEEL,
-	SQUARE,
-	TANK,
-	TINYWHEEL,
-	WHEEL,
-	NUM_CONNECTORS
-} robotConnector_t;
-
-// drawing objects (ground and graphic)
-enum drawing_objects_e {
-	BOX,
-	CYLINDER,
-	DOT,
-	LINE,
-	SPHERE,
-	TEXT
-};
-
-// 3 dimensional vector
-struct Vec3 {
-	Vec3(double x, double y, double z) : x(x), y(y), z(z) {}
-	double x, y, z;
-};
-
-// xml connectors
-struct XMLConn {
-	double size;
-	int robot, type, side, face1, face2, conn;
-};
-
-// xml robots
-struct XMLRobot {
-	int connected;
-	int id;
-	int ground;
-	int tracking;
-	int type;
-	double x, y, z;
-	double psi, theta, phi;
-	double angle1, angle2, angle3, angle4, angle5, angle6;
-	double p[3];
-	double q[4];
-	std::vector<XMLConn*> conn;
-};
-
 // recorded data
 typedef double* robotRecordData_t;
 
-#endif // MACROS_HPP_
+#endif // RS_MACROS_HPP_
 

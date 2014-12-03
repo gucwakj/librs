@@ -1,8 +1,0 @@
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
-
-#define librobosim_VERSION_MAJOR @librobosim_VERSION_MAJOR@
-#define librobosim_VERSION_MINOR @librobosim_VERSION_MINOR@
-#cmakedefine ENABLE_GRAPHICS
-
-#endif

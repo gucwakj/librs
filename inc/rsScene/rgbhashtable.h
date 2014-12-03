@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef RGBHASHTABLE_H
-#define RGBHASHTABLE_H
+#ifndef RGBHASHTABLE_H_
+#define RGBHASHTABLE_H_
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,27 +1,28 @@
-#ifndef LINKBOT_HPP_
-#define LINKBOT_HPP_
+#ifndef RSSIM_LINKBOT_HPP_
+#define RSSIM_LINKBOT_HPP_
 
-#include "robosim.hpp"
+#include <rs/macros.hpp>
+#include <rs/enum.hpp>
+#include <rsRobots/linkbot.hpp>
+#include <rsSim/modularRobot.hpp>
+#include <rsSim/robot.hpp>
 
-class DLLIMPORT CLinkbotT : public ModularRobot {
-#ifdef ENABLE_GRAPHICS
-		friend class linkbotNodeCallback;
-		friend class Graphics;
-		friend class RSGUI;
-#endif // ENABLE_GRAPHICS
+namespace rsSim {
 
+class CLinkbotT : public rsRobots::LinkbotT, virtual public ModularRobot {
+		friend class Sim;
 	// public api
 	public:
-		CLinkbotT(int disabled = -1, int type = LINKBOTT);
+		CLinkbotT(int = -1);
 		virtual ~CLinkbotT();
 
-		int accelJointAngleNB(robotJointId_t, double, double);
-		int accelJointCycloidalNB(robotJointId_t, double, double);
-		int accelJointHarmonicNB(robotJointId_t, double, double);
-		int accelJointSmoothNB(robotJointId_t, double, double, double, double);
-		int accelJointTimeNB(robotJointId_t, double, double);
-		int accelJointToMaxSpeedNB(robotJointId_t, double);
-		int accelJointToVelocityNB(robotJointId_t, double, double);
+		int accelJointAngleNB(rs::JointID, double, double);
+		int accelJointCycloidalNB(rs::JointID, double, double);
+		int accelJointHarmonicNB(rs::JointID, double, double);
+		int accelJointSmoothNB(rs::JointID, double, double, double, double);
+		int accelJointTimeNB(rs::JointID, double, double);
+		int accelJointToMaxSpeedNB(rs::JointID, double);
+		int accelJointToVelocityNB(rs::JointID, double, double);
 		int closeGripper(void);
 		int closeGripperNB(void);
 		int driveAccelCycloidalNB(double, double, double);
@@ -58,7 +59,7 @@ class DLLIMPORT CLinkbotT : public ModularRobot {
 	// inherited functions from ModularRobot class
 	private:
 		virtual int addConnector(int, int, double);
-		virtual int build(XMLRobot*, dMatrix3, double*, dBodyID, XMLConn*);
+		virtual int build(rsXML::Robot*, dMatrix3, double*, dBodyID, rsXML::Conn*) { return 0; };
 		virtual int fixBodyToConnector(dBodyID, int);
 		virtual int fixConnectorToBody(int, dBodyID, int = -1);
 		virtual int getConnectorParams(int, int, dMatrix3, double*);
@@ -66,10 +67,10 @@ class DLLIMPORT CLinkbotT : public ModularRobot {
 
 	// inherited functions from Robot class
 	private:
-		virtual int build(XMLRobot*, int = 1);
+		virtual int build(int, const double*, const double*, const double*, int);
 		virtual int buildIndividual(double, double, double, dMatrix3, double*);
 		virtual double getAngle(int);
-		virtual int initParams(int, int);
+		virtual int initParams(int);
 		virtual int initDims(void);
 		virtual void simPreCollisionThread(void);
 		virtual void simPostCollisionThread(void);
@@ -112,29 +113,31 @@ class DLLIMPORT CLinkbotT : public ModularRobot {
 				_tinywheel_radius;
 };
 
-class DLLIMPORT CLinkbotI : public CLinkbotT {
+class CLinkbotI : public rsRobots::LinkbotI, public CLinkbotT {
 	public:
-		CLinkbotI(void) : Robot(JOINT1, JOINT3), CLinkbotT(1, LINKBOTI) {}
+		CLinkbotI(void) : rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rs::JOINT1, rs::JOINT3) {}
 };
 
-class DLLIMPORT CLinkbotL : public CLinkbotT {
+class CLinkbotL : public CLinkbotT {
 	public:
-		CLinkbotL(void) : Robot(JOINT1, JOINT2), CLinkbotT(2, LINKBOTL) {}
+		CLinkbotL(void) : rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rs::JOINT1, rs::JOINT2) {}
 };
 
-class DLLIMPORT CLinkbotTGroup : public Group<CLinkbotT> {
+} // namespace rsSim
+
+class DLLIMPORT CLinkbotTGroup : public Group<rsSim::CLinkbotT> {
 	// public api
 	public:
-		CLinkbotTGroup(void) : Group<CLinkbotT>() {};
+		CLinkbotTGroup(void) : Group<rsSim::CLinkbotT>() {};
 		virtual ~CLinkbotTGroup(void) {};
 
-		inline int accelJointAngleNB(robotJointId_t, double, double);
-		inline int accelJointCycloidalNB(robotJointId_t, double, double);
-		inline int accelJointHarmonicNB(robotJointId_t, double, double);
-		inline int accelJointSmoothNB(robotJointId_t, double, double, double, double);
-		inline int accelJointTimeNB(robotJointId_t, double, double);
-		inline int accelJointToMaxSpeedNB(robotJointId_t, double);
-		inline int accelJointToVelocityNB(robotJointId_t, double, double);
+		inline int accelJointAngleNB(rs::JointID, double, double);
+		inline int accelJointCycloidalNB(rs::JointID, double, double);
+		inline int accelJointHarmonicNB(rs::JointID, double, double);
+		inline int accelJointSmoothNB(rs::JointID, double, double, double, double);
+		inline int accelJointTimeNB(rs::JointID, double, double);
+		inline int accelJointToMaxSpeedNB(rs::JointID, double);
+		inline int accelJointToVelocityNB(rs::JointID, double, double);
 		inline int closeGripper(void);
 		inline int closeGripperNB(void);
 		inline int driveAccelCycloidalNB(double, double, double);
@@ -161,15 +164,12 @@ class DLLIMPORT CLinkbotLGroup : public CLinkbotTGroup {};
 
 // motion threading
 struct LinkbotMove {
-	CLinkbotT *robot;
+	rsSim::CLinkbotT *robot;
 	char *expr;
 	double x, y, radius, trackwidth;
 	double (*func)(double x);
 	int i;
 };
 
-// simulation
-//extern RoboSim *g_sim;
-
-#endif // LINKBOT_HPP_
+#endif // RSSIM_LINKBOT_HPP_
 

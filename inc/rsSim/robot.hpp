@@ -1,5 +1,5 @@
-#ifndef ROBOT_HPP_
-#define ROBOT_HPP_
+#ifndef RSSIM_ROBOT_HPP_
+#define RSSIM_ROBOT_HPP_
 
 #ifdef _WIN32
 #include <windows.h>
@@ -10,29 +10,31 @@
 #include <unistd.h>
 #endif // _WIN32
 #include <ode/ode.h>
-#include <cctype>
-#include <climits>
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
-#include <cstdarg>
-#include <ctime>
+#include <iostream>
 #include <vector>
 
-#include "macros.hpp"
-#include "rgbhashtable.h"
+#include <rs/macros.hpp>
+#include <rs/enum.hpp>
+#include <rs/types.hpp>
+#include <rsRobots/robot.hpp>
+#include <rsScene/rgbhashtable.h>
 
-// forward declare friends
-class RoboSim;
-class RSGUI;
+// TODO: remove
+namespace rsXML {
+	class Robot;
+}
+namespace rsSim {
+	class Sim;
+}
 
-class DLLIMPORT Robot {
-		friend class RoboSim;
-		friend class RSGUI;
+namespace rsSim {
 
-	// common public api
+class Robot : virtual public rsRobots::Robot {
+		friend class rsSim::Sim;
+
 	public:
-		Robot(robotJointId_t, robotJointId_t);
+		Robot(rs::JointID, rs::JointID);
 		virtual ~Robot(void);
 
 		int blinkLED(double, int);
@@ -68,51 +70,51 @@ class DLLIMPORT Robot {
 		int getDistance(double&, double);
 		int getFormFactor(int&);
 		int getID(void);
-		int getJointAngle(robotJointId_t, double&, int = 10);
-		int getJointAngleInstant(robotJointId_t, double&);
-		int getJointMaxSpeed(robotJointId_t, double&);
+		int getJointAngle(rs::JointID, double&, int = 10);
+		int getJointAngleInstant(rs::JointID, double&);
+		int getJointMaxSpeed(rs::JointID, double&);
 		int getJointSafetyAngle(double&);
 		int getJointSafetyAngleTimeout(double&);
-		int getJointSpeed(robotJointId_t, double&);
-		int getJointSpeedRatio(robotJointId_t, double&);
+		int getJointSpeed(rs::JointID, double&);
+		int getJointSpeedRatio(rs::JointID, double&);
 		int getLEDColorName(char[]);
 		int getLEDColorRGB(int&, int&, int&);
 		int getxy(double&, double&);
-		int holdJoint(robotJointId_t);
+		int holdJoint(rs::JointID);
 		int holdJoints(void);
 		int holdJointsAtExit(void);
 		int isConnected(void);
 		int isMoving(void);
 		int isNotMoving(void);
 		int moveForeverNB(void);
-		int moveJoint(robotJointId_t, double);
-		int moveJointNB(robotJointId_t, double);
-		int moveJointByPowerNB(robotJointId_t, int);
-		int moveJointForeverNB(robotJointId_t);
-		int moveJointTime(robotJointId_t, double);
-		int moveJointTimeNB(robotJointId_t, double);
-		int moveJointTo(robotJointId_t, double);
-		int moveJointToNB(robotJointId_t, double);
-		int moveJointToByTrackPos(robotJointId_t, double);
-		int moveJointToByTrackPosNB(robotJointId_t, double);
-		int moveJointWait(robotJointId_t);
+		int moveJoint(rs::JointID, double);
+		int moveJointNB(rs::JointID, double);
+		int moveJointByPowerNB(rs::JointID, int);
+		int moveJointForeverNB(rs::JointID);
+		int moveJointTime(rs::JointID, double);
+		int moveJointTimeNB(rs::JointID, double);
+		int moveJointTo(rs::JointID, double);
+		int moveJointToNB(rs::JointID, double);
+		int moveJointToByTrackPos(rs::JointID, double);
+		int moveJointToByTrackPosNB(rs::JointID, double);
+		int moveJointWait(rs::JointID);
 		int moveTime(double);
 		int moveTimeNB(double);
 		int moveToZero(void);
 		int moveToZeroNB(void);
 		int moveWait(void);
-		int recordAngle(robotJointId_t, double[], double[], int, double, int = 1);
-		int recordAngleBegin(robotJointId_t, robotRecordData_t&, robotRecordData_t&, double, int = 1);
-		int recordAngleEnd(robotJointId_t, int&);
+		int recordAngle(rs::JointID, double[], double[], int, double, int = 1);
+		int recordAngleBegin(rs::JointID, robotRecordData_t&, robotRecordData_t&, double, int = 1);
+		int recordAngleEnd(rs::JointID, int&);
 		int recordAnglesEnd(int&);
-		int recordDistanceBegin(robotJointId_t, robotRecordData_t&, robotRecordData_t&, double, double, int = 1);
-		int recordDistanceEnd(robotJointId_t, int&);
+		int recordDistanceBegin(rs::JointID, robotRecordData_t&, robotRecordData_t&, double, double, int = 1);
+		int recordDistanceEnd(rs::JointID, int&);
 		int recordDistanceOffset(double);
 		int recordDistancesEnd(int&);
 		int recordWait(void);
 		int recordxyBegin(robotRecordData_t&, robotRecordData_t&, double, int = 1);
 		int recordxyEnd(int&);
-		int relaxJoint(robotJointId_t id);
+		int relaxJoint(rs::JointID id);
 		int relaxJoints(void);
 		int resetToZero(void);
 		int resetToZeroNB(void);
@@ -123,8 +125,8 @@ class DLLIMPORT Robot {
 		int setLEDColorRGB(int, int, int);
 		int setJointSafetyAngle(double);
 		int setJointSafetyAngleTimeout(double);
-		int setJointSpeed(robotJointId_t, double);
-		int setJointSpeedRatio(robotJointId_t, double);
+		int setJointSpeed(rs::JointID, double);
+		int setJointSpeedRatio(rs::JointID, double);
 		int setSpeed(double, double);
 		int systemTime(double&);
 		int traceOff(void);
@@ -143,7 +145,7 @@ class DLLIMPORT Robot {
 
 	// utility functions for inherited and friend classes
 	protected:
-		int addToSim(dWorldID&, dSpaceID&, int, int, RoboSim*);
+		int addToSim(dWorldID&, dSpaceID&, int, int, rsSim::Sim*);
 		double convert(double, int);
 		int doze(double);
 		int fixBodyToGround(dBodyID);
@@ -157,7 +159,7 @@ class DLLIMPORT Robot {
 
 	// virual functions for inherited classes
 	protected:
-		virtual int build(XMLRobot*, int = 0) { return 0; };
+		virtual int build(int, const double*, const double*, const double*, int) { return 0; };
 		virtual int buildIndividual(double, double, double, dMatrix3, double*) { return 0; };
 		virtual double getAngle(int) { return 0; };
 		virtual int initParams(int, int) { return 0; };
@@ -186,7 +188,7 @@ class DLLIMPORT Robot {
 		// recording
 		struct Recording {
 			Robot *robot;			// robot
-			robotJointId_t id;		// joint to record
+			rs::JointID id;		// joint to record
 			int num;				// number of points
 			int msecs;				// ms between data points
 			double *time;			// array for time
@@ -234,25 +236,24 @@ class DLLIMPORT Robot {
 		dJointID *_joint;			// joints between body parts
 		dSpaceID _space;			// space for this robot
 		dWorldID _world;			// world for all robots
-		RoboSim *_sim;				// simulation instance
+		rsSim::Sim *_sim;			// simulation instance
 		std::vector<Motor> _motor;	// motors
-		std::vector<Vec3> _offset;	// body position offsets from center
+		//std::vector<rs::Vec3> _offset;	// body position offsets from center
 		bool _motion;				// motion in progress
 		double _accel[3];			// accelerometer data
-		double _body_length;		// dimension: body length
-		double _body_height;		// dimension: body height
-		double _body_radius;		// dimension: body radius
-		double _body_width;			// dimension: body width
+		//double _body_length;		// dimension: body length
+		//double _body_height;		// dimension: body height
+		//double _body_radius;		// dimension: body radius
+		//double _body_width;			// dimension: body width
 		double _center[3];			// offset of body from initial (x,y,z)
 		double _distOffset;			// offset for recorded distance
-		double _radius;				// wheel radius
-		double _rgb[3];				// rgb of 'led'
+		//double _rgb[3];				// rgb of 'led'
 		double _speed;				// linear velocity of the robot
 		double _trackwidth;			// trackwidth of robot
-		double _wheel_depth;		// dimension: wheel depth
-		double _wheel_radius;		// dimension: custom wheel radius
+		//double _wheel_depth;		// dimension: wheel depth
+		//double _wheel_radius;		// dimension: custom wheel radius
 		int _connected;				// connected to controller
-		int _disabled;				// which joint is disabled
+		//int _disabled;				// which joint is disabled
 		int _dof;					// number of DOF
 		int *_enabled;				// list of enabled motors
 		int _id;					// robot id
@@ -262,7 +263,7 @@ class DLLIMPORT Robot {
 		int _g_shift_data;			// globally shift data for robot
 		int _g_shift_data_en;		// globally shift data for robot enable/disable flag
 		int _trace;					// tracing on or off
-		int _type;					// type of robot
+		//int _type;					// type of robot
 		MUTEX_T _active_mutex;		// active recording
 		COND_T _active_cond;		// active recording
 		MUTEX_T _goal_mutex;		// goal value being written
@@ -293,9 +294,11 @@ class DLLIMPORT Robot {
 
 	// private data
 	private:
-		robotJointId_t _leftWheel;		// joint for left wheel
-		robotJointId_t _rightWheel;		// joint for right wheel
+		rs::JointID _leftWheel;		// joint for left wheel
+		rs::JointID _rightWheel;		// joint for right wheel
 };
+
+} // namespace rsSim
 
 template<class T> class Group {
 	// public api
@@ -318,29 +321,29 @@ template<class T> class Group {
 		inline int driveForwardNB(double);
 		inline int driveTime(double);
 		inline int driveTimeNB(double);
-		inline int holdJoint(robotJointId_t);
+		inline int holdJoint(rs::JointID);
 		inline int holdJoints(void);
 		inline int holdJointsAtExit(void);
 		inline int isMoving(void);
 		inline int isNotMoving(void);
 		inline int moveForeverNB(void);
-		inline int moveJoint(robotJointId_t, double);
-		inline int moveJointNB(robotJointId_t, double);
-		inline int moveJointByPowerNB(robotJointId_t, int);
-		inline int moveJointForeverNB(robotJointId_t);
-		inline int moveJointTime(robotJointId_t, double);
-		inline int moveJointTimeNB(robotJointId_t, double);
-		inline int moveJointTo(robotJointId_t, double);
-		inline int moveJointToNB(robotJointId_t, double);
-		inline int moveJointToByTrackPos(robotJointId_t, double);
-		inline int moveJointToByTrackPosNB(robotJointId_t, double);
-		inline int moveJointWait(robotJointId_t);
+		inline int moveJoint(rs::JointID, double);
+		inline int moveJointNB(rs::JointID, double);
+		inline int moveJointByPowerNB(rs::JointID, int);
+		inline int moveJointForeverNB(rs::JointID);
+		inline int moveJointTime(rs::JointID, double);
+		inline int moveJointTimeNB(rs::JointID, double);
+		inline int moveJointTo(rs::JointID, double);
+		inline int moveJointToNB(rs::JointID, double);
+		inline int moveJointToByTrackPos(rs::JointID, double);
+		inline int moveJointToByTrackPosNB(rs::JointID, double);
+		inline int moveJointWait(rs::JointID);
 		inline int moveTime(double);
 		inline int moveTimeNB(double);
 		inline int moveToZero(void);
 		inline int moveToZeroNB(void);
 		inline int moveWait(void);
-		inline int relaxJoint(robotJointId_t id);
+		inline int relaxJoint(rs::JointID id);
 		inline int relaxJoints(void);
 		inline int resetToZero(void);
 		inline int resetToZeroNB(void);
@@ -351,8 +354,8 @@ template<class T> class Group {
 		inline int setLEDColorRGB(int, int, int);
 		inline int setJointSafetyAngle(double);
 		inline int setJointSafetyAngleTimeout(double);
-		inline int setJointSpeed(robotJointId_t, double);
-		inline int setJointSpeedRatio(robotJointId_t, double);
+		inline int setJointSpeed(rs::JointID, double);
+		inline int setJointSpeedRatio(rs::JointID, double);
 		inline int setSpeed(double, double);
 		inline int traceOff(void);
 		inline int traceOn(void);
@@ -367,20 +370,17 @@ template<class T> class Group {
 		double _d;
 		int _i;
 };
-class DLLIMPORT RobotGroup : public Group<Robot> {};
+class DLLIMPORT RobotGroup : public Group<rsSim::Robot> {};
 #include "robotgroup.tpp"
 
 // motion threading
 struct RobotMove {
-	Robot *robot;
+	rsSim::Robot *robot;
 	char *expr;
 	double x, y, radius, trackwidth;
 	double (*func)(double x);
 	int i;
 };
 
-// simulation
-//extern RoboSim *g_sim;
-
-#endif // ROBOT_HPP_
+#endif // RSSIM_ROBOT_HPP_
 

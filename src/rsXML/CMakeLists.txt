@@ -8,11 +8,11 @@ include_directories (
 )
 
 # add tinyxml2 library
-include_directories ("/home/kgucwa/projects/robot-sim/src/tinyxml2")
+include_directories ("${LIBRS_SOURCE_DIR}/deps/tinyxml2")
 if (MSVC)
-	link_directories ("/home/kgucwa/projects/robot-sim/src/tinyxml2/build/Release")
+	link_directories ("${LIBRS_SOURCE_DIR}/deps/tinyxml2/build/Release")
 else (MSVC)
-	link_directories ("/home/kgucwa/projects/robot-sim/src/tinyxml2/build")
+	link_directories ("${LIBRS_SOURCE_DIR}/deps/tinyxml2/build")
 endif (MSVC)
 set (EXTRA_LIBS ${EXTRA_LIBS} tinyxml2)
 

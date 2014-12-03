@@ -8,9 +8,9 @@ include_directories (
 )
 
 # add OpenSceneGraph library
-include_directories ("/home/kgucwa/projects/robot-sim/src/osg/build/include")
-include_directories ("/home/kgucwa/projects/robot-sim/src/osg/include")
-link_directories ("/home/kgucwa/projects/robot-sim/src/osg/build/lib")
+include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/include")
+include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/include")
+link_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/lib")
 set(EXTRA_LIBS ${EXTRA_LIBS} optimized OpenThreads debug OpenThreadsd)
 set(EXTRA_LIBS ${EXTRA_LIBS} optimized osg debug osgd)
 set(EXTRA_LIBS ${EXTRA_LIBS} optimized osgDB debug osgDBd)

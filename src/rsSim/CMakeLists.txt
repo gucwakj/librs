@@ -9,12 +9,12 @@ include_directories (
 
 # add ODE library
 if (MSVC)
-	include_directories ("/home/kgucwa/projects/robot-sim/src/opende/include")
-	link_directories ("/home/kgucwa/projects/robot-sim/src/opende/lib/Release")
-	link_directories ("/home/kgucwa/projects/robot-sim/src/opende/lib/Debug")
+	include_directories ("${LIBRS_SOURCE_DIR}/deps/opende/include")
+	link_directories ("${LIBRS_SOURCE_DIR}/deps/opende/lib/Release")
+	link_directories ("${LIBRS_SOURCE_DIR}/deps/opende/lib/Debug")
 else (MSVC)
-	include_directories ("/home/kgucwa/projects/robot-sim/src/opende/sys/include")
-	link_directories ("/home/kgucwa/projects/robot-sim/src/opende/sys/lib")
+	include_directories ("${LIBRS_SOURCE_DIR}/deps/opende/sys/include")
+	link_directories ("${LIBRS_SOURCE_DIR}/deps/opende/sys/lib")
 endif (MSVC)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized ode debug oded)
 

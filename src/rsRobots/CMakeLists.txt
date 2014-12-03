@@ -4,7 +4,6 @@ project (rsRobots)
 # include directory
 include_directories (
 	"${LIBRS_SOURCE_DIR}/inc/${PROJECT_NAME}"
-	"${LIBRS_SOURCE_DIR}/tpp"
 	"${LIBRS_BINARY_DIR}"
 )
 

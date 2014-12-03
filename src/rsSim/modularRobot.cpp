@@ -1,7 +1,9 @@
-#include "robosim.hpp"
-#include "modularrobot.hpp"
+#include <rsSim/modularRobot.hpp>
 
-ModularRobot::ModularRobot(void) : Robot(JOINT1, JOINT1) { }
+using namespace rsSim;
+
+ModularRobot::ModularRobot(void) : rsRobots::Robot(rs::ROBOT), rsSim::Robot(rs::JOINT1, rs::JOINT1) {
+}
 
 ModularRobot::~ModularRobot(void) {
 	// destroy connectors array

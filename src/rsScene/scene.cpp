@@ -1,9 +1,11 @@
-#include "graphics.hpp"
-#include "robosim.hpp"
-#include "linkbot.hpp"
-#include "mobot.hpp"
-#include "nxt.hpp"
-#include "cubus.hpp"
+#include <rsScene/keyboardHandler.hpp>
+#include <rsScene/linkbotCallback.hpp>
+#include <rsScene/mouseHandler.hpp>
+#include <rsScene/scene.hpp>
+#include <rsScene/skyTransform.hpp>
+#include <rsScene/textureCallback.hpp>
+
+using namespace rsScene;
 
 osg::Node::NodeMask NOT_VISIBLE_MASK = 0x0;
 osg::Node::NodeMask RECEIVES_SHADOW_MASK = 0x1;
@@ -12,9 +14,9 @@ osg::Node::NodeMask IS_PICKABLE_MASK = 0x3;
 osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
 
 /**********************************************************
-	Graphics
+	Scene
  **********************************************************/
-Graphics::Graphics(RoboSim *sim) {
+Scene::Scene(void) {
 	// set notification level to no output
 	osg::setNotifyLevel(osg::ALWAYS);
 
@@ -42,11 +44,10 @@ Graphics::Graphics(RoboSim *sim) {
 
 	// set texture path
 	_tex_path = this->getTexPath();
-
-	_sim = sim;
 }
 
-Graphics::~Graphics(void) {
+Scene::~Scene(void) {
+std::cerr << "deleting Scene" << std::endl;
 	MUTEX_LOCK(&_viewer_mutex);
 	_viewer = 0;
 	MUTEX_UNLOCK(&_viewer_mutex);
@@ -55,13 +56,11 @@ Graphics::~Graphics(void) {
 	MUTEX_DESTROY(&_graphics_mutex);
 	MUTEX_DESTROY(&_viewer_mutex);
 
-	// remove drawings
-	for (int i = 0; i < _drawings.size(); i++) {
-		delete _drawings[i];
-	}
+	// remove robots
+	_robot.clear();
 }
 
-int Graphics::addChild(void) {
+int Scene::addChild(void) {
 	if (_staging->getNumChildren()) {
 		_scene->addChild(_staging->getChild(0));
 		_staging->removeChild(0, 1);
@@ -71,7 +70,8 @@ int Graphics::addChild(void) {
 	return 0;
 }
 
-int Graphics::drawGround(Ground *object) {
+//int Scene::drawGround(Ground *object) {
+int Scene::drawGround(int type, const double *p, const double *c, const double *l, const double *q) {
 	osg::Box *box;
 	osg::Cylinder *cyl;
 	osg::Sphere *sph;
@@ -79,23 +79,23 @@ int Graphics::drawGround(Ground *object) {
 	osg::ref_ptr<osg::Group> ground = new osg::Group();
 	osg::ref_ptr<osg::Geode> body = new osg::Geode;
 	osg::ref_ptr<osg::ShapeDrawable> shape;
-	switch (object->type) {
-		case BOX:
-			box = new osg::Box(osg::Vec3d(object->x, object->y, object->z), object->l1, object->l2, object->l3);
-			box->setRotation(osg::Quat(object->q[1], object->q[2], object->q[3], object->q[0]));
+	switch (type) {
+		case rs::BOX:
+			box = new osg::Box(osg::Vec3d(p[0], p[1], p[2]), l[0], l[1], l[2]);
+			box->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
 			shape = new osg::ShapeDrawable(box);
 			break;
-		case CYLINDER:
-			cyl = new osg::Cylinder(osg::Vec3d(object->x, object->y, object->z), object->l1, object->l2);
-			cyl->setRotation(osg::Quat(object->q[1], object->q[2], object->q[3], object->q[0]));
+		case rs::CYLINDER:
+			cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), l[0], l[1]);
+			cyl->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
 			shape = new osg::ShapeDrawable(cyl);
 			break;
-		case SPHERE:
-			sph = new osg::Sphere(osg::Vec3d(object->x, object->y, object->z), object->l1);
+		case rs::SPHERE:
+			sph = new osg::Sphere(osg::Vec3d(p[0], p[1], p[2]), l[0]);
 			shape = new osg::ShapeDrawable(sph);
 			break;
 	}
-	shape->setColor(osg::Vec4(object->r, object->g, object->b, object->alpha));
+	shape->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
 	body->addDrawable(shape);
 
 	// set rendering properties
@@ -128,44 +128,44 @@ int Graphics::drawGround(Ground *object) {
 	return 0;
 }
 
-int Graphics::drawMarker(Drawing *marker) {
+int Scene::drawMarker(int type, const double *p1, const double *p2, const double *c, int size, std::string s) {
 	// create geode
 	osg::Geode *geode = new osg::Geode();
 
 	// draw specific marker
-	if (marker->type == DOT) {
-		osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(marker->p1[0], marker->p1[1], marker->p1[2]), marker->i/500.0);
+	if (type == rs::DOT) {
+		osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(p1[0], p1[1], p1[2]), size/500.0);
 		osg::ShapeDrawable *pointDrawable = new osg::ShapeDrawable(sphere);
-		pointDrawable->setColor(osg::Vec4(marker->c[0], marker->c[1], marker->c[2], marker->c[3]));
+		pointDrawable->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
 		geode->addDrawable(pointDrawable);
 	}
-	else if (marker->type == LINE) {
+	else if (type == rs::LINE) {
 		osg::Geometry *geom = new osg::Geometry();
 		osg::Vec3Array *vert = new osg::Vec3Array();
-		vert->push_back(osg::Vec3(marker->p1[0], marker->p1[1], marker->p1[2]));
-		vert->push_back(osg::Vec3(marker->p2[0], marker->p2[1], marker->p2[2]));
+		vert->push_back(osg::Vec3(p1[0], p1[1], p1[2]));
+		vert->push_back(osg::Vec3(p2[0], p2[1], p2[2]));
 		geom->setVertexArray(vert);
 		geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
 		osg::Vec4Array *colors = new osg::Vec4Array;
-		colors->push_back(osg::Vec4(marker->c[0], marker->c[1], marker->c[2], marker->c[3]));
+		colors->push_back(osg::Vec4(c[0], c[1], c[2], c[3]));
 		geom->setColorArray(colors);
 		geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 		osg::LineWidth *width = new osg::LineWidth();
-		width->setWidth(marker->i*3.0f);
+		width->setWidth(size*3.0f);
 		geode->addDrawable(geom);
 		geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
 	}
-	else if (marker->type == TEXT) {
+	else if (type == rs::TEXT) {
 		osgText::Text *label = new osgText::Text();
 		label->setAlignment(osgText::Text::CENTER_CENTER);
 		label->setAxisAlignment(osgText::Text::SCREEN);
 		label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 		label->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 		label->setCharacterSize(25);
-		label->setColor(osg::Vec4(marker->c[0], marker->c[1], marker->c[2], marker->c[3]));
+		label->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
 		label->setDrawMode(osgText::Text::TEXT);
-		label->setPosition(osg::Vec3(marker->p1[0], marker->p1[1], marker->p1[2]));
-		label->setText(marker->str);
+		label->setPosition(osg::Vec3(p1[0], p1[1], p1[2]));
+		label->setText(s);
 		geode->addDrawable(label);
 	}
 
@@ -183,29 +183,29 @@ int Graphics::drawMarker(Drawing *marker) {
 	return 0;
 }
 
-int Graphics::drawRobot(Robot *robot, XMLRobot *xml, int type, int tracking) {
-	_robots.push_back(new GRobot);
-	_robots.back()->robot = new osg::Group();
+int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, int trace) {
+	_robot.push_back(new Robot());
+	_robot.back()->robot = new osg::Group();
 	double rgb[4] = {0};
 
-	switch (type) {
-		case CUBUS:
-			this->draw(dynamic_cast<Cubus*>(robot), tracking, rgb);
+	switch (form) {
+		case rs::CUBUS:
+			//this->draw(dynamic_cast<rsRobots::Cubus*>(robot), trace, rgb);
 			break;
-		case LINKBOTI:
-			this->draw(dynamic_cast<CLinkbotI*>(robot), xml, tracking, rgb);
+		case rs::LINKBOTI:
+			this->drawLinkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), p, q, trace, rgb);
 			break;
-		case LINKBOTL:
-			this->draw(dynamic_cast<CLinkbotL*>(robot), xml, tracking, rgb);
+		case rs::LINKBOTL:
+			//this->draw(dynamic_cast<rsRobots::CLinkbotL*>(robot), trace, rgb);
 			break;
-		case LINKBOTT:
-			this->draw(dynamic_cast<CLinkbotT*>(robot), xml, tracking, rgb);
+		case rs::LINKBOTT:
+			//this->draw(dynamic_cast<rsRobots::CLinkbotT*>(robot), trace, rgb);
 			break;
-		case MOBOT:
-			this->draw(dynamic_cast<CMobot*>(robot), tracking, rgb);
+		case rs::MOBOT:
+			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), trace, rgb);
 			break;
-		case NXT:
-			this->draw(dynamic_cast<CNXT*>(robot), tracking, rgb);
+		case rs::NXT:
+			//this->draw(dynamic_cast<rsRobots::CNXT*>(robot), trace, rgb);
 			break;
 	}
 
@@ -230,13 +230,13 @@ int Graphics::drawRobot(Robot *robot, XMLRobot *xml, int type, int tracking) {
 	label->setBoundingBoxColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.9f));
 	label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 	label->setDrawMode(osgText::Text::TEXT | osgText::Text::FILLEDBOUNDINGBOX);
-	_robots.back()->robot->insertChild(0, label_geode);
+	_robot.back()->robot->insertChild(0, label_geode);
 
 	// draw tracking node
 	osg::Geode *trackingGeode = new osg::Geode();
 	osg::Geometry *trackingLine = new osg::Geometry();
 	osg::Vec3Array *trackingVertices = new osg::Vec3Array();
-	trackingGeode->setNodeMask((tracking) ? VISIBLE_MASK : NOT_VISIBLE_MASK);
+	trackingGeode->setNodeMask((trace) ? VISIBLE_MASK : NOT_VISIBLE_MASK);
 	trackingLine->setVertexArray(trackingVertices);
 	trackingLine->insertPrimitiveSet(0, new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, 1, 1));
 	trackingLine->setDataVariance(osg::Object::DYNAMIC);
@@ -253,28 +253,28 @@ int Graphics::drawRobot(Robot *robot, XMLRobot *xml, int type, int tracking) {
 	trackingGeode->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	trackingGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 	trackingGeode->addDrawable(trackingLine);
-	//_robots.back()->robot->insertChild(1, trackingGeode);
+	_robot.back()->robot->insertChild(1, trackingGeode);
 
 	// set user properties of node
-	_robots.back()->robot->setName("robot");
+	_robot.back()->robot->setName("robot");
 
 	// optimize robot
 	osgUtil::Optimizer optimizer;
-	optimizer.optimize(_robots.back()->robot);
+	optimizer.optimize(_robot.back()->robot);
 
 	// add to scenegraph
-	_staging->addChild(_robots.back()->robot);
+	_staging->addChild(_robot.back()->robot);
 
 	// return position of robot in root node
-	return (_staging->getChildIndex(_robots.back()->robot));
+	return (_staging->getChildIndex(_robot.back()->robot));
 }
 
-osgText::Text* Graphics::getHUDText(void) {
+osgText::Text* Scene::getHUDText(void) {
 	osg::Geode *geode = _scene->getParent(0)->getChild(1)->asGroup()->getChild(0)->asTransform()->getChild(0)->asGeode();
 	return dynamic_cast<osgText::Text *>(geode->getDrawable(0));
 }
 
-std::string Graphics::getTexPath(void) {
+std::string Scene::getTexPath(void) {
 	std::string path;
 #ifdef _WIN32
 	DWORD size = 128;
@@ -299,180 +299,11 @@ std::string Graphics::getTexPath(void) {
 	return path;
 }
 
-int Graphics::getUnits(void) {
+int Scene::getUnits(void) {
 	return _us;
 }
 
-/*void Graphics::readXML(tinyxml2::XMLDocument *doc) {
-	tinyxml2::XMLElement *node = NULL;
-	tinyxml2::XMLElement *ele = NULL;
-	tinyxml2::XMLElement *side = NULL;
-	int tracking = 0;
-
-	// check for existence of graphics node
-	if ( (node = doc->FirstChildElement("graphics")) ) {
-		node = node->FirstChildElement();
-	}
-
-	// loop over all graphics nodes ignoring grid
-	while (node) {
-		if ( !strcmp(node->Value(), "line") ) {
-			// store default variables
-			_drawings.push_back(new Drawing());
-			_drawings.back()->type = LINE;
-
-			// get user defined values from xml
-			if (node->QueryIntAttribute("width", &_drawings.back()->i)) {
-				_drawings.back()->i = 1;
-			}
-			if ( (ele = node->FirstChildElement("start")) ) {
-				ele->QueryDoubleAttribute("x", &_drawings.back()->p1[0]);
-				ele->QueryDoubleAttribute("y", &_drawings.back()->p1[1]);
-				ele->QueryDoubleAttribute("z", &_drawings.back()->p1[2]);
-			}
-			if ( (ele = node->FirstChildElement("end")) ) {
-				ele->QueryDoubleAttribute("x", &_drawings.back()->p2[0]);
-				ele->QueryDoubleAttribute("y", &_drawings.back()->p2[1]);
-				ele->QueryDoubleAttribute("z", &_drawings.back()->p2[2]);
-			}
-			if ( (ele = node->FirstChildElement("color")) ) {
-				ele->QueryDoubleAttribute("r", &_drawings.back()->c[0]);
-				ele->QueryDoubleAttribute("g", &_drawings.back()->c[1]);
-				ele->QueryDoubleAttribute("b", &_drawings.back()->c[2]);
-				ele->QueryDoubleAttribute("alpha", &_drawings.back()->c[3]);
-			}
-		}
-		else if ( !strcmp(node->Value(), "point") ) {
-			// store default variables
-			_drawings.push_back(new Drawing());
-			_drawings.back()->type = DOT;
-
-			// get user defined values from xml
-			if (node->QueryIntAttribute("size", &_drawings.back()->i)) {
-				_drawings.back()->i = 1;
-			}
-			if ( (ele = node->FirstChildElement("position")) ) {
-				ele->QueryDoubleAttribute("x", &_drawings.back()->p1[0]);
-				ele->QueryDoubleAttribute("y", &_drawings.back()->p1[1]);
-				ele->QueryDoubleAttribute("z", &_drawings.back()->p1[2]);
-			}
-			if ( (ele = node->FirstChildElement("color")) ) {
-				ele->QueryDoubleAttribute("r", &_drawings.back()->c[0]);
-				ele->QueryDoubleAttribute("g", &_drawings.back()->c[1]);
-				ele->QueryDoubleAttribute("b", &_drawings.back()->c[2]);
-				ele->QueryDoubleAttribute("alpha", &_drawings.back()->c[3]);
-			}
-		}
-		else if ( !strcmp(node->Value(), "grid") ) {
-			node->QueryIntAttribute("units", &_us);
-			node->QueryDoubleAttribute("tics", &_grid[0]);
-			node->QueryDoubleAttribute("major", &_grid[1]);
-			node->QueryDoubleAttribute("minx", &_grid[2]);
-			node->QueryDoubleAttribute("maxx", &_grid[3]);
-			node->QueryDoubleAttribute("miny", &_grid[4]);
-			node->QueryDoubleAttribute("maxy", &_grid[5]);
-			node->QueryDoubleAttribute("enabled", &_grid[6]);
-			for (int i = 0; i < 6; i++) {
-				if (_us)_grid[i] /= 39.37;
-				else _grid[i] /= 100;
-			}
-		}
-		else if ( !strcmp(node->Value(), "tracking") ) {
-			node->QueryIntAttribute("val", &tracking);
-		}
-		else {
-			// store default variables
-			_drawings.push_back(new Drawing());
-			_drawings.back()->type = TEXT;
-
-			// get user defined values from xml
-			_drawings.back()->str = node->Value();
-			if ( (ele = node->FirstChildElement("position")) ) {
-				ele->QueryDoubleAttribute("x", &_drawings.back()->p1[0]);
-				ele->QueryDoubleAttribute("y", &_drawings.back()->p1[1]);
-				ele->QueryDoubleAttribute("z", &_drawings.back()->p1[2]);
-			}
-			if ( (ele = node->FirstChildElement("color")) ) {
-				ele->QueryDoubleAttribute("r", &_drawings.back()->c[0]);
-				ele->QueryDoubleAttribute("g", &_drawings.back()->c[1]);
-				ele->QueryDoubleAttribute("b", &_drawings.back()->c[2]);
-				ele->QueryDoubleAttribute("alpha", &_drawings.back()->c[3]);
-			}
-		}
-		// go to next node
-		node = node->NextSiblingElement();
-	}
-}*/
-
-int Graphics::stageForDelete(int id) {
-	_ending = id;
-
-	// success
-	return 0;
-}
-
-void Graphics::start(int pause) {
-	// graphics haven't started yet
-	COND_INIT(&_graphics_cond);
-	MUTEX_INIT(&_graphics_mutex);
-	_graphics = 0;
-	_ending = pause;
-
-	// initialize variables
-	unsigned int width, height;
-
-	// window interface
-	osg::GraphicsContext::WindowingSystemInterface *wsi = osg::GraphicsContext::getWindowingSystemInterface();
-	if (!wsi) {
-		osg::notify(osg::NOTICE) << "osg: cannot create windows." << std::endl;
-		return;
-	}
-	wsi->getScreenResolution(osg::GraphicsContext::ScreenIdentifier(0), width, height);
-
-	// window traits
-	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-	traits->width = width/2;
-	traits->height = 3*width/8;
-	traits->x = width - traits->width - 10;
-	traits->y = height - traits->height - 50;
-	traits->windowDecoration = true;
-	traits->doubleBuffer = true;
-	traits->vsync = false;
-	traits->sharedContext = 0;
-
-	// graphics context
-	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
-	if (gc.valid()) {
-		gc->setClearColor(osg::Vec4f(0.f,0.f,0.f,0.f));
-		gc->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	else {
-		osg::notify(osg::NOTICE) << "osg: cannot create graphics." << std::endl;
-		return;
-	}
-
-	// set up viewer
-	this->setupViewer(NULL);
-
-	// set up the camera
-	this->setupCamera(gc.get(), _view, traits->width, traits->height);
-
-	// set up scene
-	this->setupScene(_view, traits->width, traits->height);
-
-	// create graphics thread
-	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Graphics::graphics_thread, (void *)this);
-
-	// wait for graphics to be ready
-	MUTEX_LOCK(&_graphics_mutex);
-	while (!_graphics) {
-		COND_WAIT(&_graphics_cond, &_graphics_mutex);
-	}
-	MUTEX_UNLOCK(&_graphics_mutex);
-	_ending = 0;
-}
-
-int Graphics::setupCamera(osg::GraphicsContext *gc, osgViewer::Viewer *viewer, double w, double h) {
+int Scene::setupCamera(osg::GraphicsContext *gc, osgViewer::Viewer *viewer, double w, double h) {
 	// camera properties
 	_camera = new osg::Camera;
 	_camera->setGraphicsContext(gc);
@@ -502,8 +333,8 @@ int Graphics::setupCamera(osg::GraphicsContext *gc, osgViewer::Viewer *viewer, d
 	return 0;
 }
 
-int Graphics::setupScene(osgViewer::Viewer *viewer, double w, double h) {
-	Graphics *sim = this;
+int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
+	Scene *sim = this;
 
 	// Creating the root node
 	_root = new osg::Group;
@@ -911,28 +742,28 @@ int Graphics::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 	geode->setCullingActive(false);
 	geode->setStateSet(stateset);
 	geode->addDrawable(drawable);
-	osg::ref_ptr<osg::Transform> transform = new MoveEarthySkyWithEyePointTransform;
+	osg::ref_ptr<osg::Transform> transform = new skyTransform;
 	transform->setCullingActive(false);
 	transform->addChild(geode);
 	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
 	clearNode->setRequiresClear(false);
-	clearNode->setCullCallback(new TexMatCallback(*tm));
+	clearNode->setCullCallback(new textureCallback(*tm));
 	clearNode->addChild(transform);
 	clearNode->setNodeMask(~IS_PICKABLE_MASK);
 	_root->addChild(clearNode);
 
 	// drawing objects
-	for (int i = 0; i < sim->_drawings.size(); i++) {
+	/*for (int i = 0; i < sim->_drawings.size(); i++) {
 		sim->drawMarker(sim->_drawings[i]);
-	}
+	}*/
 
 	// optimize the scene graph, remove redundant nodes and state etc.
 	osgUtil::Optimizer optimizer;
 	optimizer.optimize(_root);
 
 	// event handler
-	viewer->addEventHandler(new keyboardEventHandler(textHUD));
-	viewer->addEventHandler(new pickHandler());
+	viewer->addEventHandler(new keyboardHandler(textHUD));
+	viewer->addEventHandler(new mouseHandler());
 
 	// show scene
 	viewer->setSceneData(_root);
@@ -941,7 +772,7 @@ int Graphics::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 	return 0;
 }
 
-int Graphics::setupViewer(osgViewer::Viewer *viewer) {
+int Scene::setupViewer(osgViewer::Viewer *viewer) {
     // creating the viewer
 	if (viewer)
 		_view = viewer;
@@ -954,19 +785,82 @@ int Graphics::setupViewer(osgViewer::Viewer *viewer) {
 	// event handler
 	_view->addEventHandler(new osgViewer::StatsHandler);
 
+	// success
+	return 0;
+}
 
-//tinyxml2::XMLDocument doc;
-//doc.LoadFile("/home/kgucwa/projects/playground/RS/RoboSim/robosimrc");
-//this->readXML(&doc);
+int Scene::stageForDelete(int id) {
+	_ending = id;
 
 	// success
 	return 0;
 }
 
+void Scene::start(int pause) {
+	// graphics haven't started yet
+	COND_INIT(&_graphics_cond);
+	MUTEX_INIT(&_graphics_mutex);
+	_graphics = 0;
+	_ending = pause;
+
+	// initialize variables
+	unsigned int width, height;
+
+	// window interface
+	osg::GraphicsContext::WindowingSystemInterface *wsi = osg::GraphicsContext::getWindowingSystemInterface();
+	if (!wsi) {
+		osg::notify(osg::NOTICE) << "osg: cannot create windows." << std::endl;
+		return;
+	}
+	wsi->getScreenResolution(osg::GraphicsContext::ScreenIdentifier(0), width, height);
+
+	// window traits
+	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+	traits->width = width/2;
+	traits->height = 3*width/8;
+	traits->x = width - traits->width - 10;
+	traits->y = height - traits->height - 50;
+	traits->windowDecoration = true;
+	traits->doubleBuffer = true;
+	traits->vsync = false;
+	traits->sharedContext = 0;
+
+	// graphics context
+	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+	if (gc.valid()) {
+		gc->setClearColor(osg::Vec4f(0.f,0.f,0.f,0.f));
+		gc->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	else {
+		osg::notify(osg::NOTICE) << "osg: cannot create graphics." << std::endl;
+		return;
+	}
+
+	// set up viewer
+	this->setupViewer(NULL);
+
+	// set up the camera
+	this->setupCamera(gc.get(), _view, traits->width, traits->height);
+
+	// set up scene
+	this->setupScene(_view, traits->width, traits->height);
+
+	// create graphics thread
+	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
+
+	// wait for graphics to be ready
+	MUTEX_LOCK(&_graphics_mutex);
+	while (!_graphics) {
+		COND_WAIT(&_graphics_cond, &_graphics_mutex);
+	}
+	MUTEX_UNLOCK(&_graphics_mutex);
+	_ending = 0;
+}
+
 /**********************************************************
 	private functions
  **********************************************************/
-int Graphics::draw(Cubus *robot, int tracking, double *rgb) {
+/*int Scene::draw(rsRobots::Cubus *robot, int tracke, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Geode> body[robot->NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[robot->NUM_PARTS];
@@ -989,9 +883,9 @@ int Graphics::draw(Cubus *robot, int tracking, double *rgb) {
 	// 'led'
 	cyl = new osg::Cylinder(osg::Vec3d(pos[0], pos[1], pos[2]+0.0001), 0.01, robot->_body_height);
 	cyl->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-	_robots.back()->led = new osg::ShapeDrawable(cyl);
-	_robots.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
-	body[robot->BODY]->addDrawable(_robots.back()->led);
+	_robot.back()->led = new osg::ShapeDrawable(cyl);
+	_robot.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
+	body[robot->BODY]->addDrawable(_robot.back()->led);
 
 	// face1
 	pos = dGeomGetOffsetPosition(robot->_geom[robot->FACE1][0]);
@@ -1062,7 +956,7 @@ int Graphics::draw(Cubus *robot, int tracking, double *rgb) {
 	for (int i = 0; i < robot->NUM_PARTS; i++) {
 		pat[i] = new osg::PositionAttitudeTransform;
 		pat[i]->addChild(body[i].get());
-		_robots.back()->robot->addChild(pat[i].get());
+		_robot.back()->robot->addChild(pat[i].get());
 	}
 
 	// add connectors
@@ -1109,7 +1003,7 @@ int Graphics::draw(Cubus *robot, int tracking, double *rgb) {
 		geode->setName("connector");
 
 		// add to scenegraph
-		_robots.back()->robot->addChild(transform);
+		_robot.back()->robot->addChild(transform);
 	}
 
 	// add sensors
@@ -1118,10 +1012,10 @@ int Graphics::draw(Cubus *robot, int tracking, double *rgb) {
 	//}
 
 	// set update callback for robot
-	_robots.back()->robot->setUpdateCallback(new cubusNodeCallback(robot, _robots.back()->led));
+	_robot.back()->robot->setUpdateCallback(new cubusNodeCallback(robot, _robot.back()->led));
 
 	// set tracking
-	robot->_trace = tracking;
+	robot->_trace = trace;
 
 	// send back rgb
 	rgb[0] = robot->_rgb[0];
@@ -1131,59 +1025,47 @@ int Graphics::draw(Cubus *robot, int tracking, double *rgb) {
 
 	// success
 	return 0;
-}
+}*/
 
-int Graphics::draw(CLinkbotT *robot, XMLRobot *xml, int tracking, double *rgb) {
+int Scene::drawLinkbot(rsRobots::LinkbotT *robot, const double *p, const double *q, int trace, double *rgb) {
 	// initialize variables
-	osg::ref_ptr<osg::Geode> body[4];
-	osg::ref_ptr<osg::PositionAttitudeTransform> pat[4];
+	osg::ref_ptr<osg::Geode> body[rsRobots::LinkbotT::NUM_PARTS];
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsRobots::LinkbotT::NUM_PARTS];
 	osg::ref_ptr<osg::Texture2D> tex[2];
-	const double *p;
-	dQuaternion q;
 	osg::Box *box;
 	osg::Cylinder *cyl;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 		body[i] = new osg::Geode;
 	}
 
 	// body
-	p = dGeomGetPosition(robot->_geom[0][0]);
-	dGeomGetQuaternion(robot->_geom[0][0], q);
 	box = new osg::Box(osg::Vec3d(p[0], p[1], p[2]), robot->_body_width, robot->_body_length, robot->_body_height);
-	box->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
+	box->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
 	body[0]->addDrawable(new osg::ShapeDrawable(box));
-	p = dGeomGetPosition(robot->_geom[0][1]);
-	dGeomGetQuaternion(robot->_geom[0][1], q);
 	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), robot->_body_radius, robot->_body_width);
-	cyl->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
+	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
 	body[0]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// 'led'
 	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2] + 0.0001), 0.01, robot->_body_height);
-	cyl->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
-	_robots.back()->led = new osg::ShapeDrawable(cyl);
-	_robots.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
-	body[0]->addDrawable(_robots.back()->led);
+	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
+	_robot.back()->led = new osg::ShapeDrawable(cyl);
+	_robot.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
+	body[0]->addDrawable(_robot.back()->led);
 
 	// face1
-	p = dGeomGetPosition(robot->_geom[1][0]);
-	dGeomGetQuaternion(robot->_geom[1][0], q);
 	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), robot->_face_radius, robot->_face_depth);
-	cyl->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
+	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
 	body[1]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// face 2
-	p = dGeomGetPosition(robot->_geom[2][0]);
-	dGeomGetQuaternion(robot->_geom[2][0], q);
 	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), robot->_face_radius, robot->_face_depth);
-	cyl->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
+	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
 	body[2]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// face 3
-	p = dGeomGetPosition(robot->_geom[3][0]);
-	dGeomGetQuaternion(robot->_geom[3][0], q);
 	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), robot->_face_radius, robot->_face_depth);
-	cyl->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
+	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
 	body[3]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// apply texture to robot
@@ -1204,20 +1086,20 @@ int Graphics::draw(CLinkbotT *robot, XMLRobot *xml, int tracking, double *rgb) {
 	}
 
 	// set rendering properties
-	for (int i = 0; i < robot->NUM_PARTS; i++) {
+	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	}
 
 	// position each body within robot
-	for (int i = 0; i < robot->NUM_PARTS; i++) {
+	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 		pat[i] = new osg::PositionAttitudeTransform;
 		pat[i]->addChild(body[i].get());
-		_robots.back()->robot->addChild(pat[i].get());
+		_robot.back()->robot->addChild(pat[i].get());
 	}
 
 	// add connectors
-	for (int i = 0; i < robot->_conn.size(); i++) {
+	/*for (int i = 0; i < robot->_conn.size(); i++) {
 		// initialize variables
 		dMatrix3 R;
 		dQuaternion Q;
@@ -1276,7 +1158,7 @@ int Graphics::draw(CLinkbotT *robot, XMLRobot *xml, int tracking, double *rgb) {
 			// set user properties of node
 			body->setName("connector");
 			// add to scenegraph
-			_robots.back()->robot->addChild(pat);
+			_robot.back()->robot->addChild(pat);
 			return 0;
 		}
 		else if (robot->_conn[i]->d_side != -1) robot->getConnectorParams(robot->_conn[i]->d_type, robot->_conn[i]->d_side, R, p);
@@ -1289,37 +1171,37 @@ int Graphics::draw(CLinkbotT *robot, XMLRobot *xml, int tracking, double *rgb) {
 		// create node to hold mesh
 		osg::ref_ptr<osg::Node> node;
 		switch (robot->_conn[i]->type) {
-			case BIGWHEEL:
+			case rs::BIGWHEEL:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/bigwheel.3ds");
 				break;
-			case BRIDGE:
+			case rs::BRIDGE:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/bridge.3ds");
 				break;
-			case CASTER:
+			case rs::CASTER:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/caster.3ds");
 				break;
-			case CUBE:
+			case rs::CUBE:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/cube.3ds");
 				break;
-			case FACEPLATE:
+			case rs::FACEPLATE:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/faceplate.3ds");
 				break;
-			case GRIPPER:
+			case rs::GRIPPER:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/gripper.3ds");
 				break;
-			case OMNIDRIVE:
+			case rs::OMNIDRIVE:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/omnidrive.3ds");
 				break;
-			case SIMPLE:
+			case rs::SIMPLE:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/simple.3ds");
 				break;
-			case SMALLWHEEL:
+			case rs::SMALLWHEEL:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/smallwheel.3ds");
 				break;
-			case TINYWHEEL:
+			case rs::TINYWHEEL:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
 				break;
-			case WHEEL:
+			case rs::WHEEL:
 				node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
 				transform->setScale(osg::Vec3d(1, robot->_wheel_radius/robot->_tinywheel_radius, robot->_wheel_radius/robot->_tinywheel_radius));
 				break;
@@ -1349,26 +1231,22 @@ int Graphics::draw(CLinkbotT *robot, XMLRobot *xml, int tracking, double *rgb) {
 		node->setName("connector");
 
 		// add to scenegraph
-		_robots.back()->robot->addChild(transform);
-	}
+		_robot.back()->robot->addChild(transform);
+	}*/
 
-	// set update callback for robot
-	//_robots.back()->robot->setUpdateCallback(new linkbotNodeCallback(robot, _robots.back()->led));
+	//_robot.back()->robot->setUpdateCallback(new linkbotCallback(_robot.back()->robot, _robot.back()->led));
 
 	// set tracking
-	robot->_trace = tracking;
+	robot->setTrace(trace);
 
 	// send back rgb
-	rgb[0] = robot->_rgb[0];
-	rgb[1] = robot->_rgb[1];
-	rgb[2] = robot->_rgb[2];
-	rgb[3] = 1;
+	robot->getRGB(rgb);
 
 	// success
 	return 0;
 }
 
-int Graphics::draw(CMobot *robot, int tracking, double *rgb) {
+/*int Scene::draw(rsRobots::CMobot *robot, int trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Geode> body[5];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[5];
@@ -1491,9 +1369,9 @@ int Graphics::draw(CMobot *robot, int tracking, double *rgb) {
 	// 'led'
 	cyl = new osg::Cylinder(osg::Vec3d(pos[0], pos[1], pos[2]+0.0001), 0.01, robot->_body_height);
 	cyl->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-	_robots.back()->led = new osg::ShapeDrawable(cyl);
-	_robots.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
-	body[robot->BODY_R]->addDrawable(_robots.back()->led);
+	_robot.back()->led = new osg::ShapeDrawable(cyl);
+	_robot.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
+	body[robot->BODY_R]->addDrawable(_robot.back()->led);
 
 	// right endcap
 	pos = dGeomGetOffsetPosition(robot->_geom[robot->ENDCAP_R][0]);
@@ -1554,7 +1432,7 @@ int Graphics::draw(CMobot *robot, int tracking, double *rgb) {
 	for (int i = 0; i < 5; i++) {
 		pat[i] = new osg::PositionAttitudeTransform;
 		pat[i]->addChild(body[i].get());
-		_robots.back()->robot->addChild(pat[i].get());
+		_robot.back()->robot->addChild(pat[i].get());
 	}
 
 	// add connectors
@@ -1725,14 +1603,14 @@ int Graphics::draw(CMobot *robot, int tracking, double *rgb) {
 		osgUtil::Optimizer optimizer;
 		optimizer.optimize(pat);
 		// add to scenegraph
-		_robots.back()->robot->addChild(pat);
+		_robot.back()->robot->addChild(pat);
 	}
 
 	// set update callback for robot
-	_robots.back()->robot->setUpdateCallback(new mobotNodeCallback(robot, _robots.back()->led));
+	_robot.back()->robot->setUpdateCallback(new mobotNodeCallback(robot, _robot.back()->led));
 
 	// set tracking
-	robot->_trace = tracking;
+	robot->_trace = trace;
 
 	// send back rgb
 	rgb[0] = robot->_rgb[0];
@@ -1744,7 +1622,7 @@ int Graphics::draw(CMobot *robot, int tracking, double *rgb) {
 	return 0;
 }
 
-int Graphics::draw(CNXT *robot, int tracking, double *rgb) {
+int Scene::draw(rsRobots::CNXT *robot, int trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Geode> body[robot->NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[robot->NUM_PARTS];
@@ -1767,9 +1645,9 @@ int Graphics::draw(CNXT *robot, int tracking, double *rgb) {
 	// 'led'
 	cyl = new osg::Cylinder(osg::Vec3d(pos[0], pos[1], pos[2]+0.0001), 0.01, robot->_body_height);
 	cyl->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-	_robots.back()->led = new osg::ShapeDrawable(cyl);
-	_robots.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
-	body[robot->BODY]->addDrawable(_robots.back()->led);
+	_robot.back()->led = new osg::ShapeDrawable(cyl);
+	_robot.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
+	body[robot->BODY]->addDrawable(_robot.back()->led);
 
 	// wheel1
 	pos = dGeomGetOffsetPosition(robot->_geom[robot->WHEEL1][0]);
@@ -1800,14 +1678,14 @@ int Graphics::draw(CNXT *robot, int tracking, double *rgb) {
 		// position in robot
 		pat[i] = new osg::PositionAttitudeTransform;
 		pat[i]->addChild(body[i].get());
-		_robots.back()->robot->addChild(pat[i].get());
+		_robot.back()->robot->addChild(pat[i].get());
 	}
 
 	// set update callback for robot
-	_robots.back()->robot->setUpdateCallback(new nxtNodeCallback(robot, _robots.back()->led));
+	_robot.back()->robot->setUpdateCallback(new nxtNodeCallback(robot, _robot.back()->led));
 
 	// set tracking
-	robot->_trace = tracking;
+	robot->_trace = trace;
 
 	// send back rgb
 	rgb[0] = robot->_rgb[0];
@@ -1817,11 +1695,11 @@ int Graphics::draw(CNXT *robot, int tracking, double *rgb) {
 
 	// success
 	return 0;
-}
+}*/
 
-void* Graphics::graphics_thread(void *arg) {
+void* Scene::graphics_thread(void *arg) {
 	// cast viewer
-	Graphics *sim = (Graphics *)arg;
+	Scene *sim = (Scene *)arg;
 
 	// viewer event handlers
 	sim->_view->addEventHandler(new osgViewer::WindowSizeHandler);
@@ -1835,11 +1713,15 @@ void* Graphics::graphics_thread(void *arg) {
 		MUTEX_UNLOCK(&(sim->_viewer_mutex));
 
 		sim->_view->frame();
-		if (sim->_staging->getNumChildren()) {
+		/*if (sim->_staging->getNumChildren()) {
+std::cerr << "children: " << sim->_staging->getNumChildren() << std::endl;
 			sim->_scene->addChild(sim->_staging->getChild(0));
+std::cerr << "children: " << sim->_staging->getNumChildren() << std::endl;
 			sim->_staging->removeChild(0, 1);
-		}
+std::cerr << "children: " << sim->_staging->getNumChildren() << std::endl;
+		}*/
 		if (sim->_ending) {
+std::cerr << "gra" << std::endl;
 			sim->_scene->removeChild(sim->_scene->getChild(sim->_ending));
 			sim->_ending = 0;
 		}
@@ -1855,506 +1737,9 @@ void* Graphics::graphics_thread(void *arg) {
 #endif
 
 	// trigger end of code when graphics window is closed
-	sim->_sim->done();
+	//sim->done();
 
 	// return
 	return arg;
-}
-
-/**********************************************************
-	MoveEarthySkyWithEyePointTransform
- **********************************************************/
-bool MoveEarthySkyWithEyePointTransform::computeLocalToWorldMatrix(osg::Matrix &matrix,osg::NodeVisitor *nv) const {
-	osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-	if (cv) {
-		osg::Vec3 eyePointLocal = cv->getEyeLocal();
-		matrix.preMultTranslate(eyePointLocal);
-	}
-	return true;
-}
-
-bool MoveEarthySkyWithEyePointTransform::computeWorldToLocalMatrix(osg::Matrix &matrix,osg::NodeVisitor *nv) const {
-	osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-	if (cv) {
-		osg::Vec3 eyePointLocal = cv->getEyeLocal();
-		matrix.postMultTranslate(-eyePointLocal);
-	}
-	return true;
-}
-
-/**********************************************************
-	TexMatCallback
- **********************************************************/
-void TexMatCallback::operator()(osg::Node* node, osg::NodeVisitor* nv) {
-	osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-	if (cv) {
-		const osg::Matrix& MV = *(cv->getModelViewMatrix());
-		const osg::Matrix R = osg::Matrix::rotate( osg::DegreesToRadians(112.0f), 0.0f,0.0f,1.0f)*
-								osg::Matrix::rotate( osg::DegreesToRadians(90.0f), 1.0f,0.0f,0.0f);
-
-		osg::Quat q = MV.getRotate();
-		const osg::Matrix C = osg::Matrix::rotate( q.inverse() );
-
-		_texMat.setMatrix( C*R );
-	}
-	traverse(node, nv);
-}
-
-/**********************************************************
-	Keyboard Event Handler
- **********************************************************/
-keyboardEventHandler::keyboardEventHandler(osgText::Text *text) {
-	_text = text;
-}
-
-void keyboardEventHandler::accept(osgGA::GUIEventHandlerVisitor &v) {
-	v.visit(*this);
-};
-
-bool keyboardEventHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
-	osgViewer::Viewer *viewer = dynamic_cast<osgViewer::Viewer *>(&aa);
-	osg::Group *root = dynamic_cast<osg::Group *>(viewer->getSceneData());
-	osgShadow::ShadowedScene *shadow = dynamic_cast<osgShadow::ShadowedScene*>(root->getChild(0));
-
-	switch (ea.getEventType()) {
-		case osgGA::GUIEventAdapter::KEYDOWN:
-			switch (ea.getKey()) {
-				case '1': {
-					osg::Vec3f eye = osg::Vec3f(0.7, -0.7, 0.55);
-					osg::Vec3f center = osg::Vec3f(0.1, 0.3, 0);
-					osg::Vec3f up = osg::Vec3f(0, 0, 1);
-					viewer->getCameraManipulator()->setHomePosition(eye, center, up);
-					viewer->getCameraManipulator()->home(ea, aa);
-					return true;
-				}
-				case '2': {
-					osg::Vec3f eye = osg::Vec3f(0, 0, 5);
-					osg::Vec3f center = osg::Vec3f(0, 0, 0);
-					osg::Vec3f up = osg::Vec3f(0, 0, 1);
-					viewer->getCameraManipulator()->setHomePosition(eye, center, up);
-					viewer->getCameraManipulator()->home(ea, aa);
-					return true;
-				}
-				case 'n': {
-					osg::Billboard *billboard = dynamic_cast<osg::Billboard *>(root->getChild(3));
-					billboard->setNodeMask((billboard->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
-					billboard = dynamic_cast<osg::Billboard *>(root->getChild(4));
-					billboard->setNodeMask((billboard->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
-					return true;
-				}
-				case 'r': {
-					for (int i = 0; i < (int)(shadow->getNumChildren()); i++) {
-						if (shadow->getChild(i)->getName() == "robot") {
-							osg::Geode *geode = dynamic_cast<osg::Geode *>(shadow->getChild(i)->asGroup()->getChild(1));
-							osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode->getDrawable(0)->asGeometry());
-							osg::Vec3Array *vertices = dynamic_cast<osg::Vec3Array *>(draw->getVertexArray());
-							if (vertices->getNumElements()) { geode->setNodeMask(VISIBLE_MASK); }
-							for (int j = 2; j < (int)(shadow->getChild(i)->asGroup()->getNumChildren()); j++) {
-								osg::PositionAttitudeTransform *pat;
-								pat = dynamic_cast<osg::PositionAttitudeTransform *>(shadow->getChild(i)->asGroup()->getChild(j));
-								pat->setNodeMask((pat->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
-								//pat->getNodeMask() ? g_sim->setCollisions(1) : g_sim->setCollisions(0);
-							}
-						}
-					}
-					return true;
-				}
-				case 't': {
-					for (int i = 0; i < (int)(shadow->getNumChildren()); i++) {
-						if (shadow->getChild(i)->getName() == "robot") {
-							osg::Geode *geode = dynamic_cast<osg::Geode *>(shadow->getChild(i)->asGroup()->getChild(1));
-							osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode->getDrawable(0)->asGeometry());
-							osg::Vec3Array *vertices = dynamic_cast<osg::Vec3Array *>(draw->getVertexArray());
-							if (vertices->getNumElements()) {
-								geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
-							}
-						}
-					}
-					return true;
-				}
-				default:
-					//g_sim->setPause(2);
-					//if (g_sim->getPause())
-					//	_text->setText("Paused: Press any key to restart");
-					//else
-					//	_text->setText("");
-					return true;
-			}
-		default:
-			return false;
-	}
-}
-
-/**********************************************************
-	Picking Event Handler
- **********************************************************/
-pickHandler::pickHandler(void) {
-	_mx = 0.0;
-	_my = 0.0;
-}
-
-bool pickHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
-	osgViewer::Viewer *viewer = dynamic_cast<osgViewer::Viewer *>(&aa);
-	if (!viewer) return false;
-
-	switch (ea.getEventType()) {
-		case(osgGA::GUIEventAdapter::PUSH):
-		case(osgGA::GUIEventAdapter::MOVE):
-			_mx = ea.getX();
-			_my = ea.getY();
-			return false;
-		case(osgGA::GUIEventAdapter::RELEASE):
-			if (_mx == ea.getX() && _my == ea.getY())
-				pick(ea, viewer);
-			return true;
-		default:
-			return false;
-	}
-}
-
-void pickHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *viewer) {
-	osg::Node *scene = viewer->getSceneData();
-	if (!scene) return;
-
-	osg::Group *grandparent = 0;
-	osgUtil::LineSegmentIntersector *picker;
-	double x = ea.getXnormalized(), y = ea.getYnormalized();
-	picker = new osgUtil::LineSegmentIntersector(osgUtil::Intersector::PROJECTION, x, y);
-	picker->setIntersectionLimit(osgUtil::Intersector::LIMIT_ONE_PER_DRAWABLE);
-	osgUtil::IntersectionVisitor iv(picker);
-	iv.setTraversalMask(IS_PICKABLE_MASK);
-	viewer->getCamera()->accept(iv);
-	//scene->accept(iv);
-
-	if (picker->containsIntersections()) {
-		/*std::multiset<osgUtil::LineSegmentIntersector::Intersection> ins = picker->getIntersections();
-		std::multiset<osgUtil::LineSegmentIntersector::Intersection>::iterator it = ins.begin();
-		osg::NodePath nodePath;
-		for(int j = 0; j < ins.size(); j++) {
-			nodePath = (*it).nodePath;
-			it++;
-			printf("%d nodePath:\t", j);
-			for(int i = 0; i < nodePath.size(); i++) {
-				printf("%s ", nodePath[i]->className());
-			}
-			printf("\n");
-		}*/
-
-		// get node at first intersection
-		osgUtil::LineSegmentIntersector::Intersection intersection = picker->getFirstIntersection();
-		osg::NodePath &nodePath = intersection.nodePath;
-
-		// get robot node
-		grandparent = (nodePath.size()>=3) ? dynamic_cast<osg::Group *>(nodePath[nodePath.size()-3]) : 0;
-
-		// toggle HUD
-		if (grandparent && (grandparent->getName() == "robot")) {
-			osg::Geode *geode = dynamic_cast<osg::Geode *>(grandparent->getChild(0));
-			geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
-		}
-	}
-}
-
-/**********************************************************
-	Ground Node Callback
- **********************************************************/
-groundNodeCallback::groundNodeCallback(Ground *ground) {
-	_ground = ground;
-}
-
-void groundNodeCallback::operator()(osg::Node* node, osg::NodeVisitor* nv) {
-	osg::Group *group = dynamic_cast<osg::Group *>(node);
-	if (group) {
-		const double *pos = dBodyGetPosition(_ground->body);
-		const double *quat = dBodyGetQuaternion(_ground->body);
-		osg::PositionAttitudeTransform *pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(0));
-		pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-		pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-	}
-	traverse(node, nv);
-}
-
-/**********************************************************
-	Linkbot Node Callback
- **********************************************************/
-linkbotNodeCallback::linkbotNodeCallback(CLinkbotT *robot, osg::ShapeDrawable *led) {
-	_robot = robot;
-	_led = led;
-	_count = 1;
-}
-
-void linkbotNodeCallback::operator()(osg::Node* node, osg::NodeVisitor* nv) {
-	osg::Group *group = dynamic_cast<osg::Group *>(node);
-	if (group) {
-		const double *pos, *quat;
-		int i, k = 0;
-		osg::PositionAttitudeTransform *pat;
-		// draw body parts
-		for (i = 2; i < 2+4; i++) {
-			pos = dBodyGetPosition(_robot->getBodyID(i-2));
-			quat = dBodyGetQuaternion(_robot->getBodyID(i-2));
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		}
-		// draw connectors
-		for (int j = 0; j < _robot->_conn.size(); j++) {
-			dMatrix3 R;
-			dQuaternion Q;
-			double p[3] = {0};
-			if (_robot->_conn[j]->d_side != -1) {
-				_robot->getFaceParams(_robot->_conn[j]->face, R, p);
-				_robot->getConnectorParams(_robot->_conn[j]->d_type, _robot->_conn[j]->d_side, R, p);
-				p[0] += R[0]*_robot->_conn[j]->o[0] + R[1]*_robot->_conn[j]->o[1] + R[2]*_robot->_conn[j]->o[2];
-				p[1] += R[4]*_robot->_conn[j]->o[0] + R[5]*_robot->_conn[j]->o[1] + R[6]*_robot->_conn[j]->o[2];
-				p[2] += R[8]*_robot->_conn[j]->o[0] + R[9]*_robot->_conn[j]->o[1] + R[10]*_robot->_conn[j]->o[2];
-				dRtoQ(R, Q);
-			}
-			else {
-				const double *pos = dBodyGetPosition(_robot->_conn[j]->body);
-				p[0] = pos[0]; p[1] = pos[1]; p[2] = pos[2];
-				const double *rot = dBodyGetQuaternion(_robot->_conn[j]->body);
-				Q[0] = rot[0]; Q[1] = rot[1]; Q[2] = rot[2]; Q[3] = rot[3];
-			}
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i + k++));
-			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-			pat->setAttitude(osg::Quat(Q[1], Q[2], Q[3], Q[0]));
-		}
-		// draw hud
-		osg::Geode *geode = dynamic_cast<osg::Geode *>(group->getChild(0));
-		osgText::Text *label = dynamic_cast<osgText::Text *>(geode->getDrawable(0));
-		char text[50];
-	//	if (g_sim->getUnits()) {
-	//		sprintf(text, "Robot %d\n(%.4lf, %.4lf) [in]", _robot->getID()+1,
-	//			_robot->getCenter(0)*39.37, _robot->getCenter(1)*39.37);
-	//	}
-	//	else {
-			sprintf(text, "Robot %d\n(%.4lf, %.4lf) [cm]", _robot->getID()+1,
-				_robot->getCenter(0)*100, _robot->getCenter(1)*100);
-		//}
-		label->setText(text);
-		double x = _robot->getCenter(0);
-		double y = _robot->getCenter(1);
-		double z = _robot->getCenter(2) + (_robot->getID() % 2 ? 0.08 : 0) + 0.08;
-		label->setPosition(osg::Vec3(x, y, z));
-		// draw tracking line
-		if (_robot->_trace) {
-			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));
-			geode2->setNodeMask(VISIBLE_MASK);
-			osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode2->getDrawable(0)->asGeometry());
-			osg::Vec4Array *colors = dynamic_cast<osg::Vec4Array *>(draw->getColorArray());
-			colors->pop_back();
-			colors->push_back(osg::Vec4(_robot->_rgb[0], _robot->_rgb[1], _robot->_rgb[2], 1.0f) );
-			osg::Vec3Array *vertices = dynamic_cast<osg::Vec3Array *>(draw->getVertexArray());
-			vertices->push_back(osg::Vec3(x, y, 0));
-			osg::DrawArrays *array = dynamic_cast<osg::DrawArrays *>(draw->getPrimitiveSet(0));
-			array->setCount(_count++);
-		}
-		// draw led
-		_led->setColor(osg::Vec4(_robot->_rgb[0], _robot->_rgb[1], _robot->_rgb[2], 1.0));
-	}
-	traverse(node, nv);
-}
-
-/**********************************************************
-	Mobot Node Callback
- **********************************************************/
-mobotNodeCallback::mobotNodeCallback(CMobot *robot, osg::ShapeDrawable *led) {
-	_robot = robot;
-	_led = led;
-	_count = 1;
-}
-
-void mobotNodeCallback::operator()(osg::Node* node, osg::NodeVisitor* nv) {
-	osg::Group *group = dynamic_cast<osg::Group *>(node);
-	if (group) {
-		const double *pos, *quat;
-		int i, k = 0;
-		osg::PositionAttitudeTransform *pat;
-		// draw body parts
-		for (i = 2; i < 2+5; i++) {
-			pos = dBodyGetPosition(_robot->getBodyID(i-2));
-			quat = dBodyGetQuaternion(_robot->getBodyID(i-2));
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		}
-		// draw connectors
-		for (int j = 0; j < _robot->_conn.size(); j++) {
-			pos = dBodyGetPosition(_robot->_conn[j]->body);
-			quat = dBodyGetQuaternion(_robot->_conn[j]->body);
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i + k++));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		}
-		// draw hud
-		osg::Geode *geode = dynamic_cast<osg::Geode *>(group->getChild(0));
-		osgText::Text *label = dynamic_cast<osgText::Text *>(geode->getDrawable(0));
-		char text[50];
-		/*if (g_sim->getUnits()) {
-			sprintf(text, "Robot %d\n(%.4lf, %.4lf) [in]", _robot->getID()+1,
-				_robot->getCenter(0)*39.37, _robot->getCenter(1)*39.37);
-		}
-		else {*/
-			sprintf(text, "Robot %d\n(%.4lf, %.4lf) [cm]", _robot->getID()+1,
-				_robot->getCenter(0)*100, _robot->getCenter(1)*100);
-		//}
-		label->setText(text);
-		double x = _robot->getCenter(0);
-		double y = _robot->getCenter(1);
-		double z = _robot->getCenter(2) + (_robot->getID() % 2 ? 0.08 : 0) + 0.08;
-		label->setPosition(osg::Vec3(x, y, z));
-		// draw tracking line
-		if (_robot->_trace) {
-			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));
-			geode2->setNodeMask(VISIBLE_MASK);
-			osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode2->getDrawable(0)->asGeometry());
-			osg::Vec3Array *vertices = dynamic_cast<osg::Vec3Array *>(draw->getVertexArray());
-			vertices->push_back(osg::Vec3(x, y, 0));
-			osg::DrawArrays *array = dynamic_cast<osg::DrawArrays *>(draw->getPrimitiveSet(0));
-			array->setCount(_count++);
-		}
-		// draw led
-		_led->setColor(osg::Vec4(_robot->_rgb[0], _robot->_rgb[1], _robot->_rgb[2], 1.0));
-	}
-	traverse(node, nv);
-}
-
-/**********************************************************
-	NXT Node Callback
- **********************************************************/
-nxtNodeCallback::nxtNodeCallback(CNXT *robot, osg::ShapeDrawable *led) {
-	_robot = robot;
-	_led = led;
-	_count = 1;
-}
-
-void nxtNodeCallback::operator()(osg::Node* node, osg::NodeVisitor* nv) {
-	osg::Group *group = dynamic_cast<osg::Group *>(node);
-	if (group) {
-		const double *pos, *quat;
-		int i, k = 0;
-		osg::PositionAttitudeTransform *pat;
-		// draw body parts
-		for (i = 2; i < 2+3; i++) {
-			pos = dBodyGetPosition(_robot->getBodyID(i-2));
-			quat = dBodyGetQuaternion(_robot->getBodyID(i-2));
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		}
-		// draw hud
-		osg::Geode *geode = dynamic_cast<osg::Geode *>(group->getChild(0));
-		osgText::Text *label = dynamic_cast<osgText::Text *>(geode->getDrawable(0));
-		char text[50];
-		/*if (g_sim->getUnits()) {
-			sprintf(text, "Robot %d\n(%.4lf, %.4lf) [in]", _robot->getID()+1,
-				_robot->getCenter(0)*39.37, _robot->getCenter(1)*39.37);
-		}
-		else {*/
-			sprintf(text, "Robot %d\n(%.4lf, %.4lf) [cm]", _robot->getID()+1,
-				_robot->getCenter(0)*100, _robot->getCenter(1)*100);
-		//}
-		label->setText(text);
-		double x = _robot->getCenter(0);
-		double y = _robot->getCenter(1);
-		double z = _robot->getCenter(2) + (_robot->getID() % 2 ? 0.08 : 0) + 0.08;
-		label->setPosition(osg::Vec3(x, y, z));
-		// draw tracking line
-		if (_robot->_trace) {
-			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));
-			geode2->setNodeMask(VISIBLE_MASK);
-			osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode2->getDrawable(0)->asGeometry());
-			osg::Vec3Array *vertices = dynamic_cast<osg::Vec3Array *>(draw->getVertexArray());
-			vertices->push_back(osg::Vec3(x, y, 0));
-			osg::DrawArrays *array = dynamic_cast<osg::DrawArrays *>(draw->getPrimitiveSet(0));
-			array->setCount(_count++);
-		}
-		// draw led
-		_led->setColor(osg::Vec4(_robot->_rgb[0], _robot->_rgb[1], _robot->_rgb[2], 1.0));
-	}
-	traverse(node, nv);
-}
-
-/**********************************************************
-	Cubus Node Callback
- **********************************************************/
-cubusNodeCallback::cubusNodeCallback(Cubus *robot, osg::ShapeDrawable *led) {
-	_robot = robot;
-	_led = led;
-	_count = 1;
-}
-
-void cubusNodeCallback::operator()(osg::Node* node, osg::NodeVisitor* nv) {
-	osg::Group *group = dynamic_cast<osg::Group *>(node);
-	if (group) {
-		const double *pos, *quat;
-		int i, j, k;
-		osg::PositionAttitudeTransform *pat;
-		// draw body parts
-		for (i = 2; i < 2+7; i++) {
-			pos = dBodyGetPosition(_robot->getBodyID(i-2));
-			quat = dBodyGetQuaternion(_robot->getBodyID(i-2));
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		}
-		// draw connectors
-		for (j = 0; j < _robot->_conn.size(); j++) {
-			dMatrix3 R;
-			dQuaternion Q;
-			double p[3] = {0};
-			_robot->getFaceParams(_robot->_conn[j]->face, R, p);
-			if (_robot->_conn[j]->d_side != -1) _robot->getConnectorParams(_robot->_conn[j]->d_type, _robot->_conn[j]->d_side, R, p);
-			p[0] += R[0]*_robot->_conn[j]->o[0] + R[1]*_robot->_conn[j]->o[1] + R[2]*_robot->_conn[j]->o[2];
-			p[1] += R[4]*_robot->_conn[j]->o[0] + R[5]*_robot->_conn[j]->o[1] + R[6]*_robot->_conn[j]->o[2];
-			p[2] += R[8]*_robot->_conn[j]->o[0] + R[9]*_robot->_conn[j]->o[1] + R[10]*_robot->_conn[j]->o[2];
-			dRtoQ(R, Q);
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i+j));
-			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-			pat->setAttitude(osg::Quat(Q[1], Q[2], Q[3], Q[0]));
-		}
-		// draw sensors
-		for (k = 0; k < _robot->_sensor.size(); k++) {
-			pos = dGeomGetOffsetPosition(_robot->_sensor[k]->geom);
-			quat= dGeomGetOffsetRotation(_robot->_sensor[k]->geom);
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i+j+k));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		}
-		// draw hud
-		osg::Geode *geode = dynamic_cast<osg::Geode *>(group->getChild(0));
-		osgText::Text *label = dynamic_cast<osgText::Text *>(geode->getDrawable(0));
-		char text[50];
-		/*if (g_sim->getUnits()) {
-			sprintf(text, "Robot %d\n(%.4lf, %.4lf) [in]", _robot->getID()+1,
-				_robot->getCenter(0)*39.37, _robot->getCenter(1)*39.37);
-		}
-		else {*/
-			sprintf(text, "Robot %d\n(%.4lf, %.4lf) [cm]", _robot->getID()+1,
-				_robot->getCenter(0)*100, _robot->getCenter(1)*100);
-		//}
-		label->setText(text);
-		double x = _robot->getCenter(0);
-		double y = _robot->getCenter(1);
-		double z = _robot->getCenter(2) + (_robot->getID() % 2 ? 0.08 : 0) + 0.08;
-		label->setPosition(osg::Vec3(x, y, z));
-		// draw tracking line
-		if (_robot->_trace) {
-			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));
-			geode2->setNodeMask(VISIBLE_MASK);
-			osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode2->getDrawable(0)->asGeometry());
-			osg::Vec4Array *colors = dynamic_cast<osg::Vec4Array *>(draw->getColorArray());
-			colors->pop_back();
-			colors->push_back(osg::Vec4(_robot->_rgb[0], _robot->_rgb[1], _robot->_rgb[2], 1.0f) );
-			osg::Vec3Array *vertices = dynamic_cast<osg::Vec3Array *>(draw->getVertexArray());
-			vertices->push_back(osg::Vec3(x, y, 0));
-			osg::DrawArrays *array = dynamic_cast<osg::DrawArrays *>(draw->getPrimitiveSet(0));
-			array->setCount(_count++);
-		}
-		// draw led
-		_led->setColor(osg::Vec4(_robot->_rgb[0], _robot->_rgb[1], _robot->_rgb[2], 1.0));
-	}
-	traverse(node, nv);
 }
 

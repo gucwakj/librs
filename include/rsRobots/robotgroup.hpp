@@ -1,5 +1,5 @@
-#ifndef ROBOTGROUP_HPP_
-#define ROBOTGROUP_HPP_
+#ifndef RSROBOTS_ROBOTGROUP_HPP_
+#define RSROBOTS_ROBOTGROUP_HPP_
 
 namespace rsRobots {
 
@@ -532,7 +532,8 @@ namespace rsRobots {
 
 	// implementation of template class
 	class DLLIMPORT RobotGroup : public Group<rsRobots::Robot> {};
+
 } // namespace rsRobots
 
-#endif // ROBOTGROUP_HPP_
+#endif // RSROBOTS_ROBOTGROUP_HPP_
 

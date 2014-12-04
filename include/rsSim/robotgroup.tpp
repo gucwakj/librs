@@ -117,7 +117,7 @@ int Group<T>::driveTimeNB(double seconds) {
 }
 
 template<class T>
-int Group<T>::holdJoint(robotJointId_t id) {
+int Group<T>::holdJoint(rs::JointID id) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->holdJoint(id);
 	}
@@ -165,13 +165,13 @@ int Group<T>::moveForeverNB(void) {
 }
 
 template<class T>
-int Group<T>::moveJoint(robotJointId_t id, double angle) {
+int Group<T>::moveJoint(rs::JointID id, double angle) {
 	moveJointNB(id, angle);
 	return moveWait();
 }
 
 template<class T>
-int Group<T>::moveJointNB(robotJointId_t id, double angle) {
+int Group<T>::moveJointNB(rs::JointID id, double angle) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->moveJointNB(id, angle);
 	}
@@ -179,7 +179,7 @@ int Group<T>::moveJointNB(robotJointId_t id, double angle) {
 }
 
 template<class T>
-int Group<T>::moveJointByPowerNB(robotJointId_t id, int power) {
+int Group<T>::moveJointByPowerNB(rs::JointID id, int power) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->moveJointByPowerNB(id, power);
 	}
@@ -187,7 +187,7 @@ int Group<T>::moveJointByPowerNB(robotJointId_t id, int power) {
 }
 
 template<class T>
-int Group<T>::moveJointForeverNB(robotJointId_t id) {
+int Group<T>::moveJointForeverNB(rs::JointID id) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->moveJointForeverNB(id);
 	}
@@ -195,7 +195,7 @@ int Group<T>::moveJointForeverNB(robotJointId_t id) {
 }
 
 template<class T>
-int Group<T>::moveJointTime(robotJointId_t id, double seconds) {
+int Group<T>::moveJointTime(rs::JointID id, double seconds) {
 	this->moveJointTimeNB(id, seconds);
 
 #ifdef _WIN32
@@ -209,7 +209,7 @@ int Group<T>::moveJointTime(robotJointId_t id, double seconds) {
 }
 
 template<class T>
-int Group<T>::moveJointTimeNB(robotJointId_t id, double seconds) {
+int Group<T>::moveJointTimeNB(rs::JointID id, double seconds) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->moveJointTimeNB(id, seconds);
 	}
@@ -217,13 +217,13 @@ int Group<T>::moveJointTimeNB(robotJointId_t id, double seconds) {
 }
 
 template<class T>
-int Group<T>::moveJointTo(robotJointId_t id, double angle) {
+int Group<T>::moveJointTo(rs::JointID id, double angle) {
 	moveJointToNB(id, angle);
 	return moveWait();
 }
 
 template<class T>
-int Group<T>::moveJointToNB(robotJointId_t id, double angle) {
+int Group<T>::moveJointToNB(rs::JointID id, double angle) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->moveJointToNB(id, angle);
 	}
@@ -231,13 +231,13 @@ int Group<T>::moveJointToNB(robotJointId_t id, double angle) {
 }
 
 template<class T>
-int Group<T>::moveJointToByTrackPos(robotJointId_t id, double angle) {
+int Group<T>::moveJointToByTrackPos(rs::JointID id, double angle) {
 	moveJointToByTrackPosNB(id, angle);
 	return moveJointWait(id);
 }
 
 template<class T>
-int Group<T>::moveJointToByTrackPosNB(robotJointId_t id, double angle) {
+int Group<T>::moveJointToByTrackPosNB(rs::JointID id, double angle) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->moveJointToByTrackPosNB(id, angle);
 	}
@@ -245,7 +245,7 @@ int Group<T>::moveJointToByTrackPosNB(robotJointId_t id, double angle) {
 }
 
 template<class T>
-int Group<T>::moveJointWait(robotJointId_t id) {
+int Group<T>::moveJointWait(rs::JointID id) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->moveJointWait(id);
 	}
@@ -299,7 +299,7 @@ int Group<T>::moveWait(void) {
 }
 
 template<class T>
-int Group<T>::relaxJoint(robotJointId_t id) {
+int Group<T>::relaxJoint(rs::JointID id) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->relaxJoint(id);
 	}
@@ -385,7 +385,7 @@ int Group<T>::setJointSafetyAngleTimeout(double seconds) {
 }
 
 template<class T>
-int Group<T>::setJointSpeed(robotJointId_t id, double speed) {
+int Group<T>::setJointSpeed(rs::JointID id, double speed) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->setJointSpeed(id, speed);
 	}
@@ -393,7 +393,7 @@ int Group<T>::setJointSpeed(robotJointId_t id, double speed) {
 }
 
 template<class T>
-int Group<T>::setJointSpeedRatio(robotJointId_t id, double ratio) {
+int Group<T>::setJointSpeedRatio(rs::JointID id, double ratio) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->setJointSpeedRatio(id, ratio);
 	}

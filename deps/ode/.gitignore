@@ -24,3 +24,4 @@ ode-config
 stamp-h1
 autom4te.cache/
 sys/
+test-driver

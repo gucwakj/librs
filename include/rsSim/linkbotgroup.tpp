@@ -1,46 +1,46 @@
-int CLinkbotTGroup::accelJointAngleNB(robotJointId_t id, double a, double angle) {
+int CLinkbotTGroup::accelJointAngleNB(rs::JointID id, double a, double angle) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->accelJointAngleNB(id, a, angle);
 	}
 	return 0;
 }
 
-int CLinkbotTGroup::accelJointCycloidalNB(robotJointId_t id, double angle, double t) {
+int CLinkbotTGroup::accelJointCycloidalNB(rs::JointID id, double angle, double t) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->accelJointCycloidalNB(id, angle, t);
 	}
 	return 0;
 }
 
-int CLinkbotTGroup::accelJointHarmonicNB(robotJointId_t id, double angle, double t) {
+int CLinkbotTGroup::accelJointHarmonicNB(rs::JointID id, double angle, double t) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->accelJointHarmonicNB(id, angle, t);
 	}
 	return 0;
 }
 
-int CLinkbotTGroup::accelJointSmoothNB(robotJointId_t id, double a0, double af, double vmax, double angle) {
+int CLinkbotTGroup::accelJointSmoothNB(rs::JointID id, double a0, double af, double vmax, double angle) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->accelJointSmoothNB(id, a0, af, vmax, angle);
 	}
 	return 0;
 }
 
-int CLinkbotTGroup::accelJointTimeNB(robotJointId_t id, double a, double t) {
+int CLinkbotTGroup::accelJointTimeNB(rs::JointID id, double a, double t) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->accelJointTimeNB(id, a, t);
 	}
 	return 0;
 }
 
-int CLinkbotTGroup::accelJointToMaxSpeedNB(robotJointId_t id, double a) {
+int CLinkbotTGroup::accelJointToMaxSpeedNB(rs::JointID id, double a) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->accelJointToMaxSpeedNB(id, a);
 	}
 	return 0;
 }
 
-int CLinkbotTGroup::accelJointToVelocityNB(robotJointId_t id, double a, double v) {
+int CLinkbotTGroup::accelJointToVelocityNB(rs::JointID id, double a, double v) {
 	for (int i = 0; i < _robots.size(); i++) {
 		_robots[i]->accelJointToVelocityNB(id, a, v);
 	}

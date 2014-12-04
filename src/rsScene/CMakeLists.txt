@@ -3,7 +3,7 @@ project (rsScene)
 
 # include directory
 include_directories (
-	"${LIBRS_SOURCE_DIR}/inc/${PROJECT_NAME}"
+	"${LIBRS_SOURCE_DIR}/include/${PROJECT_NAME}"
 	"${LIBRS_BINARY_DIR}"
 )
 

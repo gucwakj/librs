@@ -5,7 +5,7 @@ project (LIBRS)
 cmake_minimum_required (VERSION 2.8)
 
 # set the version number
-set (LIBRS_VERSION 1.7.70)
+set (LIBRS_VERSION 0.0.70)
 set (LIBRS_SO_VERSION 0)
 
 # verbose ouptut
@@ -39,7 +39,7 @@ endif (MSVC)
 
 # include directory
 include_directories (
-	"${PROJECT_SOURCE_DIR}/inc"
+	"${PROJECT_SOURCE_DIR}/include"
 	"${PROJECT_BINARY_DIR}"
 )
 

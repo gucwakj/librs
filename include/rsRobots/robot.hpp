@@ -5,6 +5,7 @@
 
 #include <rs/enum.hpp>
 #include <rs/types.hpp>
+#include <rsRobots/rgbhashtable.h>
 
 namespace rsRobots {
 

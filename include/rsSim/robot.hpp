@@ -18,7 +18,6 @@
 #include <rs/enum.hpp>
 #include <rs/types.hpp>
 #include <rsRobots/robot.hpp>
-#include <rsScene/rgbhashtable.h>
 
 // TODO: remove
 namespace rsXML {

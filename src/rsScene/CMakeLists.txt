@@ -35,7 +35,6 @@ set (SRCS ${SRCS}
 	#mobotCallback.cpp
 	mouseHandler.cpp
 	#nxtCallback.cpp
-	rgbhashtable.c
 	scene.cpp
 	skyTransform.cpp
 	textureCallback.cpp

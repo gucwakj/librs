@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+
 #include <ode/ode.h>
 
 #include <rs/macros.hpp>

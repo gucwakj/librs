@@ -1,4 +1,3 @@
-#include <rsScene/keyboardHandler.hpp>
 #include <rsScene/linkbotCallback.hpp>
 #include <rsScene/mouseHandler.hpp>
 #include <rsScene/scene.hpp>
@@ -13,7 +12,7 @@ osg::Node::NodeMask CASTS_SHADOW_MASK = 0x2;
 osg::Node::NodeMask IS_PICKABLE_MASK = 0x3;
 osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
 
-Scene::Scene(void) {
+Scene::Scene(void) : keyboardHandler() {
 	// set notification level to no output
 	osg::setNotifyLevel(osg::ALWAYS);
 
@@ -301,6 +300,15 @@ std::string Scene::getTexPath(void) {
 
 int Scene::getUnits(void) {
 	return _us;
+}
+
+void Scene::keyPressed(int key) {}
+
+void Scene::setPauseText(int pause) {
+	if (pause)
+		this->getHUDText()->setText("Paused: Press any key to restart");
+	else
+		this->getHUDText()->setText("");
 }
 
 int Scene::setupCamera(osg::GraphicsContext *gc, osgViewer::Viewer *viewer, double w, double h) {
@@ -762,7 +770,7 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 	optimizer.optimize(_root);
 
 	// event handler
-	viewer->addEventHandler(new keyboardHandler(textHUD));
+	viewer->addEventHandler(dynamic_cast<keyboardHandler*>(this));
 	viewer->addEventHandler(new mouseHandler());
 
 	// show scene

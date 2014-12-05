@@ -20,6 +20,7 @@
 #include <rs/enum.hpp>
 #include <rsRobots/robot.hpp>
 #include <rsRobots/linkbot.hpp>
+#include <rsScene/keyboardHandler.hpp>
 
 extern osg::Node::NodeMask NOT_VISIBLE_MASK;
 extern osg::Node::NodeMask RECEIVES_SHADOW_MASK;
@@ -29,7 +30,7 @@ extern osg::Node::NodeMask VISIBLE_MASK;
 
 namespace rsScene {
 
-	class Scene {
+	class Scene : public keyboardHandler {
 		// public functions
 		public:
 			Scene(void);
@@ -42,6 +43,8 @@ namespace rsScene {
 			osgText::Text* getHUDText(void);
 			std::string getTexPath(void);
 			int getUnits(void);
+			virtual void keyPressed(int);
+			void setPauseText(int);
 			int setupCamera(osg::GraphicsContext*, osgViewer::Viewer*, double, double);
 			int setupScene(osgViewer::Viewer*, double, double);
 			int setupViewer(osgViewer::Viewer*);

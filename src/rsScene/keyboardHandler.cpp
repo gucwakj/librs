@@ -1,13 +1,10 @@
-#include "keyboardHandler.hpp"
+#include <rsScene/keyboardHandler.hpp>
 
 using namespace rsScene;
 
-keyboardHandler::keyboardHandler(osgText::Text *text) {
-	_text = text;
-}
+keyboardHandler::keyboardHandler(void) {}
 
-keyboardHandler::~keyboardHandler(void) {
-}
+keyboardHandler::~keyboardHandler(void) {}
 
 void keyboardHandler::accept(osgGA::GUIEventHandlerVisitor &v) {
 	v.visit(*this);
@@ -20,6 +17,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionA
 
 	switch (ea.getEventType()) {
 		case osgGA::GUIEventAdapter::KEYDOWN:
+			this->keyPressed(ea.getKey());
 			switch (ea.getKey()) {
 				case '1': {
 					osg::Vec3f eye = osg::Vec3f(0.7, -0.7, 0.55);
@@ -55,7 +53,6 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionA
 								osg::PositionAttitudeTransform *pat;
 								pat = dynamic_cast<osg::PositionAttitudeTransform *>(shadow->getChild(i)->asGroup()->getChild(j));
 								pat->setNodeMask((pat->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
-								//pat->getNodeMask() ? g_sim->setCollisions(1) : g_sim->setCollisions(0);
 							}
 						}
 					}
@@ -67,23 +64,20 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionA
 							osg::Geode *geode = dynamic_cast<osg::Geode *>(shadow->getChild(i)->asGroup()->getChild(1));
 							osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode->getDrawable(0)->asGeometry());
 							osg::Vec3Array *vertices = dynamic_cast<osg::Vec3Array *>(draw->getVertexArray());
-							if (vertices->getNumElements()) {
+							if (vertices->getNumElements())
 								geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
-							}
 						}
 					}
 					return true;
 				}
-				default:
-					//g_sim->setPause(2);
-					//if (g_sim->getPause())
-					//	_text->setText("Paused: Press any key to restart");
-					//else
-					//	_text->setText("");
+				default: {
 					return true;
+				}
 			}
 		default:
 			return false;
 	}
 }
+
+void keyboardHandler::keyPressed(int key) {}
 

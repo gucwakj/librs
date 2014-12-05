@@ -7,7 +7,6 @@
 #include <osgGA/GUIEventAdapter>
 #include <osgGA/GUIEventHandler>
 #include <osgShadow/ShadowedScene>
-#include <osgText/Text>
 #include <osgViewer/Viewer>
 
 extern osg::Node::NodeMask NOT_VISIBLE_MASK;
@@ -21,15 +20,12 @@ namespace rsScene {
 	class keyboardHandler : public osgGA::GUIEventHandler {
 		// public functions
 		public:
-			keyboardHandler(osgText::Text*);
+			keyboardHandler(void);
 			virtual ~keyboardHandler(void);
 
 			virtual bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
 			virtual void accept(osgGA::GUIEventHandlerVisitor&);
-
-		// private data
-		private:
-			osgText::Text *_text;
+			virtual void keyPressed(int);
 	};
 
 } // namespace rsScene

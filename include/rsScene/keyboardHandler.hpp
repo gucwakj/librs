@@ -18,14 +18,19 @@ extern osg::Node::NodeMask VISIBLE_MASK;
 
 namespace rsScene {
 
-class keyboardHandler : public osgGA::GUIEventHandler {
-	public:
-		keyboardHandler(osgText::Text*);
-		virtual bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
-		virtual void accept(osgGA::GUIEventHandlerVisitor&);
-	private:
-		osgText::Text *_text;
-};
+	class keyboardHandler : public osgGA::GUIEventHandler {
+		// public functions
+		public:
+			keyboardHandler(osgText::Text*);
+			virtual ~keyboardHandler(void);
+
+			virtual bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
+			virtual void accept(osgGA::GUIEventHandlerVisitor&);
+
+		// private data
+		private:
+			osgText::Text *_text;
+	};
 
 } // namespace rsScene
 

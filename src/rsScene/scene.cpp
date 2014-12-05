@@ -13,9 +13,6 @@ osg::Node::NodeMask CASTS_SHADOW_MASK = 0x2;
 osg::Node::NodeMask IS_PICKABLE_MASK = 0x3;
 osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
 
-/**********************************************************
-	Scene
- **********************************************************/
 Scene::Scene(void) {
 	// set notification level to no output
 	osg::setNotifyLevel(osg::ALWAYS);
@@ -60,6 +57,9 @@ std::cerr << "deleting Scene" << std::endl;
 	_robot.clear();
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 int Scene::addChild(void) {
 	if (_staging->getNumChildren()) {
 		_scene->addChild(_staging->getChild(0));

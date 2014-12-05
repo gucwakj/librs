@@ -6,6 +6,9 @@ keyboardHandler::keyboardHandler(osgText::Text *text) {
 	_text = text;
 }
 
+keyboardHandler::~keyboardHandler(void) {
+}
+
 void keyboardHandler::accept(osgGA::GUIEventHandlerVisitor &v) {
 	v.visit(*this);
 }

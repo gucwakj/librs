@@ -189,22 +189,22 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 
 	switch (form) {
 		case rs::CUBUS:
-			//this->draw(dynamic_cast<rsRobots::Cubus*>(robot), trace, rgb);
+			//this->drawCubus(dynamic_cast<rsRobots::Cubus*>(robot), p, q, trace, rgb);
 			break;
 		case rs::LINKBOTI:
-			this->drawLinkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), p, q, trace, rgb);
+			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), p, q, trace, rgb);
 			break;
 		case rs::LINKBOTL:
-			//this->draw(dynamic_cast<rsRobots::CLinkbotL*>(robot), trace, rgb);
+			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotL*>(robot), p, q, trace, rgb);
 			break;
 		case rs::LINKBOTT:
-			//this->draw(dynamic_cast<rsRobots::CLinkbotT*>(robot), trace, rgb);
+			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), p, q, trace, rgb);
 			break;
 		case rs::MOBOT:
-			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), trace, rgb);
+			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
 			break;
 		case rs::NXT:
-			//this->draw(dynamic_cast<rsRobots::CNXT*>(robot), trace, rgb);
+			//this->draw(dynamic_cast<rsRobots::CNXT*>(robot), p, q, trace, rgb);
 			break;
 	}
 
@@ -252,7 +252,7 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 	trackingGeode->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	trackingGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 	trackingGeode->addDrawable(trackingLine);
-	_robot.back()->robot->insertChild(1, trackingGeode);
+	//_robot.back()->robot->insertChild(1, trackingGeode);
 
 	// set user properties of node
 	_robot.back()->robot->setName("robot");
@@ -809,7 +809,6 @@ void Scene::start(int pause) {
 	COND_INIT(&_graphics_cond);
 	MUTEX_INIT(&_graphics_mutex);
 	_graphics = 0;
-	_ending = pause;
 
 	// initialize variables
 	unsigned int width, height;
@@ -851,18 +850,12 @@ void Scene::start(int pause) {
 	this->setupCamera(gc.get(), _view, traits->width, traits->height);
 
 	// set up scene
+	_ending = pause;
 	this->setupScene(_view, traits->width, traits->height);
+	_ending = 0;
 
 	// create graphics thread
 	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
-
-	// wait for graphics to be ready
-	MUTEX_LOCK(&_graphics_mutex);
-	while (!_graphics) {
-		COND_WAIT(&_graphics_cond, &_graphics_mutex);
-	}
-	MUTEX_UNLOCK(&_graphics_mutex);
-	_ending = 0;
 }
 
 /**********************************************************
@@ -1035,11 +1028,10 @@ void Scene::start(int pause) {
 	return 0;
 }*/
 
-int Scene::drawLinkbot(rsRobots::LinkbotT *robot, const double *p, const double *q, int trace, double *rgb) {
+int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double *q, int trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Geode> body[rsRobots::LinkbotT::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsRobots::LinkbotT::NUM_PARTS];
-	osg::ref_ptr<osg::Texture2D> tex[2];
 	osg::Box *box;
 	osg::Cylinder *cyl;
 	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
@@ -1077,6 +1069,7 @@ int Scene::drawLinkbot(rsRobots::LinkbotT *robot, const double *p, const double 
 	body[3]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// apply texture to robot
+	osg::ref_ptr<osg::Texture2D> tex[2];
 	tex[0] = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/textures/body.png"));
 	tex[1] = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/textures/face.png"));
 	for (int i = 0; i < 2; i++) {
@@ -1093,14 +1086,12 @@ int Scene::drawLinkbot(rsRobots::LinkbotT *robot, const double *p, const double 
 		body[robot->_disabled+1]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[0].get(), osg::StateAttribute::ON);
 	}
 
-	// set rendering properties
+	// rendering and positioning
 	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
+		// set rendering properties
 		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	}
-
-	// position each body within robot
-	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
+		// position each body within robot
 		pat[i] = new osg::PositionAttitudeTransform;
 		pat[i]->addChild(body[i].get());
 		_robot.back()->robot->addChild(pat[i].get());
@@ -1707,45 +1698,38 @@ int Scene::draw(rsRobots::CNXT *robot, int trace, double *rgb) {
 
 void* Scene::graphics_thread(void *arg) {
 	// cast viewer
-	Scene *sim = (Scene *)arg;
+	Scene *p = (Scene *)arg;
 
 	// viewer event handlers
-	sim->_view->addEventHandler(new osgViewer::WindowSizeHandler);
-
-	// signal connection functions that graphics are set up
-	SIGNAL(&(sim->_graphics_cond), &(sim->_graphics_mutex), sim->_graphics = 1);
+	p->_view->addEventHandler(new osgViewer::WindowSizeHandler);
 
 	// run viewer
-	MUTEX_LOCK(&(sim->_viewer_mutex));
-	while (sim->_viewer && !sim->_view->done()) {
-		MUTEX_UNLOCK(&(sim->_viewer_mutex));
+	MUTEX_LOCK(&(p->_viewer_mutex));
+	while (p->_viewer && !p->_view->done()) {
+		MUTEX_UNLOCK(&(p->_viewer_mutex));
 
-		sim->_view->frame();
-		/*if (sim->_staging->getNumChildren()) {
-std::cerr << "children: " << sim->_staging->getNumChildren() << std::endl;
-			sim->_scene->addChild(sim->_staging->getChild(0));
-std::cerr << "children: " << sim->_staging->getNumChildren() << std::endl;
-			sim->_staging->removeChild(0, 1);
-std::cerr << "children: " << sim->_staging->getNumChildren() << std::endl;
-		}*/
-		if (sim->_ending) {
-std::cerr << "gra" << std::endl;
-			sim->_scene->removeChild(sim->_scene->getChild(sim->_ending));
-			sim->_ending = 0;
+		p->_view->frame();
+		if (p->_staging->getNumChildren()) {
+			p->_scene->addChild(p->_staging->getChild(0));
+			p->_staging->removeChild(0, 1);
+		}
+		if (p->_ending) {
+			p->_scene->removeChild(p->_scene->getChild(p->_ending));
+			p->_ending = 0;
 		}
 
-		MUTEX_LOCK(&(sim->_viewer_mutex));
+		MUTEX_LOCK(&(p->_viewer_mutex));
 	}
-	MUTEX_UNLOCK(&(sim->_viewer_mutex));
+	MUTEX_UNLOCK(&(p->_viewer_mutex));
 
 	// clean up viewer & root
-	sim->_view->setSceneData(NULL);
+	p->_view->setSceneData(NULL);
 #ifdef _WIN32_
-	delete sim->_view;
+	delete p->_view;
 #endif
 
 	// trigger end of code when graphics window is closed
-	//sim->done();
+	//g_sim->done();
 
 	// return
 	return arg;

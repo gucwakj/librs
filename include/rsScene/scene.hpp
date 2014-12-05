@@ -53,11 +53,11 @@ namespace rsScene {
 
 		// private functions
 		private:
-			//int draw(rsRobots::Cubus*, int, double*);			// draw cubus
-			int drawLinkbot(rsRobots::LinkbotT*, const double*, const double*, int, double*);
-			//int draw(rsRobots::CMobot*, int, double*);		// draw mobot
-			//int draw(rsRobots::CNXT*, int, double*);			// draw nxt
-			static void* graphics_thread(void*);				// thread for graphics objects
+			//int draw_cubus(rsRobots::Cubus*, const double*, const double*, int, double*);
+			int draw_linkbot(rsRobots::LinkbotT*, const double*, const double*, int, double*);
+			//int draw_mobot(rsRobots::Mobot*, const double*, const double*, int, double*);
+			//int draw_nxt(rsRobots::NXT*, const double*, const double*, int, double*);
+			static void* graphics_thread(void*);
 
 		// private data
 		private:

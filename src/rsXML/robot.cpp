@@ -6,7 +6,7 @@ Robot::Robot(void) {
 	Robot(-1, 0);
 }
 
-Robot::Robot(int form, int trace) {
+Robot::Robot(int form, bool trace) {
 	_a[0] = 0;
 	_a[1] = 0;
 	_a[2] = 0;
@@ -68,7 +68,7 @@ double* Robot::getQuaternion(void) {
 	return _q;
 }
 
-int Robot::getTrace(void) {
+bool Robot::getTrace(void) {
 	return _trace;
 }
 

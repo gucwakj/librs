@@ -11,7 +11,7 @@ Store::Store(char *name) {
 	_ps = 3;
 	_preconfig = 0;
 	_rt = 1;
-	_trace = 0;
+	_trace = false;
 	_us = 1;
 
 	// read XML file
@@ -231,7 +231,7 @@ void Store::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 		}
 		else if ( !strcmp(node->Value(), "tracking") ) {
-			node->QueryIntAttribute("val", &_trace);
+			node->QueryIntAttribute("val", (int*)(&_trace));
 		}
 		else {
 			// create object

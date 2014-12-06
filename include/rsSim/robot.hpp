@@ -1,6 +1,9 @@
 #ifndef RSSIM_ROBOT_HPP_
 #define RSSIM_ROBOT_HPP_
 
+#include <cstring>
+#include <iostream>
+#include <vector>
 #ifdef _WIN32
 #include <windows.h>
 #include <Shlobj.h>
@@ -9,10 +12,8 @@
 #include <pthread.h>
 #include <unistd.h>
 #endif // _WIN32
+
 #include <ode/ode.h>
-#include <cstring>
-#include <iostream>
-#include <vector>
 
 #include <rs/macros.hpp>
 #include <rs/enum.hpp>
@@ -23,6 +24,7 @@
 namespace rsXML {
 	class Robot;
 }
+// TODO: remove
 namespace rsSim {
 	class Sim;
 }
@@ -30,8 +32,10 @@ namespace rsSim {
 namespace rsSim {
 
 class Robot : virtual public rsRobots::Robot {
+		// TODO: remove
 		friend class rsSim::Sim;
 
+	// public functions
 	public:
 		Robot(rs::JointID, rs::JointID);
 		virtual ~Robot(void);
@@ -170,14 +174,14 @@ class Robot : virtual public rsRobots::Robot {
 	protected:
 		// motor motion directions
 		typedef enum motor_state_e {
-			NEUTRAL = 0,
+			NEUTRAL,
 			HOLD,
 			POSITIVE,
 			NEGATIVE,
 		} motorState_t;
 		// motor motion profiles
 		typedef enum motor_mode_e {
-			ACCEL_CONSTANT = 0,
+			ACCEL_CONSTANT,
 			ACCEL_CYCLOIDAL,
 			ACCEL_HARMONIC,
 			CONTINUOUS,
@@ -186,21 +190,21 @@ class Robot : virtual public rsRobots::Robot {
 
 		// recording
 		struct Recording {
-			Robot *robot;			// robot
+			Robot *robot;		// robot
 			rs::JointID id;		// joint to record
-			int num;				// number of points
-			int msecs;				// ms between data points
-			double *time;			// array for time
-			double **ptime;			// pointer to time array
-			double **angle;			// array of angles
-			double ***pangle;		// point to array of angles
+			int num;			// number of points
+			int msecs;			// ms between data points
+			double *time;		// array for time
+			double **ptime;		// pointer to time array
+			double **angle;		// array of angles
+			double ***pangle;	// point to array of angles
 		};
 		// motor accelerations
 		struct Accel {
-			double init;			// motion initial angle
-			double start;			// motion start time
-			double period;			// motion period
-			double run;				// number of motions
+			double init;		// motion initial angle
+			double start;		// motion start time
+			double period;		// motion period
+			double run;			// number of motions
 		};
 		// motor
 		struct Motor {
@@ -237,22 +241,13 @@ class Robot : virtual public rsRobots::Robot {
 		dWorldID _world;			// world for all robots
 		rsSim::Sim *_sim;			// simulation instance
 		std::vector<Motor> _motor;	// motors
-		//std::vector<rs::Vec3> _offset;	// body position offsets from center
 		bool _motion;				// motion in progress
 		double _accel[3];			// accelerometer data
-		//double _body_length;		// dimension: body length
-		//double _body_height;		// dimension: body height
-		//double _body_radius;		// dimension: body radius
-		//double _body_width;			// dimension: body width
 		double _center[3];			// offset of body from initial (x,y,z)
 		double _distOffset;			// offset for recorded distance
-		//double _rgb[3];				// rgb of 'led'
 		double _speed;				// linear velocity of the robot
 		double _trackwidth;			// trackwidth of robot
-		//double _wheel_depth;		// dimension: wheel depth
-		//double _wheel_radius;		// dimension: custom wheel radius
 		int _connected;				// connected to controller
-		//int _disabled;				// which joint is disabled
 		int _dof;					// number of DOF
 		int *_enabled;				// list of enabled motors
 		int _id;					// robot id
@@ -261,8 +256,6 @@ class Robot : virtual public rsRobots::Robot {
 		int _shift_data;			// shift recorded data or not
 		int _g_shift_data;			// globally shift data for robot
 		int _g_shift_data_en;		// globally shift data for robot enable/disable flag
-		int _trace;					// tracing on or off
-		//int _type;					// type of robot
 		MUTEX_T _active_mutex;		// active recording
 		COND_T _active_cond;		// active recording
 		MUTEX_T _goal_mutex;		// goal value being written

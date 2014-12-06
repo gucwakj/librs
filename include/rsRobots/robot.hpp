@@ -18,11 +18,12 @@ namespace rsRobots {
 			virtual ~Robot(void);
 
 			void getOffsetPos(int, const double*, double*);
-			int getRGB(double*);
-			int setTrace(int);
+			void getRGB(double*);
+			void setTrace(bool);
 
 		// data
 		protected:
+			bool _trace;
 			std::vector<rs::Vec3> _offset;
 			double _body_length;
 			double _body_height;
@@ -32,7 +33,6 @@ namespace rsRobots {
 			double _wheel_radius;
 			double _radius;
 			double _rgb[3];
-			int _trace;
 			int _form;
 	};
 

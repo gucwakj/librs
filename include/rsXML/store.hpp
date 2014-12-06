@@ -53,13 +53,13 @@ namespace rsXML {
 				std::string s;	// label
 			};
 
+			bool _trace;						// flag: trace position
 			double _cor[2];						// coefficient of restitution [body/ground, body/body]
 			double _mu[2];						// coefficient of friction [body/ground, body/body]
 			double _grid[7];					// grid spacing (tics, major, total)
 			int _ps;							// is the simulation paused
 			int _preconfig;						// preconfigured robot shape or not
 			int _rt;							// whether to run at real time speeds
-			int _trace;							// tracking of robots
 			int _us;							// us customary units
 			std::vector<Ground*> _ground;		// ground obstacles
 			std::vector<Marker*> _marker;		// markers

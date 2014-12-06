@@ -181,7 +181,7 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 	return 0;
 }
 
-int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, int trace) {
+int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, bool trace) {
 	// create new robot
 	_robot.push_back(new Robot());
 	_robot.back()->robot = new osg::Group();
@@ -1029,7 +1029,7 @@ void Scene::start(int pause) {
 	return 0;
 }*/
 
-int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double *q, int trace, double *rgb) {
+int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double *q, bool trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Geode> body[rsRobots::LinkbotT::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsRobots::LinkbotT::NUM_PARTS];
@@ -1253,7 +1253,7 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 	return 0;
 }
 
-/*int Scene::draw(rsRobots::CMobot *robot, int trace, double *rgb) {
+/*int Scene::draw(rsRobots::CMobot *robot, bool trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Geode> body[5];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[5];
@@ -1629,7 +1629,7 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 	return 0;
 }
 
-int Scene::draw(rsRobots::CNXT *robot, int trace, double *rgb) {
+int Scene::draw(rsRobots::CNXT *robot, bool trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Geode> body[robot->NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[robot->NUM_PARTS];

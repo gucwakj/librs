@@ -13,7 +13,7 @@ namespace rsXML {
 		// public functions
 		public:
 			Robot(void);
-			Robot(int, int);
+			Robot(int, bool);
 			virtual ~Robot(void);
 
 			int addConnector(Conn*);
@@ -24,7 +24,7 @@ namespace rsXML {
 			double* getJoints(void);
 			double* getPosition(void);
 			double* getQuaternion(void);
-			int getTrace(void);
+			bool getTrace(void);
 			void setConnect(int);
 			void setGround(int);
 			void setID(int);

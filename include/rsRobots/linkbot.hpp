@@ -19,7 +19,7 @@ namespace rsRobots {
 		// public functions
 		public:
 			LinkbotT(int);
-			virtual ~LinkbotT(void);
+			virtual ~LinkbotT(void) {};
 
 			void getOffsetQuat(int, const double*, double*);
 
@@ -51,12 +51,12 @@ namespace rsRobots {
 
 	class LinkbotI : public LinkbotT {
 		public:
-			LinkbotI(void) : Robot(rs::LINKBOTI), LinkbotT(rs::JOINT2) {}
+			LinkbotI(void) : Robot(rs::LINKBOTI), LinkbotT(rs::JOINT2) {};
 	};
 
 	class LinkbotL : public LinkbotT {
 		public:
-			LinkbotL(void) : Robot(rs::LINKBOTL), LinkbotT(rs::JOINT3) {}
+			LinkbotL(void) : Robot(rs::LINKBOTL), LinkbotT(rs::JOINT3) {};
 	};
 
 } // namespace rsRobots

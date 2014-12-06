@@ -27,9 +27,6 @@ LinkbotT::LinkbotT(int disabled) : Robot(rs::LINKBOTT) {
 	_offset.push_back(rs::Vec3(_body_width/2 + _face_depth/2, 0, 0));		// face3
 }
 
-LinkbotT::~LinkbotT(void) {
-}
-
 /**********************************************************
 	public functions
  **********************************************************/

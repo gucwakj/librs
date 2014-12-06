@@ -20,11 +20,11 @@ void Robot::getOffsetPos(int body, const double *p, double *p1) {
 	p1[2] = p[2] + _offset[body].z;
 }
 
-int Robot::getRGB(double *rgb) {
+void Robot::getRGB(double *rgb) {
 	rgb = _rgb;
 }
 
-int Robot::setTrace(int trace) {
+void Robot::setTrace(bool trace) {
 	_trace = trace;
 }
 

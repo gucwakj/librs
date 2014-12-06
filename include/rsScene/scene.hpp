@@ -38,7 +38,7 @@ namespace rsScene {
 
 			int drawGround(int, const double*, const double*, const double*, const double*);
 			int drawMarker(int, const double*, const double*, const double*, int, std::string);
-			int drawRobot(rsRobots::Robot*, int, const double*, const double*, int);
+			int drawRobot(rsRobots::Robot*, int, const double*, const double*, bool);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			void setDelete(int);
@@ -55,10 +55,10 @@ namespace rsScene {
 
 		// private functions
 		private:
-			//int draw_cubus(rsRobots::Cubus*, const double*, const double*, int, double*);
-			int draw_linkbot(rsRobots::LinkbotT*, const double*, const double*, int, double*);
-			//int draw_mobot(rsRobots::Mobot*, const double*, const double*, int, double*);
-			//int draw_nxt(rsRobots::NXT*, const double*, const double*, int, double*);
+			//int draw_cubus(rsRobots::Cubus*, const double*, const double*, bool, double*);
+			int draw_linkbot(rsRobots::LinkbotT*, const double*, const double*, bool, double*);
+			//int draw_mobot(rsRobots::Mobot*, const double*, const double*, bool, double*);
+			//int draw_nxt(rsRobots::NXT*, const double*, const double*, bool, double*);
 			static void* graphics_thread(void*);
 
 		// private data

@@ -12,7 +12,7 @@ Store::Store(char *name) {
 	_preconfig = 0;
 	_rt = true;
 	_trace = false;
-	_us = 1;
+	_units = false;
 
 	// read XML file
 	tinyxml2::XMLDocument doc;
@@ -103,7 +103,7 @@ bool Store::getRealTime(void) {
 }
 
 bool Store::getUnits(void) {
-	return _us;
+	return _units;
 }
 
 /**********************************************************
@@ -225,7 +225,7 @@ void Store::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 		}
 		else if ( !strcmp(node->Value(), "grid") ) {
-			node->QueryIntAttribute("units", &_us);
+			node->QueryIntAttribute("units", reinterpret_cast<int *>(&_units));
 			node->QueryDoubleAttribute("tics", &_grid[0]);
 			node->QueryDoubleAttribute("major", &_grid[1]);
 			node->QueryDoubleAttribute("minx", &_grid[2]);
@@ -234,8 +234,10 @@ void Store::read_graphics(tinyxml2::XMLDocument *doc) {
 			node->QueryDoubleAttribute("maxy", &_grid[5]);
 			node->QueryDoubleAttribute("enabled", &_grid[6]);
 			for (int i = 0; i < 6; i++) {
-				if (_us)_grid[i] /= 39.37;
-				else _grid[i] /= 100;
+				if (_units)
+					_grid[i] /= 100;
+				else
+					_grid[i] /= 39.37;
 			}
 		}
 		else if ( !strcmp(node->Value(), "tracking") ) {

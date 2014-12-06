@@ -58,11 +58,11 @@ namespace rsXML {
 			bool _pause;					// flag: start in a paused state
 			bool _trace;					// flag: trace robot positions
 			bool _rt;						// flag: real time motion
+			bool _units;					// flag: SI (true) or customary (false)
 			double _cor[2];					// coefficient of restitution [body/ground, body/body]
 			double _mu[2];					// coefficient of friction [body/ground, body/body]
 			double _grid[7];				// grid spacing (tics, major, total)
 			int _preconfig;					// preconfigured robot shape or not
-			int _us;						// us customary units
 			std::vector<Ground*> _ground;	// ground obstacles
 			std::vector<Marker*> _marker;	// markers
 			std::vector<Robot*> _robot;		// robots

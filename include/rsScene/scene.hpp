@@ -36,19 +36,22 @@ namespace rsScene {
 			Scene(void);
 			virtual ~Scene(void);
 
-			int addChild(void);
 			int drawGround(int, const double*, const double*, const double*, const double*);
 			int drawMarker(int, const double*, const double*, const double*, int, std::string);
 			int drawRobot(rsRobots::Robot*, int, const double*, const double*, int);
 			osgText::Text* getHUDText(void);
-			std::string getTexPath(void);
-			virtual void keyPressed(int);
+			std::string getTexturePath(void);
+			void setDelete(int);
+			void setGrid(bool, const double*);
 			void setPauseText(int);
 			int setupCamera(osg::GraphicsContext*, double, double);
 			int setupScene(double, double);
 			int setupViewer(osgViewer::Viewer*);
-			int stageForDelete(int);
 			void start(int);
+
+		// virtual functions for inherited classes
+		protected:
+			virtual void keyPressed(int) {};
 
 		// private functions
 		private:
@@ -65,18 +68,17 @@ namespace rsScene {
 				osg::ShapeDrawable *led;
 			};
 
-			std::vector<Robot*> _robot;			// robots
-
 			bool _thread;						// flag: thread is running
 			bool _units;						// flag: SI (true) or customary (false)
-			double _grid[7];					// grid spacing (tics, major, total)
-			int _ending;						// temp variable for deleting robots
+			int _deleting;						// temp variable for deleting robots
 			osg::Camera *_camera;				// camera to view scene
 			osg::Group *_root;					// root node of scene
 			osg::Group *_staging;				// temp variable for adding objects
 			osgViewer::Viewer *_viewer;			// viewer
 			osgShadow::ShadowedScene *_scene;	// shadow root of scene
 			std::string _tex_path;				// texture path
+			std::vector<Robot*> _robot;			// robots
+			std::vector<double> _grid;			// grid
 			MUTEX_T _thread_mutex;				// mutex: thread running state
 			THREAD_T _osgThread;				// thread: graphics window
 	};

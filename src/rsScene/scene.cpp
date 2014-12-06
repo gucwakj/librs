@@ -19,25 +19,27 @@ Scene::Scene(void) : keyboardHandler() {
 	// staging area for new insertions
 	_staging = new osg::Group;
 
-	// deleting
-	_ending = 0;
+	// id of robot for deleting
+	_deleting = -1;
 
 	// set default grid options
-	_units = false;		// customary
-	_grid[0] = 1;		// 1 inch per tic
-	_grid[1] = 12;		// 12 inches per hash
-	_grid[2] = -24;		// min x
-	_grid[3] = 24;		// max x
-	_grid[4] = -24;		// min y
-	_grid[5] = 24;		// max y
-	_grid[6] = 1;		// enabled or not
+	_units = false;			// customary
+	_grid.push_back(1);		// 1 inch per tic
+	_grid.push_back(12);	// 12 inches per hash
+	_grid.push_back(-24);	// min x
+	_grid.push_back(24);	// max x
+	_grid.push_back(-24);	// min y
+	_grid.push_back(24);	// max y
+	_grid.push_back(1);		// enabled?
 	for (int i = 0; i < 6; i++) {
-		if (_units) _grid[i] /= 100;
-		else _grid[i] /= 39.37;
+		if (_units)
+			_grid[i] /= 100;
+		else
+			_grid[i] /= 39.37;
 	}
 
 	// set texture path
-	_tex_path = this->getTexPath();
+	_tex_path = this->getTexturePath();
 }
 
 Scene::~Scene(void) {
@@ -58,40 +60,33 @@ std::cerr << "deleting Scene" << std::endl;
 /**********************************************************
 	public functions
  **********************************************************/
-int Scene::addChild(void) {
-	if (_staging->getNumChildren()) {
-		_scene->addChild(_staging->getChild(0));
-		_staging->removeChild(0, 1);
-	}
-
-	// success
-	return 0;
-}
-
-//int Scene::drawGround(Ground *object) {
 int Scene::drawGround(int type, const double *p, const double *c, const double *l, const double *q) {
-	osg::Box *box;
-	osg::Cylinder *cyl;
-	osg::Sphere *sph;
-
+	// create ground objects
 	osg::ref_ptr<osg::Group> ground = new osg::Group();
 	osg::ref_ptr<osg::Geode> body = new osg::Geode;
 	osg::ref_ptr<osg::ShapeDrawable> shape;
+
 	switch (type) {
-		case rs::BOX:
+		case rs::BOX: {
+			osg::Box *box;
 			box = new osg::Box(osg::Vec3d(p[0], p[1], p[2]), l[0], l[1], l[2]);
 			box->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
 			shape = new osg::ShapeDrawable(box);
 			break;
-		case rs::CYLINDER:
+		}
+		case rs::CYLINDER: {
+			osg::Cylinder *cyl;
 			cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), l[0], l[1]);
 			cyl->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
 			shape = new osg::ShapeDrawable(cyl);
 			break;
-		case rs::SPHERE:
+		}
+		case rs::SPHERE: {
+			osg::Sphere *sph;
 			sph = new osg::Sphere(osg::Vec3d(p[0], p[1], p[2]), l[0]);
 			shape = new osg::ShapeDrawable(sph);
 			break;
+		}
 	}
 	shape->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
 	body->addDrawable(shape);
@@ -131,40 +126,45 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 	osg::Geode *geode = new osg::Geode();
 
 	// draw specific marker
-	if (type == rs::DOT) {
-		osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(p1[0], p1[1], p1[2]), size/500.0);
-		osg::ShapeDrawable *pointDrawable = new osg::ShapeDrawable(sphere);
-		pointDrawable->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
-		geode->addDrawable(pointDrawable);
-	}
-	else if (type == rs::LINE) {
-		osg::Geometry *geom = new osg::Geometry();
-		osg::Vec3Array *vert = new osg::Vec3Array();
-		vert->push_back(osg::Vec3(p1[0], p1[1], p1[2]));
-		vert->push_back(osg::Vec3(p2[0], p2[1], p2[2]));
-		geom->setVertexArray(vert);
-		geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
-		osg::Vec4Array *colors = new osg::Vec4Array;
-		colors->push_back(osg::Vec4(c[0], c[1], c[2], c[3]));
-		geom->setColorArray(colors);
-		geom->setColorBinding(osg::Geometry::BIND_OVERALL);
-		osg::LineWidth *width = new osg::LineWidth();
-		width->setWidth(size*3.0f);
-		geode->addDrawable(geom);
-		geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
-	}
-	else if (type == rs::TEXT) {
-		osgText::Text *label = new osgText::Text();
-		label->setAlignment(osgText::Text::CENTER_CENTER);
-		label->setAxisAlignment(osgText::Text::SCREEN);
-		label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-		label->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-		label->setCharacterSize(25);
-		label->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
-		label->setDrawMode(osgText::Text::TEXT);
-		label->setPosition(osg::Vec3(p1[0], p1[1], p1[2]));
-		label->setText(s);
-		geode->addDrawable(label);
+	switch (type) {
+		case rs::DOT: {
+			osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(p1[0], p1[1], p1[2]), size/500.0);
+			osg::ShapeDrawable *pointDrawable = new osg::ShapeDrawable(sphere);
+			pointDrawable->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
+			geode->addDrawable(pointDrawable);
+			break;
+		}
+		case rs::LINE: {
+			osg::Geometry *geom = new osg::Geometry();
+			osg::Vec3Array *vert = new osg::Vec3Array();
+			vert->push_back(osg::Vec3(p1[0], p1[1], p1[2]));
+			vert->push_back(osg::Vec3(p2[0], p2[1], p2[2]));
+			geom->setVertexArray(vert);
+			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
+			osg::Vec4Array *colors = new osg::Vec4Array;
+			colors->push_back(osg::Vec4(c[0], c[1], c[2], c[3]));
+			geom->setColorArray(colors);
+			geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+			osg::LineWidth *width = new osg::LineWidth();
+			width->setWidth(size*3.0f);
+			geode->addDrawable(geom);
+			geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
+			break;
+		}
+		case rs::TEXT: {
+			osgText::Text *label = new osgText::Text();
+			label->setAlignment(osgText::Text::CENTER_CENTER);
+			label->setAxisAlignment(osgText::Text::SCREEN);
+			label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+			label->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+			label->setCharacterSize(25);
+			label->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
+			label->setDrawMode(osgText::Text::TEXT);
+			label->setPosition(osg::Vec3(p1[0], p1[1], p1[2]));
+			label->setText(s);
+			geode->addDrawable(label);
+			break;
+		}
 	}
 
 	// set rendering properties
@@ -182,6 +182,7 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 }
 
 int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, int trace) {
+	// create new robot
 	_robot.push_back(new Robot());
 	_robot.back()->robot = new osg::Group();
 	double rgb[4] = {0};
@@ -268,11 +269,13 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 }
 
 osgText::Text* Scene::getHUDText(void) {
+	// get text geode
 	osg::Geode *geode = _scene->getParent(0)->getChild(1)->asGroup()->getChild(0)->asTransform()->getChild(0)->asGeode();
+	// return text
 	return dynamic_cast<osgText::Text *>(geode->getDrawable(0));
 }
 
-std::string Scene::getTexPath(void) {
+std::string Scene::getTexturePath(void) {
 	std::string path;
 #ifdef _WIN32
 	DWORD size = 128;
@@ -293,11 +296,24 @@ std::string Scene::getTexPath(void) {
 #else
 	path = "/usr/local/ch/package/chrobosim/data/";
 #endif
-	_tex_path = path;
 	return path;
 }
 
-void Scene::keyPressed(int key) {}
+void Scene::setDelete(int id) {
+	_deleting = id;
+}
+
+void Scene::setGrid(bool units, const double *grid) {
+	_units = units;
+
+	_grid[0] = grid[0];
+	_grid[1] = grid[1];
+	_grid[2] = grid[2];
+	_grid[3] = grid[3];
+	_grid[4] = grid[4];
+	_grid[5] = grid[5];
+	_grid[6] = grid[6];
+}
 
 void Scene::setPauseText(int pause) {
 	if (pause)
@@ -405,7 +421,7 @@ int Scene::setupScene(double w, double h) {
 	textHUD->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 	textHUD->setMaximumWidth(w);
 	textHUD->setCharacterSize(15);
-	if (_ending) textHUD->setText("Paused: Press any key to start");
+	if (_deleting) textHUD->setText("Paused: Press any key to start");
 	textHUD->setAxisAlignment(osgText::Text::SCREEN);
 	textHUD->setAlignment(osgText::Text::CENTER_CENTER);
 	textHUD->setPosition(osg::Vec3(w/2, 50, -1.5));
@@ -790,13 +806,6 @@ int Scene::setupViewer(osgViewer::Viewer *viewer) {
 	return 0;
 }
 
-int Scene::stageForDelete(int id) {
-	_ending = id;
-
-	// success
-	return 0;
-}
-
 void Scene::start(int pause) {
 	// initialize variables
 	unsigned int width, height;
@@ -838,9 +847,9 @@ void Scene::start(int pause) {
 	this->setupCamera(gc.get(), traits->width, traits->height);
 
 	// set up scene
-	_ending = pause;
+	_deleting = pause;
 	this->setupScene(traits->width, traits->height);
-	_ending = 0;
+	_deleting = 0;
 
     // thread is now running
 	MUTEX_INIT(&_thread_mutex);
@@ -1705,9 +1714,9 @@ void* Scene::graphics_thread(void *arg) {
 			p->_scene->addChild(p->_staging->getChild(0));
 			p->_staging->removeChild(0, 1);
 		}
-		if (p->_ending) {
-			p->_scene->removeChild(p->_scene->getChild(p->_ending));
-			p->_ending = 0;
+		if (p->_deleting) {
+			p->_scene->removeChild(p->_scene->getChild(p->_deleting));
+			p->_deleting = 0;
 		}
 
 		MUTEX_LOCK(&(p->_thread_mutex));

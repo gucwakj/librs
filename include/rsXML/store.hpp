@@ -21,7 +21,9 @@ namespace rsXML {
 
 			int addNewRobot(Robot*);
 			Robot* getNextRobot(int);
+			std::vector<double> getFriction(void);
 			std::vector<double> getGrid(void);
+			std::vector<double> getRestitution(void);
 			int getNumGrounds(void);
 			int getNumMarkers(void);
 			bool getPause(void);
@@ -55,17 +57,17 @@ namespace rsXML {
 				std::string s;	// label
 			};
 
-			bool _pause;					// flag: start in a paused state
-			bool _preconfig;				// flag: preconfigured robot shape
-			bool _trace;					// flag: trace robot positions
-			bool _rt;						// flag: real time motion
-			bool _units;					// flag: SI (true) or customary (false)
-			double _cor[2];					// coefficient of restitution [body/ground, body/body]
-			double _mu[2];					// coefficient of friction [body/ground, body/body]
-			std::vector<double> _grid;		// grid
-			std::vector<Ground*> _ground;	// ground obstacles
-			std::vector<Marker*> _marker;	// markers
-			std::vector<Robot*> _robot;		// robots
+			bool _pause;						// flag: start in a paused state
+			bool _preconfig;					// flag: preconfigured robot shape
+			bool _trace;						// flag: trace robot positions
+			bool _rt;							// flag: real time motion
+			bool _units;						// flag: SI (true) or customary (false)
+			std::vector<double> _friction;		// coefficient of friction [body/ground, body/body]
+			std::vector<double> _grid;			// grid [tics, major, minx, maxx, miny, maxy, enabled]
+			std::vector<double> _restitution;	// coefficient of restitution [body/ground, body/body]
+			std::vector<Ground*> _ground;		// ground obstacles
+			std::vector<Marker*> _marker;		// markers
+			std::vector<Robot*> _robot;			// robots
 	};
 
 } // namespace rsXML

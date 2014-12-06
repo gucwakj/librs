@@ -4,18 +4,18 @@ using namespace rsXML;
 
 Store::Store(char *name) {
 	// set default values
-	_cor[0] = 0;
-	_cor[1] = 0;
-	_mu[0] = 0;
-	_mu[1] = 0;
 	_pause = true;
 	_preconfig = false;
 	_rt = true;
 	_trace = false;
 	_units = false;
-
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 2; i++) {
+		_friction.push_back(0);
+		_restitution.push_back(0);
+	}
+	for (int i = 0; i < 7; i++) {
 		_grid.push_back(0);
+	}
 
 	// read XML file
 	tinyxml2::XMLDocument doc;
@@ -85,8 +85,16 @@ Robot* Store::getNextRobot(int form) {
 	return _robot[i];
 }
 
+std::vector<double> Store::getFriction(void) {
+	return _friction;
+}
+
 std::vector<double> Store::getGrid(void) {
 	return _grid;
+}
+
+std::vector<double> Store::getRestitution(void) {
+	return _restitution;
 }
 
 int Store::getNumGrounds(void) {
@@ -147,14 +155,14 @@ void Store::read_config(tinyxml2::XMLDocument *doc) {
 
 	// check for custom mu params
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("mu")) ) {
-		node->QueryDoubleAttribute("ground", &(_mu[0]));
-		node->QueryDoubleAttribute("body", &(_mu[1]));
+		node->QueryDoubleAttribute("ground", &(_friction[0]));
+		node->QueryDoubleAttribute("body", &(_friction[1]));
 	}
 
 	// check for custom cor params
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("cor")) ) {
-		node->QueryDoubleAttribute("ground", &(_cor[0]));
-		node->QueryDoubleAttribute("body", &(_cor[1]));
+		node->QueryDoubleAttribute("ground", &(_restitution[0]));
+		node->QueryDoubleAttribute("body", &(_restitution[1]));
 	}
 
 	// check if should start paused

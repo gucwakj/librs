@@ -4,6 +4,8 @@
 #include <vector>
 
 #include <rsRobots/robot.hpp>
+
+// TODO: remove
 namespace rsScene {
 	class Scene;
 }
@@ -11,11 +13,15 @@ namespace rsScene {
 namespace rsRobots {
 
 	class LinkbotT : virtual public Robot {
+			// TODO: remove
 			friend class rsScene::Scene;
-		// api
+
+		// public functions
 		public:
 			LinkbotT(int);
 			virtual ~LinkbotT(void);
+
+			void getOffsetQuat(int, const double*, double*);
 
 		// enumerations
 		public:

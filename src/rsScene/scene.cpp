@@ -1035,6 +1035,7 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsRobots::LinkbotT::NUM_PARTS];
 	osg::Box *box;
 	osg::Cylinder *cyl;
+	double p1[3], q1[4];
 	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 		body[i] = new osg::Geode;
 	}
@@ -1055,18 +1056,24 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 	body[0]->addDrawable(_robot.back()->led);
 
 	// face1
-	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), robot->_face_radius, robot->_face_depth);
-	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
+	robot->getOffsetPos(rsRobots::LinkbotT::FACE1, p, p1);
+	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), robot->_face_radius, robot->_face_depth);
+	robot->getOffsetQuat(rsRobots::LinkbotT::FACE1, q, q1);
+	cyl->setRotation(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 	body[1]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// face 2
-	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), robot->_face_radius, robot->_face_depth);
-	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
+	robot->getOffsetPos(rsRobots::LinkbotT::FACE2, p, p1);
+	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), robot->_face_radius, robot->_face_depth);
+	robot->getOffsetQuat(rsRobots::LinkbotT::FACE2, q, q1);
+	cyl->setRotation(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 	body[2]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// face 3
-	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), robot->_face_radius, robot->_face_depth);
-	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
+	robot->getOffsetPos(rsRobots::LinkbotT::FACE3, p, p1);
+	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), robot->_face_radius, robot->_face_depth);
+	robot->getOffsetQuat(rsRobots::LinkbotT::FACE3, q, q1);
+	cyl->setRotation(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 	body[3]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// apply texture to robot

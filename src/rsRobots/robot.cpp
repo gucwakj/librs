@@ -14,12 +14,10 @@ Robot::~Robot(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-int Robot::getOffset(int body, double *p) {
-	p[0] = _offset[body].x;
-	p[1] = _offset[body].y;
-	p[2] = _offset[body].z;
-
-	return 0;
+void Robot::getOffsetPos(int body, const double *p, double *p1) {
+	p1[0] = p[0] + _offset[body].x;
+	p1[1] = p[1] + _offset[body].y;
+	p1[2] = p[2] + _offset[body].z;
 }
 
 int Robot::getRGB(double *rgb) {

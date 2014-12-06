@@ -1,6 +1,8 @@
 #ifndef RSROBOTS_ROBOT_HPP_
 #define RSROBOTS_ROBOT_HPP_
 
+#include <cmath>
+#include <iostream>
 #include <vector>
 
 #include <rs/enum.hpp>
@@ -10,14 +12,16 @@
 namespace rsRobots {
 
 	class Robot {
+		// public functions
 		public:
 			Robot(int);
 			virtual ~Robot(void);
 
-			int getOffset(int, double*);
+			void getOffsetPos(int, const double*, double*);
 			int getRGB(double*);
 			int setTrace(int);
 
+		// data
 		protected:
 			std::vector<rs::Vec3> _offset;
 			double _body_length;

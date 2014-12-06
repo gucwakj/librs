@@ -33,3 +33,31 @@ LinkbotT::~LinkbotT(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+void LinkbotT::getOffsetQuat(int body, const double *q1, double *q3) {
+	// offset quaternion
+	double q2[4] = {q1[0], q1[1], q1[2], q1[3]};
+
+	// special quaternion for faces
+	switch (body) {
+		case FACE1:
+		case FACE3:
+			q2[0] = 0;
+			q2[1] = sin(0.785398);	// PI/4
+			q2[2] = 0;
+			q2[3] = cos(0.785398);	// PI/4
+			break;
+		case FACE2:
+			q2[0] = sin(0.785398);	// PI/4
+			q2[1] = 0;
+			q2[2] = 0;
+			q2[3] = cos(0.785398);	// PI/4
+			break;
+	}
+
+	// calculate body part quaternion
+	q3[0] = q2[3]*q1[0] + q2[0]*q1[3] + q2[1]*q1[2] - q2[2]*q1[1];
+	q3[1] = q2[3]*q1[1] - q2[0]*q1[2] + q2[1]*q1[3] + q2[2]*q1[0];
+	q3[2] = q2[3]*q1[2] + q2[0]*q1[1] - q2[1]*q1[0] + q2[2]*q1[3];
+	q3[3] = q2[3]*q1[3] - q2[0]*q1[0] - q2[1]*q1[1] - q2[2]*q1[2];
+}
+

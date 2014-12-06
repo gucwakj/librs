@@ -20,7 +20,7 @@ namespace rsScene {
 	class keyboardHandler : public osgGA::GUIEventHandler {
 		// public functions
 		public:
-			keyboardHandler(void);
+			keyboardHandler(void) {};
 			virtual ~keyboardHandler(void) {};
 
 			virtual bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);

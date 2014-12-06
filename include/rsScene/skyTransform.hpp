@@ -8,11 +8,12 @@
 
 namespace rsScene {
 
-class skyTransform : public osg::Transform {
-	public:
-		virtual bool computeLocalToWorldMatrix(osg::Matrix&, osg::NodeVisitor*) const;
-		virtual bool computeWorldToLocalMatrix(osg::Matrix&, osg::NodeVisitor*) const;
-};
+	class skyTransform : public osg::Transform {
+		// public functions
+		public:
+			virtual bool computeLocalToWorldMatrix(osg::Matrix&, osg::NodeVisitor*) const;
+			virtual bool computeWorldToLocalMatrix(osg::Matrix&, osg::NodeVisitor*) const;
+	};
 
 } // namespace rsScene
 

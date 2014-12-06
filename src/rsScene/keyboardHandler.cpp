@@ -2,16 +2,14 @@
 
 using namespace rsScene;
 
-keyboardHandler::keyboardHandler(void) {}
-
-keyboardHandler::~keyboardHandler(void) {}
-
 void keyboardHandler::accept(osgGA::GUIEventHandlerVisitor &v) {
 	v.visit(*this);
 }
 
 bool keyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
 	osgViewer::Viewer *viewer = dynamic_cast<osgViewer::Viewer *>(&aa);
+	if (!viewer) return false;
+
 	osg::Group *root = dynamic_cast<osg::Group *>(viewer->getSceneData());
 	osgShadow::ShadowedScene *shadow = dynamic_cast<osgShadow::ShadowedScene *>(root->getChild(0));
 
@@ -78,6 +76,4 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionA
 			return false;
 	}
 }
-
-void keyboardHandler::keyPressed(int key) {}
 

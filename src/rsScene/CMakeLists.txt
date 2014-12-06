@@ -30,14 +30,14 @@ endif (OPENGL_FOUND)
 # add source files to library
 set (SRCS ${SRCS}
 	#cubusCallback.cpp
-	keyboardHandler.cpp
 	#linkbotCallback.cpp
 	#mobotCallback.cpp
-	mouseHandler.cpp
 	#nxtCallback.cpp
-	scene.cpp
-	skyTransform.cpp
 	textureCallback.cpp
+	keyboardHandler.cpp
+	mouseHandler.cpp
+	skyTransform.cpp
+	scene.cpp
 )
 
 # add the library

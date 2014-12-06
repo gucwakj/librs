@@ -1,4 +1,4 @@
-#include "skyTransform.hpp"
+#include <rsScene/skyTransform.hpp>
 
 using namespace rsScene;
 

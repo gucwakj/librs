@@ -11,15 +11,20 @@ class CLinkbotT;
 
 namespace rsScene {
 
-class linkbotCallback : public osg::NodeCallback {
-	public:
-		linkbotCallback(CLinkbotT*, osg::ShapeDrawable*);
-		virtual void operator()(osg::Node*, osg::NodeVisitor*);
-	private:
-		CLinkbotT *_robot;
-		osg::ShapeDrawable *_led;
-		int _count;
-};
+	class linkbotCallback : public osg::NodeCallback {
+		// public functions
+		public:
+			linkbotCallback(CLinkbotT*, osg::ShapeDrawable*);
+			virtual ~linkbotCallback(void) {};
+
+			virtual void operator()(osg::Node*, osg::NodeVisitor*);
+
+		// private data
+		private:
+			CLinkbotT *_robot;
+			osg::ShapeDrawable *_led;
+			int _count;
+	};
 
 } // namespace rsScene
 

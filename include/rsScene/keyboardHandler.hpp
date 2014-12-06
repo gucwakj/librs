@@ -1,5 +1,5 @@
-#ifndef RSSCENE_KEYBOARD_HANDLER_HPP_
-#define RSSCENE_KEYBOARD_HANDLER_HPP_
+#ifndef RSSCENE_KEYBOARDHANDLER_HPP_
+#define RSSCENE_KEYBOARDHANDLER_HPP_
 
 #include <osg/Billboard>
 #include <osg/PositionAttitudeTransform>
@@ -21,14 +21,17 @@ namespace rsScene {
 		// public functions
 		public:
 			keyboardHandler(void);
-			virtual ~keyboardHandler(void);
+			virtual ~keyboardHandler(void) {};
 
 			virtual bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
 			virtual void accept(osgGA::GUIEventHandlerVisitor&);
-			virtual void keyPressed(int);
+
+		// virtual functions for inherited classes
+		protected:
+			virtual void keyPressed(int) {};
 	};
 
 } // namespace rsScene
 
-#endif // RSSCENE_KEYBOARD_HANDLER_HPP_
+#endif // RSSCENE_KEYBOARDHANDLER_HPP_
 

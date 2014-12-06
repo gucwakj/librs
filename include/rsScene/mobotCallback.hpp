@@ -4,21 +4,27 @@
 #include <osg/Geode>
 #include <osg/Node>
 #include <osg/NodeVisitor>
+#include <osg/PositionAttitudeTransform>
 #include <osg/ShapeDrawable>
 
 class CMobot;
 
 namespace rsScene {
 
-class mobotCallback : public osg::NodeCallback {
-	public:
-		mobotCallback(CMobot*, osg::ShapeDrawable*);
-		virtual void operator()(osg::Node*, osg::NodeVisitor*);
-	private:
-		CMobot *_robot;
-		osg::ShapeDrawable *_led;
-		int _count;
-};
+	class mobotCallback : public osg::NodeCallback {
+		// public functions
+		public:
+			mobotCallback(CMobot*, osg::ShapeDrawable*);
+			virtual ~mobotCallback(void) {};
+
+			virtual void operator()(osg::Node*, osg::NodeVisitor*);
+
+		// private data
+		private:
+			CMobot *_robot;
+			osg::ShapeDrawable *_led;
+			int _count;
+	};
 
 } // namespace rsScene
 

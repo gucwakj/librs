@@ -10,15 +10,20 @@ class CNXT;
 
 namespace rsScene {
 
-class nxtCallback : public osg::NodeCallback {
-	public:
-		nxtCallback(CNXT*, osg::ShapeDrawable*);
-		virtual void operator()(osg::Node*, osg::NodeVisitor*);
-	private:
-		CNXT *_robot;
-		osg::ShapeDrawable *_led;
-		int _count;
-};
+	class nxtCallback : public osg::NodeCallback {
+		// public functions
+		public:
+			nxtCallback(CNXT*, osg::ShapeDrawable*);
+			virtual ~nxtCallback(void) {};
+
+			virtual void operator()(osg::Node*, osg::NodeVisitor*);
+
+		// private data
+		private:
+			CNXT *_robot;
+			osg::ShapeDrawable *_led;
+			int _count;
+	};
 
 } // namespace rsScene
 

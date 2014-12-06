@@ -16,14 +16,19 @@ extern osg::Node::NodeMask VISIBLE_MASK;
 
 namespace rsScene {
 
-class mouseHandler : public osgGA::GUIEventHandler {
-	public:
-		mouseHandler(void);
-		bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
-		void pick(const osgGA::GUIEventAdapter&, osgViewer::Viewer*);
-	private:
-		float _mx, _my;
-};
+	class mouseHandler : public osgGA::GUIEventHandler {
+		// public functions
+		public:
+			mouseHandler(void);
+			virtual ~mouseHandler(void) {};
+
+			bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
+			void pick(const osgGA::GUIEventAdapter&, osgViewer::Viewer*);
+
+		// private data
+		private:
+			double _mx, _my;
+	};
 
 } // namespace rsScene
 

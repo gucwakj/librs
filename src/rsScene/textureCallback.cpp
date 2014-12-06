@@ -1,8 +1,6 @@
-#include "textureCallback.hpp"
+#include <rsScene/textureCallback.hpp>
 
 using namespace rsScene;
-
-textureCallback::textureCallback(osg::TexMat &tm) : _texMat(tm) {}
 
 void textureCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor *>(nv);

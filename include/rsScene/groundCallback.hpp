@@ -6,15 +6,18 @@
 
 namespace rsScene {
 
-struct Ground;
+	class groundCallback : public osg::NodeCallback {
+		// public functions
+		public:
+			groundCallback(Ground*);
+			virtual ~groundCallback(void) {};
 
-class groundNodeCallback : public osg::NodeCallback {
-	public:
-		groundCallback(Ground*);
-		virtual void operator()(osg::Node*, osg::NodeVisitor*);
-	private:
-		Ground *_ground;
-};
+			virtual void operator()(osg::Node*, osg::NodeVisitor*);
+
+		// private data
+		private:
+			Ground *_ground;
+	};
 
 } // namespace rsScene
 

@@ -1,4 +1,4 @@
-#include "groundCallback.hpp"
+#include <rsScene/groundCallback.hpp>
 
 using namespace rsScene;
 

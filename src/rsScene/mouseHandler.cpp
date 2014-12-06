@@ -1,8 +1,9 @@
-#include "mouseHandler.hpp"
+#include <rsScene/mouseHandler.hpp>
 
 using namespace rsScene;
 
 mouseHandler::mouseHandler(void) {
+	// default mouse position
 	_mx = 0.0;
 	_my = 0.0;
 }
@@ -30,22 +31,23 @@ void mouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *vie
 	osg::Node *scene = viewer->getSceneData();
 	if (!scene) return;
 
-	osg::Group *grandparent = 0;
-	osgUtil::LineSegmentIntersector *picker;
+	// run intersector from mouse through scene graph
 	double x = ea.getXnormalized(), y = ea.getYnormalized();
+	osgUtil::LineSegmentIntersector *picker;
 	picker = new osgUtil::LineSegmentIntersector(osgUtil::Intersector::PROJECTION, x, y);
 	picker->setIntersectionLimit(osgUtil::Intersector::LIMIT_ONE_PER_DRAWABLE);
 	osgUtil::IntersectionVisitor iv(picker);
 	iv.setTraversalMask(IS_PICKABLE_MASK);
 	viewer->getCamera()->accept(iv);
 
+	// get robots in intersections
 	if (picker->containsIntersections()) {
 		// get node at first intersection
 		osgUtil::LineSegmentIntersector::Intersection intersection = picker->getFirstIntersection();
 		osg::NodePath &nodePath = intersection.nodePath;
 
 		// get robot node
-		grandparent = (nodePath.size()>=3) ? dynamic_cast<osg::Group *>(nodePath[nodePath.size()-3]) : 0;
+		osg::Group *grandparent = (nodePath.size()>=3) ? dynamic_cast<osg::Group *>(nodePath[nodePath.size()-3]) : 0;
 
 		// toggle HUD
 		if (grandparent && (grandparent->getName() == "robot")) {

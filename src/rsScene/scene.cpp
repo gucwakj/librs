@@ -16,16 +16,14 @@ Scene::Scene(void) : keyboardHandler() {
 	// set notification level to no output
 	osg::setNotifyLevel(osg::ALWAYS);
 
-    // build the viewer
-	MUTEX_INIT(&_viewer_mutex);
-	_viewer = 1;
-
-	// separate viewer and inserting into scenegraph
+	// staging area for new insertions
 	_staging = new osg::Group;
+
+	// deleting
 	_ending = 0;
 
 	// set default grid options
-	_us = 1;			// customary units
+	_units = false;		// customary
 	_grid[0] = 1;		// 1 inch per tic
 	_grid[1] = 12;		// 12 inches per hash
 	_grid[2] = -24;		// min x
@@ -34,8 +32,8 @@ Scene::Scene(void) : keyboardHandler() {
 	_grid[5] = 24;		// max y
 	_grid[6] = 1;		// enabled or not
 	for (int i = 0; i < 6; i++) {
-		if (_us) _grid[i] /= 39.37;
-		else _grid[i] /= 100;
+		if (_units) _grid[i] /= 100;
+		else _grid[i] /= 39.37;
 	}
 
 	// set texture path
@@ -44,13 +42,14 @@ Scene::Scene(void) : keyboardHandler() {
 
 Scene::~Scene(void) {
 std::cerr << "deleting Scene" << std::endl;
-	MUTEX_LOCK(&_viewer_mutex);
-	_viewer = 0;
-	MUTEX_UNLOCK(&_viewer_mutex);
+	// stop thread
+	MUTEX_LOCK(&_thread_mutex);
+	_thread = false;
+	MUTEX_UNLOCK(&_thread_mutex);
 	THREAD_JOIN(_osgThread);
-	COND_DESTROY(&_graphics_cond);
-	MUTEX_DESTROY(&_graphics_mutex);
-	MUTEX_DESTROY(&_viewer_mutex);
+
+	// clean mutexes
+	MUTEX_DESTROY(&_thread_mutex);
 
 	// remove robots
 	_robot.clear();
@@ -298,10 +297,6 @@ std::string Scene::getTexPath(void) {
 	return path;
 }
 
-int Scene::getUnits(void) {
-	return _us;
-}
-
 void Scene::keyPressed(int key) {}
 
 void Scene::setPauseText(int pause) {
@@ -311,7 +306,7 @@ void Scene::setPauseText(int pause) {
 		this->getHUDText()->setText("");
 }
 
-int Scene::setupCamera(osg::GraphicsContext *gc, osgViewer::Viewer *viewer, double w, double h) {
+int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	// camera properties
 	_camera = new osg::Camera;
 	_camera->setGraphicsContext(gc);
@@ -322,7 +317,7 @@ int Scene::setupCamera(osg::GraphicsContext *gc, osgViewer::Viewer *viewer, doub
 	_camera->setComputeNearFarMode(osgUtil::CullVisitor::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
 	_camera->setCullingMode(osgUtil::CullVisitor::NO_CULLING);
 	_camera->setNearFarRatio(0.00001);
-	viewer->addSlave(_camera);
+	_viewer->addSlave(_camera);
 
 	// viewer camera properties
 	osg::ref_ptr<osgGA::OrbitManipulator> cameraManipulator = new osgGA::OrbitManipulator();
@@ -331,19 +326,17 @@ int Scene::setupCamera(osg::GraphicsContext *gc, osgViewer::Viewer *viewer, doub
 	cameraManipulator->setWheelZoomFactor(0);
 	cameraManipulator->setVerticalAxisFixed(true);
 	cameraManipulator->setElevation(0.5);
-	viewer->setCameraManipulator(cameraManipulator);
-	viewer->getCameraManipulator()->setHomePosition(osg::Vec3f(0.6, -0.8, 0.5), osg::Vec3f(0.1, 0.3, 0), osg::Vec3f(0, 0, 1));
+	_viewer->setCameraManipulator(cameraManipulator);
+	_viewer->getCameraManipulator()->setHomePosition(osg::Vec3f(0.6, -0.8, 0.5), osg::Vec3f(0.1, 0.3, 0), osg::Vec3f(0, 0, 1));
 
 	// event handler
-	viewer->addEventHandler(new osgGA::StateSetManipulator(_camera->getOrCreateStateSet()));
+	_viewer->addEventHandler(new osgGA::StateSetManipulator(_camera->getOrCreateStateSet()));
 
 	// success
 	return 0;
 }
 
-int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
-	Scene *sim = this;
-
+int Scene::setupScene(double w, double h) {
 	// Creating the root node
 	_root = new osg::Group;
 
@@ -375,7 +368,7 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 	t_stateset->setAttributeAndModes(t_depth, osg::StateAttribute::ON);
 	t_stateset->setRenderBinDetails(-1, "RenderBin");
 	t_stateset->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-	osg::ref_ptr<osg::Node> t_geode = osgDB::readNodeFile(sim->_tex_path + "ground/terrain.3ds");
+	osg::ref_ptr<osg::Node> t_geode = osgDB::readNodeFile(_tex_path + "ground/terrain.3ds");
 	t_geode->setCullingActive(false);
 	t_geode->setStateSet(t_stateset);
 	osg::ref_ptr<osg::PositionAttitudeTransform> t_transform = new osg::PositionAttitudeTransform();
@@ -412,7 +405,7 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 	textHUD->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 	textHUD->setMaximumWidth(w);
 	textHUD->setCharacterSize(15);
-	if (sim->_ending) textHUD->setText("Paused: Press any key to start");
+	if (_ending) textHUD->setText("Paused: Press any key to start");
 	textHUD->setAxisAlignment(osgText::Text::SCREEN);
 	textHUD->setAlignment(osgText::Text::CENTER_CENTER);
 	textHUD->setPosition(osg::Vec3(w/2, 50, -1.5));
@@ -422,25 +415,25 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 	_root->addChild(HUDProjectionMatrix);
 
 	// grid
-	if ( (int)(sim->_grid[6]) ) {
+	if ( (int)(_grid[6]) ) {
 		// grid lines for each sub-foot
-		double minx = (int)((sim->_grid[2]*1.01)/sim->_grid[0])*sim->_grid[0];
-		double miny = (int)((sim->_grid[4]*1.01)/sim->_grid[0])*sim->_grid[0];
-		int numx = (int)((sim->_grid[3] - minx)/sim->_grid[0]+1);
-		int numy = (int)((sim->_grid[5] - miny)/sim->_grid[0]+1);
+		double minx = (int)((_grid[2]*1.01)/_grid[0])*_grid[0];
+		double miny = (int)((_grid[4]*1.01)/_grid[0])*_grid[0];
+		int numx = (int)((_grid[3] - minx)/_grid[0]+1);
+		int numy = (int)((_grid[5] - miny)/_grid[0]+1);
 		int numVertices = 2*numx + 2*numy;
 		osg::Geode *gridGeode = new osg::Geode();
 		osg::Geometry *gridLines = new osg::Geometry();
 		osg::Vec3 *myCoords = new osg::Vec3[numVertices]();
 		// draw x lines
 		for (int i = 0, j = 0; i < numx; i++) {
-			myCoords[j++] = osg::Vec3(minx + i*sim->_grid[0], sim->_grid[4], 0.0);
-			myCoords[j++] = osg::Vec3(minx + i*sim->_grid[0], sim->_grid[5], 0.0);
+			myCoords[j++] = osg::Vec3(minx + i*_grid[0], _grid[4], 0.0);
+			myCoords[j++] = osg::Vec3(minx + i*_grid[0], _grid[5], 0.0);
 		}
 		// draw y lines
 		for (int i = 0, j = 2*numx; i < numy; i++) {
-			myCoords[j++] = osg::Vec3(sim->_grid[2], miny + i*sim->_grid[0], 0.0);
-			myCoords[j++] = osg::Vec3(sim->_grid[3], miny + i*sim->_grid[0], 0.0);
+			myCoords[j++] = osg::Vec3(_grid[2], miny + i*_grid[0], 0.0);
+			myCoords[j++] = osg::Vec3(_grid[3], miny + i*_grid[0], 0.0);
 		}
 		// add vertices
 		osg::Vec3Array *vertices = new osg::Vec3Array(numVertices, myCoords);
@@ -467,23 +460,23 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 		_scene->addChild(gridGeode);
 
 		// grid lines for each foot
-		double minx2 = (int)((sim->_grid[2]*1.01)/sim->_grid[1])*sim->_grid[1];
-		double miny2 = (int)((sim->_grid[4]*1.01)/sim->_grid[1])*sim->_grid[1];
-		int numx2 = (int)((sim->_grid[3] - minx2)/sim->_grid[1]+1);
-		int numy2 = (int)((sim->_grid[5] - miny2)/sim->_grid[1]+1);
+		double minx2 = (int)((_grid[2]*1.01)/_grid[1])*_grid[1];
+		double miny2 = (int)((_grid[4]*1.01)/_grid[1])*_grid[1];
+		int numx2 = (int)((_grid[3] - minx2)/_grid[1]+1);
+		int numy2 = (int)((_grid[5] - miny2)/_grid[1]+1);
 		int numVertices2 = 2*numx2 + 2*numy2;
 		osg::Geode *gridGeode2 = new osg::Geode();
 		osg::Geometry *gridLines2 = new osg::Geometry();
 		osg::Vec3 *myCoords2 = new osg::Vec3[numVertices2]();
 		// draw x lines
 		for (int i = 0, j = 0; i < numx2; i++) {
-			myCoords2[j++] = osg::Vec3(minx2 + i*sim->_grid[1], sim->_grid[4], 0.0);
-			myCoords2[j++] = osg::Vec3(minx2 + i*sim->_grid[1], sim->_grid[5], 0.0);
+			myCoords2[j++] = osg::Vec3(minx2 + i*_grid[1], _grid[4], 0.0);
+			myCoords2[j++] = osg::Vec3(minx2 + i*_grid[1], _grid[5], 0.0);
 		}
 		// draw y lines
 		for (int i = 0, j = 2*numx2; i < numy2; i++) {
-			myCoords2[j++] = osg::Vec3(sim->_grid[2], miny2 + i*sim->_grid[1], 0.0);
-			myCoords2[j++] = osg::Vec3(sim->_grid[3], miny2 + i*sim->_grid[1], 0.0);
+			myCoords2[j++] = osg::Vec3(_grid[2], miny2 + i*_grid[1], 0.0);
+			myCoords2[j++] = osg::Vec3(_grid[3], miny2 + i*_grid[1], 0.0);
 		}
 		// add vertices
 		osg::Vec3Array *vertices2 = new osg::Vec3Array(numVertices2, myCoords2);
@@ -513,33 +506,33 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 		osg::Geode *gridGeode3 = new osg::Geode();
 		osg::Geometry *gridLines3 = new osg::Geometry();
 		osg::Vec3 myCoords3[4];
-		if ( fabs(sim->_grid[3]) > fabs(sim->_grid[2]) ) {
-			if (sim->_grid[2] < -EPSILON)
-				myCoords3[0] = osg::Vec3(-sim->_grid[3], 0, 0);
+		if ( fabs(_grid[3]) > fabs(_grid[2]) ) {
+			if (_grid[2] < -EPSILON)
+				myCoords3[0] = osg::Vec3(-_grid[3], 0, 0);
 			else
 				myCoords3[0] = osg::Vec3(0, 0, 0);
-			myCoords3[1] = osg::Vec3(sim->_grid[3], 0, 0);
+			myCoords3[1] = osg::Vec3(_grid[3], 0, 0);
 		}
 		else {
-			if (sim->_grid[3] < -EPSILON)
+			if (_grid[3] < -EPSILON)
 				myCoords3[1] = osg::Vec3(0, 0, 0);
 			else
-				myCoords3[1] = osg::Vec3(sim->_grid[3], 0, 0);
-			myCoords3[0] = osg::Vec3(sim->_grid[2], 0, 0);
+				myCoords3[1] = osg::Vec3(_grid[3], 0, 0);
+			myCoords3[0] = osg::Vec3(_grid[2], 0, 0);
 		}
-		if ( fabs(sim->_grid[5]) > fabs(sim->_grid[4]) ) {
-			if (sim->_grid[4] < -EPSILON)
-				myCoords3[2] = osg::Vec3(-sim->_grid[5], 0, 0);
+		if ( fabs(_grid[5]) > fabs(_grid[4]) ) {
+			if (_grid[4] < -EPSILON)
+				myCoords3[2] = osg::Vec3(-_grid[5], 0, 0);
 			else
 				myCoords3[2] = osg::Vec3(0, 0, 0);
-			myCoords3[3] = osg::Vec3(0, sim->_grid[5], 0);
+			myCoords3[3] = osg::Vec3(0, _grid[5], 0);
 		}
 		else {
-			if (sim->_grid[5] < -EPSILON)
+			if (_grid[5] < -EPSILON)
 				myCoords3[3] = osg::Vec3(0, 0, 0);
 			else
-				myCoords3[3] = osg::Vec3(0, sim->_grid[5], 0);
-			myCoords3[2] = osg::Vec3(0, sim->_grid[4], 0);
+				myCoords3[3] = osg::Vec3(0, _grid[5], 0);
+			myCoords3[2] = osg::Vec3(0, _grid[4], 0);
 		}
 		// add vertices
 		osg::Vec3Array *vertices3 = new osg::Vec3Array(4, myCoords3);
@@ -575,15 +568,15 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 		xtext->setCharacterSize(50);
 		xtext->setColor(osg::Vec4(0, 0, 0, 1));
 		xtext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-		if ( fabs(sim->_grid[3]) > fabs(sim->_grid[2]) ) {
-			if (sim->_grid[3] < EPSILON)
+		if ( fabs(_grid[3]) > fabs(_grid[2]) ) {
+			if (_grid[3] < EPSILON)
 				xbillboard->addDrawable(xtext, osg::Vec3d(0.05, 0.0, 0.0));
 			else
-				xbillboard->addDrawable(xtext, osg::Vec3d(sim->_grid[3] + 0.05, 0.0, 0.0));
+				xbillboard->addDrawable(xtext, osg::Vec3d(_grid[3] + 0.05, 0.0, 0.0));
 		}
 		else {
-			if (sim->_grid[2] < -EPSILON)
-				xbillboard->addDrawable(xtext, osg::Vec3d(sim->_grid[3] + 0.05, 0.0, 0.0));
+			if (_grid[2] < -EPSILON)
+				xbillboard->addDrawable(xtext, osg::Vec3d(_grid[3] + 0.05, 0.0, 0.0));
 			else
 				xbillboard->addDrawable(xtext, osg::Vec3d(0.05, 0.0, 0.0));
 		}
@@ -602,15 +595,15 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 		ytext->setCharacterSize(50);
 		ytext->setColor(osg::Vec4(0, 0, 0, 1));
 		ytext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-		if ( fabs(sim->_grid[5]) > fabs(sim->_grid[4]) ) {
-			if (sim->_grid[5] < EPSILON)
+		if ( fabs(_grid[5]) > fabs(_grid[4]) ) {
+			if (_grid[5] < EPSILON)
 				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.05, 0.0));
 			else
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, sim->_grid[5] + 0.05, 0.0));
+				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, _grid[5] + 0.05, 0.0));
 		}
 		else {
-			if (sim->_grid[4] < -EPSILON)
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, sim->_grid[5] + 0.05, 0.0));
+			if (_grid[4] < -EPSILON)
+				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, _grid[5] + 0.05, 0.0));
 			else
 				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.05, 0.0));
 		}
@@ -630,32 +623,32 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 		xzero_text->setCharacterSize(30);
 		xzero_text->setColor(osg::Vec4(0, 0, 0, 1));
 		xzero_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-		xnum_billboard->addDrawable(xzero_text, osg::Vec3d(-0.5*sim->_grid[0], -0.5*sim->_grid[0], 0.0));
+		xnum_billboard->addDrawable(xzero_text, osg::Vec3d(-0.5*_grid[0], -0.5*_grid[0], 0.0));
 		// positive
-		for (int i = 1; i < (int)(sim->_grid[3]/sim->_grid[1]+1); i++) {
+		for (int i = 1; i < (int)(_grid[3]/_grid[1]+1); i++) {
 			osg::ref_ptr<osgText::Text> xnumpos_text = new osgText::Text();
-			if (sim->_us) sprintf(text, "   %.0lf", 39.37*i*sim->_grid[1]);
-			else sprintf(text, "   %.0lf", 100*i*sim->_grid[1]);
+			if (_units) sprintf(text, "   %.0lf", 100*i*_grid[1]);
+			else sprintf(text, "   %.0lf", 39.37*i*_grid[1]);
 			xnumpos_text->setText(text);
 			xnumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 			xnumpos_text->setAlignment(osgText::Text::CENTER_CENTER);
 			xnumpos_text->setCharacterSize(30);
 			xnumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
 			xnumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-			xnum_billboard->addDrawable(xnumpos_text, osg::Vec3d(i*sim->_grid[1], -0.5*sim->_grid[0], 0.0));
+			xnum_billboard->addDrawable(xnumpos_text, osg::Vec3d(i*_grid[1], -0.5*_grid[0], 0.0));
 		}
 		// negative
-		for (int i = 1; i < (int)(fabs(sim->_grid[2])/sim->_grid[1]+1); i++) {
+		for (int i = 1; i < (int)(fabs(_grid[2])/_grid[1]+1); i++) {
 			osg::ref_ptr<osgText::Text> xnumneg_text = new osgText::Text();
-			if (sim->_us) sprintf(text, "%.0lf   ", -39.37*i*sim->_grid[1]);
-			else sprintf(text, "%.0lf   ", -100*i*sim->_grid[1]);
+			if (_units) sprintf(text, "%.0lf   ", -100*i*_grid[1]);
+			else sprintf(text, "%.0lf   ", -39.37*i*_grid[1]);
 			xnumneg_text->setText(text);
 			xnumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 			xnumneg_text->setAlignment(osgText::Text::CENTER_CENTER);
 			xnumneg_text->setCharacterSize(30);
 			xnumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
 			xnumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-			xnum_billboard->addDrawable(xnumneg_text, osg::Vec3d(-i*sim->_grid[1], -0.5*sim->_grid[0], 0.0));
+			xnum_billboard->addDrawable(xnumneg_text, osg::Vec3d(-i*_grid[1], -0.5*_grid[0], 0.0));
 		}
 		xnum_billboard->setMode(osg::Billboard::AXIAL_ROT);
 		xnum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
@@ -670,30 +663,30 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 		// y grid numbering
 		osg::ref_ptr<osg::Billboard> ynum_billboard = new osg::Billboard();
 		// positive
-		for (int i = 1; i < (int)(sim->_grid[5]/sim->_grid[1]+1); i++) {
+		for (int i = 1; i < (int)(_grid[5]/_grid[1]+1); i++) {
 			osg::ref_ptr<osgText::Text> ynumpos_text = new osgText::Text();
-			if (sim->_us) sprintf(text, "%.0lf   ", 39.37*i*sim->_grid[1]);
-			else sprintf(text, "%.0lf   ", 100*i*sim->_grid[1]);
+			if (_units) sprintf(text, "   %.0lf", 100*i*_grid[1]);
+			else sprintf(text, "   %.0lf", 39.37*i*_grid[1]);
 			ynumpos_text->setText(text);
 			ynumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 			ynumpos_text->setAlignment(osgText::Text::CENTER_CENTER);
 			ynumpos_text->setCharacterSize(30);
 			ynumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
 			ynumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-			ynum_billboard->addDrawable(ynumpos_text, osg::Vec3d(0, i*sim->_grid[1] + 0.5*sim->_grid[0], 0.0));
+			ynum_billboard->addDrawable(ynumpos_text, osg::Vec3d(0, i*_grid[1] + 0.5*_grid[0], 0.0));
 		}
 		// negative
-		for (int i = 1; i < (int)(fabs(sim->_grid[4])/sim->_grid[1]+1); i++) {
+		for (int i = 1; i < (int)(fabs(_grid[4])/_grid[1]+1); i++) {
 			osg::ref_ptr<osgText::Text> ynumneg_text = new osgText::Text();
-			if (sim->_us) sprintf(text, "%.0lf   ", -39.37*i*sim->_grid[1]);
-			else sprintf(text, "%.0lf   ", -100*i*sim->_grid[1]);
+			if (_units) sprintf(text, "%.0lf   ", -100*i*_grid[1]);
+			else sprintf(text, "%.0lf   ", -39.37*i*_grid[1]);
 			ynumneg_text->setText(text);
 			ynumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 			ynumneg_text->setAlignment(osgText::Text::CENTER_CENTER);
 			ynumneg_text->setCharacterSize(30);
 			ynumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
 			ynumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-			ynum_billboard->addDrawable(ynumneg_text, osg::Vec3d(0, -i*sim->_grid[1] - 0.5*sim->_grid[0], 0.0));
+			ynum_billboard->addDrawable(ynumneg_text, osg::Vec3d(0, -i*_grid[1] - 0.5*_grid[0], 0.0));
 		}
 		ynum_billboard->setMode(osg::Billboard::AXIAL_ROT);
 		ynum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
@@ -717,12 +710,12 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat;
 	stateset->setTextureAttribute(0, tm);
 	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap;
-	osg::Image* imagePosX = osgDB::readImageFile(sim->_tex_path + "ground/checkered/checkered_right.png");
-	osg::Image* imageNegX = osgDB::readImageFile(sim->_tex_path + "ground/checkered/checkered_left.png");
-	osg::Image* imagePosY = osgDB::readImageFile(sim->_tex_path + "ground/checkered/checkered_top.png");
-	osg::Image* imageNegY = osgDB::readImageFile(sim->_tex_path + "ground/checkered/checkered_top.png");
-	osg::Image* imagePosZ = osgDB::readImageFile(sim->_tex_path + "ground/checkered/checkered_front.png");
-	osg::Image* imageNegZ = osgDB::readImageFile(sim->_tex_path + "ground/checkered/checkered_back.png");
+	osg::Image* imagePosX = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_right.png");
+	osg::Image* imageNegX = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_left.png");
+	osg::Image* imagePosY = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_top.png");
+	osg::Image* imageNegY = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_top.png");
+	osg::Image* imagePosZ = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_front.png");
+	osg::Image* imageNegZ = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_back.png");
 	if (imagePosX && imageNegX && imagePosY && imageNegY && imagePosZ && imageNegZ) {
 		skymap->setImage(osg::TextureCubeMap::POSITIVE_X, imagePosX);
 		skymap->setImage(osg::TextureCubeMap::NEGATIVE_X, imageNegX);
@@ -761,8 +754,8 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 	_root->addChild(clearNode);
 
 	// drawing objects
-	/*for (int i = 0; i < sim->_drawings.size(); i++) {
-		sim->drawMarker(sim->_drawings[i]);
+	/*for (int i = 0; i < _drawings.size(); i++) {
+		drawMarker(_drawings[i]);
 	}*/
 
 	// optimize the scene graph, remove redundant nodes and state etc.
@@ -770,11 +763,11 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 	optimizer.optimize(_root);
 
 	// event handler
-	viewer->addEventHandler(dynamic_cast<keyboardHandler*>(this));
-	viewer->addEventHandler(new mouseHandler());
+	_viewer->addEventHandler(dynamic_cast<keyboardHandler*>(this));
+	_viewer->addEventHandler(new mouseHandler());
 
 	// show scene
-	viewer->setSceneData(_root);
+	_viewer->setSceneData(_root);
 
 	// success
 	return 0;
@@ -783,15 +776,15 @@ int Scene::setupScene(osgViewer::Viewer *viewer, double w, double h) {
 int Scene::setupViewer(osgViewer::Viewer *viewer) {
     // creating the viewer
 	if (viewer)
-		_view = viewer;
+		_viewer = viewer;
 	else
-		_view = new osgViewer::Viewer;
+		_viewer = new osgViewer::Viewer;
 
 	// set threading model
-	_view->setThreadingModel(osgViewer::Viewer::SingleThreaded);
+	_viewer->setThreadingModel(osgViewer::Viewer::SingleThreaded);
 
 	// event handler
-	_view->addEventHandler(new osgViewer::StatsHandler);
+	_viewer->addEventHandler(new osgViewer::StatsHandler);
 
 	// success
 	return 0;
@@ -805,11 +798,6 @@ int Scene::stageForDelete(int id) {
 }
 
 void Scene::start(int pause) {
-	// graphics haven't started yet
-	COND_INIT(&_graphics_cond);
-	MUTEX_INIT(&_graphics_mutex);
-	_graphics = 0;
-
 	// initialize variables
 	unsigned int width, height;
 
@@ -847,12 +835,16 @@ void Scene::start(int pause) {
 	this->setupViewer(NULL);
 
 	// set up the camera
-	this->setupCamera(gc.get(), _view, traits->width, traits->height);
+	this->setupCamera(gc.get(), traits->width, traits->height);
 
 	// set up scene
 	_ending = pause;
-	this->setupScene(_view, traits->width, traits->height);
+	this->setupScene(traits->width, traits->height);
 	_ending = 0;
+
+    // thread is now running
+	MUTEX_INIT(&_thread_mutex);
+	_thread = true;
 
 	// create graphics thread
 	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
@@ -1701,14 +1693,14 @@ void* Scene::graphics_thread(void *arg) {
 	Scene *p = (Scene *)arg;
 
 	// viewer event handlers
-	p->_view->addEventHandler(new osgViewer::WindowSizeHandler);
+	p->_viewer->addEventHandler(new osgViewer::WindowSizeHandler);
 
 	// run viewer
-	MUTEX_LOCK(&(p->_viewer_mutex));
-	while (p->_viewer && !p->_view->done()) {
-		MUTEX_UNLOCK(&(p->_viewer_mutex));
+	MUTEX_LOCK(&(p->_thread_mutex));
+	while (p->_thread && !p->_viewer->done()) {
+		MUTEX_UNLOCK(&(p->_thread_mutex));
 
-		p->_view->frame();
+		p->_viewer->frame();
 		if (p->_staging->getNumChildren()) {
 			p->_scene->addChild(p->_staging->getChild(0));
 			p->_staging->removeChild(0, 1);
@@ -1718,14 +1710,14 @@ void* Scene::graphics_thread(void *arg) {
 			p->_ending = 0;
 		}
 
-		MUTEX_LOCK(&(p->_viewer_mutex));
+		MUTEX_LOCK(&(p->_thread_mutex));
 	}
-	MUTEX_UNLOCK(&(p->_viewer_mutex));
+	MUTEX_UNLOCK(&(p->_thread_mutex));
 
 	// clean up viewer & root
-	p->_view->setSceneData(NULL);
+	p->_viewer->setSceneData(NULL);
 #ifdef _WIN32_
-	delete p->_view;
+	delete p->_viewer;
 #endif
 
 	// trigger end of code when graphics window is closed

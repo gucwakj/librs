@@ -42,11 +42,10 @@ namespace rsScene {
 			int drawRobot(rsRobots::Robot*, int, const double*, const double*, int);
 			osgText::Text* getHUDText(void);
 			std::string getTexPath(void);
-			int getUnits(void);
 			virtual void keyPressed(int);
 			void setPauseText(int);
-			int setupCamera(osg::GraphicsContext*, osgViewer::Viewer*, double, double);
-			int setupScene(osgViewer::Viewer*, double, double);
+			int setupCamera(osg::GraphicsContext*, double, double);
+			int setupScene(double, double);
 			int setupViewer(osgViewer::Viewer*);
 			int stageForDelete(int);
 			void start(int);
@@ -68,21 +67,18 @@ namespace rsScene {
 
 			std::vector<Robot*> _robot;			// robots
 
+			bool _thread;						// flag: thread is running
+			bool _units;						// flag: SI (true) or customary (false)
 			double _grid[7];					// grid spacing (tics, major, total)
 			int _ending;						// temp variable for deleting robots
-			int _graphics;						// flag for graphics
-			int _viewer;						// flag for viewer
-			int _us;							// us units or not
 			osg::Camera *_camera;				// camera to view scene
 			osg::Group *_root;					// root node of scene
 			osg::Group *_staging;				// temp variable for adding objects
-			osgViewer::Viewer *_view;			// viewer
+			osgViewer::Viewer *_viewer;			// viewer
 			osgShadow::ShadowedScene *_scene;	// shadow root of scene
 			std::string _tex_path;				// texture path
-			COND_T _graphics_cond;				// condition for graphics
-			MUTEX_T _graphics_mutex;			// mutex for graphics existence
-			MUTEX_T _viewer_mutex;				// mutex for viewer running state
-			THREAD_T _osgThread;				// thread to hold graphics
+			MUTEX_T _thread_mutex;				// mutex: thread running state
+			THREAD_T _osgThread;				// thread: graphics window
 	};
 
 } // namespace rsScene

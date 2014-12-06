@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
 #include <tinyxml2.h>
 
 #include <rs/enum.hpp>
@@ -20,8 +21,10 @@ namespace rsXML {
 
 			int addNewRobot(Robot*);
 			Robot* getNextRobot(int);
+			const double* getGrid(void);
 			int getNumGrounds(void);
 			int getNumMarkers(void);
+			bool getUnits(void);
 
 		// private functions
 		private:
@@ -33,6 +36,15 @@ namespace rsXML {
 
 		// private data
 		private:
+			struct Ground {
+				double axis;	// longitudinal axis
+				double c[4];	// color
+				double l[3];	// lengths
+				double mass;	// mass
+				double p[3];	// position
+				double r[3];	// rotation
+				int type;		// type
+			};
 			struct Marker {
 				double c[4];	// color
 				double p[6];	// position (start and end)
@@ -40,19 +52,6 @@ namespace rsXML {
 				int type;		// type
 				std::string s;	// label
 			};
-			struct Ground {
-				double c[4];	// color
-				double l[3];	// lengths
-				double p[3];	// position
-				double r[3];	// rotation
-				double axis;	// longitudinal axis
-				double mass;	// mass
-				int type;		// type
-			};
-
-			std::vector<Marker*> _marker;		// markers
-			std::vector<Ground*> _ground;		// ground obstacles
-			std::vector<Robot*> _robot;			// robots
 
 			double _cor[2];						// coefficient of restitution [body/ground, body/body]
 			double _mu[2];						// coefficient of friction [body/ground, body/body]
@@ -62,6 +61,9 @@ namespace rsXML {
 			int _rt;							// whether to run at real time speeds
 			int _trace;							// tracking of robots
 			int _us;							// us customary units
+			std::vector<Ground*> _ground;		// ground obstacles
+			std::vector<Marker*> _marker;		// markers
+			std::vector<Robot*> _robot;			// robots
 	};
 
 } // namespace rsXML

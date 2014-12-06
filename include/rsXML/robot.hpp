@@ -1,8 +1,8 @@
 #ifndef RSXML_ROBOT_HPP_
 #define RSXML_ROBOT_HPP_
 
-#include <vector>
 #include <cmath>
+#include <vector>
 
 #include <rs/enum.hpp>
 #include <rsXML/conn.hpp>
@@ -10,6 +10,7 @@
 namespace rsXML {
 
 	class Robot {
+		// public functions
 		public:
 			Robot(void);
 			Robot(int, int);
@@ -32,11 +33,12 @@ namespace rsXML {
 			void setPsi(double);
 			void setRotation(double, double, double);
 
+		// private data
 		private:
 			std::vector<Conn*> _conn;
+			double _a[6];
 			double _p[3];
 			double _q[4];
-			double _a[6];
 			int _connected;
 			int _ground;
 			int _id;

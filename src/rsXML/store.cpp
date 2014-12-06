@@ -3,7 +3,7 @@
 using namespace rsXML;
 
 Store::Store(char *name) {
-	tinyxml2::XMLDocument doc;
+	// set default values
 	_cor[0] = 0;
 	_cor[1] = 0;
 	_mu[0] = 0;
@@ -13,6 +13,9 @@ Store::Store(char *name) {
 	_rt = 1;
 	_trace = 0;
 	_us = 1;
+
+	// read XML file
+	tinyxml2::XMLDocument doc;
 	this->load_file(name, &doc);
 	this->read_config(&doc);
 	this->read_ground(&doc);
@@ -30,6 +33,11 @@ std::cerr << "deleting Store" << std::endl;
 /**********************************************************
 	public functions
  **********************************************************/
+int Store::addNewRobot(Robot *bot) {
+	_robot.push_back(bot);
+	return 0;
+}
+
 Robot* Store::getNextRobot(int form) {
 	// find next robot in xml list
 	int i = 0;
@@ -74,17 +82,20 @@ Robot* Store::getNextRobot(int form) {
 	return _robot[i];
 }
 
-int Store::addNewRobot(Robot *bot) {
-	_robot.push_back(bot);
-	return 0;
+const double* Store::getGrid(void) {
+	return _grid;
+}
+
+int Store::getNumGrounds(void) {
+	return _ground.size();
 }
 
 int Store::getNumMarkers(void) {
 	return _marker.size();
 }
 
-int Store::getNumGrounds(void) {
-	return _ground.size();
+bool Store::getUnits(void) {
+	return _us;
 }
 
 /**********************************************************

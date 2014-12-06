@@ -1,4 +1,4 @@
-#include "conn.hpp"
+#include <rsXML/conn.hpp>
 
 using namespace rsXML;
 
@@ -20,8 +20,5 @@ Conn::Conn(double size, int conn, int face1, int face2, int robot, int side, int
 	_side = side;
 	_size = size;
 	_type = type;
-}
-
-Conn::~Conn(void) {
 }
 

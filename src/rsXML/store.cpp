@@ -9,7 +9,7 @@ Store::Store(char *name) {
 	_mu[0] = 0;
 	_mu[1] = 0;
 	_pause = true;
-	_preconfig = 0;
+	_preconfig = false;
 	_rt = true;
 	_trace = false;
 	_units = false;
@@ -398,7 +398,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 	}
 
 	// check if individual vs preconfig
-	node->QueryIntAttribute("type", &_preconfig);
+	node->QueryIntAttribute("type", reinterpret_cast<int *>(&_preconfig));
 
 	// loop over all nodes
 	while (node) {

@@ -303,7 +303,7 @@ void Scene::setDelete(int id) {
 	_deleting = id;
 }
 
-void Scene::setGrid(bool units, const double *grid) {
+void Scene::setGrid(bool units, std::vector<double> grid) {
 	_units = units;
 
 	_grid[0] = grid[0];

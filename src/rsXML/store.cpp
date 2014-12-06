@@ -14,6 +14,9 @@ Store::Store(char *name) {
 	_trace = false;
 	_units = false;
 
+	for (int i = 0; i < 7; i++)
+		_grid.push_back(0);
+
 	// read XML file
 	tinyxml2::XMLDocument doc;
 	this->load_file(name, &doc);
@@ -82,7 +85,7 @@ Robot* Store::getNextRobot(int form) {
 	return _robot[i];
 }
 
-const double* Store::getGrid(void) {
+std::vector<double> Store::getGrid(void) {
 	return _grid;
 }
 
@@ -226,6 +229,8 @@ void Store::read_graphics(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "grid") ) {
 			node->QueryIntAttribute("units", reinterpret_cast<int *>(&_units));
+			// TODO: fix xml config file to default to 1 SI and 0 customary
+			_units = (_units) ? 0 : 1;
 			node->QueryDoubleAttribute("tics", &_grid[0]);
 			node->QueryDoubleAttribute("major", &_grid[1]);
 			node->QueryDoubleAttribute("minx", &_grid[2]);

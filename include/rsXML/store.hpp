@@ -21,7 +21,7 @@ namespace rsXML {
 
 			int addNewRobot(Robot*);
 			Robot* getNextRobot(int);
-			const double* getGrid(void);
+			std::vector<double> getGrid(void);
 			int getNumGrounds(void);
 			int getNumMarkers(void);
 			bool getPause(void);
@@ -62,7 +62,7 @@ namespace rsXML {
 			bool _units;					// flag: SI (true) or customary (false)
 			double _cor[2];					// coefficient of restitution [body/ground, body/body]
 			double _mu[2];					// coefficient of friction [body/ground, body/body]
-			double _grid[7];				// grid spacing (tics, major, total)
+			std::vector<double> _grid;		// grid
 			std::vector<Ground*> _ground;	// ground obstacles
 			std::vector<Marker*> _marker;	// markers
 			std::vector<Robot*> _robot;		// robots

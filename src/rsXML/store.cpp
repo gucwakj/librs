@@ -8,7 +8,7 @@ Store::Store(char *name) {
 	_cor[1] = 0;
 	_mu[0] = 0;
 	_mu[1] = 0;
-	_ps = 3;
+	_pause = true;
 	_preconfig = 0;
 	_rt = 1;
 	_trace = false;
@@ -94,6 +94,10 @@ int Store::getNumMarkers(void) {
 	return _marker.size();
 }
 
+bool Store::getPause(void) {
+	return _pause;
+}
+
 bool Store::getUnits(void) {
 	return _us;
 }
@@ -148,7 +152,7 @@ void Store::read_config(tinyxml2::XMLDocument *doc) {
 
 	// check if should start paused
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("pause")) ) {
-		node->QueryIntAttribute("val", &_ps);
+		node->QueryIntAttribute("val", reinterpret_cast<int *>(&_pause));
 	}
 
 	// check if should run in real time

@@ -10,7 +10,7 @@ Store::Store(char *name) {
 	_mu[1] = 0;
 	_pause = true;
 	_preconfig = 0;
-	_rt = 1;
+	_rt = true;
 	_trace = false;
 	_us = 1;
 
@@ -98,6 +98,10 @@ bool Store::getPause(void) {
 	return _pause;
 }
 
+bool Store::getRealTime(void) {
+	return _rt;
+}
+
 bool Store::getUnits(void) {
 	return _us;
 }
@@ -157,7 +161,7 @@ void Store::read_config(tinyxml2::XMLDocument *doc) {
 
 	// check if should run in real time
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("realtime")) ) {
-		node->QueryIntAttribute("val", &_rt);
+		node->QueryIntAttribute("val", reinterpret_cast<int *>(&_rt));
 	}
 }
 
@@ -235,7 +239,7 @@ void Store::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 		}
 		else if ( !strcmp(node->Value(), "tracking") ) {
-			node->QueryIntAttribute("val", (int*)(&_trace));
+			node->QueryIntAttribute("val", reinterpret_cast<int *>(&_trace));
 		}
 		else {
 			// create object

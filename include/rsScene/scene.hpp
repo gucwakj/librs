@@ -55,19 +55,14 @@ namespace rsScene {
 
 		// private functions
 		private:
-			//int draw_cubus(rsRobots::Cubus*, const double*, const double*, bool, double*);
-			int draw_linkbot(rsRobots::LinkbotT*, const double*, const double*, bool, double*);
-			//int draw_mobot(rsRobots::Mobot*, const double*, const double*, bool, double*);
-			//int draw_nxt(rsRobots::NXT*, const double*, const double*, bool, double*);
+			//int draw_cubus(rsRobots::Cubus*, osg::Group*, const double*, const double*, bool, double*);
+			int draw_linkbot(rsRobots::LinkbotT*, osg::Group*, const double*, const double*, bool, double*);
+			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);
+			//int draw_nxt(rsRobots::NXT*, osg::Group*, const double*, const double*, bool, double*);
 			static void* graphics_thread(void*);
 
 		// private data
 		private:
-			struct Robot {
-				osg::Group *robot;
-				osg::ShapeDrawable *led;
-			};
-
 			bool _thread;						// flag: thread is running
 			bool _units;						// flag: SI (true) or customary (false)
 			int _deleting;						// temp variable for deleting robots
@@ -77,7 +72,6 @@ namespace rsScene {
 			osgViewer::Viewer *_viewer;			// viewer
 			osgShadow::ShadowedScene *_scene;	// shadow root of scene
 			std::string _tex_path;				// texture path
-			std::vector<Robot*> _robot;			// robots
 			std::vector<double> _grid;			// grid
 			MUTEX_T _thread_mutex;				// mutex: thread running state
 			THREAD_T _osgThread;				// thread: graphics window

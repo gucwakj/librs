@@ -52,9 +52,6 @@ std::cerr << "deleting Scene" << std::endl;
 
 	// clean mutexes
 	MUTEX_DESTROY(&_thread_mutex);
-
-	// remove robots
-	_robot.clear();
 }
 
 /**********************************************************
@@ -183,8 +180,7 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 
 int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, bool trace) {
 	// create new robot
-	_robot.push_back(new Robot());
-	_robot.back()->robot = new osg::Group();
+	osg::Group *group = new osg::Group();
 	double rgb[4] = {0};
 
 	switch (form) {
@@ -192,13 +188,13 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 			//this->drawCubus(dynamic_cast<rsRobots::Cubus*>(robot), p, q, trace, rgb);
 			break;
 		case rs::LINKBOTI:
-			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), p, q, trace, rgb);
+			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), group, p, q, trace, rgb);
 			break;
 		case rs::LINKBOTL:
-			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotL*>(robot), p, q, trace, rgb);
+			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotL*>(robot), group, p, q, trace, rgb);
 			break;
 		case rs::LINKBOTT:
-			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), p, q, trace, rgb);
+			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), group, p, q, trace, rgb);
 			break;
 		case rs::MOBOT:
 			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
@@ -229,7 +225,7 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 	label->setBoundingBoxColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.9f));
 	label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 	label->setDrawMode(osgText::Text::TEXT | osgText::Text::FILLEDBOUNDINGBOX);
-	_robot.back()->robot->insertChild(0, label_geode);
+	group->insertChild(0, label_geode);
 
 	// draw tracking node
 	osg::Geode *trackingGeode = new osg::Geode();
@@ -241,7 +237,7 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 	trackingLine->setDataVariance(osg::Object::DYNAMIC);
 	trackingLine->setUseDisplayList(false);
 	osg::Vec4Array *colors = new osg::Vec4Array;
-	colors->push_back(osg::Vec4(rgb[0], rgb[1], rgb[2], rgb[3]));
+	colors->push_back(osg::Vec4(rgb[0], rgb[1], rgb[2], 1));
 	trackingLine->setColorArray(colors);
 	trackingLine->setColorBinding(osg::Geometry::BIND_OVERALL);
 	osg::Point *point = new osg::Point();
@@ -252,20 +248,20 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 	trackingGeode->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	trackingGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 	trackingGeode->addDrawable(trackingLine);
-	//_robot.back()->robot->insertChild(1, trackingGeode);
+	//group->insertChild(1, trackingGeode);
 
 	// set user properties of node
-	_robot.back()->robot->setName("robot");
+	group->setName("robot");
 
 	// optimize robot
 	osgUtil::Optimizer optimizer;
-	optimizer.optimize(_robot.back()->robot);
+	optimizer.optimize(group);
 
 	// add to scenegraph
-	_staging->addChild(_robot.back()->robot);
+	_staging->addChild(group);
 
 	// return position of robot in root node
-	return (_staging->getChildIndex(_robot.back()->robot));
+	return (_staging->getChildIndex(group));
 }
 
 osgText::Text* Scene::getHUDText(void) {
@@ -1029,7 +1025,7 @@ void Scene::start(int pause) {
 	return 0;
 }*/
 
-int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double *q, bool trace, double *rgb) {
+int Scene::draw_linkbot(rsRobots::LinkbotT *robot, osg::Group *group, const double *p, const double *q, bool trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Geode> body[rsRobots::LinkbotT::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsRobots::LinkbotT::NUM_PARTS];
@@ -1053,9 +1049,9 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 	// 'led'
 	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2] + 0.0001), 0.01, 0.07250);
 	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
-	_robot.back()->led = new osg::ShapeDrawable(cyl);
-	_robot.back()->led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], rgb[3]));
-	body[0]->addDrawable(_robot.back()->led);
+	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
+	led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1));
+	body[0]->addDrawable(led);
 
 	// face1
 	robot->getOffsetPos(rsRobots::LinkbotT::FACE1, p, p1);
@@ -1109,7 +1105,7 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 		// position each body within robot
 		pat[i] = new osg::PositionAttitudeTransform;
 		pat[i]->addChild(body[i].get());
-		_robot.back()->robot->addChild(pat[i].get());
+		group->addChild(pat[i].get());
 	}
 
 	// add connectors
@@ -1248,7 +1244,7 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 		_robot.back()->robot->addChild(transform);
 	}*/
 
-	//_robot.back()->robot->setUpdateCallback(new linkbotCallback(_robot.back()->robot, _robot.back()->led));
+	//group->setUpdateCallback(new linkbotCallback(group, led));
 
 	// set tracking
 	robot->setTrace(trace);

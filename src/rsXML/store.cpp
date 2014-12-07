@@ -45,6 +45,10 @@ Ground* Store::getGround(int id) {
 	return _ground[id];
 }
 
+Marker* Store::getMarker(int id) {
+	return _marker[id];
+}
+
 Robot* Store::getNextRobot(int form) {
 	// find next robot in xml list
 	int i = 0;
@@ -188,6 +192,7 @@ void Store::read_graphics(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
+	double a, b, c, d;
 
 	// check for existence of node
 	if ( (node = doc->FirstChildElement("graphics")) ) {
@@ -198,50 +203,54 @@ void Store::read_graphics(tinyxml2::XMLDocument *doc) {
 	while (node) {
 		if ( !strcmp(node->Value(), "line") ) {
 			// create object
-			_marker.push_back(new Marker());
-			_marker.back()->type = rs::LINE;
-
-			// get user defined values from xml
-			if (node->QueryIntAttribute("width", &_marker.back()->size)) {
-				_marker.back()->size = 1;
-			}
-			if ( (ele = node->FirstChildElement("start")) ) {
-				ele->QueryDoubleAttribute("x", &_marker.back()->p[0]);
-				ele->QueryDoubleAttribute("y", &_marker.back()->p[1]);
-				ele->QueryDoubleAttribute("z", &_marker.back()->p[2]);
-			}
-			if ( (ele = node->FirstChildElement("end")) ) {
-				ele->QueryDoubleAttribute("x", &_marker.back()->p[3]);
-				ele->QueryDoubleAttribute("y", &_marker.back()->p[4]);
-				ele->QueryDoubleAttribute("z", &_marker.back()->p[5]);
-			}
+			_marker.push_back(new Marker(rs::LINE));
+			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
-				ele->QueryDoubleAttribute("r", &_marker.back()->c[0]);
-				ele->QueryDoubleAttribute("g", &_marker.back()->c[1]);
-				ele->QueryDoubleAttribute("b", &_marker.back()->c[2]);
-				ele->QueryDoubleAttribute("alpha", &_marker.back()->c[3]);
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_marker.back()->setColor(a, b, c, d);
 			}
+			// end position
+			if ( (ele = node->FirstChildElement("end")) ) {
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_marker.back()->setEnd(a, b, c);
+			}
+			// start position
+			if ( (ele = node->FirstChildElement("start")) ) {
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_marker.back()->setStart(a, b, c);
+			}
+			// size
+			if (!node->QueryDoubleAttribute("width", &a))
+				_marker.back()->setSize(a);
 		}
 		else if ( !strcmp(node->Value(), "point") ) {
 			// create object
-			_marker.push_back(new Marker());
-			_marker.back()->type = rs::DOT;
-
-			// get user defined values from xml
-			if (node->QueryIntAttribute("size", &_marker.back()->size)) {
-				_marker.back()->size = 1;
-			}
-			if ( (ele = node->FirstChildElement("position")) ) {
-				ele->QueryDoubleAttribute("x", &_marker.back()->p[0]);
-				ele->QueryDoubleAttribute("y", &_marker.back()->p[1]);
-				ele->QueryDoubleAttribute("z", &_marker.back()->p[2]);
-			}
+			_marker.push_back(new Marker(rs::DOT));
+			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
-				ele->QueryDoubleAttribute("r", &_marker.back()->c[0]);
-				ele->QueryDoubleAttribute("g", &_marker.back()->c[1]);
-				ele->QueryDoubleAttribute("b", &_marker.back()->c[2]);
-				ele->QueryDoubleAttribute("alpha", &_marker.back()->c[3]);
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_marker.back()->setColor(a, b, c, d);
 			}
+			// position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_marker.back()->setStart(a, b, c);
+			}
+			// size
+			if (!node->QueryDoubleAttribute("size", &a))
+				_marker.back()->setSize(a);
 		}
 		else if ( !strcmp(node->Value(), "grid") ) {
 			node->QueryIntAttribute("units", reinterpret_cast<int *>(&_units));
@@ -266,23 +275,26 @@ void Store::read_graphics(tinyxml2::XMLDocument *doc) {
 		}
 		else {
 			// create object
-			_marker.push_back(new Marker());
-			_marker.back()->type = rs::TEXT;
-
-			// get user defined values from xml
-			_marker.back()->s = node->Value();
-			if ( (ele = node->FirstChildElement("position")) ) {
-				ele->QueryDoubleAttribute("x", &_marker.back()->p[0]);
-				ele->QueryDoubleAttribute("y", &_marker.back()->p[1]);
-				ele->QueryDoubleAttribute("z", &_marker.back()->p[2]);
-			}
+			_marker.push_back(new Marker(rs::TEXT));
+			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
-				ele->QueryDoubleAttribute("r", &_marker.back()->c[0]);
-				ele->QueryDoubleAttribute("g", &_marker.back()->c[1]);
-				ele->QueryDoubleAttribute("b", &_marker.back()->c[2]);
-				ele->QueryDoubleAttribute("alpha", &_marker.back()->c[3]);
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_marker.back()->setColor(a, b, c, d);
+			}
+			// label
+			_marker.back()->setLabel(node->Value());
+			// position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_marker.back()->setStart(a, b, c);
 			}
 		}
+
 		// go to next node
 		node = node->NextSiblingElement();
 	}
@@ -302,13 +314,8 @@ void Store::read_ground(tinyxml2::XMLDocument *doc) {
 	// loop over all nodes
 	while (node) {
 		if ( !strcmp(node->Value(), "box") ) {
-			// store default variables
+			// create object
 			_ground.push_back(new Ground(rs::BOX));
-			// mass
-			if (node->QueryDoubleAttribute("mass", &a))
-				_ground.back()->setMass(0.1);
-			else
-				_ground.back()->setMass(a);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				ele->QueryDoubleAttribute("r", &a);
@@ -324,6 +331,11 @@ void Store::read_ground(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("z", &c);
 				_ground.back()->setDimensions(a, b, c);
 			}
+			// mass
+			if (node->QueryDoubleAttribute("mass", &a))
+				_ground.back()->setMass(0.1);
+			else
+				_ground.back()->setMass(a);
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
@@ -340,7 +352,7 @@ void Store::read_ground(tinyxml2::XMLDocument *doc) {
 			}
 		}
 		else if ( !strcmp(node->Value(), "cylinder") ) {
-			// store default variables
+			// create object
 			_ground.push_back(new Ground(rs::CYLINDER));
 			// mass
 			if (node->QueryDoubleAttribute("mass", &a))
@@ -382,7 +394,7 @@ void Store::read_ground(tinyxml2::XMLDocument *doc) {
 			}
 		}
 		else if ( !strcmp(node->Value(), "sphere") ) {
-			// store default variables
+			// create object
 			_ground.push_back(new Ground(rs::SPHERE));
 			// mass
 			if (node->QueryDoubleAttribute("mass", &a))

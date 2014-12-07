@@ -3,14 +3,14 @@
 
 #include <cmath>
 #include <iostream>
-#include <string>
 #include <vector>
 
 #include <tinyxml2.h>
 
 #include <rs/enum.hpp>
-#include <rsXML/robot.hpp>
 #include <rsXML/ground.hpp>
+#include <rsXML/marker.hpp>
+#include <rsXML/robot.hpp>
 
 namespace rsXML {
 
@@ -22,6 +22,7 @@ namespace rsXML {
 
 			int addNewRobot(Robot*);
 			Ground* getGround(int);
+			Marker* getMarker(int);
 			Robot* getNextRobot(int);
 			std::vector<double> getFriction(void);
 			std::vector<double> getGrid(void);
@@ -43,14 +44,6 @@ namespace rsXML {
 
 		// private data
 		private:
-			struct Marker {
-				double c[4];	// color
-				double p[6];	// position (start and end)
-				int size;		// size of object
-				int type;		// type
-				std::string s;	// label
-			};
-
 			bool _pause;						// flag: start in a paused state
 			bool _preconfig;					// flag: preconfigured robot shape
 			bool _trace;						// flag: trace robot positions
@@ -60,8 +53,8 @@ namespace rsXML {
 			std::vector<double> _grid;			// grid [tics, major, minx, maxx, miny, maxy, enabled]
 			std::vector<double> _restitution;	// coefficient of restitution [body/ground, body/body]
 			std::vector<Ground*> _ground;		// ground obstacles
-			std::vector<Marker*> _marker;		// markers
-			std::vector<Robot*> _robot;			// robots
+			std::vector<Marker*> _marker;		// graphical markers
+			std::vector<Robot*> _robot;			// simulation robots
 	};
 
 } // namespace rsXML

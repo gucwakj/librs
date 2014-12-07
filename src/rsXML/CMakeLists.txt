@@ -18,10 +18,11 @@ set (EXTRA_LIBS ${EXTRA_LIBS} tinyxml2)
 
 # add source files to library
 set (SRCS ${SRCS}
-	store.cpp
-	robot.cpp
 	conn.cpp
 	ground.cpp
+	marker.cpp
+	robot.cpp
+	store.cpp
 )
 
 # add the library

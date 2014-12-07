@@ -21,6 +21,7 @@ set (SRCS ${SRCS}
 	store.cpp
 	robot.cpp
 	conn.cpp
+	ground.cpp
 )
 
 # add the library

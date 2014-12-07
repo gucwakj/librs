@@ -41,6 +41,10 @@ int Store::addNewRobot(Robot *bot) {
 	return 0;
 }
 
+Ground* Store::getGround(int id) {
+	return _ground[id];
+}
+
 Robot* Store::getNextRobot(int form) {
 	// find next robot in xml list
 	int i = 0;
@@ -103,6 +107,10 @@ int Store::getNumGrounds(void) {
 
 int Store::getNumMarkers(void) {
 	return _marker.size();
+}
+
+int Store::getNumRobots(void) {
+	return _robot.size();
 }
 
 bool Store::getPause(void) {
@@ -284,6 +292,7 @@ void Store::read_ground(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
+	double a, b, c, d;
 
 	// check for existence of node
 	if ( (node = doc->FirstChildElement("ground")) ) {
@@ -294,100 +303,111 @@ void Store::read_ground(tinyxml2::XMLDocument *doc) {
 	while (node) {
 		if ( !strcmp(node->Value(), "box") ) {
 			// store default variables
-			_ground.push_back(new Ground());
-			_ground.back()->type = rs::BOX;
-			_ground.back()->c[0] = 0;
-			_ground.back()->c[1] = 0;
-			_ground.back()->c[2] = 0;
-			_ground.back()->c[3] = 1;
-
-			// get user defined values from xml
-			if (node->QueryDoubleAttribute("mass", &_ground.back()->mass)) {
-				_ground.back()->mass = 0.1;
-			}
+			_ground.push_back(new Ground(rs::BOX));
+			// mass
+			if (node->QueryDoubleAttribute("mass", &a))
+				_ground.back()->setMass(0.1);
+			else
+				_ground.back()->setMass(a);
+			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
-				ele->QueryDoubleAttribute("r", &_ground.back()->c[0]);
-				ele->QueryDoubleAttribute("g", &_ground.back()->c[1]);
-				ele->QueryDoubleAttribute("b", &_ground.back()->c[2]);
-				ele->QueryDoubleAttribute("alpha", &_ground.back()->c[3]);
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_ground.back()->setColor(a, b, c, d);
 			}
-			if ( (ele = node->FirstChildElement("position")) ) {
-				ele->QueryDoubleAttribute("x", &(_ground.back()->p[0]));
-				ele->QueryDoubleAttribute("y", &(_ground.back()->p[1]));
-				ele->QueryDoubleAttribute("z", &(_ground.back()->p[2]));
-			}
-			if ( (ele = node->FirstChildElement("rotation")) ) {
-				ele->QueryDoubleAttribute("psi", &(_ground.back()->r[0]));
-				ele->QueryDoubleAttribute("theta", &(_ground.back()->r[1]));
-				ele->QueryDoubleAttribute("phi", &(_ground.back()->r[2]));
-			}
+			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
-				ele->QueryDoubleAttribute("x", &(_ground.back()->l[0]));
-				ele->QueryDoubleAttribute("y", &(_ground.back()->l[1]));
-				ele->QueryDoubleAttribute("z", &(_ground.back()->l[2]));
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_ground.back()->setDimensions(a, b, c);
+			}
+			// position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_ground.back()->setPosition(a, b, c);
+			}
+			// rotation
+			if ( (ele = node->FirstChildElement("rotation")) ) {
+				ele->QueryDoubleAttribute("psi", &a);
+				ele->QueryDoubleAttribute("theta", &b);
+				ele->QueryDoubleAttribute("phi", &c);
+				_ground.back()->setRotation(a, b, c);
 			}
 		}
 		else if ( !strcmp(node->Value(), "cylinder") ) {
 			// store default variables
-			_ground.push_back(new Ground());
-			_ground.back()->c[0] = 0;
-			_ground.back()->c[1] = 0;
-			_ground.back()->c[2] = 0;
-			_ground.back()->c[3] = 1;
-
-			// get user defined values from xml
-			if (node->QueryDoubleAttribute("mass", &_ground.back()->mass)) {
-				_ground.back()->mass = 0.1;
-			}
-			if (node->QueryDoubleAttribute("axis", &_ground.back()->axis)) {
-				_ground.back()->axis = 1;
-			}
+			_ground.push_back(new Ground(rs::CYLINDER));
+			// mass
+			if (node->QueryDoubleAttribute("mass", &a))
+				_ground.back()->setMass(0.1);
+			else
+				_ground.back()->setMass(a);
+			// axis
+			if (node->QueryDoubleAttribute("axis", &a))
+				_ground.back()->setAxis(1);
+			else
+				_ground.back()->setAxis(a);
+			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
-				ele->QueryDoubleAttribute("r", &_ground.back()->c[0]);
-				ele->QueryDoubleAttribute("g", &_ground.back()->c[1]);
-				ele->QueryDoubleAttribute("b", &_ground.back()->c[2]);
-				ele->QueryDoubleAttribute("alpha", &_ground.back()->c[3]);
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_ground.back()->setColor(a, b, c, d);
 			}
-			if ( (ele = node->FirstChildElement("position")) ) {
-				ele->QueryDoubleAttribute("x", &(_ground.back()->p[0]));
-				ele->QueryDoubleAttribute("y", &(_ground.back()->p[1]));
-				ele->QueryDoubleAttribute("z", &(_ground.back()->p[2]));
-			}
-			if ( (ele = node->FirstChildElement("rotation")) ) {
-				ele->QueryDoubleAttribute("psi", &(_ground.back()->r[0]));
-				ele->QueryDoubleAttribute("theta", &(_ground.back()->r[1]));
-				ele->QueryDoubleAttribute("phi", &(_ground.back()->r[2]));
-			}
+			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
-				ele->QueryDoubleAttribute("radius", &(_ground.back()->l[0]));
-				ele->QueryDoubleAttribute("length", &(_ground.back()->l[1]));
+				ele->QueryDoubleAttribute("radius", &a);
+				ele->QueryDoubleAttribute("length", &b);
+				_ground.back()->setDimensions(a, b, 0);
+			}
+			// position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_ground.back()->setPosition(a, b, c);
+			}
+			// rotation
+			if ( (ele = node->FirstChildElement("rotation")) ) {
+				ele->QueryDoubleAttribute("psi", &a);
+				ele->QueryDoubleAttribute("theta", &b);
+				ele->QueryDoubleAttribute("phi", &c);
+				_ground.back()->setRotation(a, b, c);
 			}
 		}
 		else if ( !strcmp(node->Value(), "sphere") ) {
 			// store default variables
-			_ground.push_back(new Ground());
-			_ground.back()->c[0] = 0;
-			_ground.back()->c[1] = 0;
-			_ground.back()->c[2] = 0;
-			_ground.back()->c[3] = 1;
-
-			// get user defined values from xml
-			if (node->QueryDoubleAttribute("mass", &_ground.back()->mass)) {
-				_ground.back()->mass = 0.1;
-			}
+			_ground.push_back(new Ground(rs::SPHERE));
+			// mass
+			if (node->QueryDoubleAttribute("mass", &a))
+				_ground.back()->setMass(0.1);
+			else
+				_ground.back()->setMass(a);
+			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
-				ele->QueryDoubleAttribute("r", &_ground.back()->c[0]);
-				ele->QueryDoubleAttribute("g", &_ground.back()->c[1]);
-				ele->QueryDoubleAttribute("b", &_ground.back()->c[2]);
-				ele->QueryDoubleAttribute("alpha", &_ground.back()->c[3]);
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_ground.back()->setColor(a, b, c, d);
 			}
-			if ( (ele = node->FirstChildElement("position")) ) {
-				ele->QueryDoubleAttribute("x", &(_ground.back()->p[0]));
-				ele->QueryDoubleAttribute("y", &(_ground.back()->p[1]));
-				ele->QueryDoubleAttribute("z", &(_ground.back()->p[2]));
-			}
+			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
-				ele->QueryDoubleAttribute("radius", &(_ground.back()->l[0]));
+				ele->QueryDoubleAttribute("radius", &a);
+				_ground.back()->setDimensions(a, 0, 0);
+			}
+			// position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_ground.back()->setPosition(a, b, c);
 			}
 		}
 

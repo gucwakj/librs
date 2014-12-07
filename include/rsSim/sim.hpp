@@ -24,9 +24,9 @@ namespace rsSim {
 			//int addRobot2(rsSim::ModularRobot*, rsXML::Robot*);
 			//int addRobot2(rsSim::ModularRobot*, rsXML::Robot*, rsSim::ModularRobot*);
 			int addRobot3(rsSim::ModularRobot*, int, const double*, const double*, const double*, int, int);
-			int addGroundBox(const double*, const double*, const double*, double);
-			int addGroundCylinder(const double*, const double*, const double*, double, int);
-			int addGroundSphere(const double*, const double*, double);
+			int addGround(const double*, const double*, const double*, double);
+			int addGround(const double*, const double*, const double*, double, int);
+			int addGround(const double*, const double*, double);
 			virtual int deleteRobot(int);
 			void done(void);
 			double getClock(void);

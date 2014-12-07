@@ -336,18 +336,10 @@ int Sim::addRobot3(rsSim::ModularRobot *robot, int id, const double *p, const do
 	return 0;
 }
 
-int Sim::addGroundBox(const double *p, const double *r, const double *l, double mass) {
+int Sim::addGround(const double *p, const double *q, const double *l, double mass) {
 	// create object
 	_ground.push_back(new Ground());
 	_ground.back()->type = rs::BOX;
-
-	// set rotation of object
-	dMatrix3 R, R_x, R_y, R_z, R_xy;
-	dRFromAxisAndAngle(R_x, 1, 0, 0, r[0]);
-	dRFromAxisAndAngle(R_y, 0, 1, 0, r[1]);
-	dRFromAxisAndAngle(R_z, 0, 0, 1, r[2]);
-	dMultiply0(R_xy, R_x, R_y, 3, 3, 3);
-	dMultiply0(R, R_xy, R_z, 3, 3, 3);
 
 	// create body
 	dMass m;
@@ -358,7 +350,8 @@ int Sim::addGroundBox(const double *p, const double *r, const double *l, double 
 	}
 	dMassSetBoxTotal(&m, mass, l[0], l[1], l[2]);
 	dBodySetPosition(_ground.back()->body, p[0], p[1], p[2]);
-	dBodySetRotation(_ground.back()->body, R);
+	dQuaternion Q = {q[3], q[0], q[1], q[2]};
+	dBodySetQuaternion(_ground.back()->body, Q);
 
 	// position geom
 	_ground.back()->geom = dCreateBox(_space, l[0], l[1], l[2]);
@@ -373,18 +366,10 @@ int Sim::addGroundBox(const double *p, const double *r, const double *l, double 
 	return 0;
 }
 
-int Sim::addGroundCylinder(const double *p, const double *r, const double *l, double mass, int axis) {
+int Sim::addGround(const double *p, const double *q, const double *l, double mass, int axis) {
 	// create object
 	_ground.push_back(new Ground());
 	_ground.back()->type = rs::CYLINDER;
-
-	// set rotation of object
-	dMatrix3 R, R_x, R_y, R_z, R_xy;
-	dRFromAxisAndAngle(R_x, 1, 0, 0, r[0]);
-	dRFromAxisAndAngle(R_y, 0, 1, 0, r[1]);
-	dRFromAxisAndAngle(R_z, 0, 0, 1, r[2]);
-	dMultiply0(R_xy, R_x, R_y, 3, 3, 3);
-	dMultiply0(R, R_xy, R_z, 3, 3, 3);
 
 	// create body
 	dMass m;
@@ -395,7 +380,8 @@ int Sim::addGroundCylinder(const double *p, const double *r, const double *l, do
 	}
 	dMassSetCylinderTotal(&m, mass, axis, l[0], l[1]);
 	dBodySetPosition(_ground.back()->body, p[0], p[1], p[2]);
-	dBodySetRotation(_ground.back()->body, R);
+	dQuaternion Q = {q[3], q[0], q[1], q[2]};
+	dBodySetQuaternion(_ground.back()->body, Q);
 
 	// position geom
 	_ground.back()->geom = dCreateCylinder(_space, l[0], l[1]);
@@ -415,7 +401,7 @@ int Sim::addGroundCylinder(const double *p, const double *r, const double *l, do
 	return 0;
 }
 
-int Sim::addGroundSphere(const double *p, const double *l, double mass) {
+int Sim::addGround(const double *p, const double *l, double mass) {
 	// create object
 	_ground.push_back(new Ground());
 	_ground.back()->type = rs::SPHERE;

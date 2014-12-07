@@ -10,6 +10,7 @@
 
 #include <rs/enum.hpp>
 #include <rsXML/robot.hpp>
+#include <rsXML/ground.hpp>
 
 namespace rsXML {
 
@@ -20,12 +21,14 @@ namespace rsXML {
 			virtual ~Store(void);
 
 			int addNewRobot(Robot*);
+			Ground* getGround(int);
 			Robot* getNextRobot(int);
 			std::vector<double> getFriction(void);
 			std::vector<double> getGrid(void);
 			std::vector<double> getRestitution(void);
 			int getNumGrounds(void);
 			int getNumMarkers(void);
+			int getNumRobots(void);
 			bool getPause(void);
 			bool getRealTime(void);
 			bool getUnits(void);
@@ -40,15 +43,6 @@ namespace rsXML {
 
 		// private data
 		private:
-			struct Ground {
-				double axis;	// longitudinal axis
-				double c[4];	// color
-				double l[3];	// lengths
-				double mass;	// mass
-				double p[3];	// position
-				double r[3];	// rotation
-				int type;		// type
-			};
 			struct Marker {
 				double c[4];	// color
 				double p[6];	// position (start and end)

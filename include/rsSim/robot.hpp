@@ -245,6 +245,7 @@ class Robot : virtual public rsRobots::Robot {
 		double _accel[3];			// accelerometer data
 		double _center[3];			// offset of body from initial (x,y,z)
 		double _distOffset;			// offset for recorded distance
+		double _radius;				// radius of wheels
 		double _speed;				// linear velocity of the robot
 		double _trackwidth;			// trackwidth of robot
 		int _connected;				// connected to controller

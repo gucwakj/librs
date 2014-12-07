@@ -3,19 +3,11 @@
 
 #include <vector>
 
-#include <rsRobots/robot.hpp>
-
-// TODO: remove
-namespace rsScene {
-	class Scene;
-}
+#include <rsRobots/modularRobot.hpp>
 
 namespace rsRobots {
 
-	class LinkbotT : virtual public Robot {
-			// TODO: remove
-			friend class rsScene::Scene;
-
+	class LinkbotT : virtual public ModularRobot {
 		// public functions
 		public:
 			LinkbotT(int);
@@ -37,9 +29,6 @@ namespace rsRobots {
 		protected:
 			double _bigwheel_radius;
 			double _bridge_length;
-			double _conn_depth;
-			double _conn_height;
-			double _conn_radius;
 			double _cubic_length;
 			double _face_depth;
 			double _face_radius;

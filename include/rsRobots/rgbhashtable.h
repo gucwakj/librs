@@ -1,17 +1,5 @@
-/* rgbhashtable.h
- *
- * A hashtable for storing RGB values for a Linkbot LED
- * Chaining is used to resolve collisions
- * RGB values need to be stored as an array of 3 values
- * An address of an array of three values is returned for the RGB color values
- *
- * Dawn Hustig-Schultz
- * 2013/12/20
- *
- */
-
-#ifndef RGBHASHTABLE_H_
-#define RGBHASHTABLE_H_
+#ifndef RSROBOTS_RGBHASHTABLE_H_
+#define RSROBOTS_RGBHASHTABLE_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,5 +30,5 @@ int HT_GetKey(rgbHashTable*, int[], char[]);		// reverse look-up
 }
 #endif
 
-#endif // RGBHASHTABLE_H_
+#endif // RSROBOTS_RGBHASHTABLE_H_
 

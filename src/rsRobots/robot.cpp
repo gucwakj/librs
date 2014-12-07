@@ -14,6 +14,10 @@ Robot::~Robot(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+int Robot::getForm(void) {
+	return _form;
+}
+
 void Robot::getOffsetPos(int body, const double *p, double *p1) {
 	p1[0] = p[0] + _offset[body].x;
 	p1[1] = p[1] + _offset[body].y;

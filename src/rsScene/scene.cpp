@@ -1039,39 +1039,41 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 		body[i] = new osg::Geode;
 	}
+	// get led color
+	robot->getRGB(rgb);
 
 	// body
-	box = new osg::Box(osg::Vec3d(p[0], p[1], p[2]), robot->_body_width, robot->_body_length, robot->_body_height);
+	box = new osg::Box(osg::Vec3d(p[0], p[1], p[2]), 0.07835, 0.03935, 0.07250);
 	box->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
 	body[0]->addDrawable(new osg::ShapeDrawable(box));
-	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), robot->_body_radius, robot->_body_width);
+	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), 0.03625, 0.07835);
 	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
 	body[0]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// 'led'
-	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2] + 0.0001), 0.01, robot->_body_height);
+	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2] + 0.0001), 0.01, 0.07250);
 	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
 	_robot.back()->led = new osg::ShapeDrawable(cyl);
-	_robot.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
+	_robot.back()->led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], rgb[3]));
 	body[0]->addDrawable(_robot.back()->led);
 
 	// face1
 	robot->getOffsetPos(rsRobots::LinkbotT::FACE1, p, p1);
-	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), robot->_face_radius, robot->_face_depth);
+	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), 0.03060, 0.00200);
 	robot->getOffsetQuat(rsRobots::LinkbotT::FACE1, q, q1);
 	cyl->setRotation(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 	body[1]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// face 2
 	robot->getOffsetPos(rsRobots::LinkbotT::FACE2, p, p1);
-	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), robot->_face_radius, robot->_face_depth);
+	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), 0.03060, 0.00200);
 	robot->getOffsetQuat(rsRobots::LinkbotT::FACE2, q, q1);
 	cyl->setRotation(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 	body[2]->addDrawable(new osg::ShapeDrawable(cyl));
 
 	// face 3
 	robot->getOffsetPos(rsRobots::LinkbotT::FACE3, p, p1);
-	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), robot->_face_radius, robot->_face_depth);
+	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), 0.03060, 0.00200);
 	robot->getOffsetQuat(rsRobots::LinkbotT::FACE3, q, q1);
 	cyl->setRotation(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 	body[3]->addDrawable(new osg::ShapeDrawable(cyl));
@@ -1090,8 +1092,13 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 	body[1]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
 	body[2]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
 	body[3]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
-	if (robot->_disabled > 0) {
-		body[robot->_disabled+1]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[0].get(), osg::StateAttribute::ON);
+	switch (robot->getForm()) {
+		case rs::LINKBOTI:
+			body[rsRobots::LinkbotT::FACE2]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[0].get(), osg::StateAttribute::ON);
+			break;
+		case rs::LINKBOTL:
+			body[rsRobots::LinkbotT::FACE3]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[0].get(), osg::StateAttribute::ON);
+			break;
 	}
 
 	// rendering and positioning
@@ -1245,9 +1252,6 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, const double *p, const double
 
 	// set tracking
 	robot->setTrace(trace);
-
-	// send back rgb
-	robot->getRGB(rgb);
 
 	// success
 	return 0;

@@ -1,5 +1,5 @@
-#ifndef RSSCENE_MOBOTCALLBACK_HPP_
-#define RSSCENE_MOBOTCALLBACK_HPP_
+#ifndef RSCALLBACK_MOBOTCALLBACK_HPP_
+#define RSCALLBACK_MOBOTCALLBACK_HPP_
 
 #include <osg/Geode>
 #include <osg/Node>
@@ -9,7 +9,7 @@
 
 class CMobot;
 
-namespace rsScene {
+namespace rsCallback {
 
 	class mobotCallback : public osg::NodeCallback {
 		// public functions
@@ -26,7 +26,7 @@ namespace rsScene {
 			int _count;
 	};
 
-} // namespace rsScene
+} // namespace rsCallback
 
-#endif // RSSCENE_MOBOTCALLBACK_HPP_
+#endif // RSCALLBACK_MOBOTCALLBACK_HPP_
 

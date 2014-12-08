@@ -1,4 +1,3 @@
-#include <rsScene/linkbotCallback.hpp>
 #include <rsScene/mouseHandler.hpp>
 #include <rsScene/scene.hpp>
 #include <rsScene/skyTransform.hpp>
@@ -57,7 +56,7 @@ std::cerr << "deleting Scene" << std::endl;
 /**********************************************************
 	public functions
  **********************************************************/
-int Scene::drawGround(int type, const double *p, const double *c, const double *l, const double *q) {
+rsScene::Ground* Scene::drawGround(int type, const double *p, const double *c, const double *l, const double *q) {
 	// create ground objects
 	osg::ref_ptr<osg::Group> ground = new osg::Group();
 	osg::ref_ptr<osg::Geode> body = new osg::Geode;
@@ -115,7 +114,7 @@ int Scene::drawGround(int type, const double *p, const double *c, const double *
 	_staging->addChild(ground);
 
 	// success
-	return 0;
+	return ground;
 }
 
 int Scene::drawMarker(int type, const double *p1, const double *p2, const double *c, int size, std::string s) {
@@ -1243,8 +1242,6 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, osg::Group *group, const doub
 		// add to scenegraph
 		_robot.back()->robot->addChild(transform);
 	}*/
-
-	//group->setUpdateCallback(new linkbotCallback(group, led));
 
 	// set tracking
 	robot->setTrace(trace);

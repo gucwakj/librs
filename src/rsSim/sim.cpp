@@ -336,7 +336,7 @@ int Sim::addRobot3(rsSim::ModularRobot *robot, int id, const double *p, const do
 	return 0;
 }
 
-int Sim::addGround(const double *p, const double *q, const double *l, double mass) {
+Ground2* Sim::addGround(const double *p, const double *q, const double *l, double mass) {
 	// create object
 	_ground.push_back(new Ground());
 	_ground.back()->type = rs::BOX;
@@ -363,10 +363,10 @@ int Sim::addGround(const double *p, const double *q, const double *l, double mas
 	dBodySetMass(_ground.back()->body, &m);
 
 	// success
-	return 0;
+	return &_ground.back()->body;
 }
 
-int Sim::addGround(const double *p, const double *q, const double *l, double mass, int axis) {
+Ground2* Sim::addGround(const double *p, const double *q, const double *l, double mass, int axis) {
 	// create object
 	_ground.push_back(new Ground());
 	_ground.back()->type = rs::CYLINDER;
@@ -398,10 +398,10 @@ int Sim::addGround(const double *p, const double *q, const double *l, double mas
 	dBodySetMass(_ground.back()->body, &m);
 
 	// success
-	return 0;
+	return &_ground.back()->body;
 }
 
-int Sim::addGround(const double *p, const double *l, double mass) {
+Ground2* Sim::addGround(const double *p, const double *l, double mass) {
 	// create object
 	_ground.push_back(new Ground());
 	_ground.back()->type = rs::SPHERE;
@@ -426,7 +426,7 @@ int Sim::addGround(const double *p, const double *l, double mass) {
 	dBodySetMass(_ground.back()->body, &m);
 
 	// success
-	return 0;
+	return &_ground.back()->body;
 }
 
 int Sim::deleteRobot(int loc) {

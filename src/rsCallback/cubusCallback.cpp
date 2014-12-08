@@ -1,7 +1,7 @@
 #include "cubusCallback.hpp"
 #include "cubus.hpp"
 
-using namespace rsScene;
+using namespace rsCallback;
 
 cubusCallback::cubusCallback(Cubus *robot, osg::ShapeDrawable *led) {
 	_robot = robot;

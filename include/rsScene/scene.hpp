@@ -29,6 +29,10 @@ extern osg::Node::NodeMask IS_PICKABLE_MASK;
 extern osg::Node::NodeMask VISIBLE_MASK;
 
 namespace rsScene {
+	typedef osg::Group Ground;
+}
+
+namespace rsScene {
 
 	class Scene : public keyboardHandler {
 		// public functions
@@ -36,7 +40,7 @@ namespace rsScene {
 			Scene(void);
 			virtual ~Scene(void);
 
-			int drawGround(int, const double*, const double*, const double*, const double*);
+			Ground* drawGround(int, const double*, const double*, const double*, const double*);
 			int drawMarker(int, const double*, const double*, const double*, int, std::string);
 			int drawRobot(rsRobots::Robot*, int, const double*, const double*, bool);
 			osgText::Text* getHUDText(void);

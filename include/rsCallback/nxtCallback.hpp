@@ -1,5 +1,5 @@
-#ifndef RSSCENE_NXTCALLBACK_HPP_
-#define RSSCENE_NXTCALLBACK_HPP_
+#ifndef RSCALLBACK_NXTCALLBACK_HPP_
+#define RSCALLBACK_NXTCALLBACK_HPP_
 
 #include <osg/Geode>
 #include <osg/Node>
@@ -8,7 +8,7 @@
 
 class CNXT;
 
-namespace rsScene {
+namespace rsCallback {
 
 	class nxtCallback : public osg::NodeCallback {
 		// public functions
@@ -25,7 +25,7 @@ namespace rsScene {
 			int _count;
 	};
 
-} // namespace rsScene
+} // namespace rsCallback
 
-#endif // RSSCENE_NXTCALLBACK_HPP_
+#endif // RSCALLBACK_NXTCALLBACK_HPP_
 

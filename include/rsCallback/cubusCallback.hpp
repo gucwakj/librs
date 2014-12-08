@@ -1,5 +1,5 @@
-#ifndef RSSCENE_CUBUSCALLBACK_HPP_
-#define RSSCENE_CUBUSCALLBACK_HPP_
+#ifndef RSCALLBACK_CUBUSCALLBACK_HPP_
+#define RSCALLBACK_CUBUSCALLBACK_HPP_
 
 #include <osg/Geode>
 #include <osg/Node>
@@ -9,7 +9,7 @@
 
 class Cubus;
 
-namespace rsScene {
+namespace rsCallback {
 
 	class cubusCallback : public osg::NodeCallback {
 		// public functions
@@ -26,7 +26,7 @@ namespace rsScene {
 			int _count;
 	};
 
-} // namespace rsScene
+} // namespace rsCallback
 
-#endif // RSSCENE_CUBUSCALLBACK_HPP_
+#endif // RSCALLBACK_CUBUSCALLBACK_HPP_
 

@@ -1,25 +1,33 @@
-#include "nxtCallback.hpp"
-#include "nxt.hpp"
+#include "mobotCallback.hpp"
+#include "mobot.hpp"
 
-using namespace rsScene;
+using namespace rsCallback;
 
-nxtCallback::nxtCallback(CNXT *robot, osg::ShapeDrawable *led) {
+mobotCallback::mobotCallback(CMobot *robot, osg::ShapeDrawable *led) {
 	_robot = robot;
 	_led = led;
 	_count = 1;
 }
 
-void nxtCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
+void mobotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		const double *pos, *quat;
 		int i, k = 0;
 		osg::PositionAttitudeTransform *pat;
 		// draw body parts
-		for (i = 2; i < 2+3; i++) {
+		for (i = 2; i < 2+5; i++) {
 			pos = dBodyGetPosition(_robot->getBodyID(i-2));
 			quat = dBodyGetQuaternion(_robot->getBodyID(i-2));
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i));
+			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
+			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+		}
+		// draw connectors
+		for (int j = 0; j < _robot->_conn.size(); j++) {
+			pos = dBodyGetPosition(_robot->_conn[j]->body);
+			quat = dBodyGetQuaternion(_robot->_conn[j]->body);
+			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i + k++));
 			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
 			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		}

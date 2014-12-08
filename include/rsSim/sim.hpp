@@ -59,13 +59,7 @@ namespace rsSim {
 				int node;
 				THREAD_T thread;
 			};
-			struct Ground {
-				dBodyID body;
-				dGeomID geom;
-				int type;
-			};
 
-			std::vector<Ground*> _ground;	// ground obstacles
 			std::vector<Robots*> _robot;	// robots
 
 			dWorldID _world;				// world in which simulation occurs

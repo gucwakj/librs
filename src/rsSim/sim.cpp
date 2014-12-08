@@ -27,11 +27,6 @@ std::cerr << "deleting Sim" << std::endl;
 	dWorldDestroy(_world);
 	dCloseODE();
 
-	// remove ground
-	for (int i = 0; i < _ground.size(); i++) {
-		delete _ground[i];
-	}
-
 	// remove robots
 	for (int i = 0; i < _robot.size(); i++) {
 		delete _robot[i];
@@ -47,9 +42,7 @@ int Sim::init_ode(void) {
 	_world = dWorldCreate();							// create world for simulation
 	_space = dHashSpaceCreate(0);						// create space for robots
 	_group = dJointGroupCreate(0);						// create group for joints
-	_ground.push_back(new Ground());
-	_ground[0]->body = NULL;							// immovable
-	_ground[0]->geom = dCreatePlane(_space, 0, 0, 1, 0);// ground plane
+	dGeomID geom = dCreatePlane(_space, 0, 0, 1, 0);	// ground plane
 
 	// simulation parameters
 	dWorldSetAutoDisableFlag(_world, 1);				// auto-disable bodies that are not moving
@@ -337,96 +330,87 @@ int Sim::addRobot3(rsSim::ModularRobot *robot, int id, const double *p, const do
 }
 
 Ground2* Sim::addGround(const double *p, const double *q, const double *l, double mass) {
-	// create object
-	_ground.push_back(new Ground());
-	_ground.back()->type = rs::BOX;
-
 	// create body
 	dMass m;
-	_ground.back()->body = dBodyCreate(_world);
+	dBodyID *body = new dBodyID();
+	*body = dBodyCreate(_world);
 	if (mass == 0) {
-		dBodyDisable(_ground.back()->body);
+		dBodyDisable(*body);
 		mass = 1;
 	}
-	dMassSetBoxTotal(&m, mass, l[0], l[1], l[2]);
-	dBodySetPosition(_ground.back()->body, p[0], p[1], p[2]);
+	dBodySetPosition(*body, p[0], p[1], p[2]);
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
-	dBodySetQuaternion(_ground.back()->body, Q);
+	dBodySetQuaternion(*body, Q);
 
 	// position geom
-	_ground.back()->geom = dCreateBox(_space, l[0], l[1], l[2]);
-	dGeomSetBody(_ground.back()->geom, _ground.back()->body);
-	dGeomSetOffsetPosition(_ground.back()->geom, -m.c[0], -m.c[1], -m.c[2]);
+	dMassSetBoxTotal(&m, mass, l[0], l[1], l[2]);
+	dGeomID geom = dCreateBox(_space, l[0], l[1], l[2]);
+	dGeomSetBody(geom, *body);
+	dGeomSetOffsetPosition(geom, -m.c[0], -m.c[1], -m.c[2]);
 
 	// set mass center to (0,0,0) of _bodyID
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
-	dBodySetMass(_ground.back()->body, &m);
+	dBodySetMass(*body, &m);
 
-	// success
-	return &_ground.back()->body;
+	// return object
+	return body;
 }
 
 Ground2* Sim::addGround(const double *p, const double *q, const double *l, double mass, int axis) {
-	// create object
-	_ground.push_back(new Ground());
-	_ground.back()->type = rs::CYLINDER;
-
 	// create body
 	dMass m;
-	_ground.back()->body = dBodyCreate(_world);
+	dBodyID *body = new dBodyID();
+	*body = dBodyCreate(_world);
 	if (mass == 0) {
-		dBodyDisable(_ground.back()->body);
+		dBodyDisable(*body);
 		mass = 1;
 	}
-	dMassSetCylinderTotal(&m, mass, axis, l[0], l[1]);
-	dBodySetPosition(_ground.back()->body, p[0], p[1], p[2]);
+	dBodySetPosition(*body, p[0], p[1], p[2]);
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
-	dBodySetQuaternion(_ground.back()->body, Q);
+	dBodySetQuaternion(*body, Q);
 
 	// position geom
-	_ground.back()->geom = dCreateCylinder(_space, l[0], l[1]);
-	dGeomSetBody(_ground.back()->geom, _ground.back()->body);
-	dGeomSetOffsetPosition(_ground.back()->geom, -m.c[0], -m.c[1], -m.c[2]);
-	dMatrix3 R1;
-	if (axis == 1) {		dRFromAxisAndAngle(R1, 0, 1, 0, M_PI/2); }
-	else if (axis == 2) {	dRFromAxisAndAngle(R1, 1, 0, 0, M_PI/2); }
-	else if (axis == 3) {	dRFromAxisAndAngle(R1, 0, 0, 1, 0); }
-	dGeomSetOffsetRotation(_ground.back()->geom, R1);
+	dMassSetCylinderTotal(&m, mass, axis, l[0], l[1]);
+	dGeomID geom = dCreateCylinder(_space, l[0], l[1]);
+	dGeomSetBody(geom, *body);
+	dGeomSetOffsetPosition(geom, -m.c[0], -m.c[1], -m.c[2]);
+	dMatrix3 R;
+	if (axis == 1) {		dRFromAxisAndAngle(R, 0, 1, 0, M_PI/2); }
+	else if (axis == 2) {	dRFromAxisAndAngle(R, 1, 0, 0, M_PI/2); }
+	else if (axis == 3) {	dRFromAxisAndAngle(R, 0, 0, 1, 0); }
+	dGeomSetOffsetRotation(geom, R);
 
 	// set mass center to (0,0,0) of _bodyID
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
-	dBodySetMass(_ground.back()->body, &m);
+	dBodySetMass(*body, &m);
 
-	// success
-	return &_ground.back()->body;
+	// return object
+	return body;
 }
 
 Ground2* Sim::addGround(const double *p, const double *l, double mass) {
-	// create object
-	_ground.push_back(new Ground());
-	_ground.back()->type = rs::SPHERE;
-
 	// create body
 	dMass m;
-	_ground.back()->body = dBodyCreate(_world);
+	dBodyID *body = new dBodyID();
+	*body = dBodyCreate(_world);
 	if (mass == 0) {
-		dBodyDisable(_ground.back()->body);
+		dBodyDisable(*body);
 		mass = 1;
 	}
-	dMassSetSphereTotal(&m, mass, l[0]);
-	dBodySetPosition(_ground.back()->body, p[0], p[1], p[2]);
+	dBodySetPosition(*body, p[0], p[1], p[2]);
 
 	// position geom
-	_ground.back()->geom = dCreateSphere(_space, l[0]);
-	dGeomSetBody(_ground.back()->geom, _ground.back()->body);
-	dGeomSetOffsetPosition(_ground.back()->geom, -m.c[0], -m.c[1], -m.c[2]);
+	dMassSetSphereTotal(&m, mass, l[0]);
+	dGeomID geom = dCreateSphere(_space, l[0]);
+	dGeomSetBody(geom, *body);
+	dGeomSetOffsetPosition(geom, -m.c[0], -m.c[1], -m.c[2]);
 
-	// set mass center to (0,0,0) of bodyID
+	// set mass center to (0,0,0) of _bodyID
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
-	dBodySetMass(_ground.back()->body, &m);
+	dBodySetMass(*body, &m);
 
-	// success
-	return &_ground.back()->body;
+	// return object
+	return body;
 }
 
 int Sim::deleteRobot(int loc) {

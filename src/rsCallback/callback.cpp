@@ -3,7 +3,7 @@
 
 using namespace rsCallback;
 
-void Callback::attachCallback(rsScene::Ground *scene, rsSim::Ground2 *sim) {
+void Callback::attachCallback(rsScene::Ground *scene, rsSim::Ground *sim) {
 	scene->setUpdateCallback(new groundCallback(sim));
 }
 

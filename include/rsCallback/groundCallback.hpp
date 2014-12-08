@@ -13,14 +13,14 @@ namespace rsCallback {
 	class groundCallback : public osg::NodeCallback {
 		// public functions
 		public:
-			groundCallback(rsSim::Ground2*);
+			groundCallback(rsSim::Ground*);
 			virtual ~groundCallback(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 
 		// private data
 		private:
-			rsSim::Ground2 *_ground;
+			rsSim::Ground *_ground;
 	};
 
 } // namespace rsCallback

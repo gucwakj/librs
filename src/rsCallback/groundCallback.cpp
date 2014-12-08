@@ -2,7 +2,7 @@
 
 using namespace rsCallback;
 
-groundCallback::groundCallback(rsSim::Ground2 *ground) {
+groundCallback::groundCallback(rsSim::Ground *ground) {
 	_ground = ground;
 }
 

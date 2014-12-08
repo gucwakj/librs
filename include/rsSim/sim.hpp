@@ -12,7 +12,9 @@
 #include <rsSim/robot.hpp>
 
 namespace rsSim {
-	typedef dBodyID Ground2;
+
+	typedef dBodyID Ground;
+
 } // namespace rsSim
 
 namespace rsSim {
@@ -28,9 +30,9 @@ namespace rsSim {
 			//int addRobot2(rsSim::ModularRobot*, rsXML::Robot*);
 			//int addRobot2(rsSim::ModularRobot*, rsXML::Robot*, rsSim::ModularRobot*);
 			int addRobot3(rsSim::ModularRobot*, int, const double*, const double*, const double*, int, int);
-			Ground2* addGround(const double*, const double*, const double*, double);
-			Ground2* addGround(const double*, const double*, const double*, double, int);
-			Ground2* addGround(const double*, const double*, double);
+			Ground* addGround(const double*, const double*, const double*, double);
+			Ground* addGround(const double*, const double*, const double*, double, int);
+			Ground* addGround(const double*, const double*, double);
 			virtual int deleteRobot(int);
 			void done(void);
 			double getClock(void);

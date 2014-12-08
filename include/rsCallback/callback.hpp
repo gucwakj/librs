@@ -15,7 +15,7 @@ namespace rsCallback {
 			Callback(void) {};
 			virtual ~Callback(void) {};
 
-			void attachCallback(rsScene::Ground*, rsSim::Ground2*);
+			void attachCallback(rsScene::Ground*, rsSim::Ground*);
 	};
 
 } // namespace rsCallback

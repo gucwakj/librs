@@ -329,7 +329,7 @@ int Sim::addRobot3(rsSim::ModularRobot *robot, int id, const double *p, const do
 	return 0;
 }
 
-Ground2* Sim::addGround(const double *p, const double *q, const double *l, double mass) {
+Ground* Sim::addGround(const double *p, const double *q, const double *l, double mass) {
 	// create body
 	dMass m;
 	dBodyID *body = new dBodyID();
@@ -356,7 +356,7 @@ Ground2* Sim::addGround(const double *p, const double *q, const double *l, doubl
 	return body;
 }
 
-Ground2* Sim::addGround(const double *p, const double *q, const double *l, double mass, int axis) {
+Ground* Sim::addGround(const double *p, const double *q, const double *l, double mass, int axis) {
 	// create body
 	dMass m;
 	dBodyID *body = new dBodyID();
@@ -388,7 +388,7 @@ Ground2* Sim::addGround(const double *p, const double *q, const double *l, doubl
 	return body;
 }
 
-Ground2* Sim::addGround(const double *p, const double *l, double mass) {
+Ground* Sim::addGround(const double *p, const double *l, double mass) {
 	// create body
 	dMass m;
 	dBodyID *body = new dBodyID();

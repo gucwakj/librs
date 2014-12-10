@@ -2,7 +2,7 @@
 
 using namespace rsCallback;
 
-linkbotCallback::linkbotCallback(rsSim::CLinkbotT *robot, dBodyID *bodies, std::vector<rsSim::Connector*> &conn, bool units) {
+linkbotCallback::linkbotCallback(rsSim::CLinkbotT *robot, dBodyID *bodies, rsSim::ConnectorList &conn, bool units) {
 	_bodies = bodies;
 	_conn = conn;
 	_count = 1;

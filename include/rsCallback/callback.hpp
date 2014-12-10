@@ -1,8 +1,6 @@
 #ifndef RSCALLBACK_CALLBACK_HPP_
 #define RSCALLBACK_CALLBACK_HPP_
 
-#include <vector>
-
 #include <ode/common.h>
 
 #include <osg/Node>
@@ -22,7 +20,7 @@ namespace rsCallback {
 			virtual ~Callback(void) {};
 
 			void attachCallback(rsScene::Ground*, rsSim::Ground*);
-			void attachCallback(rsScene::Robot*, rsSim::Robot*, dBodyID *bodies, std::vector<rsSim::Connector*>&);
+			void attachCallback(rsScene::Robot*, rsSim::Robot*, dBodyID *bodies, rsSim::ConnectorList&);
 
 			void setUnits(bool);
 

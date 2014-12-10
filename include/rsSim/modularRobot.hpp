@@ -3,20 +3,25 @@
 
 #include <rsSim/robot.hpp>
 
+// TODO: remove
 namespace rsXML {
 	class Conn;
 }
 
 namespace rsSim {
 
-// connector
-struct Connector {
-	dBodyID body;
-	dGeomID *geom;
-	double o[3];
-	int face, type;
-	int d_side, d_type;
-};
+	struct Connector {
+		dBodyID body;
+		dGeomID *geom;
+		double o[3];
+		int face, type;
+		int d_side, d_type;
+	};
+	typedef std::vector<Connector*> ConnectorList;
+
+}
+
+namespace rsSim {
 
 class ModularRobot : virtual public rsSim::Robot {
 		friend class Sim;
@@ -74,15 +79,10 @@ class ModularRobot : virtual public rsSim::Robot {
 			int type;
 		};
 
-		std::vector<Connector*> _conn;		// connectors
+		ConnectorList _conn;		// connectors
 		std::vector<Neighbor> _neighbor;	// connected robots
 		std::vector<Sensor*> _sensor;		// connected sensors
 		std::vector<dJointFeedback*> _fb;	// feedback forces from joints
-		//double _bigwheel_radius;			// dimension: big wheel radius
-		//double _conn_depth;					// dimension: connector depth
-		//double _conn_height;				// dimension: connector height
-		//double _conn_radius;				// dimension: connector radius
-		//double _smallwheel_radius;			// dimension: small wheel radius
 };
 
 } // namepsace rsSim

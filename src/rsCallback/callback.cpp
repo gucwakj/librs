@@ -12,7 +12,7 @@ void Callback::attachCallback(rsScene::Ground *scene, rsSim::Ground *sim) {
 	scene->setUpdateCallback(new groundCallback(sim));
 }
 
-void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, dBodyID *bodies, std::vector<rsSim::Connector*> &conn) {
+void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, dBodyID *bodies, rsSim::ConnectorList &conn) {
 	switch (sim->getForm()) {
 		case rs::LINKBOTI:
 		case rs::LINKBOTL:

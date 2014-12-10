@@ -56,7 +56,7 @@ std::cerr << "deleting Scene" << std::endl;
 /**********************************************************
 	public functions
  **********************************************************/
-rsScene::Ground* Scene::drawGround(int type, const double *p, const double *c, const double *l, const double *q) {
+Ground* Scene::drawGround(int type, const double *p, const double *c, const double *l, const double *q) {
 	// create ground objects
 	osg::ref_ptr<osg::Group> ground = new osg::Group();
 	osg::ref_ptr<osg::Geode> body = new osg::Geode;
@@ -99,9 +99,6 @@ rsScene::Ground* Scene::drawGround(int type, const double *p, const double *c, c
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
 	pat->addChild(body.get());
 	ground->addChild(pat.get());
-
-	// add update callback
-	//ground->setUpdateCallback(new groundNodeCallback(object));
 
 	// set user properties of node
 	ground->setName("ground");
@@ -177,7 +174,7 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 	return 0;
 }
 
-int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, bool trace) {
+Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, bool trace) {
 	// create new robot
 	osg::Group *group = new osg::Group();
 	double rgb[4] = {0};
@@ -220,8 +217,8 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 	label->setAxisAlignment(osgText::Text::SCREEN);
 	label->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 	label->setCharacterSize(30);
-	label->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	label->setBoundingBoxColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.9f));
+	label->setColor(osg::Vec4(1, 1, 1, 1));
+	label->setBoundingBoxColor(osg::Vec4(0, 0, 0, 0.9));
 	label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 	label->setDrawMode(osgText::Text::TEXT | osgText::Text::FILLEDBOUNDINGBOX);
 	group->insertChild(0, label_geode);
@@ -248,6 +245,7 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 	trackingGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 	trackingGeode->addDrawable(trackingLine);
 	//group->insertChild(1, trackingGeode);
+	group->insertChild(1, label_geode);
 
 	// set user properties of node
 	group->setName("robot");
@@ -259,8 +257,8 @@ int Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const do
 	// add to scenegraph
 	_staging->addChild(group);
 
-	// return position of robot in root node
-	return (_staging->getChildIndex(group));
+	// return robot
+	return group;
 }
 
 osgText::Text* Scene::getHUDText(void) {
@@ -1034,8 +1032,9 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, osg::Group *group, const doub
 	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 		body[i] = new osg::Geode;
 	}
+
 	// get led color
-	robot->getRGB(rgb);
+	rgb = robot->getRGB();
 
 	// body
 	box = new osg::Box(osg::Vec3d(p[0], p[1], p[2]), 0.07835, 0.03935, 0.07250);

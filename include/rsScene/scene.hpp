@@ -30,6 +30,7 @@ extern osg::Node::NodeMask VISIBLE_MASK;
 
 namespace rsScene {
 	typedef osg::Group Ground;
+	typedef osg::Group Robot;
 }
 
 namespace rsScene {
@@ -42,7 +43,7 @@ namespace rsScene {
 
 			Ground* drawGround(int, const double*, const double*, const double*, const double*);
 			int drawMarker(int, const double*, const double*, const double*, int, std::string);
-			int drawRobot(rsRobots::Robot*, int, const double*, const double*, bool);
+			Robot* drawRobot(rsRobots::Robot*, int, const double*, const double*, bool);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			void setDelete(int);

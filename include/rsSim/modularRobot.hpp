@@ -26,6 +26,9 @@ class ModularRobot : virtual public rsSim::Robot {
 
 		int connect(char* = NULL, int = 3);
 
+	public:
+		std::vector<Connector*>& getConnectorList(void);
+	
 	// utility functions for inherited and friend classes
 	protected:
 		int addNeighbor(ModularRobot*, int, int);

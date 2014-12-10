@@ -1578,6 +1578,10 @@ dBodyID Robot::getBodyID(int id) {
 	return _body[id];
 }
 
+dBodyID* Robot::getBodyList(void) {
+	return _body;
+}
+
 double Robot::getCenter(int i) {
 	const double *pos = dBodyGetPosition(_body[0]);
 	const double *R = dBodyGetRotation(_body[0]);

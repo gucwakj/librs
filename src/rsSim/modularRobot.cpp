@@ -32,6 +32,10 @@ int ModularRobot::connect(char *name, int pause) {
 	return 0;
 }
 
+std::vector<Connector*>& ModularRobot::getConnectorList(void) {
+	return _conn;
+}
+
 /**********************************************************
 	protected functions for inherited classes
  **********************************************************/

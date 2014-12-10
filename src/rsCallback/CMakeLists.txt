@@ -33,7 +33,7 @@ set (SRCS ${SRCS}
 	callback.cpp
 	#cubusCallback.cpp
 	groundCallback.cpp
-	#linkbotCallback.cpp
+	linkbotCallback.cpp
 	#mobotCallback.cpp
 	#nxtCallback.cpp
 )

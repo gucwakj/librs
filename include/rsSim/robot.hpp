@@ -146,6 +146,10 @@ class Robot : virtual public rsRobots::Robot {
 		int recordAngles(double*, double**, int, double, int);
 		int recordAnglesBegin(robotRecordData_t&, robotRecordData_t*&, double, int = 1);
 
+	public:
+		dBodyID* getBodyList(void);
+		double getCenter(int);
+
 	// utility functions for inherited and friend classes
 	protected:
 		int addToSim(dWorldID&, dSpaceID&, int, int, rsSim::Sim*);
@@ -153,7 +157,6 @@ class Robot : virtual public rsRobots::Robot {
 		int doze(double);
 		int fixBodyToGround(dBodyID);
 		dBodyID getBodyID(int);
-		double getCenter(int);
 		double getRotation(int, int);
 		double mod_angle(double, double, double);
 		int noisy(double*, int, double);

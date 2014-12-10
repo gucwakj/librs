@@ -6,24 +6,27 @@
 #include <osg/NodeVisitor>
 #include <osg/PositionAttitudeTransform>
 #include <osg/ShapeDrawable>
+#include <osgText/Text>
 
-class CLinkbotT;
+#include <rsSim/linkbot.hpp>
 
 namespace rsCallback {
 
 	class linkbotCallback : public osg::NodeCallback {
 		// public functions
 		public:
-			linkbotCallback(CLinkbotT*, osg::ShapeDrawable*);
+			linkbotCallback(rsSim::CLinkbotT*, dBodyID*, std::vector<rsSim::Connector*>&, bool);
 			virtual ~linkbotCallback(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 
 		// private data
 		private:
-			CLinkbotT *_robot;
-			osg::ShapeDrawable *_led;
+			bool _units;
 			int _count;
+			rsSim::CLinkbotT *_robot;
+			std::vector<rsSim::Connector*> _conn;
+			dBodyID *_bodies;
 	};
 
 } // namespace rsCallback

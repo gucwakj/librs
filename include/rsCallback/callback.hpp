@@ -1,8 +1,6 @@
 #ifndef RSCALLBACK_CALLBACK_HPP_
 #define RSCALLBACK_CALLBACK_HPP_
 
-#include <ode/common.h>
-
 #include <osg/Node>
 #include <osg/NodeVisitor>
 #include <osgText/Text>
@@ -20,7 +18,7 @@ namespace rsCallback {
 			virtual ~Callback(void) {};
 
 			void attachCallback(rsScene::Ground*, rsSim::Ground*);
-			void attachCallback(rsScene::Robot*, rsSim::Robot*, dBodyID *bodies, rsSim::ConnectorList&);
+			void attachCallback(rsScene::Robot*, rsSim::Robot*, rsSim::BodyList&, rsSim::ConnectorList&);
 
 			void setUnits(bool);
 

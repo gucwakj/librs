@@ -31,6 +31,12 @@ namespace rsSim {
 
 namespace rsSim {
 
+	typedef std::vector<dBodyID> BodyList;
+
+}
+
+namespace rsSim {
+
 class Robot : virtual public rsRobots::Robot {
 		// TODO: remove
 		friend class rsSim::Sim;
@@ -147,7 +153,7 @@ class Robot : virtual public rsRobots::Robot {
 		int recordAnglesBegin(robotRecordData_t&, robotRecordData_t*&, double, int = 1);
 
 	public:
-		dBodyID* getBodyList(void);
+		BodyList& getBodyList(void);
 		double getCenter(int);
 
 	// utility functions for inherited and friend classes
@@ -237,13 +243,13 @@ class Robot : virtual public rsRobots::Robot {
 			COND_T success_cond;	// motion successful condition
 		};
 
-		dBodyID *_body;				// body parts
 		dGeomID **_geom;			// geometries of each body part
 		dJointID *_joint;			// joints between body parts
 		dSpaceID _space;			// space for this robot
 		dWorldID _world;			// world for all robots
 		rsSim::Sim *_sim;			// simulation instance
 		std::vector<Motor> _motor;	// motors
+		BodyList _body;				// body parts
 		bool _motion;				// motion in progress
 		double _accel[3];			// accelerometer data
 		double _center[3];			// offset of body from initial (x,y,z)

@@ -817,7 +817,9 @@ int CLinkbotT::build(int id, const double *p, const double *r, const double *a, 
 
 int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double *rot) {
 	// init body parts
-	for (int i = 0; i < NUM_PARTS; i++) { _body[i] = dBodyCreate(_world); }
+	for (int i = 0; i < NUM_PARTS; i++) {
+		_body.push_back(dBodyCreate(_world));
+	}
 	_geom[BODY] = new dGeomID[2];
 	_geom[FACE1] = new dGeomID[1];
 	_geom[FACE2] = new dGeomID[1];
@@ -1086,7 +1088,6 @@ int CLinkbotT::initParams(int disabled) {
 	_dof = 3;
 
 	// create arrays for linkbots
-	_body = new dBodyID[NUM_PARTS];
 	_enabled = new int[(disabled == -1) ? 3 : 2];
 	_geom = new dGeomID * [NUM_PARTS];
 	_joint = new dJointID[_dof];

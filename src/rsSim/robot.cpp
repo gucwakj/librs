@@ -23,7 +23,6 @@ Robot::Robot(rs::JointID leftWheel, rs::JointID rightWheel) : rsRobots::Robot(rs
 
 Robot::~Robot(void) {
 	// delete all arrays
-	delete [] _body;
 	delete [] _enabled;
 	delete [] _geom;
 	delete [] _joint;
@@ -1578,7 +1577,7 @@ dBodyID Robot::getBodyID(int id) {
 	return _body[id];
 }
 
-dBodyID* Robot::getBodyList(void) {
+BodyList& Robot::getBodyList(void) {
 	return _body;
 }
 

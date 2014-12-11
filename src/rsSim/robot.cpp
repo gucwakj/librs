@@ -24,7 +24,6 @@ Robot::Robot(rs::JointID leftWheel, rs::JointID rightWheel) : rsRobots::Robot(rs
 Robot::~Robot(void) {
 	// delete all arrays
 	delete [] _enabled;
-	delete [] _joint;
 
 	// destroy mutexes
 	MUTEX_DESTROY(&_active_mutex);

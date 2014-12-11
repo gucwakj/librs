@@ -220,7 +220,6 @@ class Robot : virtual public rsRobots::Robot {
 			bool success;			// trigger for motion completion
 			bool record;			// recording in progress
 			bool record_active;		// actively recording a new point
-			dJointID id;			// motors
 			double alpha;			// angular acceleration
 			double encoder;			// encoder resolution
 			double goal;			// goal theta value
@@ -238,12 +237,13 @@ class Robot : virtual public rsRobots::Robot {
 			int state;				// state
 			int stopping;			// stopping movement
 			int timeout;			// mode timeout
+			dJointID id;			// motor id
+			dJointID joint;			// joint of the motor
 			Accel accel;			// acceleration variables
 			MUTEX_T success_mutex;	// motion successful mutex
 			COND_T success_cond;	// motion successful condition
 		};
 
-		dJointID *_joint;			// joints between body parts
 		dSpaceID _space;			// space for this robot
 		dWorldID _world;			// world for all robots
 		rsSim::Sim *_sim;			// simulation instance

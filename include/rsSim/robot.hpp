@@ -243,7 +243,6 @@ class Robot : virtual public rsRobots::Robot {
 			COND_T success_cond;	// motion successful condition
 		};
 
-		dGeomID **_geom;			// geometries of each body part
 		dJointID *_joint;			// joints between body parts
 		dSpaceID _space;			// space for this robot
 		dWorldID _world;			// world for all robots

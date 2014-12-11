@@ -21,11 +21,6 @@ CLinkbotT::~CLinkbotT(void) {
 		MUTEX_DESTROY(&_motor[i].success_mutex);
 		COND_DESTROY(&_motor[i].success_cond);
 	}
-
-	// destroy geoms
-	if (_connected) {
-		for (int i = NUM_PARTS - 1; i >= 0; i--) { delete [] _geom[i]; }
-	}
 }
 
 int CLinkbotT::accelJointAngleNB(rs::JointID id, double a, double angle) {
@@ -820,10 +815,13 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 	for (int i = 0; i < NUM_PARTS; i++) {
 		_body.push_back(dBodyCreate(_world));
 	}
-	_geom[BODY] = new dGeomID[2];
-	_geom[FACE1] = new dGeomID[1];
-	_geom[FACE2] = new dGeomID[1];
-	_geom[FACE3] = new dGeomID[1];
+
+	// init geom arrays
+	dGeomID **geom = new dGeomID * [NUM_PARTS];
+	geom[BODY] = new dGeomID[2];
+	geom[FACE1] = new dGeomID[1];
+	geom[FACE2] = new dGeomID[1];
+	geom[FACE3] = new dGeomID[1];
 
     // input angles to radians
 	for (int i = 0; i < _dof; i++) {
@@ -836,10 +834,10 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 	double f3[6] = {_body_width/2 + _face_depth/2, 0, 0, _body_width/2, 0, 0};
 
 	// build robot bodies
-	this->build_body(x, y, z, R, 0);
-	this->build_face(FACE1, R[0]*f1[0] + x, R[4]*f1[0] + y, R[8]*f1[0] + z, R, 0);
-	this->build_face(FACE2, R[1]*f2[1] + x, R[5]*f2[1] + y, R[9]*f2[1] + z, R, 0);
-	this->build_face(FACE3, R[0]*f3[0] + x, R[4]*f3[0] + y, R[8]*f3[0] + z, R, 0);
+	this->build_body(geom[BODY], x, y, z, R, 0);
+	this->build_face(FACE1, geom[FACE1], R[0]*f1[0] + x, R[4]*f1[0] + y, R[8]*f1[0] + z, R, 0);
+	this->build_face(FACE2, geom[FACE2], R[1]*f2[1] + x, R[5]*f2[1] + y, R[9]*f2[1] + z, R, 0);
+	this->build_face(FACE3, geom[FACE3], R[0]*f3[0] + x, R[4]*f3[0] + y, R[8]*f3[0] + z, R, 0);
 
 	// get center of robot offset from body position
 	_center[0] = 0;
@@ -900,9 +898,9 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 
 	// if bodies are rotated, then redraw
 	if ( _motor[rs::JOINT1].theta != 0 || _motor[rs::JOINT2].theta != 0 || _motor[rs::JOINT3].theta != 0 ) {
-		this->build_face(FACE1, R[0]*f1[0] + x, R[4]*f1[0] + y, R[8]*f1[0] + z, R_f1, 0);
-		this->build_face(FACE2, R[1]*f2[1] + x, R[5]*f2[1] + y, R[9]*f2[1] + z, R_f2, 0);
-		this->build_face(FACE3, R[0]*f3[0] + x, R[4]*f3[0] + y, R[8]*f3[0] + z, R_f3, 0);
+		this->build_face(FACE1, geom[FACE1], R[0]*f1[0] + x, R[4]*f1[0] + y, R[8]*f1[0] + z, R_f1, 0);
+		this->build_face(FACE2, geom[FACE1], R[1]*f2[1] + x, R[5]*f2[1] + y, R[9]*f2[1] + z, R_f2, 0);
+		this->build_face(FACE3, geom[FACE1], R[0]*f3[0] + x, R[4]*f3[0] + y, R[8]*f3[0] + z, R_f3, 0);
 	}
 
     // motor for body to face 1
@@ -940,6 +938,10 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 
     // set damping on all bodies to 0.1
     for (int i = 0; i < NUM_PARTS; i++) dBodySetDamping(_body[i], 0.1, 0.1);
+
+	// delete geom arrays
+	for (int i = 0; i < NUM_PARTS; i++) { delete [] geom[i]; }
+	delete [] geom;
 
 	// success
 	return 0;
@@ -1089,7 +1091,6 @@ int CLinkbotT::initParams(int disabled) {
 
 	// create arrays for linkbots
 	_enabled = new int[(disabled == -1) ? 3 : 2];
-	_geom = new dGeomID * [NUM_PARTS];
 	_joint = new dJointID[_dof];
 	_motor.resize(_dof);
 	_neighbor.resize(_dof);
@@ -1486,7 +1487,7 @@ int CLinkbotT::build_bigwheel(Connector *conn, int face, int side, int type) {
 	return 0;
 }
 
-int CLinkbotT::build_body(double x, double y, double z, dMatrix3 R, double theta) {
+int CLinkbotT::build_body(dGeomID *geom, double x, double y, double z, dMatrix3 R, double theta) {
 	// define parameters
 	dMass m, m1, m2;
 	dMatrix3 R1, R2, R3;
@@ -1513,15 +1514,15 @@ int CLinkbotT::build_body(double x, double y, double z, dMatrix3 R, double theta
 	dMultiply0(R2, R1, R3, 3, 3, 3);
 
 	// set geometry 1 - box
-	_geom[BODY][0] = dCreateBox(_space, _body_width, _body_length, _body_height);
-	dGeomSetBody(_geom[BODY][0], _body[BODY]);
-	dGeomSetOffsetPosition(_geom[BODY][0], -m.c[0], -_body_length/2 - m.c[1], -m.c[2]);
+	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
+	dGeomSetBody(geom[0], _body[BODY]);
+	dGeomSetOffsetPosition(geom[0], -m.c[0], -_body_length/2 - m.c[1], -m.c[2]);
 
 	// set geometry 2 - cylinder
-	_geom[BODY][1] = dCreateCylinder(_space, _body_radius, _body_width);
-	dGeomSetBody(_geom[BODY][1], _body[BODY]);
-	dGeomSetOffsetPosition(_geom[BODY][1], -m.c[0], -m.c[1], -m.c[2]);
-	dGeomSetOffsetRotation(_geom[BODY][1], R2);
+	geom[1] = dCreateCylinder(_space, _body_radius, _body_width);
+	dGeomSetBody(geom[1], _body[BODY]);
+	dGeomSetOffsetPosition(geom[1], -m.c[0], -m.c[1], -m.c[2]);
+	dGeomSetOffsetRotation(geom[1], R2);
 
 	// set mass center to (0,0,0) of _bodyID
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
@@ -1724,7 +1725,7 @@ int CLinkbotT::build_cube(Connector *conn, int face, int side, int type) {
 	return 0;
 }
 
-int CLinkbotT::build_face(int id, double x, double y, double z, dMatrix3 R, double theta) {
+int CLinkbotT::build_face(int id, dGeomID *geom, double x, double y, double z, dMatrix3 R, double theta) {
 	// define parameters
 	dMass m;
 	dMatrix3 R1, R2, R3;
@@ -1754,10 +1755,10 @@ int CLinkbotT::build_face(int id, double x, double y, double z, dMatrix3 R, doub
 	dMultiply0(R2, R1, R3, 3, 3, 3);
 
 	// set geometry
-	_geom[id][0] = dCreateCylinder(_space, _face_radius, _face_depth);
-	dGeomSetBody(_geom[id][0], _body[id]);
-	dGeomSetOffsetPosition(_geom[id][0], -m.c[0], -m.c[1], -m.c[2]);
-	dGeomSetOffsetRotation(_geom[id][0], R2);
+	geom[0] = dCreateCylinder(_space, _face_radius, _face_depth);
+	dGeomSetBody(geom[0], _body[id]);
+	dGeomSetOffsetPosition(geom[0], -m.c[0], -m.c[1], -m.c[2]);
+	dGeomSetOffsetRotation(geom[0], R2);
 
 	// set mass center to (0,0,0) of _bodyID
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);

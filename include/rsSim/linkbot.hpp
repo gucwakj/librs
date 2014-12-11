@@ -77,21 +77,21 @@ class CLinkbotT : public rsRobots::LinkbotT, virtual public ModularRobot {
 
 	// private functions
 	private:
-		int add_connector_daisy(int, int, double, int, int);			// add daisy chained connector
-		int build_bigwheel(Connector*, int, int = -1, int = -1);		// build big wheel connector
-		int build_body(double, double, double, dMatrix3, double);		// build body of linkbot
-		int build_bridge(Connector*, int, int = -1, int = -1);			// build bridge connector
-		int build_caster(Connector*, int, int, int = -1, int = -1);		// build caster connector
-		int build_cube(Connector*, int, int = -1, int = -1);			// build cube connector
-		int build_face(int, double, double, double, dMatrix3, double);	// build face of linkbot
-		int build_faceplate(Connector*, int, int = -1, int = -1);		// build faceplate connector
-		int build_gripper(Connector*, int);								// build gripper connector
-		int build_omnidrive(Connector*, int, int = -1, int = -1);		// build omnidrive connector
-		int build_simple(Connector*, int, int = -1, int = -1);			// build simple connector
-		int build_smallwheel(Connector*, int, int = -1, int = -1);		// build small wheel connector
-		int build_tinywheel(Connector*, int, int = -1, int = -1);		// build tiny wheel connector
-		int build_wheel(Connector*, int, double, int = -1, int = -1);	// build custom wheel connector
-		static void* closeGripperNBThread(void*);						// thread to close gripper
+		int add_connector_daisy(int, int, double, int, int);						// add daisy chained connector
+		int build_bigwheel(Connector*, int, int = -1, int = -1);					// build big wheel connector
+		int build_body(dGeomID*, double, double, double, dMatrix3, double);			// build body of linkbot
+		int build_bridge(Connector*, int, int = -1, int = -1);						// build bridge connector
+		int build_caster(Connector*, int, int, int = -1, int = -1);					// build caster connector
+		int build_cube(Connector*, int, int = -1, int = -1);						// build cube connector
+		int build_face(int, dGeomID*, double, double, double, dMatrix3, double);	// build face of linkbot
+		int build_faceplate(Connector*, int, int = -1, int = -1);					// build faceplate connector
+		int build_gripper(Connector*, int);											// build gripper connector
+		int build_omnidrive(Connector*, int, int = -1, int = -1);					// build omnidrive connector
+		int build_simple(Connector*, int, int = -1, int = -1);						// build simple connector
+		int build_smallwheel(Connector*, int, int = -1, int = -1);					// build small wheel connector
+		int build_tinywheel(Connector*, int, int = -1, int = -1);					// build tiny wheel connector
+		int build_wheel(Connector*, int, double, int = -1, int = -1);				// build custom wheel connector
+		static void* closeGripperNBThread(void*);									// thread to close gripper
 
 	// private data
 	private:

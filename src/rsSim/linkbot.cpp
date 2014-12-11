@@ -1097,12 +1097,11 @@ int CLinkbotT::initParams(int disabled) {
 	_dof = 3;
 
 	// create arrays for linkbots
-	_enabled = new int[(disabled == -1) ? 3 : 2];
 	_motor.resize(_dof);
 	_neighbor.resize(_dof);
 
 	// fill with default data
-	for (int i = 0, j = 0; i < _dof; i++) {
+	for (int i = 0; i < _dof; i++) {
 		_motor[i].accel.init = 0;
 		_motor[i].accel.run = 0;
 		_motor[i].accel.period = 0;
@@ -1129,7 +1128,6 @@ int CLinkbotT::initParams(int disabled) {
 		_motor[i].theta = 0;
 		MUTEX_INIT(&_motor[i].success_mutex);
 		COND_INIT(&_motor[i].success_cond);
-		if (i != disabled) { _enabled[j++] = i; }
 	}
 	_connected = 0;
 	_disabled = disabled;
@@ -1193,8 +1191,8 @@ void CLinkbotT::simPreCollisionThread(void) {
 	this->noisy(_accel, 3, 0.005);
 
 	// update angle values for each degree of freedom
-	for (int j = 0; j < ((_disabled == -1) ? 3 : 2); j++) {
-		int i = _enabled[j];
+	for (int i = 0; i < _dof; i++) {
+		if (_disabled == i) continue;
 		// store current angle
 		_motor[i].theta = getAngle(i);
 		// set rotation axis

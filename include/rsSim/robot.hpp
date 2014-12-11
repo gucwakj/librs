@@ -258,7 +258,6 @@ class Robot : virtual public rsRobots::Robot {
 		double _trackwidth;			// trackwidth of robot
 		int _connected;				// connected to controller
 		int _dof;					// number of DOF
-		int *_enabled;				// list of enabled motors
 		int _id;					// robot id
 		int _pos;					// position in simulation
 		int _seed;					// seed for random number generation

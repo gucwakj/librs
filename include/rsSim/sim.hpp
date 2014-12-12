@@ -12,11 +12,11 @@
 #include <rsSim/robot.hpp>
 
 namespace rsSim {
+
+	// typedefs
 	typedef dBodyID Ground;
-} // namespace rsSim
 
-namespace rsSim {
-
+	// class
 	class Sim {
 		// public functions
 		public:

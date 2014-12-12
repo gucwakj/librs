@@ -664,49 +664,14 @@ int CLinkbotT::addConnector(int type, int face, double size) {
 }
 
 int CLinkbotT::build(int id, const double *p, const double *r, const double *a, int ground) {
-	// check for wheels
-	/*for (int i = 0; i < robot->conn.size(); i++) {
-		if (robot->conn[i]->conn == BIGWHEEL) {
-			robot->z += (_bigwheel_radius - _body_height/2);
-			_radius = _bigwheel_radius;
-			break;
-		}
-		else if (robot->conn[i]->conn == SMALLWHEEL) {
-			robot->z += (_smallwheel_radius - _body_height/2);
-			_radius = _smallwheel_radius;
-			break;
-		}
-		else if (robot->conn[i]->conn == TINYWHEEL) {
-			robot->z += (_tinywheel_radius - _body_height/2);
-			_radius = _tinywheel_radius;
-			break;
-		}
-		else if (robot->conn[i]->conn == WHEEL) {
-			robot->z += (robot->conn[i]->size - _body_height/2);
-			_radius = robot->conn[i]->size;
-			if (fabs(robot->z) > (_body_radius-EPSILON)) { robot->z += _body_height/2; }
-			break;
-		}
-	}
-	for (int i = 0; i < robot->conn.size(); i++) {
-		if (robot->conn[i]->conn == CASTER && !static_cast<int>(robot->conn[i]->size))
-			robot->psi += RAD2DEG(atan2(_radius - _smallwheel_radius, 0.08575));
-	}*/
-
 	// create rotation matrix
-	double	sphi = sin(DEG2RAD(r[0])),		cphi = cos(DEG2RAD(r[0])),
-			stheta = sin(DEG2RAD(r[1])),	ctheta = cos(DEG2RAD(r[1])),
-			spsi = sin(DEG2RAD(r[2])),		cpsi = cos(DEG2RAD(r[2]));
-	dMatrix3 R = {cphi*ctheta,	-cphi*stheta*spsi - sphi*cpsi,	-cphi*stheta*cpsi + sphi*spsi,	0,
-				  sphi*ctheta,	-sphi*stheta*spsi + cphi*cpsi,	-sphi*stheta*cpsi - cphi*spsi,	0,
-				  stheta,		ctheta*spsi,					ctheta*cpsi,					0};
+	dMatrix3 R;
+	dQuaternion Q = {r[1], r[2], r[3], r[0]};
+	dRfromQ(R, Q);
 
-	// adjust input height by body height
+	// build
 	double rot[3] = {a[0], a[1], a[2]};
-	if (fabs(p[2]) < (_body_radius - EPSILON))
-		this->buildIndividual(p[0] + R[2]*_body_height/2, p[1] + R[6]*_body_height/2, p[2] + R[10]*_body_height/2, R, rot);
-	else
-		this->buildIndividual(p[0], p[1], p[2], R, rot);
+	this->buildIndividual(p[0], p[1], p[2], R, rot);
 
 	// add connectors
 	/*for (int i = 0; i < robot->conn.size(); i++) {

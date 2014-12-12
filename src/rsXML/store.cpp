@@ -448,8 +448,8 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 	// loop over all nodes
 	while (node) {
 		if (node->ToComment()) {}
-		else if ( !strcmp(node->Value(), "cubus") ) {
-			_robot.push_back(new Robot(rs::CUBUS, _trace));
+		/*else if ( !strcmp(node->Value(), "cubus") ) {
+			_robot.push_back(new Cubus(_trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -475,9 +475,9 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
 			_robot.back()->setGround(i);
-		}
+		}*/
 		else if ( !strcmp(node->Value(), "linkboti") ) {
-			_robot.push_back(new Robot(rs::LINKBOTI, _trace));
+			_robot.push_back(new LinkbotI(_trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -512,7 +512,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			_robot.back()->setGround(i);
 		}
 		else if ( !strcmp(node->Value(), "linkbotl") ) {
-			_robot.push_back(new Robot(rs::LINKBOTL, _trace));
+			_robot.push_back(new LinkbotL(_trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -547,7 +547,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			_robot.back()->setGround(i);
 		}
 		else if ( !strcmp(node->Value(), "linkbott") ) {
-			_robot.push_back(new Robot(rs::LINKBOTT, _trace));
+			_robot.push_back(new LinkbotT(_trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -581,8 +581,8 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
 			_robot.back()->setGround(i);
 		}
-		else if ( !strcmp(node->Value(), "mobot") ) {
-			_robot.push_back(new Robot(rs::MOBOT, _trace));
+		/*else if ( !strcmp(node->Value(), "mobot") ) {
+			_robot.push_back(new Mobot(_trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -606,9 +606,9 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
 			_robot.back()->setGround(i);
-		}
-		else if ( !strcmp(node->Value(), "nxt") ) {
-			_robot.push_back(new Robot(rs::NXT, _trace));
+		}*/
+		/*else if ( !strcmp(node->Value(), "nxt") ) {
+			_robot.push_back(new NXT(_trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -630,7 +630,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
 			_robot.back()->setGround(i);
-		}
+		}*/
 		else {
 			if ( !strcmp(node->Value(), "bigwheel") ) {
 				ctype = rs::BIGWHEEL;
@@ -743,6 +743,11 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 
 		// go to next node
 		node = node->NextSiblingElement();
+	}
+
+	// post process each robot data
+	for (int i = 0; i < _robot.size(); i++) {
+		_robot[i]->postProcess();
 	}
 }
 

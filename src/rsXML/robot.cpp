@@ -2,11 +2,7 @@
 
 using namespace rsXML;
 
-Robot::Robot(void) {
-	Robot(-1, 0);
-}
-
-Robot::Robot(int form, bool trace) {
+Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_a[0] = 0;
 	_a[1] = 0;
 	_a[2] = 0;
@@ -14,7 +10,6 @@ Robot::Robot(int form, bool trace) {
 	_a[4] = 0;
 	_a[5] = 0;
 	_connected = 0;
-	_form = form;
 	_ground = -1;
 	_id = -1;
 	_p[0] = 0;
@@ -42,10 +37,6 @@ int Robot::addConnector(Conn *conn) {
 
 int Robot::getConnect(void) {
 	return _connected;
-}
-
-int Robot::getForm(void) {
-	return _form;
 }
 
 int Robot::getGround(void) {
@@ -132,5 +123,47 @@ void Robot::setRotation(double a, double b, double c) {
 			q3[0]*q2[3]*q1[0] - q3[0]*q2[0]*q1[3] - q3[0]*q2[1]*q1[2] + q3[0]*q2[2]*q1[1] -
 			q3[1]*q2[3]*q1[1] + q3[1]*q2[0]*q1[2] - q3[1]*q2[1]*q1[3] - q3[1]*q2[2]*q1[0] -
 			q3[2]*q2[3]*q1[2] - q3[2]*q2[0]*q1[1] + q3[2]*q2[1]*q1[0] - q3[2]*q2[2]*q1[3];
+}
+
+void LinkbotT::postProcess(void) {
+	// check for wheels
+	for (int i = 0; i < _conn.size(); i++) {
+		if (_conn[i]->getConn() == rs::BIGWHEEL) {
+			_p[2] += (_bigwheel_radius - _body_height/2);
+			_radius = _bigwheel_radius;
+			break;
+		}
+		else if (_conn[i]->getConn() == rs::SMALLWHEEL) {
+			_p[2] += (_smallwheel_radius - _body_height/2);
+			_radius = _smallwheel_radius;
+			break;
+		}
+		else if (_conn[i]->getConn() == rs::TINYWHEEL) {
+			_p[2] += (_tinywheel_radius - _body_height/2);
+			_radius = _tinywheel_radius;
+			break;
+		}
+		else if (_conn[i]->getConn() == rs::WHEEL) {
+			_p[2] += (_conn[i]->getSize() - _body_height/2);
+			_radius = _conn[i]->getSize();
+			break;
+		}
+	}
+
+	// tilt for casters
+	for (int i = 0; i < _conn.size(); i++) {
+		if (_conn[i]->getType() == rs::CASTER && !static_cast<int>(_conn[i]->getSize()))
+			this->setPsi(atan2(_radius - _smallwheel_radius, 0.08575));
+	}
+
+	// adjust height to be above zero
+	if (fabs(_p[2]) < (_body_radius - EPSILON)) {
+		double v[3] = {0, 0, _body_height/2};
+		double uv[3] = {_q[1]*v[2]-_q[2]*v[1], _q[2]*v[0]-_q[0]*v[2], _q[0]*v[1]-_q[1]*v[0]};
+		double uuv[3] = {2*(_q[1]*uv[2]-_q[2]*uv[1]), 2*(_q[2]*uv[0]-_q[0]*uv[2]), 2*(_q[0]*uv[1]-_q[1]*uv[0])};
+		_p[0] += v[0] + 2*_q[3]*uv[0] + uuv[0];
+		_p[1] += v[1] + 2*_q[3]*uv[1] + uuv[1];
+		_p[2] += v[2] + 2*_q[3]*uv[2] + uuv[2];
+	}
 }
 

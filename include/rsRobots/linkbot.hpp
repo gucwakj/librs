@@ -8,7 +8,7 @@ namespace rsRobots {
 	class LinkbotT : virtual public ModularRobot {
 		// public functions
 		public:
-			LinkbotT(int);
+			LinkbotT(int = -1);
 			virtual ~LinkbotT(void) {};
 
 			void getOffsetQuat(int, const double*, double*);

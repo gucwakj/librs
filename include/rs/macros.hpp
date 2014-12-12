@@ -1,6 +1,8 @@
 #ifndef RS_MACROS_HPP_
 #define RS_MACROS_HPP_
 
+#include <cfloat>
+
 #define EPSILON DBL_EPSILON
 #define RECORD_ANGLE_ALLOC_SIZE 16
 #define DEG2RAD(x) ((x) * M_PI / 180.0)

@@ -22,3 +22,31 @@ Conn::Conn(double size, int conn, int face1, int face2, int robot, int side, int
 	_type = type;
 }
 
+double Conn::getSize(void) {
+	return _size;
+}
+
+int Conn::getConn(void) {
+	return _conn;
+}
+
+int Conn::getFace1(void) {
+	return _face1;
+}
+
+int Conn::getFace2(void) {
+	return _face2;
+}
+
+int Conn::getRobot(void) {
+	return _robot;
+}
+
+int Conn::getSide(void) {
+	return _side;
+}
+
+int Conn::getType(void) {
+	return _type;
+}
+

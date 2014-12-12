@@ -12,6 +12,14 @@ namespace rsXML {
 			Conn(double, int, int, int, int, int, int);
 			virtual ~Conn(void) {};
 
+			double getSize(void);
+			int getConn(void);
+			int getFace1(void);
+			int getFace2(void);
+			int getRobot(void);
+			int getSide(void);
+			int getType(void);
+
 		// private data
 		private:
 			double _size;

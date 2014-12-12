@@ -63,6 +63,28 @@ bool Robot::getTrace(void) {
 	return _trace;
 }
 
+void Robot::printDebug(void) {
+	std::cerr << "XML Robot" << std::endl;
+	std::cerr << "form: " << _form << std::endl;
+	std::cerr << "  id: " << _id << std::endl;
+	std::cerr << "p[0]: " << _p[0] << std::endl;
+	std::cerr << "p[1]: " << _p[1] << std::endl;
+	std::cerr << "p[2]: " << _p[2] << std::endl;
+	std::cerr << "q[0]: " << _q[0] << std::endl;
+	std::cerr << "q[1]: " << _q[1] << std::endl;
+	std::cerr << "q[2]: " << _q[2] << std::endl;
+	std::cerr << "q[3]: " << _q[3] << std::endl;
+	std::cerr << "a[0]: " << _a[0] << std::endl;
+	std::cerr << "a[1]: " << _a[1] << std::endl;
+	std::cerr << "a[2]: " << _a[2] << std::endl;
+	std::cerr << "a[3]: " << _a[3] << std::endl;
+	std::cerr << "a[4]: " << _a[4] << std::endl;
+	std::cerr << "a[5]: " << _a[5] << std::endl;
+	for (int i = 0; i < _conn.size(); i++) {
+		_conn[i]->printDebug();
+	}
+}
+
 void Robot::setConnect(int a) {
 	_connected = a;
 }

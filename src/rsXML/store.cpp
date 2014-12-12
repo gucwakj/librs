@@ -745,6 +745,12 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 		node = node->NextSiblingElement();
 	}
 
+	// debug printing
+	std::cerr << "XML Reading Debug List" << std::endl;
+	for (int i = 0; i < _robot.size(); i++) {
+		_robot[i]->printDebug();
+	}
+
 	// post process each robot data
 	for (int i = 0; i < _robot.size(); i++) {
 		_robot[i]->postProcess();

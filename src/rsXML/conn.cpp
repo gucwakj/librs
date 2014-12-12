@@ -50,3 +50,12 @@ int Conn::getType(void) {
 	return _type;
 }
 
+void Conn::printDebug(void) {
+	std::cerr << "XML Conn" << std::endl;
+	std::cerr << "face: " << _face2 << std::endl;
+	std::cerr << "base: " << _robot << std::endl;
+	std::cerr << " fac: " << _face1 << std::endl;
+	std::cerr << "type: " << _type << std::endl;
+	std::cerr << "side: " << _side << std::endl;
+	std::cerr << "conn: " << _conn << std::endl;
+}

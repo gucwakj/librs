@@ -1,6 +1,8 @@
 #ifndef RSXML_CONN_HPP_
 #define RSXML_CONN_HPP_
 
+#include <iostream>
+
 #include <rs/enum.hpp>
 
 namespace rsXML {
@@ -19,6 +21,7 @@ namespace rsXML {
 			int getRobot(void);
 			int getSide(void);
 			int getType(void);
+			void printDebug(void);
 
 		// private data
 		private:

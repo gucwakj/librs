@@ -28,6 +28,7 @@ namespace rsXML {
 			double* getQuaternion(void);
 			bool getTrace(void);
 			virtual void postProcess(void) {};
+			void printDebug(void);
 			void setConnect(int);
 			void setGround(int);
 			void setID(int);

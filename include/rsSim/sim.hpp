@@ -12,9 +12,7 @@
 #include <rsSim/robot.hpp>
 
 namespace rsSim {
-
 	typedef dBodyID Ground;
-
 } // namespace rsSim
 
 namespace rsSim {
@@ -38,52 +36,46 @@ namespace rsSim {
 			double getClock(void);
 			int getCOR(double&, double&);
 			int getMu(double&, double&);
-			int getPause(void);
+			bool getPause(void);
 			double getStep(void);
-			int getUnits(void);
 			int runSimulation(void);
 			int setCollisions(int);
 			int setCOR(double, double);
 			int setMu(double, double);
 			int setPause(int);
 
-		// private functions
-		private:
-			int init_ode(void);								// init function for ode variables
-			int init_sim(int);								// init function for simulation variables
-			static void collision(void*, dGeomID, dGeomID);	// wrapper function for nearCallback to work in class
-			static void* simulation_thread(void*);			// simulation thread function
-
-		// private data
+		// protected data
 		protected:
-			struct Robots {
+			struct Robot {
 				rsSim::Robot *robot;
 				int node;
 				THREAD_T thread;
 			};
 
-			std::vector<Robots*> _robot;	// robots
+			bool _collision;					// flag: perform collisions
+			bool _running;						// flag: simulation running
+			bool _rt;							// flag: run in real time
+			bool _pause;						// flag: paused
+			double _clock;						// clock time of simulation
+			double _friction[2];				// coefficient of friction [body/ground, body/body]
+			double _restitution[2];				// coefficient of restitution [body/ground, body/body]
+			double _step;						// time step of simulation
+			dWorldID _world;					// ode: world
+			dSpaceID _space;					// ode: space for robots
+			dJointGroupID _group;				// ode: joint group
+			std::vector<Robot*> _robot;			// list: robots
+			COND_T _running_cond;				// condition: actively running simulation
+			MUTEX_T _clock_mutex;				// mutex: getting the clock
+			MUTEX_T _pause_mutex;				// mutex: paused simulation
+			MUTEX_T _robot_mutex;				// mutex: ground collisions
+			MUTEX_T _running_mutex;				// mutex: actively running program
+			MUTEX_T _step_mutex;				// mutex: getting the step value
+			THREAD_T _simulation;				// thread: simulation
 
-			dWorldID _world;				// world in which simulation occurs
-			dSpaceID _space;				// space for robots in which to live
-			dJointGroupID _group;			// group to store joints
-			bool _collision;				// check to perform collisions
-			double _clock;					// clock time of simulation
-			double _cor[2];					// coefficient of restitution [body/ground, body/body]
-			double _mu[2];					// coefficient of friction [body/ground, body/body]
-			double _step;					// time of each step of simulation
-			int _pause;						// is the simulation paused
-			int _preconfig;					// preconfigured robot shape or not
-			int _rt;						// whether to run at real time speeds
-			int _running;					// is the program running
-			int _us;						// us customary units
-			COND_T _running_cond;			// condition for actively running program
-			MUTEX_T _clock_mutex;			// mutex for getting the clock
-			MUTEX_T _pause_mutex;			// mutex for paused simulation
-			MUTEX_T _robot_mutex;			// mutex for ground collisions
-			MUTEX_T _running_mutex;			// mutex for actively running program
-			MUTEX_T _step_mutex;			// mutex for getting the step value
-			THREAD_T _simulation;			// simulation thread
+		// private functions
+		private:
+			static void collision(void*, dGeomID, dGeomID);	// wrapper function for nearCallback to work in class
+			static void* simulation_thread(void*);			// simulation thread function
 	};
 
 } // namespace rsSim

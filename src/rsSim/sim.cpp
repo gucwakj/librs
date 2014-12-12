@@ -3,15 +3,50 @@
 using namespace rsSim;
 
 Sim::Sim(int pause) {
-	init_ode();
-	init_sim(pause);
+	// create ODE simulation space
+	dInitODE2(0);										// initialized ode library
+	_world = dWorldCreate();							// create world for simulation
+	_space = dHashSpaceCreate(0);						// create space for robots
+	_group = dJointGroupCreate(0);						// create group for joints
+	dGeomID geom = dCreatePlane(_space, 0, 0, 1, 0);	// ground plane
+
+	// simulation parameters
+	dWorldSetAutoDisableFlag(_world, 1);				// auto-disable bodies that are not moving
+	dWorldSetAutoDisableAngularThreshold(_world, 0.01);	// threshold velocity for defining movement
+	dWorldSetAutoDisableLinearThreshold(_world, 0.01);	// linear velocity threshold
+	dWorldSetAutoDisableSteps(_world, 4);				// number of steps below thresholds before stationary
+	dWorldSetContactSurfaceLayer(_world, 0.01);			// depth each body can sink into another body before resting
+	dWorldSetGravity(_world, 0, 0, -9.81);				// gravity
+
+	// default collision parameters
+	_friction[0] = 0.9;									// friction body/ground
+	_friction[1] = 0.6;									// friction body/body
+	_restitution[0] = 0.3;								// restitution body/ground
+	_restitution[1] = 0.3;								// restitution body/body
+
+	// simulation variables
+	_clock = 0;											// start clock
+	_collision = true;									// perform inter-robot collisions
+	_pause = true;										// start paused
+	_rt = true;											// real time
+	_running = true;									// is simulation running
+	_step = 0.004;										// initial time step
+
+	// thread variables
+	MUTEX_INIT(&_clock_mutex);
+	MUTEX_INIT(&_pause_mutex);
+	MUTEX_INIT(&_robot_mutex);
+	MUTEX_INIT(&_running_mutex);
+	MUTEX_INIT(&_step_mutex);
+	COND_INIT(&_running_cond);
+	THREAD_CREATE(&_simulation, (void* (*)(void *))&Sim::simulation_thread, this);
 }
 
 Sim::~Sim(void) {
 std::cerr << "deleting Sim" << std::endl;
 	// remove simulation
 	MUTEX_LOCK(&_running_mutex);
-	_running = 0;
+	_running = false;
 	MUTEX_UNLOCK(&_running_mutex);
 	THREAD_JOIN(_simulation);
 	COND_DESTROY(&_running_cond);
@@ -31,54 +66,6 @@ std::cerr << "deleting Sim" << std::endl;
 	for (int i = 0; i < _robot.size(); i++) {
 		delete _robot[i];
 	}
-}
-
-/**********************************************************
-	Initialization functions
- **********************************************************/
-int Sim::init_ode(void) {
-	// create ODE simulation space
-	dInitODE2(0);										// initialized ode library
-	_world = dWorldCreate();							// create world for simulation
-	_space = dHashSpaceCreate(0);						// create space for robots
-	_group = dJointGroupCreate(0);						// create group for joints
-	dGeomID geom = dCreatePlane(_space, 0, 0, 1, 0);	// ground plane
-
-	// simulation parameters
-	dWorldSetAutoDisableFlag(_world, 1);				// auto-disable bodies that are not moving
-	dWorldSetAutoDisableAngularThreshold(_world, 0.01);	// threshold velocity for defining movement
-	dWorldSetAutoDisableLinearThreshold(_world, 0.01);	// linear velocity threshold
-	dWorldSetAutoDisableSteps(_world, 4);				// number of steps below thresholds before stationary
-	dWorldSetContactSurfaceLayer(_world, 0.01);			// depth each body can sink into another body before resting
-	dWorldSetGravity(_world, 0, 0, -9.81);				// gravity
-
-	// success
-	return 0;
-}
-
-int Sim::init_sim(int pause) {
-	// default collision parameters
-	_mu[0] = 0.9;	_mu[1] = 0.6;
-	_cor[0] = 0.3;	_cor[1] = 0.3;
-
-	// thread variables
-	MUTEX_INIT(&_clock_mutex);
-	MUTEX_INIT(&_pause_mutex);
-	MUTEX_INIT(&_robot_mutex);
-	MUTEX_INIT(&_running_mutex);
-	MUTEX_INIT(&_step_mutex);
-	COND_INIT(&_running_cond);
-	THREAD_CREATE(&_simulation, (void* (*)(void *))&Sim::simulation_thread, this);
-
-	// variables to keep track of progress of simulation
-	_running = 1;			// is simulation running
-	_pause = 1;				// start paused
-    _step = 0.004;			// initial time step
-	_clock = 0;				// start clock
-	_collision = true;		// perform inter-robot collisions
-
-	// success
-	return 0;
 }
 
 /**********************************************************
@@ -309,7 +296,7 @@ int Sim::addRobot3(rsSim::ModularRobot *robot, int id, const double *p, const do
 	MUTEX_LOCK(&_robot_mutex);
 
 	// create new robot
-	_robot.push_back(new Robots());
+	_robot.push_back(new Robot());
 	_robot.back()->robot = robot;
 
 	// get form of new robot
@@ -431,7 +418,7 @@ int Sim::deleteRobot(int loc) {
 }
 
 void Sim::done(void) {
-	SIGNAL(&_running_cond, &_running_mutex, _running = 0);
+	SIGNAL(&_running_cond, &_running_mutex, _running = false);
 }
 
 double Sim::getClock(void) {
@@ -442,24 +429,24 @@ double Sim::getClock(void) {
 }
 
 int Sim::getCOR(double &robot, double &ground) {
-	robot = _cor[0];
-	ground = _cor[1];
+	robot = _restitution[0];
+	ground = _restitution[1];
 
 	// success
 	return 0;
 }
 
 int Sim::getMu(double &robot, double &ground) {
-	robot = _mu[0];
-	ground = _mu[1];
+	robot = _friction[0];
+	ground = _friction[1];
 
 	// success
 	return 0;
 }
 
-int Sim::getPause(void) {
+bool Sim::getPause(void) {
 	MUTEX_LOCK(&_pause_mutex);
-	int pause = _pause;
+	bool pause = _pause;
 	MUTEX_UNLOCK(&_pause_mutex);
 	return pause;
 }
@@ -469,11 +456,6 @@ double Sim::getStep(void) {
 	double step = _step;
 	MUTEX_UNLOCK(&_step_mutex);
 	return step;
-}
-
-// TODO: implement function
-int Sim::getUnits(void) {
-	return 0;
 }
 
 int Sim::runSimulation(void) {
@@ -505,16 +487,16 @@ int Sim::setCollisions(int mode) {
 }
 
 int Sim::setCOR(double robot, double ground) {
-	_cor[0] = robot;
-	_cor[1] = ground;
+	_restitution[0] = robot;
+	_restitution[1] = ground;
 
 	// success
 	return 0;
 }
 
 int Sim::setMu(double robot, double ground) {
-	_mu[0] = robot;
-	_mu[1] = ground;
+	_friction[0] = robot;
+	_friction[1] = ground;
 
 	// success
 	return 0;
@@ -527,13 +509,13 @@ int Sim::setPause(int mode) {
 	// switch pause variable
 	switch (mode) {
 		case 0:
-			_pause = 0;
+			_pause = false;
 			break;
 		case 1:
-			_pause = 1;
+			_pause = true;
 			break;
 		case 2:
-			_pause = _pause ? 0: 1;
+			_pause = _pause ? false : true;
 			break;
 	}
 
@@ -596,7 +578,7 @@ void* Sim::simulation_thread(void *arg) {
 			// perform pre-collision updates
 			MUTEX_LOCK(&(sim->_robot_mutex));
 			for (int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_CREATE(&(sim->_robot[j]->thread), (void* (*)(void *))&Robot::simPreCollisionThreadEntry, (void *)sim->_robot[j]->robot);
+				THREAD_CREATE(&(sim->_robot[j]->thread), (void* (*)(void *))&rsSim::Robot::simPreCollisionThreadEntry, (void *)sim->_robot[j]->robot);
 			}
 			for (int j = 0; j < sim->_robot.size(); j++) {
 				THREAD_JOIN(sim->_robot[j]->thread);
@@ -612,7 +594,7 @@ void* Sim::simulation_thread(void *arg) {
 
 			// perform post-collision updates
 			for (int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_CREATE(&(sim->_robot[j]->thread), (void* (*)(void *))&Robot::simPostCollisionThreadEntry, (void *)sim->_robot[j]->robot);
+				THREAD_CREATE(&(sim->_robot[j]->thread), (void* (*)(void *))&rsSim::Robot::simPostCollisionThreadEntry, (void *)sim->_robot[j]->robot);
 			}
 			for (int j = 0; j < sim->_robot.size(); j++) {
 				THREAD_JOIN(sim->_robot[j]->thread);
@@ -720,12 +702,12 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 		dContact contact[8] = {0};
 		for ( int i = 0; i < dCollide(o1, o2, 8, &contact[0].geom, sizeof(dContact)); i++ ) {
 			if ( dGeomGetSpace(o1) == ptr->_space || dGeomGetSpace(o2) == ptr->_space ) {
-				contact[i].surface.mu = ptr->_mu[0];
-				contact[i].surface.bounce = ptr->_cor[0];
+				contact[i].surface.mu = ptr->_friction[0];
+				contact[i].surface.bounce = ptr->_restitution[0];
 			}
 			else {
-				contact[i].surface.mu = ptr->_mu[1];
-				contact[i].surface.bounce = ptr->_cor[1];
+				contact[i].surface.mu = ptr->_friction[1];
+				contact[i].surface.bounce = ptr->_restitution[1];
 			}
 			contact[i].surface.mode = dContactBounce | dContactApprox1;
 			dJointAttach( dJointCreateContact(ptr->_world, ptr->_group, contact + i), b1, b2);

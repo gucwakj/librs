@@ -1536,10 +1536,10 @@ double Robot::convert(double value, int tometer) {
 		tmp = ((g_sim->getUnits()) ? value/39.370 : value/100);
 	else
 		tmp = ((g_sim->getUnits()) ? value*39.370 : value*100);*/
-	if (tometer)
+	/*if (tometer)
 		tmp = ((_sim->getUnits()) ? value/39.370 : value/100);
 	else
-		tmp = ((_sim->getUnits()) ? value*39.370 : value*100);
+		tmp = ((_sim->getUnits()) ? value*39.370 : value*100);*/
 
 	return tmp;
 }

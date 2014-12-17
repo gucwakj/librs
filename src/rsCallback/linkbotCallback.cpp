@@ -71,9 +71,9 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 				p[0] = pos[0]; p[1] = pos[1]; p[2] = pos[2];
 				Q[0] = quat[0]; Q[1] = quat[1]; Q[2] = quat[2]; Q[3] = quat[3];
 			}
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(7 + i++));
+			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsRobots::LinkbotT::NUM_PARTS + i));
 			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-			pat->setAttitude(osg::Quat(Q[1], Q[2], Q[3], Q[0]));
+			pat->setAttitude(osg::Quat(Q[3], Q[0], Q[1], Q[2]));
 		}
 	}
 	traverse(node, nv);

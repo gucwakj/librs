@@ -681,6 +681,7 @@ int CLinkbotT::addConnector(int type, int face, double size, int side, int conn)
 			case rs::CASTER:
 				_conn.back()->d_side = -10*size;
 				this->build_caster(_conn.back(), face, static_cast<int>(size), side, type);
+				_conn.back()->d_side = side;
 				break;
 			case rs::CUBE:
 				this->build_cube(_conn.back(), face, side, type);

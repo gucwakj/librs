@@ -15,7 +15,6 @@ namespace rsSim {
 	// connector struct
 	struct Connector {
 		dBodyID body;
-		dGeomID *geom;
 		double o[3];
 		int face, type;
 		int d_side, d_type;

@@ -11,6 +11,11 @@ namespace rsRobots {
 			ModularRobot(void) : Robot(rs::ROBOT) {};
 			virtual ~ModularRobot(void) {};
 
+		// for inherited classes
+		public:
+			void getConnBodyOffset(int, const double*, const double*, double*, double*) {};
+			void getConnFaceOffset(int, int, const double*, const double*, double*, double*) {};
+
 		// data
 		protected:
 			double _conn_depth;

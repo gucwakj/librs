@@ -10,7 +10,7 @@
 namespace rsSim {
 
 	// class
-	class CLinkbotT : public rsRobots::LinkbotT, virtual public ModularRobot {
+	class CLinkbotT : virtual public rsRobots::LinkbotT, virtual public ModularRobot {
 			friend class Sim;
 		// public api
 		public:
@@ -57,17 +57,19 @@ namespace rsSim {
 			int turnLeftNB(double, double, double);
 			int turnRightNB(double, double, double);
 
-		// inherited functions from ModularRobot class
-		private:
-			virtual int addConnector(int, int, double);
-			virtual int build(rsXML::Robot*, dMatrix3, double*, dBodyID, rsXML::Conn*) { return 0; };
-			virtual int fixBodyToConnector(dBodyID, int);
-			virtual int fixConnectorToBody(int, dBodyID, int = -1);
+		public:
 			virtual int getConnectorParams(int, int, dMatrix3, double*);
 			virtual int getFaceParams(int, dMatrix3, double*);
 
+		// inherited functions from ModularRobot class
+		protected:
+			virtual int addConnector(int, int, double, int, int);
+			virtual int build(rsXML::Robot*, dMatrix3, double*, dBodyID, rsXML::Conn*) { return 0; };
+			virtual int fixBodyToConnector(dBodyID, int);
+			virtual int fixConnectorToBody(int, dBodyID, int = -1);
+
 		// inherited functions from Robot class
-		private:
+		protected:
 			virtual int build(int, const double*, const double*, const double*, int);
 			virtual int buildIndividual(double, double, double, dMatrix3, double*);
 			virtual double getAngle(int);
@@ -78,7 +80,6 @@ namespace rsSim {
 
 		// private functions
 		private:
-			int add_connector_daisy(int, int, double, int, int);						// add daisy chained connector
 			int build_bigwheel(Connector*, int, int = -1, int = -1);					// build big wheel connector
 			int build_body(dGeomID*, double, double, double, dMatrix3, double);			// build body of linkbot
 			int build_bridge(Connector*, int, int = -1, int = -1);						// build bridge connector

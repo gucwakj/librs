@@ -35,6 +35,10 @@ int Robot::addConnector(Conn *conn) {
 	return 0;
 }
 
+ConnectorList& Robot::getConnectorList(void) {
+	return _conn;
+}
+
 int Robot::getConnect(void) {
 	return _connected;
 }

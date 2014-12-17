@@ -1,6 +1,7 @@
 #ifndef RSSIM_MODULARROBOT_HPP_
 #define RSSIM_MODULARROBOT_HPP_
 
+#include <rsRobots/modularRobot.hpp>
 #include <rsSim/robot.hpp>
 
 // TODO: remove
@@ -23,7 +24,7 @@ namespace rsSim {
 	// typedefs
 	typedef std::vector<Connector*> ConnectorList;
 
-	class ModularRobot : virtual public rsSim::Robot {
+	class ModularRobot : virtual public rsRobots::ModularRobot, virtual public rsSim::Robot {
 			// TODO: remove
 			friend class Sim;
 
@@ -36,7 +37,10 @@ namespace rsSim {
 
 		// undocumented public functions
 		public:
-			std::vector<Connector*>& getConnectorList(void);
+			ConnectorList& getConnectorList(void);
+			virtual int addConnector(int, int, double, int, int) = 0;
+			virtual int getConnectorParams(int, int, dMatrix3, double*) = 0;
+			virtual int getFaceParams(int, dMatrix3, double*) = 0;
 
 		// utility functions
 		protected:
@@ -50,12 +54,9 @@ namespace rsSim {
 
 		// virual functions for inherited classes
 		protected:
-			virtual int addConnector(int, int, double) = 0;
 			virtual int build(rsXML::Robot*, dMatrix3, double*, dBodyID, rsXML::Conn*) = 0;
 			virtual int fixBodyToConnector(dBodyID, int) = 0;
 			virtual int fixConnectorToBody(int, dBodyID, int = -1) = 0;
-			virtual int getConnectorParams(int, int, dMatrix3, double*) = 0;
-			virtual int getFaceParams(int, dMatrix3, double*) = 0;
 
 		// virtual functions from Robot class
 		protected:

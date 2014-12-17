@@ -12,6 +12,9 @@
 
 namespace rsXML {
 
+	// typedefs
+	typedef std::vector<Conn*> ConnectorList;
+
 	// classes
 	class Robot : virtual public rsRobots::Robot {
 		// public functions
@@ -20,6 +23,7 @@ namespace rsXML {
 			virtual ~Robot(void);
 
 			int addConnector(Conn*);
+			ConnectorList& getConnectorList(void);
 			int getConnect(void);
 			int getGround(void);
 			int getID(void);
@@ -39,7 +43,6 @@ namespace rsXML {
 
 		// data
 		protected:
-			std::vector<Conn*> _conn;
 			double _a[6];
 			double _p[3];
 			double _q[4];
@@ -47,6 +50,7 @@ namespace rsXML {
 			int _ground;
 			int _id;
 			int _trace;
+			ConnectorList _conn;
 	};
 	class LinkbotT : virtual public rsRobots::LinkbotT, public Robot {
 		public:

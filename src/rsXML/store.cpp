@@ -729,8 +729,10 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			// store connectors to each robot
 			for (int j = 0; j < i; j++) {
 				for (int k = 0; k < _robot.size(); k++) {
-					if (_robot[k]->getID() == rtmp[j])
+					if (_robot[k]->getID() == rtmp[j]) {
 						_robot[k]->addConnector(new Conn(size, atmp[j], ftmp[0], ftmp[j], rtmp[0], ntmp[j], ctype));
+						break;
+					}
 				}
 			}
 

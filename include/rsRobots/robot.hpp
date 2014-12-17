@@ -19,9 +19,13 @@ namespace rsRobots {
 
 			int getForm(void);
 			int getID(void);
-			void getOffsetPos(int, const double*, double*);
 			double* getRGB(void);
 			void setTrace(bool);
+
+		// for inherited classes
+		public:
+			void getRobotBodyOffset(int, const double*, const double*, double*, double*) {};
+			void getRobotFaceOffset(int, const double*, const double*, double*, double*) {};
 
 		// data
 		protected:

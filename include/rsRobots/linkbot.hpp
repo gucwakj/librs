@@ -11,7 +11,12 @@ namespace rsRobots {
 			LinkbotT(int = -1);
 			virtual ~LinkbotT(void) {};
 
-			void getOffsetQuat(int, const double*, double*);
+		// inherited functions
+		public:
+			void getConnBodyOffset(int, const double*, const double*, double*, double*);
+			void getConnFaceOffset(int, int, const double*, const double*, double*, double*);
+			void getRobotBodyOffset(int, const double*, const double*, double*, double*);
+			void getRobotFaceOffset(int, const double*, const double*, double*, double*);
 
 		// enumerations
 		public:

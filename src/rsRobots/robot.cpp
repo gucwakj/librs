@@ -26,12 +26,6 @@ int Robot::getID(void) {
 	return _id;
 }
 
-void Robot::getOffsetPos(int body, const double *p, double *p1) {
-	p1[0] = p[0] + _offset[body].x;
-	p1[1] = p[1] + _offset[body].y;
-	p1[2] = p[2] + _offset[body].z;
-}
-
 double* Robot::getRGB(void) {
 	return _rgb;
 }

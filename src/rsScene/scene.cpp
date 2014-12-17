@@ -56,6 +56,26 @@ std::cerr << "deleting Scene" << std::endl;
 /**********************************************************
 	public functions
  **********************************************************/
+void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type, int face, double size, int side, int conn) {
+	switch (robot->getForm()) {
+		case rs::CUBUS:
+			//this->drawCubus(dynamic_cast<rsRobots::Cubus*>(robot), p, q, trace, rgb);
+			break;
+		case rs::LINKBOTI:
+			this->draw_linkbot_conn(dynamic_cast<rsRobots::LinkbotI*>(robot), group, type, face, size, side, conn);
+			break;
+		case rs::LINKBOTL:
+			this->draw_linkbot_conn(dynamic_cast<rsRobots::LinkbotL*>(robot), group, type, face, size, side, conn);
+			break;
+		case rs::LINKBOTT:
+			this->draw_linkbot_conn(dynamic_cast<rsRobots::LinkbotT*>(robot), group, type, face, size, side, conn);
+			break;
+		case rs::MOBOT:
+			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
+			break;
+	}
+}
+
 Ground* Scene::drawGround(int type, const double *p, const double *c, const double *l, const double *q) {
 	// create ground objects
 	osg::ref_ptr<osg::Group> ground = new osg::Group();
@@ -1022,55 +1042,59 @@ void Scene::start(int pause) {
 	return 0;
 }*/
 
-int Scene::draw_linkbot(rsRobots::LinkbotT *robot, osg::Group *group, const double *p, const double *q, bool trace, double *rgb) {
+void Scene::draw_linkbot(rsRobots::LinkbotT *robot, Robot *group, const double *p, const double *q, bool trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Geode> body[rsRobots::LinkbotT::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsRobots::LinkbotT::NUM_PARTS];
 	osg::Box *box;
 	osg::Cylinder *cyl;
 	double p1[3], q1[4];
+
+	// build bodies
 	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 		body[i] = new osg::Geode;
+		pat[i] = new osg::PositionAttitudeTransform;
+		pat[i]->addChild(body[i]);
+		group->addChild(pat[i].get());
 	}
 
 	// get led color
 	rgb = robot->getRGB();
 
 	// body
-	box = new osg::Box(osg::Vec3d(p[0], p[1], p[2]), 0.07835, 0.03935, 0.07250);
-	box->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
-	body[0]->addDrawable(new osg::ShapeDrawable(box));
-	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), 0.03625, 0.07835);
-	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
-	body[0]->addDrawable(new osg::ShapeDrawable(cyl));
+	box = new osg::Box(osg::Vec3d(0, 0, 0), 0.07835, 0.03935, 0.07250);
+	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.03625, 0.07835);
+	body[rsRobots::LinkbotT::BODY]->addDrawable(new osg::ShapeDrawable(box));
+	body[rsRobots::LinkbotT::BODY]->addDrawable(new osg::ShapeDrawable(cyl));
+	pat[rsRobots::LinkbotT::BODY]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat[rsRobots::LinkbotT::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// 'led'
-	cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2] + 0.0001), 0.01, 0.07250);
-	cyl->setRotation(osg::Quat(q[0], q[1], q[2], q[3]));
+	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0 + 0.0001), 0.01, 0.07250);
 	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
 	led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1));
-	body[0]->addDrawable(led);
+	body[rsRobots::LinkbotT::BODY]->addDrawable(led);
 
 	// face1
-	robot->getOffsetPos(rsRobots::LinkbotT::FACE1, p, p1);
-	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), 0.03060, 0.00200);
-	robot->getOffsetQuat(rsRobots::LinkbotT::FACE1, q, q1);
-	cyl->setRotation(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
-	body[1]->addDrawable(new osg::ShapeDrawable(cyl));
+	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE1, p, q, p1, q1);
+	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.03060, 0.00200);
+	body[rsRobots::LinkbotT::FACE1]->addDrawable(new osg::ShapeDrawable(cyl));
+	pat[rsRobots::LinkbotT::FACE1]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	pat[rsRobots::LinkbotT::FACE1]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 
 	// face 2
-	robot->getOffsetPos(rsRobots::LinkbotT::FACE2, p, p1);
-	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), 0.03060, 0.00200);
-	robot->getOffsetQuat(rsRobots::LinkbotT::FACE2, q, q1);
-	cyl->setRotation(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
-	body[2]->addDrawable(new osg::ShapeDrawable(cyl));
+	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE2, p, q, p1, q1);
+	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.03060, 0.00200);
+	body[rsRobots::LinkbotT::FACE2]->addDrawable(new osg::ShapeDrawable(cyl));
+	pat[rsRobots::LinkbotT::FACE2]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	pat[rsRobots::LinkbotT::FACE2]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 
 	// face 3
-	robot->getOffsetPos(rsRobots::LinkbotT::FACE3, p, p1);
-	cyl = new osg::Cylinder(osg::Vec3d(p1[0], p1[1], p1[2]), 0.03060, 0.00200);
-	robot->getOffsetQuat(rsRobots::LinkbotT::FACE3, q, q1);
-	cyl->setRotation(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
-	body[3]->addDrawable(new osg::ShapeDrawable(cyl));
+	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE3, p, q, p1, q1);
+	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.03060, 0.00200);
+	body[rsRobots::LinkbotT::FACE3]->addDrawable(new osg::ShapeDrawable(cyl));
+	pat[rsRobots::LinkbotT::FACE3]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	pat[rsRobots::LinkbotT::FACE3]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 
 	// apply texture to robot
 	osg::ref_ptr<osg::Texture2D> tex[2];
@@ -1095,158 +1119,156 @@ int Scene::draw_linkbot(rsRobots::LinkbotT *robot, osg::Group *group, const doub
 			break;
 	}
 
-	// rendering and positioning
+	// rendering
 	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 		// set rendering properties
 		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-		// position each body within robot
-		pat[i] = new osg::PositionAttitudeTransform;
-		pat[i]->addChild(body[i].get());
-		group->addChild(pat[i].get());
 	}
 
-	// add connectors
-	/*for (int i = 0; i < robot->_conn.size(); i++) {
-		// initialize variables
-		dMatrix3 R;
-		dQuaternion Q;
-		double p[3] = {0};
+	// set tracking
+	robot->setTrace(trace);
+}
 
-		// get connection parameters
-		robot->getFaceParams(robot->_conn[i]->face, R, p);
-		dRtoQ(R, Q);
-		if (robot->_conn[i]->d_side <= -10) {
-			// initialize variables
-			osg::ref_ptr<osg::Geode> body = new osg::Geode;
-			osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
-			const double *pos;
-			dQuaternion quat;
-			osg::Box *box;
-			osg::Cylinder *cyl;
-			osg::Sphere *sph;
-			double	depth = robot->_conn_depth,
-					width = 1.5*robot->_face_radius,
-					height = robot->_body_height;
+void Scene::draw_linkbot_conn(rsRobots::LinkbotT *robot, Robot *group, int type, int face, double size, int side, int conn) {
+	// get robot p&q
+	osg::PositionAttitudeTransform *pat;
+	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsRobots::LinkbotT::BODY));
+	osg::Vec3d p = pat->getPosition();
+	osg::Quat q = pat->getAttitude();
+	double p1[3], p2[3], q1[4], q2[4];
 
-			pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[0]);
-			dGeomGetOffsetQuaternion(robot->_conn[i]->geom[0], quat);
-			box = new osg::Box(osg::Vec3d(pos[0], pos[1], pos[2]), depth, width, height);
-			box->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-			body->addDrawable(new osg::ShapeDrawable(box));
-			pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[1]);
-			dGeomGetOffsetQuaternion(robot->_conn[i]->geom[1], quat);
-			box = new osg::Box(osg::Vec3d(pos[0], pos[1], pos[2]), 0.02, 0.022, 0.0032);
-			box->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-			body->addDrawable(new osg::ShapeDrawable(box));
-			pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[2]);
-			dGeomGetOffsetQuaternion(robot->_conn[i]->geom[2], quat);
-			cyl = new osg::Cylinder(osg::Vec3d(pos[0], pos[1], pos[2]), 0.011, robot->_radius - robot->_face_radius - 0.006 + 0.0032);
-			cyl->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-			body->addDrawable(new osg::ShapeDrawable(cyl));
-			pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[3]);
-			dGeomGetOffsetQuaternion(robot->_conn[i]->geom[3], quat);
-			sph = new osg::Sphere(osg::Vec3d(pos[0], pos[1], pos[2]), 0.006);
-			body->addDrawable(new osg::ShapeDrawable(sph));
+	// get face p&q
+	dynamic_cast<rsRobots::LinkbotI *>(robot)->getRobotFaceOffset(face, p.ptr(), q.asVec4().ptr(), p1, q1);
+	if (side <= -10) {
+		/* // initialize variables
+		osg::ref_ptr<osg::Geode> body = new osg::Geode;
+		osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
+		dQuaternion quat;
+		osg::Box *box;
+		osg::Cylinder *cyl;
+		osg::Sphere *sph;
+		double	depth = robot->_conn_depth,
+				width = 1.5*robot->_face_radius,
+				height = robot->_body_height;
 
-			// apply texture
-			osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/conn.png"));
-			tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-			tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
-			tex->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-			tex->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
-			pat->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
-
-			// set rendering
-			body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-			body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-
-			// add body to pat
-			pat->addChild(body.get());
-			// set user properties of node
-			body->setName("connector");
-			// add to scenegraph
-			_robot.back()->robot->addChild(pat);
-			return 0;
-		}
-		else if (robot->_conn[i]->d_side != -1) robot->getConnectorParams(robot->_conn[i]->d_type, robot->_conn[i]->d_side, R, p);
-
-		// PAT to transform mesh
-		osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
-		transform->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-		transform->setAttitude(osg::Quat(Q[1], Q[2], Q[3], Q[0]));
-
-		// create node to hold mesh
-		osg::ref_ptr<osg::Node> node;
-		switch (robot->_conn[i]->type) {
-			case rs::BIGWHEEL:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/bigwheel.3ds");
-				break;
-			case rs::BRIDGE:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/bridge.3ds");
-				break;
-			case rs::CASTER:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/caster.3ds");
-				break;
-			case rs::CUBE:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/cube.3ds");
-				break;
-			case rs::FACEPLATE:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/faceplate.3ds");
-				break;
-			case rs::GRIPPER:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/gripper.3ds");
-				break;
-			case rs::OMNIDRIVE:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/omnidrive.3ds");
-				break;
-			case rs::SIMPLE:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/simple.3ds");
-				break;
-			case rs::SMALLWHEEL:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/smallwheel.3ds");
-				break;
-			case rs::TINYWHEEL:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
-				break;
-			case rs::WHEEL:
-				node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
-				transform->setScale(osg::Vec3d(1, robot->_wheel_radius/robot->_tinywheel_radius, robot->_wheel_radius/robot->_tinywheel_radius));
-				break;
-		}
-		node->setCullingActive(false);
+		pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[0]);
+		dGeomGetOffsetQuaternion(robot->_conn[i]->geom[0], quat);
+		box = new osg::Box(osg::Vec3d(pos[0], pos[1], pos[2]), depth, width, height);
+		box->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+		body->addDrawable(new osg::ShapeDrawable(box));
+		pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[1]);
+		dGeomGetOffsetQuaternion(robot->_conn[i]->geom[1], quat);
+		box = new osg::Box(osg::Vec3d(pos[0], pos[1], pos[2]), 0.02, 0.022, 0.0032);
+		box->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+		body->addDrawable(new osg::ShapeDrawable(box));
+		pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[2]);
+		dGeomGetOffsetQuaternion(robot->_conn[i]->geom[2], quat);
+		cyl = new osg::Cylinder(osg::Vec3d(pos[0], pos[1], pos[2]), 0.011, robot->_radius - robot->_face_radius - 0.006 + 0.0032);
+		cyl->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+		body->addDrawable(new osg::ShapeDrawable(cyl));
+		pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[3]);
+		dGeomGetOffsetQuaternion(robot->_conn[i]->geom[3], quat);
+		sph = new osg::Sphere(osg::Vec3d(pos[0], pos[1], pos[2]), 0.006);
+		body->addDrawable(new osg::ShapeDrawable(sph));
 
 		// apply texture
-		osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/textures/conn.png"));
-		tex->setDataVariance(osg::Object::DYNAMIC);
+		osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/conn.png"));
 		tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 		tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
 		tex->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
 		tex->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
-		tex->setWrap(osg::Texture::WRAP_R, osg::Texture::REPEAT);
-		node->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
-		osg::ref_ptr<osg::TexEnv> texEnv = new osg::TexEnv(osg::TexEnv::DECAL);
-		node->getOrCreateStateSet()->setTextureAttribute(0, texEnv, osg::StateAttribute::ON);
+		pat->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
 
 		// set rendering
-		node->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-		node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+		body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
 		// add body to pat
-		transform->addChild(node);
-
+		pat->addChild(body.get());
 		// set user properties of node
-		node->setName("connector");
-
+		body->setName("connector");
 		// add to scenegraph
-		_robot.back()->robot->addChild(transform);
-	}*/
+		_robot.back()->robot->addChild(pat);
+		return 0;*/
+	}
+	else if (conn == -1)
+		dynamic_cast<rsRobots::LinkbotI *>(robot)->getConnBodyOffset(type, p1, q1, p2, q2);
+	else {
+		dynamic_cast<rsRobots::LinkbotI *>(robot)->getConnFaceOffset(type, side, p1, q1, p2, q2);
+		type = conn;
+		dynamic_cast<rsRobots::LinkbotI *>(robot)->getConnBodyOffset(type, p2, q2, p2, q2);
+	}
 
-	// set tracking
-	robot->setTrace(trace);
+	// PAT to transform mesh
+	osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
+	transform->setPosition(osg::Vec3d(p2[0], p2[1], p2[2]));
+	transform->setAttitude(osg::Quat(q2[0], q2[1], q2[2], q2[3]));
 
-	// success
-	return 0;
+	// create node to hold mesh
+	osg::ref_ptr<osg::Node> node;
+	switch (type) {
+		case rs::BIGWHEEL:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/bigwheel.3ds");
+			break;
+		case rs::BRIDGE:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/bridge.3ds");
+			break;
+		case rs::CASTER:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/caster.3ds");
+			break;
+		case rs::CUBE:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/cube.3ds");
+			break;
+		case rs::FACEPLATE:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/faceplate.3ds");
+			break;
+		case rs::GRIPPER:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/gripper.3ds");
+			break;
+		case rs::OMNIDRIVE:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/omnidrive.3ds");
+			break;
+		case rs::SIMPLE:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/simple.3ds");
+			break;
+		case rs::SMALLWHEEL:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/smallwheel.3ds");
+			break;
+		case rs::TINYWHEEL:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
+			break;
+		case rs::WHEEL:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
+			//transform->setScale(osg::Vec3d(1, robot->_wheel_radius/robot->_tinywheel_radius, robot->_wheel_radius/robot->_tinywheel_radius));
+			break;
+	}
+	node->setCullingActive(false);
+
+	// apply texture
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/textures/conn.png"));
+	tex->setDataVariance(osg::Object::DYNAMIC);
+	tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+	tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+	tex->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+	tex->setWrap(osg::Texture::WRAP_R, osg::Texture::REPEAT);
+	node->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+	osg::ref_ptr<osg::TexEnv> texEnv = new osg::TexEnv(osg::TexEnv::DECAL);
+	node->getOrCreateStateSet()->setTextureAttribute(0, texEnv, osg::StateAttribute::ON);
+
+	// set rendering
+	node->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+	// add body to pat
+	transform->addChild(node);
+
+	// set user properties of node
+	node->setName("connector");
+
+	// add to scenegraph
+	group->addChild(transform);
 }
 
 /*int Scene::draw(rsRobots::CMobot *robot, bool trace, double *rgb) {

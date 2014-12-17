@@ -53,25 +53,25 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		double *rgb = _robot->getRGB();
 		led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
 		// child 7->end: connectors
-		for (int j = 0, k = 0; j < _conn.size(); j++) {
+		for (int i = 0; i < _conn.size(); i++) {
 			dMatrix3 R;
 			dQuaternion Q;
 			double p[3] = {0};
-			/*if (_robot->_conn[j]->d_side != -1) {
-				_robot->getFaceParams(_robot->_conn[j]->face, R, p);
-				_robot->getConnectorParams(_robot->_conn[j]->d_type, _robot->_conn[j]->d_side, R, p);
-				p[0] += R[0]*_robot->_conn[j]->o[0] + R[1]*_robot->_conn[j]->o[1] + R[2]*_robot->_conn[j]->o[2];
-				p[1] += R[4]*_robot->_conn[j]->o[0] + R[5]*_robot->_conn[j]->o[1] + R[6]*_robot->_conn[j]->o[2];
-				p[2] += R[8]*_robot->_conn[j]->o[0] + R[9]*_robot->_conn[j]->o[1] + R[10]*_robot->_conn[j]->o[2];
+			if (_conn[i]->d_side != -1) {
+				_robot->getFaceParams(_conn[i]->face, R, p);
+				_robot->getConnectorParams(_conn[i]->d_type, _conn[i]->d_side, R, p);
+				p[0] += R[0]*_conn[i]->o[0] + R[1]*_conn[i]->o[1] + R[2]*_conn[i]->o[2];
+				p[1] += R[4]*_conn[i]->o[0] + R[5]*_conn[i]->o[1] + R[6]*_conn[i]->o[2];
+				p[2] += R[8]*_conn[i]->o[0] + R[9]*_conn[i]->o[1] + R[10]*_conn[i]->o[2];
 				dRtoQ(R, Q);
-			}*/
-			//else {
-				pos = dBodyGetPosition(_conn[j]->body);
-				quat = dBodyGetQuaternion(_conn[j]->body);
+			}
+			else {
+				pos = dBodyGetPosition(_conn[i]->body);
+				quat = dBodyGetQuaternion(_conn[i]->body);
 				p[0] = pos[0]; p[1] = pos[1]; p[2] = pos[2];
 				Q[0] = quat[0]; Q[1] = quat[1]; Q[2] = quat[2]; Q[3] = quat[3];
-			//}
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(7 + k++));
+			}
+			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(7 + i++));
 			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 			pat->setAttitude(osg::Quat(Q[1], Q[2], Q[3], Q[0]));
 		}

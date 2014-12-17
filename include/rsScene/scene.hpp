@@ -41,6 +41,7 @@ namespace rsScene {
 			Scene(void);
 			virtual ~Scene(void);
 
+			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, double, int, int);
 			Ground* drawGround(int, const double*, const double*, const double*, const double*);
 			int drawMarker(int, const double*, const double*, const double*, int, std::string);
 			Robot* drawRobot(rsRobots::Robot*, int, const double*, const double*, bool);
@@ -61,9 +62,10 @@ namespace rsScene {
 		// private functions
 		private:
 			//int draw_cubus(rsRobots::Cubus*, osg::Group*, const double*, const double*, bool, double*);
-			int draw_linkbot(rsRobots::LinkbotT*, osg::Group*, const double*, const double*, bool, double*);
+			void draw_linkbot(rsRobots::LinkbotT*, Robot*, const double*, const double*, bool, double*);
 			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);
 			//int draw_nxt(rsRobots::NXT*, osg::Group*, const double*, const double*, bool, double*);
+			void draw_linkbot_conn(rsRobots::LinkbotT*, Robot*, int, int, double, int, int);
 			static void* graphics_thread(void*);
 
 		// private data

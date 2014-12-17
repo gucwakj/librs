@@ -605,58 +605,105 @@ int CLinkbotT::turnRightNB(double angle, double radius, double trackwidth) {
 /**********************************************************
 	inherited functions
  **********************************************************/
-int CLinkbotT::addConnector(int type, int face, double size) {
+int CLinkbotT::addConnector(int type, int face, double size, int side, int conn) {
 	// create new connector
 	_conn.push_back(new Connector());
-	_conn.back()->d_side = -1;
-	_conn.back()->d_type = -1;
-	_conn.back()->face = face;
-	_conn.back()->type = type;
 
-	// build connector
-	switch (type) {
-		case rs::BIGWHEEL:
-			this->build_bigwheel(_conn.back(), face);
-			break;
-		case rs::BRIDGE:
-			this->build_bridge(_conn.back(), face);
-			break;
-		case rs::CASTER:
-			this->build_caster(_conn.back(), face, static_cast<int>(size));
-			break;
-		case rs::CUBE:
-			this->build_cube(_conn.back(), face);
-			break;
-		case rs::FACEPLATE:
-			this->build_faceplate(_conn.back(), face);
-			break;
-		case rs::GRIPPER:
-			this->build_gripper(_conn.back(), 1);
-			break;
-		case rs::OMNIDRIVE:
-			this->build_omnidrive(_conn.back(), face);
-			break;
-		case rs::SIMPLE:
-			this->build_simple(_conn.back(), face);
-			break;
-		case rs::SMALLWHEEL:
-			this->build_smallwheel(_conn.back(), face);
-			break;
-		case rs::TINYWHEEL:
-			this->build_tinywheel(_conn.back(), face);
-			break;
-		case rs::WHEEL:
-			this->build_wheel(_conn.back(), face, size);
-			break;
-	}
-
-	if (type == rs::GRIPPER) {
-		_conn.push_back(new Connector());
+	// daisy chained or not
+	if (conn == -1) {
+		// create new connector
 		_conn.back()->d_side = -1;
 		_conn.back()->d_type = -1;
 		_conn.back()->face = face;
 		_conn.back()->type = type;
-		this->build_gripper(_conn.back(), 3);
+
+		// build connector
+		switch (type) {
+			case rs::BIGWHEEL:
+				this->build_bigwheel(_conn.back(), face);
+				break;
+			case rs::BRIDGE:
+				this->build_bridge(_conn.back(), face);
+				break;
+			case rs::CASTER:
+				this->build_caster(_conn.back(), face, static_cast<int>(size));
+				break;
+			case rs::CUBE:
+				this->build_cube(_conn.back(), face);
+				break;
+			case rs::FACEPLATE:
+				this->build_faceplate(_conn.back(), face);
+				break;
+			case rs::GRIPPER:
+				this->build_gripper(_conn.back(), 1);
+				break;
+			case rs::OMNIDRIVE:
+				this->build_omnidrive(_conn.back(), face);
+				break;
+			case rs::SIMPLE:
+				this->build_simple(_conn.back(), face);
+				break;
+			case rs::SMALLWHEEL:
+				this->build_smallwheel(_conn.back(), face);
+				break;
+			case rs::TINYWHEEL:
+				this->build_tinywheel(_conn.back(), face);
+				break;
+			case rs::WHEEL:
+				this->build_wheel(_conn.back(), face, size);
+				break;
+		}
+
+		if (type == rs::GRIPPER) {
+			_conn.push_back(new Connector());
+			_conn.back()->d_side = -1;
+			_conn.back()->d_type = -1;
+			_conn.back()->face = face;
+			_conn.back()->type = type;
+			this->build_gripper(_conn.back(), 3);
+		}
+	}
+	else {
+		// create new connector
+		_conn.back()->d_side = side;
+		_conn.back()->d_type = type;
+		_conn.back()->face = face;
+		_conn.back()->type = conn;
+
+		// build connector
+		switch (conn) {
+			case rs::BIGWHEEL:
+				this->build_bigwheel(_conn.back(), face, side, type);
+				break;
+			case rs::BRIDGE:
+				this->build_bridge(_conn.back(), face, side, type);
+				break;
+			case rs::CASTER:
+				_conn.back()->d_side = -10*size;
+				this->build_caster(_conn.back(), face, static_cast<int>(size), side, type);
+				break;
+			case rs::CUBE:
+				this->build_cube(_conn.back(), face, side, type);
+				break;
+			case rs::FACEPLATE:
+				this->build_faceplate(_conn.back(), face, side, type);
+				break;
+			case rs::OMNIDRIVE:
+				this->build_omnidrive(_conn.back(), face, side, type);
+				break;
+			case rs::SIMPLE:
+				this->build_simple(_conn.back(), face, side, type);
+				break;
+			case rs::SMALLWHEEL:
+				this->build_smallwheel(_conn.back(), face, side, type);
+				break;
+			case rs::TINYWHEEL:
+				this->build_tinywheel(_conn.back(), face, side, type);
+				break;
+			case rs::WHEEL:
+				this->build_wheel(_conn.back(), face, size, side, type);
+				break;
+		}
 	}
 
 	// success
@@ -672,16 +719,6 @@ int CLinkbotT::build(int id, const double *p, const double *r, const double *a, 
 	// build
 	double rot[3] = {a[0], a[1], a[2]};
 	this->buildIndividual(p[0], p[1], p[2], R, rot);
-
-	// add connectors
-	/*for (int i = 0; i < robot->conn.size(); i++) {
-		if (robot->conn[i]->robot == _id) {
-			if (robot->conn[i]->conn == -1)
-				this->addConnector(robot->conn[i]->type, robot->conn[i]->face1, robot->conn[i]->size);
-			else
-				this->add_connector_daisy(robot->conn[i]->conn, robot->conn[i]->face1, robot->conn[i]->size, robot->conn[i]->side, robot->conn[i]->type);
-		}
-	}*/
 
 	// set trackwidth
 	/*double wheel[4] = {0};
@@ -1354,53 +1391,6 @@ void CLinkbotT::simPostCollisionThread(void) {
 /**********************************************************
 	private functions
  **********************************************************/
-int CLinkbotT::add_connector_daisy(int conn, int face, double size, int side, int type) {
-	// create new connector
-	_conn.push_back(new Connector());
-	_conn.back()->d_side = side;
-	_conn.back()->d_type = type;
-	_conn.back()->face = face;
-	_conn.back()->type = conn;
-
-	// build connector
-	switch (conn) {
-		case rs::BIGWHEEL:
-			this->build_bigwheel(_conn.back(), face, side, type);
-			break;
-		case rs::BRIDGE:
-			this->build_bridge(_conn.back(), face, side, type);
-			break;
-		case rs::CASTER:
-			_conn.back()->d_side = -10*size;
-			this->build_caster(_conn.back(), face, static_cast<int>(size), side, type);
-			break;
-		case rs::CUBE:
-			this->build_cube(_conn.back(), face, side, type);
-			break;
-		case rs::FACEPLATE:
-			this->build_faceplate(_conn.back(), face, side, type);
-			break;
-		case rs::OMNIDRIVE:
-			this->build_omnidrive(_conn.back(), face, side, type);
-			break;
-		case rs::SIMPLE:
-			this->build_simple(_conn.back(), face, side, type);
-			break;
-		case rs::SMALLWHEEL:
-			this->build_smallwheel(_conn.back(), face, side, type);
-			break;
-		case rs::TINYWHEEL:
-			this->build_tinywheel(_conn.back(), face, side, type);
-			break;
-		case rs::WHEEL:
-			this->build_wheel(_conn.back(), face, size, side, type);
-			break;
-	}
-
-	// success
-	return 0;
-}
-
 int CLinkbotT::build_bigwheel(Connector *conn, int face, int side, int type) {
 	// create body
 	conn->body = dBodyCreate(_world);

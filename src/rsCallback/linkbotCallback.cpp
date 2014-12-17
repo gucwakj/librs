@@ -44,9 +44,9 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(i+2));
+			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
 			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+			pat->setAttitude(osg::Quat(quat[3], quat[0], quat[1], quat[2]));
 		}
 		// child 2: bodies; drawable 2: led
 		osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(0)->asGeode()->getDrawable(2));

@@ -123,13 +123,40 @@ void LinkbotT::getConnBodyOffset(int type, const double *p, const double *q, dou
 
 	// get offset of body
 	switch (type) {
+		case rs::BIGWHEEL:
+			p2[0] = _wheel_depth/2;
+			break;
+		case rs::BRIDGE:
+			p2[0] = _conn_depth/2;
+			p2[1] = -_bridge_length/2 + _face_radius;
+			break;
 		case rs::CASTER:
 			p2[0] = _conn_depth/4;
+			break;
+		case rs::CUBE:
+			p2[0] = _cubic_length/2;
+			break;
+		case rs::FACEPLATE:
+			p2[0] = _conn_depth/2;
+			break;
+		case rs::GRIPPER:
+			p2[0] = _conn_depth/2;
+			break;
+		case rs::OMNIDRIVE:
+			p2[0] = _conn_depth/2;
+			p2[1] = _omni_length/2 - _face_radius;
+			p2[2] = -_omni_length/2 + _face_radius;
 			break;
 		case rs::SIMPLE:
 			p2[0] = _conn_depth/2;
 			break;
 		case rs::SMALLWHEEL:
+			p2[0] = _wheel_depth/2;
+			break;
+		case rs::TINYWHEEL:
+			p2[0] = _wheel_depth/2;
+			break;
+		case rs::WHEEL:
 			p2[0] = _wheel_depth/2;
 			break;
 	}

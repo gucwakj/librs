@@ -8,7 +8,7 @@ Sim::Sim(int pause) {
 	_world = dWorldCreate();							// create world for simulation
 	_space = dHashSpaceCreate(0);						// create space for robots
 	_group = dJointGroupCreate(0);						// create group for joints
-	dGeomID geom = dCreatePlane(_space, 0, 0, 1, 0);	// ground plane
+	dCreatePlane(_space, 0, 0, 1, 0);					// ground plane
 
 	// simulation parameters
 	dWorldSetAutoDisableFlag(_world, 1);				// auto-disable bodies that are not moving

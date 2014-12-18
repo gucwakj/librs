@@ -714,7 +714,7 @@ int CLinkbotT::addConnector(int type, int face, double size, int side, int conn)
 int CLinkbotT::build(int id, const double *p, const double *r, const double *a, int ground) {
 	// create rotation matrix
 	dMatrix3 R;
-	dQuaternion Q = {r[1], r[2], r[3], r[0]};
+	dQuaternion Q = {r[3], r[0], r[1], r[2]};
 	dRfromQ(R, Q);
 
 	// build

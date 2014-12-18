@@ -46,7 +46,7 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			quat = dBodyGetQuaternion(_bodies[i]);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
 			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[3], quat[0], quat[1], quat[2]));
+			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		}
 		// child 2: bodies; drawable 2: led
 		osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(0)->asGeode()->getDrawable(2));
@@ -73,7 +73,7 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			}
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsRobots::LinkbotT::NUM_PARTS + i));
 			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-			pat->setAttitude(osg::Quat(Q[3], Q[0], Q[1], Q[2]));
+			pat->setAttitude(osg::Quat(Q[1], Q[2], Q[3], Q[0]));
 		}
 	}
 	traverse(node, nv);

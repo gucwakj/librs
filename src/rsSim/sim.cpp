@@ -43,7 +43,7 @@ Sim::Sim(int pause) {
 }
 
 Sim::~Sim(void) {
-std::cerr << "deleting Sim" << std::endl;
+	std::cerr << "deleting Sim" << std::endl;
 	// remove simulation
 	MUTEX_LOCK(&_running_mutex);
 	_running = false;
@@ -668,7 +668,6 @@ void* Sim::simulation_thread(void *arg) {
 	// unlock running variable
 	MUTEX_UNLOCK(&(sim->_running_mutex));
 
-std::cerr << "end sim thread" << std::endl;
 	// cleanup
 	delete [] dt;
 
@@ -710,7 +709,7 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 				contact[i].surface.bounce = ptr->_restitution[1];
 			}
 			contact[i].surface.mode = dContactBounce | dContactApprox1;
-			dJointAttach( dJointCreateContact(ptr->_world, ptr->_group, contact + i), b1, b2);
+			dJointAttach(dJointCreateContact(ptr->_world, ptr->_group, contact + i), b1, b2);
 		}
 	}
 }

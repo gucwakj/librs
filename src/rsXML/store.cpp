@@ -473,7 +473,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("a6", &f);
 				_robot.back()->setJoints(a, b, c, d, e, f);
 			}
-			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
+			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}*/
 		else if ( !strcmp(node->Value(), "linkboti") ) {
@@ -508,7 +508,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				else if (i == 4)
 					_robot.back()->setPsi(3*M_PI/2);
 			}
-			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
+			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
 		else if ( !strcmp(node->Value(), "linkbotl") ) {
@@ -543,7 +543,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				else if (i == 4)
 					_robot.back()->setPsi(3*M_PI/2);
 			}
-			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
+			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
 		else if ( !strcmp(node->Value(), "linkbott") ) {
@@ -578,7 +578,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				else if (i == 4)
 					_robot.back()->setPsi(3*M_PI/2);
 			}
-			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
+			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
 		/*else if ( !strcmp(node->Value(), "mobot") ) {
@@ -604,7 +604,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("a4", &d);
 				_robot.back()->setJoints(a, b, c, d);
 			}
-			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
+			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}*/
 		/*else if ( !strcmp(node->Value(), "nxt") ) {
@@ -628,7 +628,7 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("w2", &b);
 				_robot.back()->setJoints(a, b);
 			}
-			i = (node->QueryIntAttribute("ground", &i)) ? i : -1;
+			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}*/
 		else {

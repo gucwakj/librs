@@ -42,7 +42,7 @@ Scene::Scene(void) : keyboardHandler() {
 }
 
 Scene::~Scene(void) {
-std::cerr << "deleting Scene" << std::endl;
+	std::cerr << "deleting Scene" << std::endl;
 	// stop thread
 	MUTEX_LOCK(&_thread_mutex);
 	_thread = false;
@@ -83,26 +83,15 @@ Ground* Scene::drawGround(int type, const double *p, const double *c, const doub
 	osg::ref_ptr<osg::ShapeDrawable> shape;
 
 	switch (type) {
-		case rs::BOX: {
-			osg::Box *box;
-			box = new osg::Box(osg::Vec3d(p[0], p[1], p[2]), l[0], l[1], l[2]);
-			box->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
-			shape = new osg::ShapeDrawable(box);
+		case rs::BOX:
+			shape = new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2]));
 			break;
-		}
-		case rs::CYLINDER: {
-			osg::Cylinder *cyl;
-			cyl = new osg::Cylinder(osg::Vec3d(p[0], p[1], p[2]), l[0], l[1]);
-			cyl->setRotation(osg::Quat(q[1], q[2], q[3], q[0]));
-			shape = new osg::ShapeDrawable(cyl);
+		case rs::CYLINDER:
+			shape = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[0], l[1]));
 			break;
-		}
-		case rs::SPHERE: {
-			osg::Sphere *sph;
-			sph = new osg::Sphere(osg::Vec3d(p[0], p[1], p[2]), l[0]);
-			shape = new osg::ShapeDrawable(sph);
+		case rs::SPHERE:
+			shape = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0]));
 			break;
-		}
 	}
 	shape->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
 	body->addDrawable(shape);
@@ -117,6 +106,8 @@ Ground* Scene::drawGround(int type, const double *p, const double *c, const doub
 
 	// add positioning capability
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
+	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat->setAttitude(osg::Quat(q[1], q[2], q[3], q[0]));
 	pat->addChild(body.get());
 	ground->addChild(pat.get());
 

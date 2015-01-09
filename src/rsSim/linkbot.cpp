@@ -826,7 +826,7 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 	geom[FACE2] = new dGeomID[1];
 	geom[FACE3] = new dGeomID[1];
 
-    // input angles to radians
+	// input angles to radians
 	for (int i = 0; i < _dof; i++) {
 		_motor[i].goal = _motor[i].theta = DEG2RAD(rot[i]);
 	}
@@ -850,7 +850,7 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 	// joint variable
 	dJointID *joint = new dJointID[_dof];
 
-    // joint for body to face 1
+	// joint for body to face 1
 	joint[rs::JOINT1] = dJointCreateHinge(_world, 0);
 	dJointAttach(joint[rs::JOINT1], _body[BODY], _body[FACE1]);
 	dJointSetHingeAnchor(joint[rs::JOINT1],	R[0]*f1[3] + R[1]*f1[4] + R[2]*f1[5] + x,
@@ -859,7 +859,7 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 	dJointSetHingeAxis(joint[rs::JOINT1], R[0], R[4], R[8]);
 	dBodySetFiniteRotationAxis(_body[FACE1], R[0], R[4], R[8]);
 
-    // joint for body to face 2
+	// joint for body to face 2
 	if (_disabled == rs::JOINT2) {
 		joint[rs::JOINT2] = dJointCreateFixed(_world, 0);
 		dJointAttach(joint[rs::JOINT2], _body[BODY], _body[FACE2]);
@@ -875,7 +875,7 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 		dBodySetFiniteRotationAxis(_body[FACE2], R[1], R[5], R[9]);
 	}
 
-    // joint for body to face 3
+	// joint for body to face 3
 	if (_disabled == rs::JOINT3) {
 		joint[rs::JOINT3] = dJointCreateFixed(_world, 0);
 		dJointAttach(joint[rs::JOINT3], _body[BODY], _body[FACE3]);
@@ -891,16 +891,16 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 		dBodySetFiniteRotationAxis(_body[FACE3], -R[0], -R[4], -R[8]);
 	}
 
-    // create rotation matrices for each body part
-    dMatrix3 R_f, R_f1, R_f2, R_f3;
-    dRFromAxisAndAngle(R_f, -1, 0, 0, _motor[rs::JOINT1].theta);
-    dMultiply0(R_f1, R, R_f, 3, 3, 3);
+	// create rotation matrices for each body part
+	dMatrix3 R_f, R_f1, R_f2, R_f3;
+	dRFromAxisAndAngle(R_f, -1, 0, 0, _motor[rs::JOINT1].theta);
+	dMultiply0(R_f1, R, R_f, 3, 3, 3);
 	dRSetIdentity(R_f);
-    dRFromAxisAndAngle(R_f, 0, -1, 0, _motor[rs::JOINT2].theta);
-    dMultiply0(R_f2, R, R_f, 3, 3, 3);
+	dRFromAxisAndAngle(R_f, 0, -1, 0, _motor[rs::JOINT2].theta);
+	dMultiply0(R_f2, R, R_f, 3, 3, 3);
 	dRSetIdentity(R_f);
-    dRFromAxisAndAngle(R_f, 1, 0, 0, _motor[rs::JOINT3].theta);
-    dMultiply0(R_f3, R, R_f, 3, 3, 3);
+	dRFromAxisAndAngle(R_f, 1, 0, 0, _motor[rs::JOINT3].theta);
+	dMultiply0(R_f3, R, R_f, 3, 3, 3);
 
 	// if bodies are rotated, then redraw
 	if ( _motor[rs::JOINT1].theta != 0 || _motor[rs::JOINT2].theta != 0 || _motor[rs::JOINT3].theta != 0 ) {
@@ -909,44 +909,44 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 		this->build_face(FACE3, geom[FACE1], R[0]*f3[0] + x, R[4]*f3[0] + y, R[8]*f3[0] + z, R_f3, 0);
 	}
 
-    // motor for body to face 1
-    _motor[rs::JOINT1].id = dJointCreateAMotor(_world, 0);
-    _motor[rs::JOINT1].joint = joint[rs::JOINT1];
-    dJointAttach(_motor[rs::JOINT1].id, _body[BODY], _body[FACE1]);
-    dJointSetAMotorMode(_motor[rs::JOINT1].id, dAMotorUser);
-    dJointSetAMotorNumAxes(_motor[rs::JOINT1].id, 1);
-    dJointSetAMotorAxis(_motor[rs::JOINT1].id, 0, 1, R[0], R[4], R[8]);
-    dJointSetAMotorAngle(_motor[rs::JOINT1].id, 0, 0);
-    dJointSetAMotorParam(_motor[rs::JOINT1].id, dParamFMax, _motor[rs::JOINT1].tau_max);
-    dJointSetAMotorParam(_motor[rs::JOINT1].id, dParamFudgeFactor, 0.3);
+	// motor for body to face 1
+	_motor[rs::JOINT1].id = dJointCreateAMotor(_world, 0);
+	_motor[rs::JOINT1].joint = joint[rs::JOINT1];
+	dJointAttach(_motor[rs::JOINT1].id, _body[BODY], _body[FACE1]);
+	dJointSetAMotorMode(_motor[rs::JOINT1].id, dAMotorUser);
+	dJointSetAMotorNumAxes(_motor[rs::JOINT1].id, 1);
+	dJointSetAMotorAxis(_motor[rs::JOINT1].id, 0, 1, R[0], R[4], R[8]);
+	dJointSetAMotorAngle(_motor[rs::JOINT1].id, 0, 0);
+	dJointSetAMotorParam(_motor[rs::JOINT1].id, dParamFMax, _motor[rs::JOINT1].tau_max);
+	dJointSetAMotorParam(_motor[rs::JOINT1].id, dParamFudgeFactor, 0.3);
 	dJointDisable(_motor[rs::JOINT1].id);
 
-    // motor for body to face 2
-    _motor[rs::JOINT2].id = dJointCreateAMotor(_world, 0);
-    _motor[rs::JOINT2].joint = joint[rs::JOINT2];
-    dJointAttach(_motor[rs::JOINT2].id, _body[BODY], _body[FACE2]);
-    dJointSetAMotorMode(_motor[rs::JOINT2].id, dAMotorUser);
-    dJointSetAMotorNumAxes(_motor[rs::JOINT2].id, 1);
-    dJointSetAMotorAxis(_motor[rs::JOINT2].id, 0, 1, R[1], R[5], R[9]);
-    dJointSetAMotorAngle(_motor[rs::JOINT2].id, 0, 0);
-    dJointSetAMotorParam(_motor[rs::JOINT2].id, dParamFMax, _motor[rs::JOINT2].tau_max);
-    dJointSetAMotorParam(_motor[rs::JOINT2].id, dParamFudgeFactor, 0.3);
+	// motor for body to face 2
+	_motor[rs::JOINT2].id = dJointCreateAMotor(_world, 0);
+	_motor[rs::JOINT2].joint = joint[rs::JOINT2];
+	dJointAttach(_motor[rs::JOINT2].id, _body[BODY], _body[FACE2]);
+	dJointSetAMotorMode(_motor[rs::JOINT2].id, dAMotorUser);
+	dJointSetAMotorNumAxes(_motor[rs::JOINT2].id, 1);
+	dJointSetAMotorAxis(_motor[rs::JOINT2].id, 0, 1, R[1], R[5], R[9]);
+	dJointSetAMotorAngle(_motor[rs::JOINT2].id, 0, 0);
+	dJointSetAMotorParam(_motor[rs::JOINT2].id, dParamFMax, _motor[rs::JOINT2].tau_max);
+	dJointSetAMotorParam(_motor[rs::JOINT2].id, dParamFudgeFactor, 0.3);
 	dJointDisable(_motor[rs::JOINT2].id);
 
-    // motor for body to face 3
-    _motor[rs::JOINT3].id = dJointCreateAMotor(_world, 0);
-    _motor[rs::JOINT3].joint = joint[rs::JOINT3];
-    dJointAttach(_motor[rs::JOINT3].id, _body[BODY], _body[FACE3]);
-    dJointSetAMotorMode(_motor[rs::JOINT3].id, dAMotorUser);
-    dJointSetAMotorNumAxes(_motor[rs::JOINT3].id, 1);
-    dJointSetAMotorAxis(_motor[rs::JOINT3].id, 0, 1, -R[0], -R[4], -R[8]);
-    dJointSetAMotorAngle(_motor[rs::JOINT3].id, 0, 0);
-    dJointSetAMotorParam(_motor[rs::JOINT3].id, dParamFMax, _motor[rs::JOINT3].tau_max);
-    dJointSetAMotorParam(_motor[rs::JOINT3].id, dParamFudgeFactor, 0.3);
+	// motor for body to face 3
+	_motor[rs::JOINT3].id = dJointCreateAMotor(_world, 0);
+	_motor[rs::JOINT3].joint = joint[rs::JOINT3];
+	dJointAttach(_motor[rs::JOINT3].id, _body[BODY], _body[FACE3]);
+	dJointSetAMotorMode(_motor[rs::JOINT3].id, dAMotorUser);
+	dJointSetAMotorNumAxes(_motor[rs::JOINT3].id, 1);
+	dJointSetAMotorAxis(_motor[rs::JOINT3].id, 0, 1, -R[0], -R[4], -R[8]);
+	dJointSetAMotorAngle(_motor[rs::JOINT3].id, 0, 0);
+	dJointSetAMotorParam(_motor[rs::JOINT3].id, dParamFMax, _motor[rs::JOINT3].tau_max);
+	dJointSetAMotorParam(_motor[rs::JOINT3].id, dParamFudgeFactor, 0.3);
 	dJointDisable(_motor[rs::JOINT3].id);
 
-    // set damping on all bodies to 0.1
-    for (int i = 0; i < NUM_PARTS; i++) dBodySetDamping(_body[i], 0.1, 0.1);
+	// set damping on all bodies to 0.1
+	for (int i = 0; i < NUM_PARTS; i++) dBodySetDamping(_body[i], 0.1, 0.1);
 
 	// delete arrays
 	for (int i = 0; i < NUM_PARTS; i++) { delete [] geom[i]; }

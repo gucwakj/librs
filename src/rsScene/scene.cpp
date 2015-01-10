@@ -37,6 +37,10 @@ Scene::Scene(void) : keyboardHandler() {
 			_grid[i] /= 39.37;
 	}
 
+	// set thread mutex
+	MUTEX_INIT(&_thread_mutex);
+	_thread = false;
+
 	// set texture path
 	_tex_path = this->getTexturePath();
 }

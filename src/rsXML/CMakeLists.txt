@@ -16,6 +16,9 @@ else (MSVC)
 endif (MSVC)
 set (EXTRA_LIBS ${EXTRA_LIBS} tinyxml2)
 
+# add rsRobots
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
+
 # add source files to library
 set (SRCS ${SRCS}
 	conn.cpp

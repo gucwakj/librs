@@ -22,6 +22,9 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized ode debug oded)
 add_definitions (-DdDOUBLE)
 add_definitions (-DdNODEBUG)
 
+# add rsRobots
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
+
 # add source files to library
 set (SRCS ${SRCS}
 	robot.cpp

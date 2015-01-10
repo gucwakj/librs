@@ -10,23 +10,30 @@ include_directories (
 # add ODE library
 if (MSVC)
 	include_directories ("${LIBRS_SOURCE_DIR}/deps/ode/include")
+	link_directories ("${LIBRS_SOURCE_DIR}/deps/ode/lib/Release")
+	link_directories ("${LIBRS_SOURCE_DIR}/deps/ode/lib/Debug")
 else (MSVC)
 	include_directories ("${LIBRS_SOURCE_DIR}/deps/ode/sys/include")
+	link_directories ("${LIBRS_SOURCE_DIR}/deps/ode/sys/lib")
 endif (MSVC)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized ode debug oded)
 
 # ODE options
 add_definitions (-DdDOUBLE)
 add_definitions (-DdNODEBUG)
 
-# rsSim
-include_directories ("${LIBRS_SOURCE_DIR}/include/rsSim")
+# add rsRobots
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
+
+# add rsSim
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsSim debug rsSimd)
 
 # add OpenSceneGraph library
 include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/include")
 include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/include")
 
-# rsScene
-include_directories ("${LIBRS_SOURCE_DIR}/include/rsScene")
+# add rsScene
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsScene debug rsScened)
 
 # add source files to library
 set (SRCS ${SRCS}

@@ -11,14 +11,14 @@ include_directories (
 include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/include")
 include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/include")
 link_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/lib")
-set(EXTRA_LIBS ${EXTRA_LIBS} optimized OpenThreads debug OpenThreadsd)
-set(EXTRA_LIBS ${EXTRA_LIBS} optimized osg debug osgd)
-set(EXTRA_LIBS ${EXTRA_LIBS} optimized osgDB debug osgDBd)
-set(EXTRA_LIBS ${EXTRA_LIBS} optimized osgGA debug osgGAd)
-set(EXTRA_LIBS ${EXTRA_LIBS} optimized osgShadow debug osgShadowd)
-set(EXTRA_LIBS ${EXTRA_LIBS} optimized osgText debug osgTextd)
-set(EXTRA_LIBS ${EXTRA_LIBS} optimized osgUtil debug osgUtild)
-set(EXTRA_LIBS ${EXTRA_LIBS} optimized osgViewer debug osgViewerd)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized OpenThreads debug OpenThreadsd)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osg debug osgd)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgDB debug osgDBd)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgGA debug osgGAd)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgShadow debug osgShadowd)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgText debug osgTextd)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgUtil debug osgUtild)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgViewer debug osgViewerd)
 
 # add openGL library
 find_package (OpenGL REQUIRED)
@@ -27,12 +27,11 @@ if (OPENGL_FOUND)
 	set (EXTRA_LIBS ${EXTRA_LIBS} ${OPENGL_LIBRARIES})
 endif (OPENGL_FOUND)
 
+# add rsRobots
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
+
 # add source files to library
 set (SRCS ${SRCS}
-	#cubusCallback.cpp
-	#linkbotCallback.cpp
-	#mobotCallback.cpp
-	#nxtCallback.cpp
 	textureCallback.cpp
 	keyboardHandler.cpp
 	mouseHandler.cpp

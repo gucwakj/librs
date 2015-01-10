@@ -132,171 +132,12 @@ Sim::~Sim(void) {
 	return 0;
 }*/
 
-/*int Sim::addRobot(ModularRobot *robot) {
-	// lock robot data to insert a new one into simulation
-	MUTEX_LOCK(&_robot_mutex);
-
-	// create new robot
-	_robot.push_back(new Robots());
-	_robot.back()->robot = robot;
-
-	// get form of new robot
-	int form = 0;
-	robot->getFormFactor(form);
-
-	// find next robot in xml list
-	int i;
-	for (i = 0; i < _xmlbot.size(); i++) {
-		if (_xmlbot[i]->type == form && !_xmlbot[i]->connected)
-			break;
-	}
-
-	// no robot found
-	if (i == _xmlbot.size() || _xmlbot[i]->type != form) {
-		switch (form) {
-			case MOBOT:
-				fprintf(stderr, "Error: Could not find Mobot in Sim GUI.\n");
-				break;
-			case LINKBOTI:
-				fprintf(stderr, "Error: Could not find LinkbotI in Sim GUI.\n");
-				break;
-			case LINKBOTL:
-				fprintf(stderr, "Error: Could not find LinkbotL in Sim GUI.\n");
-				break;
-			case LINKBOTT:
-				fprintf(stderr, "Error: Could not find LinkbotT in Sim GUI.\n");
-				break;
-			case CUBUS:
-				fprintf(stderr, "Error: Could not find CUBUS in Sim GUI.\n");
-				break;
-		}
-		if (_preconfig) {
-			fprintf(stderr, "       Preconfigured Robot Configuration selected.\n");
-			fprintf(stderr, "       Please uncheck if you want to use the Individual Robot List.\n");
-		}
-		exit(-1);
-	}
-
-	// give simulation data to robot
-	robot->addToSim(_world, _space, _xmlbot[i]->id, _robot.size()-1, this);
-
-	// find if robot is connected to another one
-	int j;
-	for (j = 0; j < _xmlbot[i]->conn.size(); j++) {
-		if (_xmlbot[i]->conn[j]->robot != _xmlbot[i]->id)
-			break;
-	}
-
-	// if robot is connected to another one
-	if (j != _xmlbot[i]->conn.size()) {
-		for (int k = 0; k < _robot.size(); k++) {
-			if (_robot[k]->robot->getID() == _xmlbot[i]->conn[j]->robot) {
-				ModularRobot *r = dynamic_cast<ModularRobot *>(_robot[k]->robot);
-				dBodyID body = r->getConnectorBodyID(_xmlbot[i]->conn[j]->face1);
-				dMatrix3 R;
-				double m[3] = {0};
-				r->getFaceParams(_xmlbot[i]->conn[j]->face1, R, m);
-				robot->build(_xmlbot[i], R, m, body, _xmlbot[i]->conn[j]);
-				robot->addNeighbor(r, _xmlbot[i]->conn[j]->face2-1, _xmlbot[i]->conn[j]->face1-1);
-				r->addNeighbor(robot, _xmlbot[i]->conn[j]->face1-1, _xmlbot[i]->conn[j]->face2-1);
-				break;
-			}
-		}
-	}
-	else {
-		// check if robot is colliding with others
-		for (int k = 0; k < _robot.size() - 1; k++) {
-			if ( (fabs(_robot[k]->robot->getCenter(0) - _xmlbot[i]->x) < 0.1) && (fabs(_robot[k]->robot->getCenter(1) - _xmlbot[i]->y) < 0.1) ) {
-				std::cerr << "WARNING: Robot " << _robot[k]->robot->getID() + 1 << "and Robot " << _xmlbot[i]->id + 1 << " are possibly colliding." << std::endl;
-				std::cerr << "         Please check Sim GUI for x and y positions that may be too close." << std::endl;
-			}
-		}
-		// build
-		robot->build(_xmlbot[i]);
-	}
-
-	// robot now connected
-	_xmlbot[i]->connected = 1;
-
-#ifdef ENABLE_GRAPHICS
-	//if (_lib) _robot.back()->node = _graphics->drawRobot(robot, _xmlbot[i], form, _xmlbot[i]->tracking);
-#endif // ENABLE_GRAPHICS
-
-	// unlock robot data
-	MUTEX_UNLOCK(&_robot_mutex);
-
-	// success
-	return 0;
-}*/
-
-/*int Sim::addRobot2(ModularRobot *robot, rsXML::Robot *bot) {
-	// lock robot data to insert a new one into simulation
-	MUTEX_LOCK(&_robot_mutex);
-
-	// create new robot
-	_robot.push_back(new Robots());
-	_robot.back()->robot = robot;
-
-	// get form of new robot
-	int form = 0;
-	robot->getFormFactor(form);
-
-	// give simulation data to robot
-	robot->addToSim(_world, _space, bot->id, _robot.size()-1, this);
-
-	// build
-	robot->build(bot);
-
-#ifdef ENABLE_GRAPHICS
-	//_robot.back()->node = _graphics->drawRobot(robot, bot, form, bot->tracking);
-#endif // ENABLE_GRAPHICS
-
-	// unlock robot data
-	MUTEX_UNLOCK(&_robot_mutex);
-
-	// success
-	return 0;
-}*/
-
-/*int Sim::addRobot2(ModularRobot *robot, rsXML::Robot *bot, ModularRobot *base) {
-	// lock robot data to insert a new one into simulation
-	MUTEX_LOCK(&_robot_mutex);
-
-	// create new robot
-	_robot.push_back(new Robots());
-	_robot.back()->robot = robot;
-
-	// get form of new robot
-	int form = 0;
-	robot->getFormFactor(form);
-
-	// give simulation data to robot
-	robot->addToSim(_world, _space, bot->id, _robot.size()-1, this);
-
-	// build
-	dBodyID body = base->getConnectorBodyID(bot->conn[0]->face1);
-	dMatrix3 R;
-	double m[3] = {0};
-	base->getFaceParams(bot->conn[0]->face1, R, m);
-	robot->build(bot, R, m, body, bot->conn[0]);
-
-#ifdef ENABLE_GRAPHICS
-	//_robot.back()->node = _graphics->drawRobot(robot, bot, form, bot->tracking);
-#endif // ENABLE_GRAPHICS
-
-	// unlock robot data
-	MUTEX_UNLOCK(&_robot_mutex);
-
-	// success
-	return 0;
-}*/
-
-int Sim::addRobot3(rsSim::ModularRobot *robot, int id, const double *p, const double *r, const double *a, int ground, int trace) {
+int Sim::addRobot(rsSim::ModularRobot *robot, int id, const double *p, const double *r, const double *a, int ground, int trace) {
 	// lock robot data
 	MUTEX_LOCK(&_robot_mutex);
 
 	// create new robot
-	_robot.push_back(new Robot());
+	_robot.push_back(new RobotNode());
 	_robot.back()->robot = robot;
 
 	// get form of new robot
@@ -308,6 +149,35 @@ int Sim::addRobot3(rsSim::ModularRobot *robot, int id, const double *p, const do
 
 	// build
 	robot->build(id, p, r, a, ground);
+
+	// unlock robot data
+	MUTEX_UNLOCK(&_robot_mutex);
+
+	// success
+	return 0;
+}
+
+int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const double *a, int face1, int face2, int type, int side, int ground, int trace) {
+	// lock robot data to insert a new one into simulation
+	MUTEX_LOCK(&_robot_mutex);
+
+	// create new robot
+	_robot.push_back(new RobotNode());
+	_robot.back()->robot = robot;
+
+	// get form of new robot
+	int form = 0;
+	robot->getFormFactor(form);
+
+	// give simulation data to robot
+	robot->addToSim(_world, _space, id, _robot.size()-1, this);
+
+	// build
+	dMatrix3 R;
+	double m[3] = {0};
+	rsSim::ModularRobot *base2 = dynamic_cast<rsSim::ModularRobot*>(base);
+	base2->getFaceParams(face1, R, m);
+	robot->build(id, R, m, a, base2->getConnectorBodyID(face1), face2, type, side, ground, trace);
 
 	// unlock robot data
 	MUTEX_UNLOCK(&_robot_mutex);
@@ -411,10 +281,7 @@ int Sim::deleteRobot(int loc) {
 	MUTEX_UNLOCK(&_robot_mutex);
 
 	// success
-	if (!_robot.size())
-		return 0;
-	else
-		return 1;
+	return _robot.size();
 }
 
 void Sim::done(void) {
@@ -449,6 +316,14 @@ bool Sim::getPause(void) {
 	bool pause = _pause;
 	MUTEX_UNLOCK(&_pause_mutex);
 	return pause;
+}
+
+Robot* Sim::getRobot(int id) {
+	for (int i = 0; i < _robot.size(); i++) {
+		if (_robot[i]->robot->getID() == id)
+			return _robot[i]->robot;
+	}
+	return NULL;
 }
 
 double Sim::getStep(void) {

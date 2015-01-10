@@ -4,12 +4,6 @@
 #include <rsRobots/modularRobot.hpp>
 #include <rsSim/robot.hpp>
 
-// TODO: remove
-namespace rsXML {
-	class Robot;
-	class Conn;
-}
-
 namespace rsSim {
 
 	// connector struct
@@ -53,7 +47,7 @@ namespace rsSim {
 
 		// virual functions for inherited classes
 		protected:
-			virtual int build(rsXML::Robot*, dMatrix3, double*, dBodyID, rsXML::Conn*) = 0;
+			virtual int build(int, dMatrix3, double*, const double*, dBodyID, int, int, int, int, int) = 0;
 			virtual int fixBodyToConnector(dBodyID, int) = 0;
 			virtual int fixConnectorToBody(int, dBodyID, int = -1) = 0;
 

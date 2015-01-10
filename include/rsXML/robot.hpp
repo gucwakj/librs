@@ -23,6 +23,7 @@ namespace rsXML {
 			virtual ~Robot(void);
 
 			int addConnector(Conn*);
+			Conn* getBaseConnector(void);
 			ConnectorList& getConnectorList(void);
 			int getConnect(void);
 			int getGround(void);
@@ -46,6 +47,7 @@ namespace rsXML {
 			double _a[6];
 			double _p[3];
 			double _q[4];
+			int _base;
 			int _connected;
 			int _ground;
 			int _id;

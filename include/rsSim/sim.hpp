@@ -23,11 +23,9 @@ namespace rsSim {
 			Sim(int);
 			virtual ~Sim(void);
 
-			//int addRobot(rsSim::Robot*);
-			//int addRobot(rsSim::ModularRobot*);
-			//int addRobot2(rsSim::ModularRobot*, rsXML::Robot*);
-			//int addRobot2(rsSim::ModularRobot*, rsXML::Robot*, rsSim::ModularRobot*);
-			int addRobot3(rsSim::ModularRobot*, int, const double*, const double*, const double*, int, int);
+			//int addRobot(Robot*);
+			int addRobot(ModularRobot*, int, const double*, const double*, const double*, int, int);
+			int addRobot(ModularRobot*, int, Robot*, const double*, int, int, int, int, int, int);
 			Ground* addGround(const double*, const double*, const double*, double);
 			Ground* addGround(const double*, const double*, const double*, double, int);
 			Ground* addGround(const double*, const double*, double);
@@ -37,6 +35,7 @@ namespace rsSim {
 			int getCOR(double&, double&);
 			int getMu(double&, double&);
 			bool getPause(void);
+			Robot* getRobot(int);
 			double getStep(void);
 			int runSimulation(void);
 			int setCollisions(int);
@@ -46,7 +45,7 @@ namespace rsSim {
 
 		// protected data
 		protected:
-			struct Robot {
+			struct RobotNode {
 				rsSim::Robot *robot;
 				int node;
 				THREAD_T thread;
@@ -63,7 +62,7 @@ namespace rsSim {
 			dWorldID _world;					// ode: world
 			dSpaceID _space;					// ode: space for robots
 			dJointGroupID _group;				// ode: joint group
-			std::vector<Robot*> _robot;			// list: robots
+			std::vector<RobotNode*> _robot;		// list: robots
 			COND_T _running_cond;				// condition: actively running simulation
 			MUTEX_T _clock_mutex;				// mutex: getting the clock
 			MUTEX_T _pause_mutex;				// mutex: paused simulation

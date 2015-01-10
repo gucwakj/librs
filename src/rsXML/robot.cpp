@@ -9,6 +9,7 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_a[3] = 0;
 	_a[4] = 0;
 	_a[5] = 0;
+	_base = -1;
 	_connected = 0;
 	_ground = -1;
 	_id = -1;
@@ -33,6 +34,13 @@ int Robot::addConnector(Conn *conn) {
 
 	// success
 	return 0;
+}
+
+Conn* Robot::getBaseConnector(void) {
+	if (_base == -1)
+		return NULL;
+	else
+		return _conn[_base];
 }
 
 ConnectorList& Robot::getConnectorList(void) {
@@ -152,44 +160,58 @@ void Robot::setRotation(double a, double b, double c) {
 }
 
 void LinkbotT::postProcess(void) {
-	// check for wheels
+	// find if i am connected to another robot
 	for (int i = 0; i < _conn.size(); i++) {
-		if (_conn[i]->getConn() == rs::BIGWHEEL) {
-			_p[2] += (_bigwheel_radius - _body_height/2);
-			_radius = _bigwheel_radius;
-			break;
-		}
-		else if (_conn[i]->getConn() == rs::SMALLWHEEL) {
-			_p[2] += (_smallwheel_radius - _body_height/2);
-			_radius = _smallwheel_radius;
-			break;
-		}
-		else if (_conn[i]->getConn() == rs::TINYWHEEL) {
-			_p[2] += (_tinywheel_radius - _body_height/2);
-			_radius = _tinywheel_radius;
-			break;
-		}
-		else if (_conn[i]->getConn() == rs::WHEEL) {
-			_p[2] += (_conn[i]->getSize() - _body_height/2);
-			_radius = _conn[i]->getSize();
+		if (_conn[i]->getRobot() != _id) {
+			_base = i;
 			break;
 		}
 	}
 
-	// tilt for casters
-	for (int i = 0; i < _conn.size(); i++) {
-		if (_conn[i]->getType() == rs::CASTER && !static_cast<int>(_conn[i]->getSize()))
-			this->setPsi(atan2(_radius - _smallwheel_radius, 0.08575));
+	// reposition robot in space
+	if (_base != -1) {
+		_base = _base;
 	}
+	else {
+		// check for wheels
+		for (int i = 0; i < _conn.size(); i++) {
+			if (_conn[i]->getConn() == rs::BIGWHEEL) {
+				_p[2] += (_bigwheel_radius - _body_height/2);
+				_radius = _bigwheel_radius;
+				break;
+			}
+			else if (_conn[i]->getConn() == rs::SMALLWHEEL) {
+				_p[2] += (_smallwheel_radius - _body_height/2);
+				_radius = _smallwheel_radius;
+				break;
+			}
+			else if (_conn[i]->getConn() == rs::TINYWHEEL) {
+				_p[2] += (_tinywheel_radius - _body_height/2);
+				_radius = _tinywheel_radius;
+				break;
+			}
+			else if (_conn[i]->getConn() == rs::WHEEL) {
+				_p[2] += (_conn[i]->getSize() - _body_height/2);
+				_radius = _conn[i]->getSize();
+				break;
+			}
+		}
 
-	// adjust height to be above zero
-	if (fabs(_p[2]) < (_body_radius - EPSILON)) {
-		double v[3] = {0, 0, _body_height/2};
-		double uv[3] = {_q[1]*v[2]-_q[2]*v[1], _q[2]*v[0]-_q[0]*v[2], _q[0]*v[1]-_q[1]*v[0]};
-		double uuv[3] = {2*(_q[1]*uv[2]-_q[2]*uv[1]), 2*(_q[2]*uv[0]-_q[0]*uv[2]), 2*(_q[0]*uv[1]-_q[1]*uv[0])};
-		_p[0] += v[0] + 2*_q[3]*uv[0] + uuv[0];
-		_p[1] += v[1] + 2*_q[3]*uv[1] + uuv[1];
-		_p[2] += v[2] + 2*_q[3]*uv[2] + uuv[2];
+		// tilt for casters
+		for (int i = 0; i < _conn.size(); i++) {
+			if (_conn[i]->getType() == rs::CASTER && !static_cast<int>(_conn[i]->getSize()))
+				this->setPsi(atan2(_radius - _smallwheel_radius, 0.08575));
+		}
+
+		// adjust height to be above zero
+		if (fabs(_p[2]) < (_body_radius - EPSILON)) {
+			double v[3] = {0, 0, _body_height/2};
+			double uv[3] = {_q[1]*v[2]-_q[2]*v[1], _q[2]*v[0]-_q[0]*v[2], _q[0]*v[1]-_q[1]*v[0]};
+			double uuv[3] = {2*(_q[1]*uv[2]-_q[2]*uv[1]), 2*(_q[2]*uv[0]-_q[0]*uv[2]), 2*(_q[0]*uv[1]-_q[1]*uv[0])};
+			_p[0] += v[0] + 2*_q[3]*uv[0] + uuv[0];
+			_p[1] += v[1] + 2*_q[3]*uv[1] + uuv[1];
+			_p[2] += v[2] + 2*_q[3]*uv[2] + uuv[2];
+		}
 	}
 }
 

@@ -13,8 +13,7 @@ CLinkbotT::CLinkbotT(int disabled) : rsRobots::Robot(rs::LINKBOTT), rsRobots::Li
 
 CLinkbotT::~CLinkbotT(void) {
 	// remove robot from simulation
-	_sim->deleteRobot(_pos);
-	delete _sim;
+	if (!_sim->deleteRobot(_pos)) { delete _sim; }
 
 	// delete mutexes
 	for (int i = 0; i < _dof; i++) {
@@ -748,37 +747,37 @@ int CLinkbotT::build(int id, const double *p, const double *r, const double *a, 
 	return 0;
 }
 
-/*int CLinkbotT::build(XMLRobot *robot, dMatrix3 R, double *m, dBodyID base, XMLConn *conn) {
+int CLinkbotT::build(int id, dMatrix3 R, double *m, const double *a, dBodyID base, int face2, int type, int side, int ground, int trace) {
 	// initialize new variables
 	double offset[3] = {0};
 	dMatrix3 R1, R2, R3, R4, R5, R6;
 
 	// generate parameters for connector
-	this->getConnectorParams(conn->type, conn->side, R, m);
+	this->getConnectorParams(type, side, R, m);
 
 	// rotate about connection joint
-	dRFromAxisAndAngle(R1, R[0], R[4], R[8], robot->psi);
+	dRFromAxisAndAngle(R1, R[0], R[4], R[8], 0);
 	dMultiply0(R2, R1, R, 3, 3, 3);
 
 	// rotate body for connection face
-	switch (conn->face2) {
+	switch (face2) {
 		case 1:
 			offset[0] = _body_width/2 + _face_depth;
 			dRFromAxisAndAngle(R3, R2[2], R2[6], R2[10], 0);
 			dMultiply0(R4, R3, R2, 3, 3, 3);
-			dRFromAxisAndAngle(R5, R4[0], R4[4], R4[8], DEG2RAD(robot->angle1));
+			dRFromAxisAndAngle(R5, R4[0], R4[4], R4[8], DEG2RAD(a[0]));
 			break;
 		case 2:
 			offset[0] = _face_depth + _body_length;
 			dRFromAxisAndAngle(R3, R2[2], R2[6], R2[10], -M_PI/2);
 			dMultiply0(R4, R3, R2, 3, 3, 3);
-			dRFromAxisAndAngle(R5, R4[1], R4[5], R4[9], -DEG2RAD(robot->angle2));
+			dRFromAxisAndAngle(R5, R4[1], R4[5], R4[9], -DEG2RAD(a[1]));
 			break;
 		case 3:
 			offset[0] = _body_width/2 + _face_depth;
 			dRFromAxisAndAngle(R3, R2[2], R2[6], R2[10], M_PI);
 			dMultiply0(R4, R3, R2, 3, 3, 3);
-			dRFromAxisAndAngle(R5, R4[0], R4[4], R4[8], DEG2RAD(robot->angle3));
+			dRFromAxisAndAngle(R5, R4[0], R4[4], R4[8], DEG2RAD(a[2]));
 			break;
 	}
 	m[0] += R[0]*offset[0];
@@ -787,31 +786,18 @@ int CLinkbotT::build(int id, const double *p, const double *r, const double *a, 
 	dMultiply0(R6, R5, R4, 3, 3, 3);
 
     // build new module
-	double rot[3] = {robot->angle1, robot->angle2, robot->angle3};
+	double rot[3] = {a[0], a[1], a[2]};
 	this->buildIndividual(m[0], m[1], m[2], R6, rot);
 
     // add fixed joint to attach two modules
-	this->fixBodyToConnector(base, conn->face2);
-
-	// add connectors
-	for (int i = 0; i < robot->conn.size(); i++) {
-		if (robot->conn[i]->robot == _id) {
-			if (robot->conn[i]->conn == -1)
-				this->addConnector(robot->conn[i]->type, robot->conn[i]->face1, robot->conn[i]->size);
-			else
-				this->add_connector_daisy(robot->conn[i]->conn, robot->conn[i]->face1, robot->conn[i]->size, robot->conn[i]->side, robot->conn[i]->type);
-		}
-		else if (robot->conn[i]->face2 != conn->face2) {
-			this->fixConnectorToBody(robot->conn[i]->face2, base);
-		}
-	}
+	this->fixBodyToConnector(base, face2);
 
 	// fix to ground
-	if (robot->ground != -1) this->fixBodyToGround(_body[robot->ground]);
+	if (ground != -1) this->fixBodyToGround(_body[ground]);
 
 	// success
 	return 0;
-}*/
+}
 
 int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double *rot) {
 	// init body parts

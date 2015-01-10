@@ -41,6 +41,7 @@ namespace rsScene {
 			Scene(void);
 			virtual ~Scene(void);
 
+			void addChild(void);
 			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, double, int, int);
 			Ground* drawGround(int, const double*, const double*, const double*, const double*);
 			int drawMarker(int, const double*, const double*, const double*, int, std::string);

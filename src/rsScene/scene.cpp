@@ -56,6 +56,13 @@ Scene::~Scene(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+void Scene::addChild(void) {
+	if (_staging->getNumChildren()) {
+		_scene->addChild(_staging->getChild(0));
+		_staging->removeChild(0, 1);
+	}
+}
+
 void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type, int face, double size, int side, int conn) {
 	switch (robot->getForm()) {
 		case rs::CUBUS:
@@ -107,7 +114,7 @@ Ground* Scene::drawGround(int type, const double *p, const double *c, const doub
 	// add positioning capability
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
 	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-	pat->setAttitude(osg::Quat(q[1], q[2], q[3], q[0]));
+	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 	pat->addChild(body.get());
 	ground->addChild(pat.get());
 
@@ -1726,10 +1733,7 @@ void* Scene::graphics_thread(void *arg) {
 		MUTEX_UNLOCK(&(p->_thread_mutex));
 
 		p->_viewer->frame();
-		if (p->_staging->getNumChildren()) {
-			p->_scene->addChild(p->_staging->getChild(0));
-			p->_staging->removeChild(0, 1);
-		}
+		p->addChild();
 		if (p->_deleting) {
 			p->_scene->removeChild(p->_scene->getChild(p->_deleting));
 			p->_deleting = 0;

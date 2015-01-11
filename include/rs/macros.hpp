@@ -26,11 +26,11 @@
 #define MUTEX_UNLOCK(mutex) ReleaseMutex(*mutex)
 //   COND
 #define COND_T HANDLE
-#define COND_INIT(cond) *cond = CreateEvent(NULL, TRUE, TRUE, NULL); ResetEvent(*cond)
+#define COND_ACTION(cond, mutex, action) action; SetEvent(*cond)
 #define COND_DESTROY(cond)
-#define COND_WAIT(cond , mutex) ResetEvent(*cond); ReleaseMutex(*mutex); WaitForSingleObject(*cond, INFINITE)
-#define SIGNAL(cond, mutex, action) action; SetEvent(*cond)
+#define COND_INIT(cond) *cond = CreateEvent(NULL, TRUE, TRUE, NULL); ResetEvent(*cond)
 #define COND_SIGNAL(cond) SetEvent(*cond)
+#define COND_WAIT(cond , mutex) ResetEvent(*cond); ReleaseMutex(*mutex); WaitForSingleObject(*cond, INFINITE)
 #else
 #define DLLIMPORT
 //   THREADS
@@ -52,11 +52,11 @@
 #define MUTEX_UNLOCK(mutex) pthread_mutex_unlock(mutex)
 //   COND
 #define COND_T pthread_cond_t
-#define COND_INIT(cond) pthread_cond_init(cond, NULL)
+#define COND_ACTION(cond, mutex, action) pthread_mutex_lock(mutex); action; pthread_cond_signal(cond); pthread_mutex_unlock(mutex)
 #define COND_DESTROY(cond) pthread_cond_destroy(cond)
-#define COND_WAIT(cond, mutex) pthread_cond_wait(cond, mutex)
-#define SIGNAL(cond, mutex, action) pthread_mutex_lock(mutex); action; pthread_cond_signal(cond); pthread_mutex_unlock(mutex)
+#define COND_INIT(cond) pthread_cond_init(cond, NULL)
 #define COND_SIGNAL(cond) pthread_cond_signal(cond)
+#define COND_WAIT(cond, mutex) pthread_cond_wait(cond, mutex)
 //   RWLOCK
 #define RWLOCK_T pthread_rwlock_t
 #define RWLOCK_INIT(rwlock) pthread_rwlock_init(rwlock, NULL)

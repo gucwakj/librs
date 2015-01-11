@@ -83,7 +83,7 @@ void* CMobot::motionArchThread(void *arg) {
 	move->robot->motionArch(move->d);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -149,7 +149,7 @@ void* CMobot::motionInchwormLeftThread(void *arg) {
 	move->robot->motionInchwormLeft(move->i);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -201,7 +201,7 @@ void* CMobot::motionInchwormRightThread(void *arg) {
 	move->robot->motionInchwormRight(move->i);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -245,7 +245,7 @@ void* CMobot::motionRollBackwardThread(void *arg) {
 	move->robot->motionRollBackward(move->d);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -293,7 +293,7 @@ void* CMobot::motionRollForwardThread(void *arg) {
 	move->robot->motionRollForward(move->d);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -338,7 +338,7 @@ void* CMobot::motionSkinnyThread(void *arg) {
 	move->robot->motionSkinny(move->d);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -387,7 +387,7 @@ void* CMobot::motionStandThread(void *arg) {
 	move->robot->motionStand();
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -450,7 +450,7 @@ void* CMobot::motionTumbleLeftThread(void *arg) {
 	move->robot->motionTumbleLeft(move->i);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -514,7 +514,7 @@ void* CMobot::motionTumbleRightThread(void *arg) {
 	move->robot->motionTumbleRight(move->i);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -558,7 +558,7 @@ void* CMobot::motionTurnLeftThread(void *arg) {
 	move->robot->motionTurnLeft(move->d);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -602,7 +602,7 @@ void* CMobot::motionTurnRightThread(void *arg) {
 	move->robot->motionTurnRight(move->d);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;
@@ -649,7 +649,7 @@ void* CMobot::motionUnstandThread(void *arg) {
 	move->robot->motionUnstand();
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// success
 	return NULL;

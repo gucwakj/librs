@@ -1757,7 +1757,7 @@ void* Robot::drivexyToThread(void *arg) {
 	move->robot->drivexyTo(move->x, move->y, move->radius, move->trackwidth);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// cleanup
 	delete move;
@@ -1774,7 +1774,7 @@ void* Robot::drivexyToFuncThread(void *arg) {
 	move->robot->drivexyToFunc(move->x, move->y, move->i, move->func, move->radius, move->trackwidth);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// cleanup
 	delete move;
@@ -1791,7 +1791,7 @@ void* Robot::drivexyToPolyThread(void *arg) {
 	move->robot->drivexyToPoly(move->x, move->y, move->i, move->expr, move->radius, move->trackwidth);
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// cleanup
 	delete move;
@@ -1895,7 +1895,7 @@ void* Robot::recordAngleThread(void *arg) {
 	}
 
 	// signal completion of recording
-	SIGNAL(&rec->robot->_recording_cond, &rec->robot->_recording_mutex, rec->robot->_motor[rec->id].record = false);
+	COND_ACTION(&rec->robot->_recording_cond, &rec->robot->_recording_mutex, rec->robot->_motor[rec->id].record = false);
 
 	// cleanup
 	delete rec;

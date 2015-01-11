@@ -285,7 +285,7 @@ int Sim::deleteRobot(int loc) {
 }
 
 void Sim::done(void) {
-	SIGNAL(&_running_cond, &_running_mutex, _running = false);
+	COND_ACTION(&_running_cond, &_running_mutex, _running = false);
 }
 
 double Sim::getClock(void) {

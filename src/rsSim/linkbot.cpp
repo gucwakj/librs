@@ -2109,7 +2109,7 @@ void* CLinkbotT::closeGripperNBThread(void *arg) {
 	move->robot->closeGripper();
 
 	// signal successful completion
-	SIGNAL(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
 
 	// cleanup
 	delete move;

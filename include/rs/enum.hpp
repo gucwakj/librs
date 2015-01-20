@@ -44,47 +44,6 @@ namespace rs {
 		NUM_CONNECTORS
 	};
 
-	// TODO: put connectors into rsRobots classes
-	// cant be done yet with xml implementation
-	/*
-	namespace Linkbot {
-		enum Connector {
-			BIGWHEEL,
-			BRIDGE,
-			CASTER,
-			CUBE,
-			FACEPLATE,
-			GRIPPER,
-			OMNIDRIVE,
-			SIMPLE,
-			SMALLWHEEL,
-			TINYWHEEL,
-			WHEEL,
-			NUM_CONNECTORS
-		};
-	} // namespace Linkbot
-
-	namespace Mobot {
-		enum Connector {
-			BIGWHEEL,
-			CASTER,
-			SIMPLE,
-			SMALLWHEEL,
-			SQUARE,
-			TANK,
-			WHEEL,
-			NUM_CONNECTORS
-		};
-	} // namespace Mobot
-
-	namespace Cubus {
-		enum Connector {
-			SIMPLE,
-			NUM_CONNECTORS
-		};
-	} // namespace Cubus
-	*/
-
 	// drawing objects (ground and graphic)
 	enum Drawing {
 		BOX,
@@ -96,6 +55,75 @@ namespace rs {
 	};
 
 } // namespace rs
+
+namespace rsLinkbot {
+
+	enum Preconfig {
+		ROBOT,
+		BOW,
+		EXPLORER,
+		FOURBOTDRIVE,
+		FOURWHEELDRIVE,
+		FOURWHEELEXPLORER,
+		GROUPBOW,
+		INCHWORM,
+		LIFT,
+		OMNIDRIVE,
+		SNAKE,
+		STAND,
+		NUM_PRECONFIG
+	};
+
+	/*enum Connector {
+		BIGWHEEL,
+		BRIDGE,
+		CASTER,
+		CUBE,
+		FACEPLATE,
+		GRIPPER,
+		OMNIDRIVE,
+		SIMPLE,
+		SMALLWHEEL,
+		TINYWHEEL,
+		WHEEL,
+		NUM_CONNECTORS
+	};*/
+
+} // namespace rsLinkbot
+
+/*namespace rsMobot {
+
+	enum Preconfig {
+		EXPLORER,
+		LIFT,
+		NUM_PRECONFIG
+	};
+
+	enum Connector {
+		BIGWHEEL,
+		CASTER,
+		SIMPLE,
+		SMALLWHEEL,
+		SQUARE,
+		TANK,
+		WHEEL,
+		NUM_CONNECTORS
+	};
+
+} // namespace rsMobot
+
+namespace rsCubus {
+
+	enum Preconfig {
+		NUM_PRECONFIG
+	};
+
+	enum Connector {
+		SIMPLE,
+		NUM_CONNECTORS
+	};
+
+} // namespace rsCubus*/
 
 #endif // RS_ENUM_HPP_
 

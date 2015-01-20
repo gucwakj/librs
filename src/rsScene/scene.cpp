@@ -60,11 +60,18 @@ Scene::~Scene(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Scene::addChild(void) {
+int Scene::addChild(void) {
 	if (_staging->getNumChildren()) {
 		_scene->addChild(_staging->getChild(0));
 		_staging->removeChild(0, 1);
+		return _scene->getNumChildren();
 	}
+	return -1;
+}
+
+int Scene::deleteChild(int id) {
+	_scene->removeChild(_scene->getChild(id));
+	return _scene->getNumChildren();
 }
 
 void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type, int face, double size, int side, int conn) {

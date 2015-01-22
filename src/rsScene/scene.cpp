@@ -1,3 +1,5 @@
+#include <osgFX/Scribe>
+
 #include <rsScene/mouseHandler.hpp>
 #include <rsScene/scene.hpp>
 #include <rsScene/skyTransform.hpp>
@@ -43,6 +45,10 @@ Scene::Scene(void) : keyboardHandler() {
 
 	// set texture path
 	_tex_path = this->getTexturePath();
+
+	// flags for graphical output options
+	_highlight = false;
+	_label = true;
 }
 
 Scene::~Scene(void) {
@@ -64,9 +70,32 @@ int Scene::addChild(void) {
 	if (_staging->getNumChildren()) {
 		_scene->addChild(_staging->getChild(0));
 		_staging->removeChild(0, 1);
-		return _scene->getNumChildren();
+		return _scene->getNumChildren() - 1;
 	}
 	return -1;
+}
+
+void Scene::addHighlight(int id, bool exclusive) {
+	// deselect everything
+	if (exclusive) {
+		// find nodes of intersection
+		osg::Group *test = NULL;
+		for (int i = 6; i < _scene->getNumChildren(); i++) {
+			test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+			// get robot node
+			if (test && (test->getName() == "robot" || test->getName() == "ground")) {
+				if (dynamic_cast<osgFX::Scribe *>(test->getChild(2)->asTransform()->getChild(0)))
+					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)));
+			}
+		}
+	}
+
+	// set highlight of item
+	osg::Group *parent = _scene->getChild(id)->asGroup();
+	osg::Node *child = parent->getChild(2)->asTransform()->getChild(0);
+	if (parent && child) {
+		this->toggleHighlight(parent, child);
+	}
 }
 
 int Scene::deleteChild(int id) {
@@ -235,6 +264,10 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const
 
 	// draw HUD
 	osgText::Text *label = new osgText::Text();
+	char text[50];
+	sprintf(text, "Robot %d\n(%.4lf, %.4lf) [cm]", robot->getID() + 1, p[0]*100, p[1]*100);
+	label->setText(text);
+	label->setPosition(osg::Vec3(p[0], p[1], p[2] + (robot->getID() % 2 ? 0.08 : 0) + 0.08));
 	osg::Geode *label_geode = new osg::Geode();
 	label_geode->addDrawable(label);
 	label_geode->setNodeMask(NOT_VISIBLE_MASK);
@@ -335,6 +368,14 @@ void Scene::setGrid(bool units, std::vector<double> grid) {
 	_grid[4] = grid[4];
 	_grid[5] = grid[5];
 	_grid[6] = grid[6];
+}
+
+void Scene::setHighlight(bool highlight) {
+	_highlight = highlight;
+}
+
+void Scene::setLabel(bool label) {
+	_label = label;
 }
 
 void Scene::setPauseText(int pause) {
@@ -802,7 +843,7 @@ int Scene::setupScene(double w, double h) {
 
 	// event handler
 	_viewer->addEventHandler(dynamic_cast<keyboardHandler*>(this));
-	_viewer->addEventHandler(new mouseHandler());
+	_viewer->addEventHandler(new mouseHandler(this));
 
 	// show scene
 	_viewer->setSceneData(_root);
@@ -879,6 +920,60 @@ void Scene::start(int pause) {
 
 	// create graphics thread
 	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
+}
+
+void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
+	if (!_highlight) return;
+
+	if (parent->getName() == "robot") {
+		// not highlighted yet, do that now
+		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
+			for (int i = 2; i < parent->getNumChildren(); i++) {
+				osgFX::Scribe *scribe = new osgFX::Scribe();
+				scribe->setWireframeColor(osg::Vec4(1, 1, 0, 0.1));
+				scribe->setWireframeLineWidth(1);
+				scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+				scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+				scribe->addChild(parent->getChild(i)->asTransform()->getChild(0));
+				parent->getChild(i)->asTransform()->replaceChild(parent->getChild(i)->asTransform()->getChild(0), scribe);
+			}
+		}
+		// already highlighted, take it away
+		else {
+			for (int i = 2; i < parent->getNumChildren(); i++) {
+				osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(i)->asTransform()->getChild(0));
+				parent->getChild(i)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
+			}
+		}
+	}
+	else if (parent->getName() == "ground") {
+		// not highlighted yet, do that now
+		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
+			osgFX::Scribe *scribe = new osgFX::Scribe();
+			scribe->setWireframeColor(osg::Vec4(1, 1, 0, 0.1));
+			scribe->setWireframeLineWidth(1);
+			scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+			scribe->addChild(parent->getChild(0)->asTransform()->getChild(0));
+			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), scribe);
+		}
+		// already highlighted, take it away
+		else {
+			osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(0)->asTransform()->getChild(0));
+			parent->getChild(0)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
+		}
+	}
+}
+
+void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
+	if (!_label) return;
+
+	if (parent->getName() == "robot") {
+		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
+		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
+	}
+	else if (parent->getName() == "ground") {
+	}
 }
 
 /**********************************************************

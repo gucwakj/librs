@@ -1,11 +1,15 @@
 #include <rsScene/mouseHandler.hpp>
+#include <rsScene/scene.hpp>
 
 using namespace rsScene;
 
-mouseHandler::mouseHandler(void) {
+mouseHandler::mouseHandler(rsScene::Scene *scene) {
 	// default mouse position
 	_mx = 0.0;
 	_my = 0.0;
+
+	// scene to which this handler is attached
+	_scene = scene;
 }
 
 bool mouseHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
@@ -46,13 +50,16 @@ void mouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *vie
 		osgUtil::LineSegmentIntersector::Intersection intersection = picker->getFirstIntersection();
 		osg::NodePath &nodePath = intersection.nodePath;
 
-		// get robot node
-		osg::Group *grandparent = (nodePath.size()>=3) ? dynamic_cast<osg::Group *>(nodePath[nodePath.size()-3]) : 0;
-
-		// toggle HUD
-		if (grandparent && (grandparent->getName() == "robot")) {
-			osg::Geode *geode = dynamic_cast<osg::Geode *>(grandparent->getChild(0));
-			geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
+		// find nodes of intersection
+		osg::Group *test = NULL;
+		for (int i = 0; i < nodePath.size() - 2; i++) {
+			test = dynamic_cast<osg::Group *>(nodePath[i]);
+			// get robot node
+			if (test && (test->getName() == "robot" || test->getName() == "ground")) {
+				_scene->toggleHighlight(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
+				_scene->toggleLabel(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
+				break;
+			}
 		}
 	}
 }

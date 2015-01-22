@@ -42,6 +42,7 @@ namespace rsScene {
 			virtual ~Scene(void);
 
 			int addChild(void);
+			void addHighlight(int, bool = 1);
 			int deleteChild(int);
 			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, double, int, int);
 			Ground* drawGround(int, const double*, const double*, const double*, const double*);
@@ -51,11 +52,15 @@ namespace rsScene {
 			std::string getTexturePath(void);
 			void setDelete(int);
 			void setGrid(bool, std::vector<double>);
+			void setHighlight(bool);
+			void setLabel(bool);
 			void setPauseText(int);
 			int setupCamera(osg::GraphicsContext*, double, double);
 			int setupScene(double, double);
 			int setupViewer(osgViewer::Viewer*);
 			void start(int);
+			void toggleHighlight(osg::Group*, osg::Node*);
+			void toggleLabel(osg::Group*, osg::Node*);
 
 		// virtual functions for inherited classes
 		protected:
@@ -72,6 +77,8 @@ namespace rsScene {
 
 		// private data
 		private:
+			bool _highlight;					// flag: enable object highlight on click
+			bool _label;						// flag: enable object hud on click
 			bool _thread;						// flag: thread is running
 			bool _units;						// flag: SI (true) or customary (false)
 			int _deleting;						// temp variable for deleting robots

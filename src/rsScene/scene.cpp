@@ -1148,59 +1148,23 @@ void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
 
 void Scene::draw_linkbot(rsRobots::LinkbotT *robot, Robot *group, const double *p, const double *q, bool trace, double *rgb) {
 	// initialize variables
-	osg::ref_ptr<osg::Geode> body[rsRobots::LinkbotT::NUM_PARTS];
+	osg::ref_ptr<osg::Node> body[rsRobots::LinkbotT::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsRobots::LinkbotT::NUM_PARTS];
-	osg::Box *box;
-	osg::Cylinder *cyl;
 	double p1[3], q1[4];
 
-	// build bodies
+	// create transforms
 	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
-		body[i] = new osg::Geode;
 		pat[i] = new osg::PositionAttitudeTransform;
-		pat[i]->addChild(body[i]);
 		group->addChild(pat[i].get());
 	}
 
 	// get led color
 	rgb = robot->getRGB();
 
-	// body
-	box = new osg::Box(osg::Vec3d(0, 0, 0), 0.07835, 0.03935, 0.07250);
-	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.03625, 0.07835);
-	body[rsRobots::LinkbotT::BODY]->addDrawable(new osg::ShapeDrawable(box));
-	body[rsRobots::LinkbotT::BODY]->addDrawable(new osg::ShapeDrawable(cyl));
-	pat[rsRobots::LinkbotT::BODY]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-	pat[rsRobots::LinkbotT::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+	// set tracing
+	robot->setTrace(trace);
 
-	// 'led'
-	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0 + 0.0001), 0.01, 0.07250);
-	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
-	led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1));
-	body[rsRobots::LinkbotT::BODY]->addDrawable(led);
-
-	// face1
-	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE1, p, q, p1, q1);
-	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.03060, 0.00200);
-	body[rsRobots::LinkbotT::FACE1]->addDrawable(new osg::ShapeDrawable(cyl));
-	pat[rsRobots::LinkbotT::FACE1]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
-	pat[rsRobots::LinkbotT::FACE1]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
-
-	// face 2
-	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE2, p, q, p1, q1);
-	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.03060, 0.00200);
-	body[rsRobots::LinkbotT::FACE2]->addDrawable(new osg::ShapeDrawable(cyl));
-	pat[rsRobots::LinkbotT::FACE2]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
-	pat[rsRobots::LinkbotT::FACE2]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
-
-	// face 3
-	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE3, p, q, p1, q1);
-	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.03060, 0.00200);
-	body[rsRobots::LinkbotT::FACE3]->addDrawable(new osg::ShapeDrawable(cyl));
-	pat[rsRobots::LinkbotT::FACE3]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
-	pat[rsRobots::LinkbotT::FACE3]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
-
-	// apply texture to robot
+	// set up textures
 	osg::ref_ptr<osg::Texture2D> tex[2];
 	tex[0] = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/textures/body.png"));
 	tex[1] = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/textures/face.png"));
@@ -1210,28 +1174,72 @@ void Scene::draw_linkbot(rsRobots::LinkbotT *robot, Robot *group, const double *
 		tex[i]->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
 		tex[i]->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
 	}
-	body[0]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[0].get(), osg::StateAttribute::ON);
-	body[1]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
-	body[2]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
-	body[3]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
+	osg::ref_ptr<osg::TexEnv> texEnv = new osg::TexEnv(osg::TexEnv::DECAL);
+
+	// draw body
+	body[rsRobots::LinkbotT::BODY] = osgDB::readNodeFile(_tex_path + "linkbot/models/body.3ds");
+	body[rsRobots::LinkbotT::BODY]->setName("body");
+	body[rsRobots::LinkbotT::BODY]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[0].get(), osg::StateAttribute::ON);
+	pat[rsRobots::LinkbotT::BODY]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat[rsRobots::LinkbotT::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+
+	// draw 'led'
+	/*osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0 + 0.0001), 0.01, 0.07250);
+	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
+	led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1));
+	body[rsRobots::LinkbotT::BODY]->addDrawable(led);*/
+
+	// draw face1
+	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE1, p, q, p1, q1);
+	body[rsRobots::LinkbotT::FACE1] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
+	body[rsRobots::LinkbotT::FACE1]->setName("face1");
+	body[rsRobots::LinkbotT::FACE1]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
+	pat[rsRobots::LinkbotT::FACE1]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	pat[rsRobots::LinkbotT::FACE1]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
+
+	// faces 2 & 3 switch
 	switch (robot->getForm()) {
 		case rs::LINKBOTI:
+			body[rsRobots::LinkbotT::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_fixed.3ds");
 			body[rsRobots::LinkbotT::FACE2]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[0].get(), osg::StateAttribute::ON);
+			body[rsRobots::LinkbotT::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
+			body[rsRobots::LinkbotT::FACE3]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
 			break;
 		case rs::LINKBOTL:
+			body[rsRobots::LinkbotT::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
+			body[rsRobots::LinkbotT::FACE2]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
+			body[rsRobots::LinkbotT::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_fixed.3ds");
 			body[rsRobots::LinkbotT::FACE3]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[0].get(), osg::StateAttribute::ON);
+			break;
+		case rs::LINKBOTT:
+			body[rsRobots::LinkbotT::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
+			body[rsRobots::LinkbotT::FACE2]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
+			body[rsRobots::LinkbotT::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
+			body[rsRobots::LinkbotT::FACE3]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex[1].get(), osg::StateAttribute::ON);
 			break;
 	}
 
-	// rendering
+	// draw face 2
+	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE2, p, q, p1, q1);
+	body[rsRobots::LinkbotT::FACE2]->setName("face2");
+	pat[rsRobots::LinkbotT::FACE2]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	pat[rsRobots::LinkbotT::FACE2]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
+
+	// draw face 3
+	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE3, p, q, p1, q1);
+	body[rsRobots::LinkbotT::FACE3]->setName("face3");
+	pat[rsRobots::LinkbotT::FACE3]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	pat[rsRobots::LinkbotT::FACE3]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
+
 	for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
 		// set rendering properties
 		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		body[i]->getOrCreateStateSet()->setTextureAttribute(0, texEnv, osg::StateAttribute::ON);
+		body[i]->setCullingActive(false);
+		// add bodies to transforms
+		pat[i]->addChild(body[i]);
 	}
-
-	// set tracking
-	robot->setTrace(trace);
 }
 
 void Scene::draw_linkbot_conn(rsRobots::LinkbotT *robot, Robot *group, int type, int face, double size, int side, int conn) {

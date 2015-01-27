@@ -182,21 +182,21 @@ void LinkbotT::getRobotBodyOffset(int body, const double *p, const double *q, do
 	switch (body) {
 		case FACE1:
 			q2[0] = 0;
-			q2[1] = sin(0.785398);	// 0.5*PI/2
-			q2[2] = 0;
-			q2[3] = cos(0.785398);	// 0.5*PI/2
+			q2[1] = 0;
+			q2[2] = sin(1.570796);	// 0.5 * PI
+			q2[3] = cos(1.570796);	// 0.5 * PI
 			break;
 		case FACE2:
-			q2[0] = sin(0.785398);	// 0.5*PI/2
+			q2[0] = 0;
 			q2[1] = 0;
-			q2[2] = 0;
-			q2[3] = cos(0.785398);	// 0.5*PI/2
+			q2[2] = sin(-0.785398);	// -0.5 * PI/2
+			q2[3] = cos(-0.785398);	// -0.5 * PI/2
 			break;
 		case FACE3:
 			q2[0] = 0;
-			q2[1] = sin(-0.785398);	// -0.5*PI/2
+			q2[1] = 0;
 			q2[2] = 0;
-			q2[3] = cos(-0.785398);	// -0.5*PI/2
+			q2[3] = 1;
 			break;
 	}
 

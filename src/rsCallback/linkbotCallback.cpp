@@ -45,13 +45,16 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
+			if (i == 0)
+				pat->setPosition(osg::Vec3d(pos[0], _robot->getCenter(1), pos[2]));
+			else
+				pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
 			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		}
 		// child 2: bodies; drawable 2: led
-		osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(0)->asGeode()->getDrawable(2));
-		double *rgb = _robot->getRGB();
-		led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
+		//osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(0)->asGeode()->getDrawable(2));
+		//double *rgb = _robot->getRGB();
+		//led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
 		// child 7->end: connectors
 		for (int i = 0; i < _conn.size(); i++) {
 			dMatrix3 R;

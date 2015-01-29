@@ -3,6 +3,7 @@
 
 #include <osg/Depth>
 #include <osg/LineWidth>
+#include <osg/Material>
 #include <osg/MatrixTransform>
 #include <osg/Point>
 #include <osg/ShapeDrawable>
@@ -68,6 +69,7 @@ namespace rsScene {
 
 		// private functions
 		private:
+			osg::Material* create_material(osg::Vec4);
 			//int draw_cubus(rsRobots::Cubus*, osg::Group*, const double*, const double*, bool, double*);
 			void draw_linkbot(rsRobots::LinkbotT*, Robot*, const double*, const double*, bool, double*);
 			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);

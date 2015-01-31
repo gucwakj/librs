@@ -21,7 +21,10 @@ Scene::Scene(void) : keyboardHandler() {
 	_staging = new osg::Group;
 
 	// id of robot for deleting
-	_deleting = -1;
+	_deleting = 0;
+
+	// set default level to load
+	_level = OUTDOORS;
 
 	// set default grid options
 	_units = false;			// customary
@@ -109,13 +112,13 @@ void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type,
 			//this->drawCubus(dynamic_cast<rsRobots::Cubus*>(robot), p, q, trace, rgb);
 			break;
 		case rs::LINKBOTI:
-			this->draw_linkbot_conn(dynamic_cast<rsRobots::LinkbotI*>(robot), group, type, face, size, side, conn);
+			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::LinkbotI*>(robot), group, type, face, size, side, conn);
 			break;
 		case rs::LINKBOTL:
-			this->draw_linkbot_conn(dynamic_cast<rsRobots::LinkbotL*>(robot), group, type, face, size, side, conn);
+			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::LinkbotL*>(robot), group, type, face, size, side, conn);
 			break;
 		case rs::LINKBOTT:
-			this->draw_linkbot_conn(dynamic_cast<rsRobots::LinkbotT*>(robot), group, type, face, size, side, conn);
+			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::LinkbotT*>(robot), group, type, face, size, side, conn);
 			break;
 		case rs::MOBOT:
 			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
@@ -242,13 +245,13 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const
 			//this->drawCubus(dynamic_cast<rsRobots::Cubus*>(robot), p, q, trace, rgb);
 			break;
 		case rs::LINKBOTI:
-			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), group, p, q, trace, rgb);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), group, p, q, trace, rgb);
 			break;
 		case rs::LINKBOTL:
-			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotL*>(robot), group, p, q, trace, rgb);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotL*>(robot), group, p, q, trace, rgb);
 			break;
 		case rs::LINKBOTT:
-			this->draw_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), group, p, q, trace, rgb);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), group, p, q, trace, rgb);
 			break;
 		case rs::MOBOT:
 			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
@@ -389,6 +392,8 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	// camera properties
 	_camera = new osg::Camera;
 	_camera->setGraphicsContext(gc);
+	_camera->setClearColor(osg::Vec4(0, 0, 0, 1));
+	_camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	_camera->setViewport(new osg::Viewport(0, 0, w, h));
 	_camera->setDrawBuffer(GL_BACK);
 	_camera->setReadBuffer(GL_BACK);
@@ -415,7 +420,7 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	return 0;
 }
 
-int Scene::setupScene(double w, double h) {
+int Scene::setupScene(double w, double h, bool pause) {
 	// Creating the root node
 	_root = new osg::Group;
 
@@ -426,7 +431,7 @@ int Scene::setupScene(double w, double h) {
 	_scene->setCastsShadowTraversalMask(CASTS_SHADOW_MASK);
 	//osg::ref_ptr<osgShadow::ShadowMap> sm = new osgShadow::ShadowMap;
 	//sm->setTextureSize(osg::Vec2s(1024, 1024));
-	//shadowedScene->setShadowTechnique(sm.get());
+	//_scene->setShadowTechnique(sm.get());
 
 	// add light source
 	/*osg::ref_ptr<osg::LightSource> ls = new osg::LightSource;
@@ -439,63 +444,184 @@ int Scene::setupScene(double w, double h) {
 	ls->getLight()->setQuadraticAttenuation(0.05);
 	_scene->addChild(ls.get());*/
 
-	// load terrain node
-	osg::ref_ptr<osg::Depth> t_depth = new osg::Depth;
-	t_depth->setFunction(osg::Depth::LEQUAL);
-	t_depth->setRange(1.0, 1.0);
-	osg::ref_ptr<osg::StateSet> t_stateset = new osg::StateSet();
-	t_stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	t_stateset->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-	t_stateset->setAttributeAndModes(t_depth, osg::StateAttribute::ON);
-	t_stateset->setRenderBinDetails(-1, "RenderBin");
-	t_stateset->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-	osg::ref_ptr<osg::Node> t_geode = osgDB::readNodeFile(_tex_path + "ground/terrain.3ds");
-	t_geode->setCullingActive(false);
-	t_geode->setStateSet(t_stateset);
-	osg::ref_ptr<osg::PositionAttitudeTransform> t_transform = new osg::PositionAttitudeTransform();
-	t_transform->setScale(osg::Vec3d(2, 2, 0.001));
-	t_transform->setCullingActive(false);
-	t_transform->addChild(t_geode);
-	osg::ref_ptr<osgUtil::LineSegmentIntersector> r_segment = new osgUtil::LineSegmentIntersector(osg::Vec3d(0, 0, 999), osg::Vec3d(0, 0, -999));
-	osgUtil::IntersectionVisitor r_visitor(r_segment);
-	t_transform->accept(r_visitor);
-	osgUtil::LineSegmentIntersector::Intersection r_hits = r_segment->getFirstIntersection();
-	osg::Vec3d r_pos = r_hits.getWorldIntersectPoint();
-	t_transform->setPosition(osg::Vec3d(r_pos[0], r_pos[1], -r_pos[2]));
-	//t_transform->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
-	t_transform->setNodeMask(~IS_PICKABLE_MASK);
-	_scene->addChild(t_transform);
+	switch (_level) {
+		case OUTDOORS:
+			this->draw_scene_outdoors(w, h, pause);
+			break;
+		case BOARD:
+			this->draw_scene_board(w, h, pause);
+			break;
+	}
 
-	// set up HUD
-	osg::ref_ptr<osg::Geode> HUDGeode = new osg::Geode();
-	osg::ref_ptr<osgText::Text> textHUD = new osgText::Text();
-	osg::ref_ptr<osg::Projection> HUDProjectionMatrix = new osg::Projection;
-	osg::ref_ptr<osg::MatrixTransform> HUDModelViewMatrix = new osg::MatrixTransform;
-	osg::ref_ptr<osg::StateSet> HUDStateSet = new osg::StateSet();
-	HUDProjectionMatrix->setMatrix(osg::Matrix::ortho2D(0, w, 0, h));
-	HUDProjectionMatrix->addChild(HUDModelViewMatrix);
-	HUDModelViewMatrix->setMatrix(osg::Matrix::identity());
-	HUDModelViewMatrix->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-	HUDModelViewMatrix->addChild(HUDGeode);
-	HUDGeode->setStateSet(HUDStateSet);
-	HUDStateSet->setMode(GL_BLEND,osg::StateAttribute::ON);
-	HUDStateSet->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
-	HUDStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	HUDStateSet->setRenderBinDetails(11, "RenderBin");
-	HUDGeode->addDrawable(textHUD);
-	textHUD->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-	textHUD->setMaximumWidth(w);
-	textHUD->setCharacterSize(15);
-	if (_deleting) textHUD->setText("Paused: Press any key to start");
-	textHUD->setAxisAlignment(osgText::Text::SCREEN);
-	textHUD->setAlignment(osgText::Text::CENTER_CENTER);
-	textHUD->setPosition(osg::Vec3(w/2, 50, -1.5));
-	textHUD->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-	textHUD->setBackdropColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	textHUD->setBackdropOffset(0.1);
-	_root->addChild(HUDProjectionMatrix);
+	// optimize the scene graph, remove redundant nodes and state etc.
+	osgUtil::Optimizer optimizer;
+	optimizer.optimize(_root);
 
-	// grid
+	// event handler
+	_viewer->addEventHandler(dynamic_cast<keyboardHandler*>(this));
+	_viewer->addEventHandler(new mouseHandler(this));
+
+	// show scene
+	_viewer->setSceneData(_root);
+
+	// success
+	return 0;
+}
+
+int Scene::setupViewer(osgViewer::Viewer *viewer) {
+    // creating the viewer
+	if (viewer)
+		_viewer = viewer;
+	else
+		_viewer = new osgViewer::Viewer;
+
+	// set threading model
+	_viewer->setThreadingModel(osgViewer::Viewer::SingleThreaded);
+
+	// event handler
+	_viewer->addEventHandler(new osgViewer::StatsHandler);
+
+	// success
+	return 0;
+}
+
+void Scene::start(int pause) {
+	// initialize variables
+	unsigned int width, height;
+
+	// window interface
+	osg::GraphicsContext::WindowingSystemInterface *wsi = osg::GraphicsContext::getWindowingSystemInterface();
+	if (!wsi) {
+		osg::notify(osg::NOTICE) << "osg: cannot create windows." << std::endl;
+		return;
+	}
+	wsi->getScreenResolution(osg::GraphicsContext::ScreenIdentifier(0), width, height);
+
+	// window traits
+	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+	traits->width = width/2;
+	traits->height = 3*width/8;
+	traits->x = width - traits->width - 10;
+	traits->y = height - traits->height - 50;
+	traits->windowDecoration = true;
+	traits->doubleBuffer = true;
+	traits->vsync = false;
+	traits->sharedContext = 0;
+
+	// graphics context
+	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+	if (gc.valid()) {
+		gc->setClearColor(osg::Vec4f(0.f,0.f,0.f,1.f));
+		gc->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	else {
+		osg::notify(osg::NOTICE) << "osg: cannot create graphics." << std::endl;
+		return;
+	}
+
+	// set up viewer
+	this->setupViewer(NULL);
+
+	// set up the camera
+	this->setupCamera(gc.get(), traits->width, traits->height);
+
+	// set up scene
+	this->setupScene(traits->width, traits->height, pause);
+
+    // thread is now running
+	MUTEX_INIT(&_thread_mutex);
+	_thread = true;
+
+	// create graphics thread
+	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
+}
+
+void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
+	if (!_highlight) return;
+
+	if (parent->getName() == "robot") {
+		// not highlighted yet, do that now
+		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
+			for (int i = 2; i < parent->getNumChildren(); i++) {
+				osgFX::Scribe *scribe = new osgFX::Scribe();
+				scribe->setWireframeColor(osg::Vec4(1, 1, 0, 0.1));
+				scribe->setWireframeLineWidth(1);
+				scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+				scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+				scribe->addChild(parent->getChild(i)->asTransform()->getChild(0));
+				parent->getChild(i)->asTransform()->replaceChild(parent->getChild(i)->asTransform()->getChild(0), scribe);
+			}
+		}
+		// already highlighted, take it away
+		else {
+			for (int i = 2; i < parent->getNumChildren(); i++) {
+				osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(i)->asTransform()->getChild(0));
+				parent->getChild(i)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
+			}
+		}
+	}
+	else if (parent->getName() == "ground") {
+		// not highlighted yet, do that now
+		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
+			osgFX::Scribe *scribe = new osgFX::Scribe();
+			scribe->setWireframeColor(osg::Vec4(1, 1, 0, 0.1));
+			scribe->setWireframeLineWidth(1);
+			scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+			scribe->addChild(parent->getChild(0)->asTransform()->getChild(0));
+			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), scribe);
+		}
+		// already highlighted, take it away
+		else {
+			osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(0)->asTransform()->getChild(0));
+			parent->getChild(0)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
+		}
+	}
+}
+
+void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
+	if (!_label) return;
+
+	if (parent->getName() == "robot") {
+		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
+		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
+	}
+	else if (parent->getName() == "ground") {
+	}
+}
+
+/**********************************************************
+	private functions
+ **********************************************************/
+osg::Material* Scene::create_material(osg::Vec4 color) {
+	osg::Material *material = new osg::Material();
+	/*
+	material->setAmbient(osg::Material::FRONT,  osg::Vec4(1.0, 1.0, 1.0, 1.0));
+	material->setDiffuse(osg::Material::FRONT,  osg::Vec4(1.0, 1.0, 1.0, 1.0));
+	material->setEmission(osg::Material::FRONT, color);
+	material->setSpecular(osg::Material::FRONT, osg::Vec4(1.0, 1.0, 1.0, 1.0));
+	material->setShininess(osg::Material::FRONT, 25.0);
+	*/
+	/*
+	material->setAmbient(osg::Material::FRONT, osg::Vec4(0.0,0.0f,0.0f,1.0f));
+	material->setDiffuse(osg::Material::FRONT, osg::Vec4(0.0,0.0f,0.0f,1.0f));
+	material->setEmission(osg::Material::FRONT, color);
+	material->setSpecular(osg::Material::FRONT, osg::Vec4(1.0,1.0f,1.0f,1.0f));
+	*/
+	/*
+	material->setColorMode(osg::Material::DIFFUSE);
+	material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1));
+	material->setEmission(osg::Material::FRONT, color);
+	material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(1, 1, 1, 1));
+	material->setShininess(osg::Material::FRONT_AND_BACK, 64.0f);
+	*/
+	material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.0, 0.0, 0.0, 1.0));
+	material->setEmission(osg::Material::FRONT, color);
+	material->setShininess(osg::Material::FRONT_AND_BACK, 0);
+	return material;
+}
+
+void Scene::draw_grid(void) {
 	if ( (int)(_grid[6]) ) {
 		// grid lines for each sub-foot
 		double minx = (int)((_grid[2]*1.01)/_grid[0])*_grid[0];
@@ -779,230 +905,42 @@ int Scene::setupScene(double w, double h) {
 		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		_root->addChild(ynum_billboard);
 	}
-
-	// skybox
-	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
-	osg::ref_ptr<osg::TexEnv> te = new osg::TexEnv;
-	te->setMode(osg::TexEnv::REPLACE);
-	stateset->setTextureAttributeAndModes(0, te, osg::StateAttribute::ON);
-	osg::ref_ptr<osg::TexGen> tg = new osg::TexGen;
-	tg->setMode(osg::TexGen::NORMAL_MAP);
-	stateset->setTextureAttributeAndModes(0, tg, osg::StateAttribute::ON);
-	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat;
-	stateset->setTextureAttribute(0, tm);
-	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap;
-	osg::Image* imagePosX = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_right.png");
-	osg::Image* imageNegX = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_left.png");
-	osg::Image* imagePosY = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_top.png");
-	osg::Image* imageNegY = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_top.png");
-	osg::Image* imagePosZ = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_front.png");
-	osg::Image* imageNegZ = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_back.png");
-	if (imagePosX && imageNegX && imagePosY && imageNegY && imagePosZ && imageNegZ) {
-		skymap->setImage(osg::TextureCubeMap::POSITIVE_X, imagePosX);
-		skymap->setImage(osg::TextureCubeMap::NEGATIVE_X, imageNegX);
-		skymap->setImage(osg::TextureCubeMap::POSITIVE_Y, imagePosY);
-		skymap->setImage(osg::TextureCubeMap::NEGATIVE_Y, imageNegY);
-		skymap->setImage(osg::TextureCubeMap::POSITIVE_Z, imagePosZ);
-		skymap->setImage(osg::TextureCubeMap::NEGATIVE_Z, imageNegZ);
-		skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-		skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-		skymap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
-		skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
-		skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-	}
-	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
-	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
-	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
-	depth->setFunction(osg::Depth::ALWAYS);
-	depth->setRange(1.0,1.0);
-	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON);
-	stateset->setRenderBinDetails(-1, "RenderBin");
-	stateset->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-	osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f),1));
-	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setCullingActive(false);
-	geode->setStateSet(stateset);
-	geode->addDrawable(drawable);
-	osg::ref_ptr<osg::Transform> transform = new skyTransform;
-	transform->setCullingActive(false);
-	transform->addChild(geode);
-	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
-	clearNode->setRequiresClear(false);
-	clearNode->setCullCallback(new textureCallback(*tm));
-	clearNode->addChild(transform);
-	clearNode->setNodeMask(~IS_PICKABLE_MASK);
-	_root->addChild(clearNode);
-
-	// optimize the scene graph, remove redundant nodes and state etc.
-	osgUtil::Optimizer optimizer;
-	optimizer.optimize(_root);
-
-	// event handler
-	_viewer->addEventHandler(dynamic_cast<keyboardHandler*>(this));
-	_viewer->addEventHandler(new mouseHandler(this));
-
-	// show scene
-	_viewer->setSceneData(_root);
-
-	// success
-	return 0;
 }
 
-int Scene::setupViewer(osgViewer::Viewer *viewer) {
-    // creating the viewer
-	if (viewer)
-		_viewer = viewer;
-	else
-		_viewer = new osgViewer::Viewer;
+void Scene::draw_global_hud(double w, double h, bool paused) {
+	osg::ref_ptr<osg::Geode> HUDGeode = new osg::Geode();
+	osg::ref_ptr<osgText::Text> textHUD = new osgText::Text();
+	osg::ref_ptr<osg::Projection> HUDProjectionMatrix = new osg::Projection;
+	osg::ref_ptr<osg::MatrixTransform> HUDModelViewMatrix = new osg::MatrixTransform;
+	osg::ref_ptr<osg::StateSet> HUDStateSet = new osg::StateSet();
 
-	// set threading model
-	_viewer->setThreadingModel(osgViewer::Viewer::SingleThreaded);
+	HUDProjectionMatrix->setMatrix(osg::Matrix::ortho2D(0, w, 0, h));
+	HUDProjectionMatrix->addChild(HUDModelViewMatrix);
 
-	// event handler
-	_viewer->addEventHandler(new osgViewer::StatsHandler);
+	HUDModelViewMatrix->setMatrix(osg::Matrix::identity());
+	HUDModelViewMatrix->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+	HUDModelViewMatrix->addChild(HUDGeode);
 
-	// success
-	return 0;
-}
+	HUDGeode->setStateSet(HUDStateSet);
+	HUDGeode->addDrawable(textHUD);
 
-void Scene::start(int pause) {
-	// initialize variables
-	unsigned int width, height;
+	HUDStateSet->setMode(GL_BLEND,osg::StateAttribute::ON);
+	HUDStateSet->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
+	HUDStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	HUDStateSet->setRenderBinDetails(11, "RenderBin");
 
-	// window interface
-	osg::GraphicsContext::WindowingSystemInterface *wsi = osg::GraphicsContext::getWindowingSystemInterface();
-	if (!wsi) {
-		osg::notify(osg::NOTICE) << "osg: cannot create windows." << std::endl;
-		return;
-	}
-	wsi->getScreenResolution(osg::GraphicsContext::ScreenIdentifier(0), width, height);
+	textHUD->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+	textHUD->setMaximumWidth(w);
+	textHUD->setCharacterSize(15);
+	if (paused) textHUD->setText("Paused: Press any key to start");
+	textHUD->setAxisAlignment(osgText::Text::SCREEN);
+	textHUD->setAlignment(osgText::Text::CENTER_CENTER);
+	textHUD->setPosition(osg::Vec3(w/2, 50, -1.5));
+	textHUD->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+	textHUD->setBackdropColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	textHUD->setBackdropOffset(0.1);
 
-	// window traits
-	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-	traits->width = width/2;
-	traits->height = 3*width/8;
-	traits->x = width - traits->width - 10;
-	traits->y = height - traits->height - 50;
-	traits->windowDecoration = true;
-	traits->doubleBuffer = true;
-	traits->vsync = false;
-	traits->sharedContext = 0;
-
-	// graphics context
-	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
-	if (gc.valid()) {
-		gc->setClearColor(osg::Vec4f(0.f,0.f,0.f,0.f));
-		gc->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	else {
-		osg::notify(osg::NOTICE) << "osg: cannot create graphics." << std::endl;
-		return;
-	}
-
-	// set up viewer
-	this->setupViewer(NULL);
-
-	// set up the camera
-	this->setupCamera(gc.get(), traits->width, traits->height);
-
-	// set up scene
-	_deleting = pause;
-	this->setupScene(traits->width, traits->height);
-	_deleting = 0;
-
-    // thread is now running
-	MUTEX_INIT(&_thread_mutex);
-	_thread = true;
-
-	// create graphics thread
-	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
-}
-
-void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
-	if (!_highlight) return;
-
-	if (parent->getName() == "robot") {
-		// not highlighted yet, do that now
-		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
-			for (int i = 2; i < parent->getNumChildren(); i++) {
-				osgFX::Scribe *scribe = new osgFX::Scribe();
-				scribe->setWireframeColor(osg::Vec4(1, 1, 0, 0.1));
-				scribe->setWireframeLineWidth(1);
-				scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-				scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-				scribe->addChild(parent->getChild(i)->asTransform()->getChild(0));
-				parent->getChild(i)->asTransform()->replaceChild(parent->getChild(i)->asTransform()->getChild(0), scribe);
-			}
-		}
-		// already highlighted, take it away
-		else {
-			for (int i = 2; i < parent->getNumChildren(); i++) {
-				osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(i)->asTransform()->getChild(0));
-				parent->getChild(i)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
-			}
-		}
-	}
-	else if (parent->getName() == "ground") {
-		// not highlighted yet, do that now
-		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
-			osgFX::Scribe *scribe = new osgFX::Scribe();
-			scribe->setWireframeColor(osg::Vec4(1, 1, 0, 0.1));
-			scribe->setWireframeLineWidth(1);
-			scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-			scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-			scribe->addChild(parent->getChild(0)->asTransform()->getChild(0));
-			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), scribe);
-		}
-		// already highlighted, take it away
-		else {
-			osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(0)->asTransform()->getChild(0));
-			parent->getChild(0)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
-		}
-	}
-}
-
-void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
-	if (!_label) return;
-
-	if (parent->getName() == "robot") {
-		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
-		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
-	}
-	else if (parent->getName() == "ground") {
-	}
-}
-
-/**********************************************************
-	private functions
- **********************************************************/
-osg::Material* Scene::create_material(osg::Vec4 color) {
-	osg::Material *material = new osg::Material();
-/*
-	material->setAmbient(osg::Material::FRONT,  osg::Vec4(1.0, 1.0, 1.0, 1.0));
-	material->setDiffuse(osg::Material::FRONT,  osg::Vec4(1.0, 1.0, 1.0, 1.0));
-	material->setEmission(osg::Material::FRONT, color);
-	material->setSpecular(osg::Material::FRONT, osg::Vec4(1.0, 1.0, 1.0, 1.0));
-	material->setShininess(osg::Material::FRONT, 25.0);
-*/
-/*
-material->setAmbient(osg::Material::FRONT, osg::Vec4(0.0,0.0f,0.0f,1.0f));
-material->setDiffuse(osg::Material::FRONT, osg::Vec4(0.0,0.0f,0.0f,1.0f));
-material->setEmission(osg::Material::FRONT, color);
-material->setSpecular(osg::Material::FRONT, osg::Vec4(1.0,1.0f,1.0f,1.0f));
-*/
-/*
-material->setColorMode(osg::Material::DIFFUSE);
-material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1));
-material->setEmission(osg::Material::FRONT, color);
-material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(1, 1, 1, 1));
-material->setShininess(osg::Material::FRONT_AND_BACK, 64.0f);
-*/
-
-material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.0, 0.0, 0.0, 1.0));
-material->setEmission(osg::Material::FRONT, color);
-material->setShininess(osg::Material::FRONT_AND_BACK, 0);
-	return material;
+	_root->addChild(HUDProjectionMatrix);
 }
 
 /*int Scene::draw(rsRobots::Cubus *robot, int tracke, double *rgb) {
@@ -1172,7 +1110,7 @@ material->setShininess(osg::Material::FRONT_AND_BACK, 0);
 	return 0;
 }*/
 
-void Scene::draw_linkbot(rsRobots::LinkbotT *robot, Robot *group, const double *p, const double *q, bool trace, double *rgb) {
+void Scene::draw_robot_linkbot(rsRobots::LinkbotT *robot, Robot *group, const double *p, const double *q, bool trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Node> body[rsRobots::LinkbotT::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsRobots::LinkbotT::NUM_PARTS];
@@ -1202,65 +1140,64 @@ void Scene::draw_linkbot(rsRobots::LinkbotT *robot, Robot *group, const double *
 	led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1));
 	body[rsRobots::LinkbotT::BODY]->addDrawable(led);*/
 
-/*
-osg::ref_ptr<osg::LightSource> lightSource(new osg::LightSource());
-osg::ref_ptr<osg::PositionAttitudeTransform> lightPAT(new osg::PositionAttitudeTransform());
-//lightPAT->setPosition(osg::Vec3(0.0, 0.0, 0.1));
-lightPAT->setPosition(osg::Vec3(p[0], p[1] + 0.02, p[2] + 0.035));
-_scene->addChild(lightPAT);
-osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(0, 0, 0), 0.006);
-osg::Geode *geode = new osg::Geode();
-osg::Material *material2 = new osg::Material();
-material2->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.0, 0.0, 0.0, 1.0));
-material2->setEmission(osg::Material::FRONT, osg::Vec4(0.0, 0.0, 1.0, 1.0));
-geode->getOrCreateStateSet()->setAttribute(material2);
-geode->addDrawable(new osg::ShapeDrawable(sphere));
-lightSource->addChild(geode);
-lightSource->getLight()->setLightNum(0);
-lightSource->getLight()->setPosition(osg::Vec4(0, 0, 0, 1.0));
-lightSource->getLight()->setDiffuse(osg::Vec4(1.0, 0.0, 1.0, 1.0));		// set color
-lightSource->getLight()->setSpecular(osg::Vec4(1, 1, 1, 1));
-lightSource->getLight()->setAmbient(osg::Vec4(0, 0, 1, 1));
-lightPAT->addChild(lightSource);
-_scene->addChild(lightSource.get());
-_scene->getOrCreateStateSet()->setMode(GL_LIGHT0, osg::StateAttribute::ON);
-*/
+	/*
+	osg::ref_ptr<osg::LightSource> lightSource(new osg::LightSource());
+	osg::ref_ptr<osg::PositionAttitudeTransform> lightPAT(new osg::PositionAttitudeTransform());
+	//lightPAT->setPosition(osg::Vec3(0.0, 0.0, 0.1));
+	lightPAT->setPosition(osg::Vec3(p[0], p[1] + 0.02, p[2] + 0.035));
+	_scene->addChild(lightPAT);
+	osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(0, 0, 0), 0.006);
+	osg::Geode *geode = new osg::Geode();
+	osg::Material *material2 = new osg::Material();
+	material2->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.0, 0.0, 0.0, 1.0));
+	material2->setEmission(osg::Material::FRONT, osg::Vec4(0.0, 0.0, 1.0, 1.0));
+	geode->getOrCreateStateSet()->setAttribute(material2);
+	geode->addDrawable(new osg::ShapeDrawable(sphere));
+	lightSource->addChild(geode);
+	lightSource->getLight()->setLightNum(0);
+	lightSource->getLight()->setPosition(osg::Vec4(0, 0, 0, 1.0));
+	lightSource->getLight()->setDiffuse(osg::Vec4(1.0, 0.0, 1.0, 1.0));		// set color
+	lightSource->getLight()->setSpecular(osg::Vec4(1, 1, 1, 1));
+	lightSource->getLight()->setAmbient(osg::Vec4(0, 0, 1, 1));
+	lightPAT->addChild(lightSource);
+	_scene->addChild(lightSource.get());
+	_scene->getOrCreateStateSet()->setMode(GL_LIGHT0, osg::StateAttribute::ON);
+	*/
 
-/*
-osg::Light* myLight1 = new osg::Light;
-myLight1->setLightNum(1);
-myLight1->setPosition(	osg::Vec4(p[0], p[1] + 0.02, p[2] + 0.035, 1.0));
-myLight1->setAmbient(	osg::Vec4(0.0, 0.0, 1.0, 1.0));
-myLight1->setDiffuse(	osg::Vec4(0.0, 0.0, 1.0, 1.0));
-//myLight1->setSpotCutoff(20.0f);
-//myLight1->setSpotExponent(50.0f);
-//myLight1->setDirection(osg::Vec3(1.0f,1.0f,-1.0f));
-osg::LightSource* lightS1 = new osg::LightSource;
-lightS1->setLight(myLight1);
-lightS1->setLocalStateSetModes(osg::StateAttribute::ON);
-lightS1->setStateSetModes(*_scene->getOrCreateStateSet(), osg::StateAttribute::ON);
-_scene->addChild(lightS1);
-_scene->getOrCreateStateSet()->setMode(GL_LIGHT1, osg::StateAttribute::ON);
-*/
+	/*
+	osg::Light* myLight1 = new osg::Light;
+	myLight1->setLightNum(1);
+	myLight1->setPosition(	osg::Vec4(p[0], p[1] + 0.02, p[2] + 0.035, 1.0));
+	myLight1->setAmbient(	osg::Vec4(0.0, 0.0, 1.0, 1.0));
+	myLight1->setDiffuse(	osg::Vec4(0.0, 0.0, 1.0, 1.0));
+	//myLight1->setSpotCutoff(20.0f);
+	//myLight1->setSpotExponent(50.0f);
+	//myLight1->setDirection(osg::Vec3(1.0f,1.0f,-1.0f));
+	osg::LightSource* lightS1 = new osg::LightSource;
+	lightS1->setLight(myLight1);
+	lightS1->setLocalStateSetModes(osg::StateAttribute::ON);
+	lightS1->setStateSetModes(*_scene->getOrCreateStateSet(), osg::StateAttribute::ON);
+	_scene->addChild(lightS1);
+	_scene->getOrCreateStateSet()->setMode(GL_LIGHT1, osg::StateAttribute::ON);
+	*/
 
-/*
-// create a local light.
-osg::Light* myLight2 = new osg::Light;
-myLight2->setLightNum(1);
-myLight2->setPosition(osg::Vec4(p[0], p[1] + 0.02, p[2] + 0.035, 1.0));
-myLight2->setAmbient(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
-myLight2->setDiffuse(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
-myLight2->setConstantAttenuation(1.0f);
-myLight2->setLinearAttenuation(2.0f);
-myLight2->setQuadraticAttenuation(1.0f);
-osg::LightSource* lightS2 = new osg::LightSource;
-lightS2->setLight(myLight2);
-lightS2->setLocalStateSetModes(osg::StateAttribute::ON);
-//lightS2->setStateSetModes(*_scene->getOrCreateStateSet(),osg::StateAttribute::ON);
-_scene->addChild(lightS2);
-_scene->getOrCreateStateSet()->setMode(GL_LIGHT1, osg::StateAttribute::ON);
-*/
-
+	/*
+	// create a local light.
+	osg::Light* myLight2 = new osg::Light;
+	myLight2->setLightNum(1);
+	myLight2->setPosition(osg::Vec4(p[0], p[1] + 0.02, p[2] + 0.035, 1.0));
+	myLight2->setAmbient(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
+	myLight2->setDiffuse(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
+	myLight2->setConstantAttenuation(1.0f);
+	myLight2->setLinearAttenuation(2.0f);
+	myLight2->setQuadraticAttenuation(1.0f);
+	osg::LightSource* lightS2 = new osg::LightSource;
+	lightS2->setLight(myLight2);
+	lightS2->setLocalStateSetModes(osg::StateAttribute::ON);
+	//lightS2->setStateSetModes(*_scene->getOrCreateStateSet(),osg::StateAttribute::ON);
+	_scene->addChild(lightS2);
+	_scene->getOrCreateStateSet()->setMode(GL_LIGHT1, osg::StateAttribute::ON);
+	*/
 
 	// draw face1
 	robot->getRobotBodyOffset(rsRobots::LinkbotT::FACE1, p, q, p1, q1);
@@ -1308,7 +1245,7 @@ _scene->getOrCreateStateSet()->setMode(GL_LIGHT1, osg::StateAttribute::ON);
 	}
 }
 
-void Scene::draw_linkbot_conn(rsRobots::LinkbotT *robot, Robot *group, int type, int face, double size, int side, int conn) {
+void Scene::draw_robot_linkbot_conn(rsRobots::LinkbotT *robot, Robot *group, int type, int face, double size, int side, int conn) {
 	// get robot p&q
 	osg::PositionAttitudeTransform *pat;
 	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsRobots::LinkbotT::BODY));
@@ -1899,6 +1836,147 @@ int Scene::draw(rsRobots::CNXT *robot, bool trace, double *rgb) {
 	// success
 	return 0;
 }*/
+
+void Scene::draw_scene_outdoors(double w, double h, bool pause) {
+	// load terrain node
+	osg::ref_ptr<osg::Depth> t_depth = new osg::Depth;
+	t_depth->setFunction(osg::Depth::LEQUAL);
+	t_depth->setRange(1.0, 1.0);
+	osg::ref_ptr<osg::StateSet> t_stateset = new osg::StateSet();
+	t_stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	t_stateset->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	t_stateset->setAttributeAndModes(t_depth, osg::StateAttribute::ON);
+	t_stateset->setRenderBinDetails(-1, "RenderBin");
+	t_stateset->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+	osg::ref_ptr<osg::Node> t_geode = osgDB::readNodeFile(_tex_path + "ground/terrain.3ds");
+	t_geode->setCullingActive(false);
+	t_geode->setStateSet(t_stateset);
+	osg::ref_ptr<osg::PositionAttitudeTransform> t_transform = new osg::PositionAttitudeTransform();
+	t_transform->setScale(osg::Vec3d(2, 2, 0.001));
+	t_transform->setCullingActive(false);
+	t_transform->addChild(t_geode);
+	osg::ref_ptr<osgUtil::LineSegmentIntersector> r_segment = new osgUtil::LineSegmentIntersector(osg::Vec3d(0, 0, 999), osg::Vec3d(0, 0, -999));
+	osgUtil::IntersectionVisitor r_visitor(r_segment);
+	t_transform->accept(r_visitor);
+	osgUtil::LineSegmentIntersector::Intersection r_hits = r_segment->getFirstIntersection();
+	osg::Vec3d r_pos = r_hits.getWorldIntersectPoint();
+	t_transform->setPosition(osg::Vec3d(r_pos[0], r_pos[1], -r_pos[2]));
+	//t_transform->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
+	t_transform->setNodeMask(~IS_PICKABLE_MASK);
+	_scene->addChild(t_transform);
+
+	// generate HUD for scene
+	this->draw_global_hud(w, h, pause);
+
+	// draw grid
+	this->draw_grid();
+
+	// skybox
+	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+	osg::ref_ptr<osg::TexEnv> te = new osg::TexEnv;
+	te->setMode(osg::TexEnv::REPLACE);
+	stateset->setTextureAttributeAndModes(0, te, osg::StateAttribute::ON);
+	osg::ref_ptr<osg::TexGen> tg = new osg::TexGen;
+	tg->setMode(osg::TexGen::NORMAL_MAP);
+	stateset->setTextureAttributeAndModes(0, tg, osg::StateAttribute::ON);
+	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat;
+	stateset->setTextureAttribute(0, tm);
+	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap;
+	osg::Image* imagePosX = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_right.png");
+	osg::Image* imageNegX = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_left.png");
+	osg::Image* imagePosY = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_top.png");
+	osg::Image* imageNegY = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_top.png");
+	osg::Image* imagePosZ = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_front.png");
+	osg::Image* imageNegZ = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_back.png");
+	if (imagePosX && imageNegX && imagePosY && imageNegY && imagePosZ && imageNegZ) {
+		skymap->setImage(osg::TextureCubeMap::POSITIVE_X, imagePosX);
+		skymap->setImage(osg::TextureCubeMap::NEGATIVE_X, imageNegX);
+		skymap->setImage(osg::TextureCubeMap::POSITIVE_Y, imagePosY);
+		skymap->setImage(osg::TextureCubeMap::NEGATIVE_Y, imageNegY);
+		skymap->setImage(osg::TextureCubeMap::POSITIVE_Z, imagePosZ);
+		skymap->setImage(osg::TextureCubeMap::NEGATIVE_Z, imageNegZ);
+		skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+		skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+		skymap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+		skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+		skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+	}
+	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setFunction(osg::Depth::ALWAYS);
+	depth->setRange(1.0,1.0);
+	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON);
+	stateset->setRenderBinDetails(-1, "RenderBin");
+	stateset->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+	osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f),1));
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+	geode->setCullingActive(false);
+	geode->setStateSet(stateset);
+	geode->addDrawable(drawable);
+	osg::ref_ptr<osg::Transform> transform = new skyTransform;
+	transform->setCullingActive(false);
+	transform->addChild(geode);
+	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
+	clearNode->setRequiresClear(false);
+	clearNode->setCullCallback(new textureCallback(*tm));
+	clearNode->addChild(transform);
+	clearNode->setNodeMask(~IS_PICKABLE_MASK);
+	_root->addChild(clearNode);
+}
+
+void Scene::draw_scene_board(double w, double h, bool pause) {
+	// generate HUD for scene
+	this->draw_global_hud(w, h, pause);
+
+	// grid
+	_grid[2] = -0.610;	// -24 inches
+	_grid[3] = 0.610;	//  24 inches
+	_grid[4] = -1.219;	// -48 inches
+	_grid[5] = 1.219;	//  48 inches
+	this->draw_grid();
+
+	// board
+	osg::Geode *geode = new osg::Geode;
+	osg::Geometry *geom = new osg::Geometry;
+	geode->addDrawable(geom);
+	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	osg::Vec3Array *coords = new osg::Vec3Array;
+	coords->reserve(4);
+	coords->push_back(osg::Vec3(-0.610, -1.219, 0));
+	coords->push_back(osg::Vec3( 0.610, -1.219, 0));
+	coords->push_back(osg::Vec3(-0.610,  1.219, 0));
+	coords->push_back(osg::Vec3( 0.610,  1.219, 0));
+	geom->setVertexArray(coords);
+	osg::DrawElementsUShort *quadstrip = new osg::DrawElementsUShort(osg::PrimitiveSet::QUAD_STRIP);
+	quadstrip->reserve(4);
+	quadstrip->push_back(2);
+	quadstrip->push_back(0);
+	quadstrip->push_back(3);
+	quadstrip->push_back(1);
+	geom->addPrimitiveSet(quadstrip);
+	osgUtil::SmoothingVisitor::smooth(*geom);
+	_scene->addChild(geode);
+
+	/* surrounding walls
+	double p[3] = {0.610 - 0.01, 0, 0.015};
+	double c[4] = {1, 1, 1, 1};
+	double l[3] = {0.01, 2.438, 0};
+	double q[4] = {1, 0, 0, 1};
+	this->drawGround(rs::CYLINDER, p, c, l, q);
+	p[0] = -0.610 + 0.01;
+	this->drawGround(rs::CYLINDER, p, c, l, q);
+	p[0] = 0;
+	p[1] = -1.219 + 0.01;
+	q[0] = 0;
+	q[1] = 1;
+	l[1] = 1.22;
+	this->drawGround(rs::CYLINDER, p, c, l, q);
+	p[1] = 1.219 - 0.01;
+	this->drawGround(rs::CYLINDER, p, c, l, q);
+	*/
+}
 
 void* Scene::graphics_thread(void *arg) {
 	// cast viewer

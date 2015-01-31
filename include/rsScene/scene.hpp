@@ -12,7 +12,9 @@
 #include <osgGA/OrbitManipulator>
 #include <osgGA/StateSetManipulator>
 #include <osgText/Text>
+#include <osgShadow/ShadowMap>
 #include <osgShadow/ShadowedScene>
+#include <osgUtil/SmoothingVisitor>
 #include <osgUtil/Optimizer>
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
@@ -36,6 +38,16 @@ namespace rsScene {
 
 namespace rsScene {
 
+	// enum - Levels
+	enum Levels {
+		OUTDOORS,
+		BOARD,
+		ROBOPLAY2013,
+		ROBOPLAY2014,
+		NUM_LEVELS
+	};
+
+	// class - Scene
 	class Scene : public keyboardHandler {
 		// public functions
 		public:
@@ -57,7 +69,7 @@ namespace rsScene {
 			void setLabel(bool);
 			void setPauseText(int);
 			int setupCamera(osg::GraphicsContext*, double, double);
-			int setupScene(double, double);
+			int setupScene(double, double, bool);
 			int setupViewer(osgViewer::Viewer*);
 			void start(int);
 			void toggleHighlight(osg::Group*, osg::Node*);
@@ -70,11 +82,15 @@ namespace rsScene {
 		// private functions
 		private:
 			osg::Material* create_material(osg::Vec4);
+			void draw_grid(void);
+			void draw_global_hud(double, double, bool);
 			//int draw_cubus(rsRobots::Cubus*, osg::Group*, const double*, const double*, bool, double*);
-			void draw_linkbot(rsRobots::LinkbotT*, Robot*, const double*, const double*, bool, double*);
+			void draw_robot_linkbot(rsRobots::LinkbotT*, Robot*, const double*, const double*, bool, double*);
+			void draw_robot_linkbot_conn(rsRobots::LinkbotT*, Robot*, int, int, double, int, int);
 			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);
 			//int draw_nxt(rsRobots::NXT*, osg::Group*, const double*, const double*, bool, double*);
-			void draw_linkbot_conn(rsRobots::LinkbotT*, Robot*, int, int, double, int, int);
+			void draw_scene_outdoors(double, double, bool);
+			void draw_scene_board(double, double, bool);
 			static void* graphics_thread(void*);
 
 		// private data
@@ -84,6 +100,7 @@ namespace rsScene {
 			bool _thread;						// flag: thread is running
 			bool _units;						// flag: SI (true) or customary (false)
 			int _deleting;						// temp variable for deleting robots
+			int _level;							// level to load
 			osg::Camera *_camera;				// camera to view scene
 			osg::Group *_root;					// root node of scene
 			osg::Group *_staging;				// temp variable for adding objects

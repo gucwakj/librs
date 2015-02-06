@@ -1,4 +1,5 @@
 #include <osgFX/Scribe>
+#include <osgDB/FileUtils>
 
 #include <rsScene/mouseHandler.hpp>
 #include <rsScene/scene.hpp>
@@ -352,6 +353,7 @@ std::string Scene::getTexturePath(void) {
 		path = path;
 	path += "/package/chrobosim/data/";
 #else
+	osgDB::setLibraryFilePathList("/home/kgucwa/projects/librs/deps/osg/build/lib/");
 	path = "/home/kgucwa/projects/librs/resources/";
 #endif
 	return path;

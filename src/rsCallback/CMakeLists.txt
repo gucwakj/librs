@@ -31,6 +31,9 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsSim debug rsSimd)
 # add OpenSceneGraph library
 include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/include")
 include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/include")
+link_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/lib")
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osg debug osgd)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgText debug osgTextd)
 
 # add rsScene
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsScene debug rsScened)

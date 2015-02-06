@@ -6,9 +6,6 @@ using namespace rsSim;
 CLinkbotT::CLinkbotT(int disabled) : rsRobots::Robot(rs::LINKBOTT), rsRobots::LinkbotT(rs::JOINT1), Robot(rs::JOINT1, rs::JOINT3) {
 	// initialize parameters
 	this->initParams(disabled);
-
-	// initialize dimensions
-	this->initDims();
 }
 
 CLinkbotT::~CLinkbotT(void) {
@@ -1131,34 +1128,6 @@ int CLinkbotT::initParams(int disabled) {
 	_sim = NULL;
 	_speed = 2;
 	_trace = 1;
-
-	// success
-	return 0;
-}
-
-int CLinkbotT::initDims(void) {
-	_body_length = 0.03935;
-	_body_width = 0.07835;
-	_body_height = 0.07250;
-	_body_radius = 0.03625;
-	_face_depth = 0.00200;
-	_face_radius = 0.03060;
-	_conn_depth = 0.00570;
-	_conn_height = 0.03715;
-	_bigwheel_radius = 0.05080;
-	_bridge_length = 0.14025;
-	_cubic_length = 0.07115;
-	_omni_length = 0.17360;
-	_radius = _body_height/2;
-	_smallwheel_radius = 0.04445;
-	_tinywheel_radius = 0.04128;
-	_wheel_depth = 0.00140;
-	_wheel_radius = 0.04445;
-	_offset.push_back(rs::Vec3(0, 0, 0));									// body
-	_offset.push_back(rs::Vec3(-_body_width/2 - _face_depth/2, 0, 0));		// face1
-	_offset.push_back(rs::Vec3(0, -_body_length - _face_depth/2, 0));		// face2
-	_offset.push_back(rs::Vec3(_body_width/2 + _face_depth/2, 0, 0));		// face3
-
 
 	// success
 	return 0;

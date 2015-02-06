@@ -74,7 +74,6 @@ namespace rsSim {
 			virtual int buildIndividual(double, double, double, dMatrix3, double*);
 			virtual double getAngle(int);
 			virtual int initParams(int);
-			virtual int initDims(void);
 			virtual void simPreCollisionThread(void);
 			virtual void simPostCollisionThread(void);
 
@@ -94,25 +93,6 @@ namespace rsSim {
 			int build_tinywheel(Connector*, int, int = -1, int = -1);					// build tiny wheel connector
 			int build_wheel(Connector*, int, double, int = -1, int = -1);				// build custom wheel connector
 			static void* closeGripperNBThread(void*);									// thread to close gripper
-
-		// private data
-		private:
-			// robot body parts
-			enum robot_pieces_e {
-				BODY,
-				FACE1,
-				FACE2,
-				FACE3,
-				NUM_PARTS
-			};
-
-			// dimensions
-			double	_bridge_length,
-					_cubic_length,
-					_face_depth,
-					_face_radius,
-					_omni_length,
-					_tinywheel_radius;
 	};
 
 	// class

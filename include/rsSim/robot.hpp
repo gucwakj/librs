@@ -164,7 +164,6 @@ namespace rsSim {
 			virtual int buildIndividual(double, double, double, dMatrix3, double*) { return 0; };
 			virtual double getAngle(int) { return 0; };
 			virtual int initParams(int, int) { return 0; };
-			virtual int initDims(void) { return 0; };
 			virtual void simPreCollisionThread(void) { return; };
 			virtual void simPostCollisionThread(void) { return; };
 

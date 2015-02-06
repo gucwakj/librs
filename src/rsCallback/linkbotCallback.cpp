@@ -45,10 +45,7 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
-			if (i == 0)
-				pat->setPosition(osg::Vec3d(pos[0], _robot->getCenter(1), pos[2]));
-			else
-				pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
+			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
 			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		}
 		// child 2: bodies; drawable 2: led

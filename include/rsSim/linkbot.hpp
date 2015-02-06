@@ -81,11 +81,11 @@ namespace rsSim {
 		// private functions
 		private:
 			int build_bigwheel(Connector*, int, int = -1, int = -1);					// build big wheel connector
-			int build_body(dGeomID*, double, double, double, dMatrix3, double);			// build body of linkbot
+			void build_body(dGeomID*, const double*, const double*);
 			int build_bridge(Connector*, int, int = -1, int = -1);						// build bridge connector
 			int build_caster(Connector*, int, int, int = -1, int = -1);					// build caster connector
 			int build_cube(Connector*, int, int = -1, int = -1);						// build cube connector
-			int build_face(int, dGeomID*, double, double, double, dMatrix3, double);	// build face of linkbot
+			void build_face(int, dGeomID*, const double*, const double*);
 			int build_faceplate(Connector*, int, int = -1, int = -1);					// build faceplate connector
 			int build_gripper(Connector*, int);											// build gripper connector
 			int build_omnidrive(Connector*, int, int = -1, int = -1);					// build omnidrive connector

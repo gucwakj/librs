@@ -817,20 +817,25 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 		_motor[i].goal = _motor[i].theta = DEG2RAD(rot[i]);
 	}
 
-	// offset values for each body part[0-2] and joint[3-5] from center
-	double f1[6] = {-_body_width/2 - _face_depth/2, 0, 0, -_body_width/2, 0, 0};
-	double f2[6] = {0, -_body_length - _face_depth/2, 0, 0, -_body_length, 0};
-	double f3[6] = {_body_width/2 + _face_depth/2, 0, 0, _body_width/2, 0, 0};
+	// offset values for each joint[3-5] from center
+	double f1[3] = {-_body_width/2, 0, 0};
+	double f2[3] = {0, -_body_length, 0};
+	double f3[3] = {_body_width/2, 0, 0};
 
 	// build robot bodies
-	this->build_body(geom[BODY], x, y, z, R, 0);
-	this->build_face(FACE1, geom[FACE1], R[0]*f1[0] + x, R[4]*f1[0] + y, R[8]*f1[0] + z, R, 0);
-	this->build_face(FACE2, geom[FACE2], R[1]*f2[1] + x, R[5]*f2[1] + y, R[9]*f2[1] + z, R, 0);
-	this->build_face(FACE3, geom[FACE3], R[0]*f3[0] + x, R[4]*f3[0] + y, R[8]*f3[0] + z, R, 0);
+	double p[3] = {x, y, z}, q[4] = {0, 0, 0, 1};
+	this->build_body(geom[BODY], p, q);
+	double p1[3], q1[4];
+	this->getRobotBodyOffset(FACE1, p, q, p1, q1);
+	this->build_face(FACE1, geom[FACE1], p1, q1);
+	this->getRobotBodyOffset(FACE2, p, q, p1, q1);
+	this->build_face(FACE2, geom[FACE2], p1, q1);
+	this->getRobotBodyOffset(FACE3, p, q, p1, q1);
+	this->build_face(FACE3, geom[FACE3], p1, q1);
 
 	// get center of robot offset from body position
 	_center[0] = 0;
-	_center[1] = 0.012462;
+	_center[1] = 0;
 	_center[2] = 0;
 
 	// joint variable
@@ -839,9 +844,7 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 	// joint for body to face 1
 	joint[rs::JOINT1] = dJointCreateHinge(_world, 0);
 	dJointAttach(joint[rs::JOINT1], _body[BODY], _body[FACE1]);
-	dJointSetHingeAnchor(joint[rs::JOINT1],	R[0]*f1[3] + R[1]*f1[4] + R[2]*f1[5] + x,
-											R[4]*f1[3] + R[5]*f1[4] + R[6]*f1[5] + y,
-											R[8]*f1[3] + R[9]*f1[4] + R[10]*f1[5] + z);
+	dJointSetHingeAnchor(joint[rs::JOINT1],	R[0]*f1[0] + x, R[4]*f1[0] + y, R[8]*f1[0] + z);
 	dJointSetHingeAxis(joint[rs::JOINT1], R[0], R[4], R[8]);
 	dBodySetFiniteRotationAxis(_body[FACE1], R[0], R[4], R[8]);
 
@@ -854,9 +857,7 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 	else {
 		joint[rs::JOINT2] = dJointCreateHinge(_world, 0);
 		dJointAttach(joint[rs::JOINT2], _body[BODY], _body[FACE2]);
-		dJointSetHingeAnchor(joint[rs::JOINT2],	R[0]*f2[3] + R[1]*f2[4] + R[2]*f2[5] + x,
-												R[4]*f2[3] + R[5]*f2[4] + R[6]*f2[5] + y,
-												R[8]*f2[3] + R[9]*f2[4] + R[10]*f2[5] + z);
+		dJointSetHingeAnchor(joint[rs::JOINT2],	R[1]*f2[1] + x, R[5]*f2[1] + y, R[9]*f2[1] + z);
 		dJointSetHingeAxis(joint[rs::JOINT2], R[1], R[5], R[9]);
 		dBodySetFiniteRotationAxis(_body[FACE2], R[1], R[5], R[9]);
 	}
@@ -870,9 +871,7 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 	else {
 		joint[rs::JOINT3] = dJointCreateHinge(_world, 0);
 		dJointAttach(joint[rs::JOINT3], _body[BODY], _body[FACE3]);
-		dJointSetHingeAnchor(joint[rs::JOINT3],	R[0]*f3[3] + R[1]*f3[4] + R[2]*f3[5] + x,
-												R[4]*f3[3] + R[5]*f3[4] + R[6]*f3[5] + y,
-												R[8]*f3[3] + R[9]*f3[4] + R[10]*f3[5] + z);
+		dJointSetHingeAnchor(joint[rs::JOINT3],	R[0]*f3[0] + x, R[4]*f3[0] + y, R[8]*f3[0] + z);
 		dJointSetHingeAxis(joint[rs::JOINT3], -R[0], -R[4], -R[8]);
 		dBodySetFiniteRotationAxis(_body[FACE3], -R[0], -R[4], -R[8]);
 	}
@@ -889,11 +888,11 @@ int CLinkbotT::buildIndividual(double x, double y, double z, dMatrix3 R, double 
 	dMultiply0(R_f3, R, R_f, 3, 3, 3);
 
 	// if bodies are rotated, then redraw
-	if ( _motor[rs::JOINT1].theta != 0 || _motor[rs::JOINT2].theta != 0 || _motor[rs::JOINT3].theta != 0 ) {
+	/*if ( _motor[rs::JOINT1].theta != 0 || _motor[rs::JOINT2].theta != 0 || _motor[rs::JOINT3].theta != 0 ) {
 		this->build_face(FACE1, geom[FACE1], R[0]*f1[0] + x, R[4]*f1[0] + y, R[8]*f1[0] + z, R_f1, 0);
 		this->build_face(FACE2, geom[FACE1], R[1]*f2[1] + x, R[5]*f2[1] + y, R[9]*f2[1] + z, R_f2, 0);
 		this->build_face(FACE3, geom[FACE1], R[0]*f3[0] + x, R[4]*f3[0] + y, R[8]*f3[0] + z, R_f3, 0);
-	}
+	}*/
 
 	// motor for body to face 1
 	_motor[rs::JOINT1].id = dJointCreateAMotor(_world, 0);
@@ -1433,49 +1432,32 @@ int CLinkbotT::build_bigwheel(Connector *conn, int face, int side, int type) {
 	return 0;
 }
 
-int CLinkbotT::build_body(dGeomID *geom, double x, double y, double z, dMatrix3 R, double theta) {
-	// define parameters
-	dMass m, m1, m2;
-	dMatrix3 R1, R2, R3;
-
+void CLinkbotT::build_body(dGeomID *geom, const double *p, const double *q) {
 	// set mass of body
+	dMass m, m1;
 	dMassSetBox(&m, 1000, _body_width, _body_length, _body_height);
 	dMassTranslate(&m, 0, -_body_length/2, 0);
-	dMassSetCylinder(&m2, 400, 1, _body_radius, _body_width);
-	dMassAdd(&m, &m2);
-
-	// adjust x,y,z to position center of mass correctly
-	x += R[0]*m.c[0] + R[1]*m.c[1] + R[2]*m.c[2];
-	y += R[4]*m.c[0] + R[5]*m.c[1] + R[6]*m.c[2];
-	z += R[8]*m.c[0] + R[9]*m.c[1] + R[10]*m.c[2];
-
-	// set body parameters
-	dBodySetPosition(_body[BODY], x, y, z);
-	dBodySetRotation(_body[BODY], R);
-	dBodySetFiniteRotationMode(_body[BODY], 1);
-
-	// rotation matrix for curves
-	dRFromAxisAndAngle(R1, 0, 1, 0, M_PI/2);
-	dRFromAxisAndAngle(R3, 0, 0, 1, -theta);
-	dMultiply0(R2, R1, R3, 3, 3, 3);
-
-	// set geometry 1 - box
-	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
-	dGeomSetBody(geom[0], _body[BODY]);
-	dGeomSetOffsetPosition(geom[0], -m.c[0], -_body_length/2 - m.c[1], -m.c[2]);
-
-	// set geometry 2 - cylinder
-	geom[1] = dCreateCylinder(_space, _body_radius, _body_width);
-	dGeomSetBody(geom[1], _body[BODY]);
-	dGeomSetOffsetPosition(geom[1], -m.c[0], -m.c[1], -m.c[2]);
-	dGeomSetOffsetRotation(geom[1], R2);
-
-	// set mass center to (0,0,0) of _bodyID
+	dMassSetCylinder(&m1, 400, 1, _body_radius, _body_width);
+	dMassAdd(&m, &m1);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[BODY], &m);
 
-	// success
-	return 0;
+	// set body parameters
+	dBodySetPosition(_body[BODY], p[0], p[1], p[2]);
+	dQuaternion Q = {q[3], q[0], q[1], q[2]};
+	dBodySetQuaternion(_body[BODY], Q);
+	dBodySetFiniteRotationMode(_body[BODY], 1);
+
+	// set geometry 0 - box
+	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
+	dGeomSetBody(geom[0], _body[BODY]);
+	dGeomSetOffsetPosition(geom[0], 0, -_body_length/2, 0);
+
+	// set geometry 1 - cylinder
+	geom[1] = dCreateCylinder(_space, _body_radius, _body_width);
+	dGeomSetBody(geom[1], _body[BODY]);
+	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
+	dGeomSetOffsetQuaternion(geom[1], Q1);
 }
 
 int CLinkbotT::build_bridge(Connector *conn, int face, int side, int type) {
@@ -1671,47 +1653,25 @@ int CLinkbotT::build_cube(Connector *conn, int face, int side, int type) {
 	return 0;
 }
 
-int CLinkbotT::build_face(int id, dGeomID *geom, double x, double y, double z, dMatrix3 R, double theta) {
-	// define parameters
-	dMass m;
-	dMatrix3 R1, R2, R3;
-
+void CLinkbotT::build_face(int id, dGeomID *geom, const double *p, const double *q) {
 	// set mass of body
+	dMass m;
 	if (id == 2)
 		dMassSetCylinder(&m, 270, 2, 2*_face_radius, _face_depth);
 	else
 		dMassSetCylinder(&m, 270, 1, 2*_face_radius, _face_depth);
-
-	// adjust x,y,z to position center of mass correctly
-	x += R[0]*m.c[0] + R[1]*m.c[1] + R[2]*m.c[2];
-	y += R[4]*m.c[0] + R[5]*m.c[1] + R[6]*m.c[2];
-	z += R[8]*m.c[0] + R[9]*m.c[1] + R[10]*m.c[2];
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(_body[id], &m);
 
 	// set body parameters
-	dBodySetPosition(_body[id], x, y, z);
-	dBodySetRotation(_body[id], R);
+	dBodySetPosition(_body[id], p[0], p[1], p[2]);
+	dQuaternion Q = {q[3], q[0], q[1], q[2]};
+	dBodySetQuaternion(_body[id], Q);
 	dBodySetFiniteRotationMode(_body[id], 1);
-
-	// rotation matrix
-	if (id == 2)
-	    dRFromAxisAndAngle(R1, 1, 0, 0, M_PI/2);		// SWITCHED X AND Y AXIS
-	else
-	    dRFromAxisAndAngle(R1, 0, 1, 0, M_PI/2);		// SWITCHED X AND Y AXIS
-	dRFromAxisAndAngle(R3, 0, 0, 1, -theta);
-	dMultiply0(R2, R1, R3, 3, 3, 3);
 
 	// set geometry
 	geom[0] = dCreateCylinder(_space, _face_radius, _face_depth);
 	dGeomSetBody(geom[0], _body[id]);
-	dGeomSetOffsetPosition(geom[0], -m.c[0], -m.c[1], -m.c[2]);
-	dGeomSetOffsetRotation(geom[0], R2);
-
-	// set mass center to (0,0,0) of _bodyID
-	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
-	dBodySetMass(_body[id], &m);
-
-	// success
-	return 0;
 }
 
 int CLinkbotT::build_faceplate(Connector *conn, int face, int side, int type) {

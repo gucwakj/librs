@@ -5,7 +5,10 @@ using namespace rsSim;
 
 CLinkbotT::CLinkbotT(int disabled) : rsRobots::Robot(rs::LINKBOTT), rsRobots::LinkbotT(rs::JOINT1), Robot(rs::JOINT1, rs::JOINT3) {
 	// initialize parameters
-	this->initParams(disabled);
+	this->init_params();
+
+	// disabled joint
+	_disabled = disabled;
 }
 
 CLinkbotT::~CLinkbotT(void) {
@@ -1063,7 +1066,7 @@ int CLinkbotT::getFaceParams(int face, dMatrix3 R, double *p) {
 	return 0;
 }
 */
-int CLinkbotT::initParams(int disabled) {
+void CLinkbotT::init_params(void) {
 	_dof = 3;
 
 	// create arrays for linkbots
@@ -1100,7 +1103,6 @@ int CLinkbotT::initParams(int disabled) {
 		COND_INIT(&_motor[i].success_cond);
 	}
 	_connected = 0;
-	_disabled = disabled;
 	_distOffset = 0;
 	_g_shift_data = 0;
 	_g_shift_data_en = 0;
@@ -1113,9 +1115,6 @@ int CLinkbotT::initParams(int disabled) {
 	_sim = NULL;
 	_speed = 2;
 	_trace = 1;
-
-	// success
-	return 0;
 }
 
 void CLinkbotT::simPreCollisionThread(void) {

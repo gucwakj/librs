@@ -69,7 +69,7 @@ namespace rsSim {
 			virtual int build(int, const double*, const double*, const double*, int);
 			virtual int buildIndividual(double, double, double, dMatrix3, double*);
 			virtual double getAngle(int);
-			virtual int initParams(int);
+			virtual void init_params(void);
 			virtual void simPreCollisionThread(void);
 			virtual void simPostCollisionThread(void);
 

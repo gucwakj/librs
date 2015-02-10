@@ -258,3 +258,14 @@ void LinkbotT::getRobotFaceOffset(int face, const double *p, const double *q, do
 	q1[3] = q2[3]*q[3] - q2[0]*q[0] - q2[1]*q[1] - q2[2]*q[2];
 }
 
+double LinkbotT::getWheelRatio(int standard) {
+	switch (standard) {
+		case rs::BIGWHEEL:
+			return _wheel_radius/_bigwheel_radius;
+		case rs::SMALLWHEEL:
+			return _wheel_radius/_smallwheel_radius;
+		case rs::TINYWHEEL:
+			return _wheel_radius/_tinywheel_radius;
+	}
+	return 0;
+}

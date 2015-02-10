@@ -11,6 +11,8 @@ namespace rsRobots {
 			LinkbotT(int = -1);
 			virtual ~LinkbotT(void) {};
 
+			double getWheelRatio(int);
+
 		// inherited functions
 		public:
 			void getConnBodyOffset(int, const double*, const double*, double*, double*);

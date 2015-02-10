@@ -635,6 +635,7 @@ int CLinkbotT::addConnector(int type, int face, double size, int side, int conn)
 		_conn.back()->face = face;
 		_conn.back()->type = conn;
 		_conn.back()->body = dBodyCreate(_world);
+		type = conn;
 	}
 
 	// build connector

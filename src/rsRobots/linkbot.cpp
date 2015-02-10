@@ -128,7 +128,7 @@ void LinkbotT::getConnBodyOffset(int type, const double *p, const double *q, dou
 			break;
 		case rs::BRIDGE:
 			p2[0] = _conn_depth/2;
-			p2[1] = -_bridge_length/2 + _face_radius;
+			p2[1] = _bridge_length/2 - _face_radius;
 			break;
 		case rs::CASTER:
 			p2[0] = _conn_depth/4;
@@ -221,14 +221,14 @@ void LinkbotT::getRobotFaceOffset(int face, const double *p, const double *q, do
 	double q2[4];
 	switch (face) {
 		case FACE1:
-			p2[0] = _face_depth/2;
+			p2[0] = -_face_depth/2;
 			q2[0] = 0;
 			q2[1] = 0;
 			q2[2] = sin(1.570796);	// 0.5*PI
 			q2[3] = cos(1.570796);	// 0.5*PI
 			break;
 		case FACE2:
-			p2[1] = _face_depth/2;
+			p2[1] = -_face_depth/2;
 			q2[0] = 0;
 			q2[1] = 0;
 			q2[2] = sin(-0.785398);	// 0.5*PI/2

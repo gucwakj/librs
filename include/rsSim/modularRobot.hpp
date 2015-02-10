@@ -32,14 +32,12 @@ namespace rsSim {
 		public:
 			ConnectorList& getConnectorList(void);
 			virtual int addConnector(int, int, double, int, int) = 0;
-			virtual int getConnectorParams(int, int, dMatrix3, double*) = 0;
-			virtual int getFaceParams(int, dMatrix3, double*) = 0;
 
 		// utility functions
 		protected:
 			int addNeighbor(ModularRobot*, int, int);
-			int addSensor(int, int);
-			static void collideSensor(void*, dGeomID, dGeomID);
+			//int addSensor(int, int);
+			//static void collideSensor(void*, dGeomID, dGeomID);
 			dBodyID getConnectorBodyID(int);
 			int getNeighborCount(int = -1, int = 0);
 			double getNeighborForce(int, int = 0);

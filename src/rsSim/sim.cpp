@@ -176,7 +176,7 @@ int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const 
 	dMatrix3 R;
 	double m[3] = {0};
 	rsSim::ModularRobot *base2 = dynamic_cast<rsSim::ModularRobot*>(base);
-	base2->getFaceParams(face1, R, m);
+	//base2->getFaceParams(face1, R, m);
 	robot->build(id, R, m, a, base2->getConnectorBodyID(face1), face2, type, side, ground, trace);
 
 	// unlock robot data

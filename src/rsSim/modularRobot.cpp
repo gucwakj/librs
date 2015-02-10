@@ -44,7 +44,7 @@ int ModularRobot::addNeighbor(ModularRobot *robot, int myface, int hisface) {
 	_neighbor[myface].face = hisface;
 }
 
-int ModularRobot::addSensor(int type, int face) {
+/*int ModularRobot::addSensor(int type, int face) {
 	// add new sensor
 	_sensor.push_back(new Sensor());
 	_sensor.back()->type = type;
@@ -67,9 +67,9 @@ int ModularRobot::addSensor(int type, int face) {
 						fabs(R[8]*dim[0] + R[9]*dim[1] + R[10]*dim[2])};
 	_sensor.back()->geom = dCreateBox(_sensor.back()->space, size[0], size[1], size[2]);
 	dGeomSetBody(_sensor.back()->geom, _sensor.back()->body);
-}
+}*/
 
-void ModularRobot::collideSensor(void *data, dGeomID o1, dGeomID o2) {
+/*void ModularRobot::collideSensor(void *data, dGeomID o1, dGeomID o2) {
 	// cast void pointer to pointer to class
 	ModularRobot *ptr = (ModularRobot *)data;
 	char str[300];
@@ -95,7 +95,7 @@ void ModularRobot::collideSensor(void *data, dGeomID o1, dGeomID o2) {
 		}
 		//printf("%s\n\n", str);
 	}
-}
+}*/
 
 /*int ModularRobot::drawSensor(int i, osg::Group *robot) {
 	// get sensor location

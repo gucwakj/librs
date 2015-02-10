@@ -57,10 +57,6 @@ namespace rsSim {
 			int turnLeftNB(double, double, double);
 			int turnRightNB(double, double, double);
 
-		public:
-			virtual int getConnectorParams(int, int, dMatrix3, double*);
-			virtual int getFaceParams(int, dMatrix3, double*);
-
 		// inherited functions from ModularRobot class
 		protected:
 			virtual int addConnector(int, int, double, int, int);
@@ -79,20 +75,17 @@ namespace rsSim {
 
 		// private functions
 		private:
-			int build_bigwheel(Connector*, int, int = -1, int = -1);					// build big wheel connector
 			void build_body(dGeomID*, const double*, const double*);
-			int build_bridge(Connector*, int, int = -1, int = -1);						// build bridge connector
-			int build_caster(Connector*, int, int, int = -1, int = -1);					// build caster connector
-			int build_cube(Connector*, int, int = -1, int = -1);						// build cube connector
+			void build_bridge(Connector*);
+			void build_caster(Connector*, int);
+			void build_cube(Connector*);
 			void build_face(int, dGeomID*, const double*, const double*);
-			int build_faceplate(Connector*, int, int = -1, int = -1);					// build faceplate connector
-			int build_gripper(Connector*, int);											// build gripper connector
-			int build_omnidrive(Connector*, int, int = -1, int = -1);					// build omnidrive connector
-			int build_simple(Connector*, int, int = -1, int = -1);						// build simple connector
-			int build_smallwheel(Connector*, int, int = -1, int = -1);					// build small wheel connector
-			int build_tinywheel(Connector*, int, int = -1, int = -1);					// build tiny wheel connector
-			int build_wheel(Connector*, int, double, int = -1, int = -1);				// build custom wheel connector
-			static void* closeGripperNBThread(void*);									// thread to close gripper
+			void build_faceplate(Connector*);
+			void build_gripper(Connector*, int);
+			void build_omnidrive(Connector*);
+			void build_simple(Connector*);
+			void build_wheel(Connector*, double);
+			static void* closeGripperNBThread(void*);
 	};
 
 	// class

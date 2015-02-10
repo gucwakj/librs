@@ -1,4 +1,5 @@
 #include <rsSim/sim.hpp>
+#include <rsSim/linkbot.hpp>
 
 using namespace rsSim;
 
@@ -165,19 +166,14 @@ int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const 
 	_robot.push_back(new RobotNode());
 	_robot.back()->robot = robot;
 
-	// get form of new robot
-	int form = 0;
-	robot->getFormFactor(form);
-
 	// give simulation data to robot
 	robot->addToSim(_world, _space, id, _robot.size()-1, this);
 
 	// build
-	dMatrix3 R;
-	double m[3] = {0};
-	rsSim::ModularRobot *base2 = dynamic_cast<rsSim::ModularRobot*>(base);
-	//base2->getFaceParams(face1, R, m);
-	robot->build(id, R, m, a, base2->getConnectorBodyID(face1), face2, type, side, ground, trace);
+	double p[3], q[4], p1[3], q1[4];
+	base->getRobotFaceOffset(face1, base->getPosition(), base->getQuaternion(), p, q);
+	dynamic_cast<rsSim::ModularRobot*>(base)->getConnFaceOffset(type, side, p, q, p1, q1);
+	robot->build(id, p1, q1, a, dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorBodyID(face1), face2, ground);
 
 	// unlock robot data
 	MUTEX_UNLOCK(&_robot_mutex);

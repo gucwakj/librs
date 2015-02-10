@@ -13,8 +13,8 @@ namespace rsRobots {
 
 		// for inherited classes
 		public:
-			void getConnBodyOffset(int, const double*, const double*, double*, double*) {};
-			void getConnFaceOffset(int, int, const double*, const double*, double*, double*) {};
+			virtual void getConnBodyOffset(int, const double*, const double*, double*, double*) {};
+			virtual void getConnFaceOffset(int, int, const double*, const double*, double*, double*) {};
 
 		// data
 		protected:

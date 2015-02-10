@@ -43,9 +43,9 @@ namespace rsSim {
 			double getNeighborForce(int, int = 0);
 			double getNeighborTorque(int, int = 0);
 
-		// virual functions for inherited classes
+		// pure virual functions for inherited classes
 		protected:
-			virtual int build(int, dMatrix3, double*, const double*, dBodyID, int, int, int, int, int) = 0;
+			virtual int build(int, const double*, const double*, const double*, dBodyID, int, int) = 0;
 			virtual int fixBodyToConnector(dBodyID, int) = 0;
 			virtual int fixConnectorToBody(int, dBodyID, int = -1) = 0;
 

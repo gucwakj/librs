@@ -15,10 +15,10 @@ namespace rsRobots {
 
 		// inherited functions
 		public:
-			void getConnBodyOffset(int, const double*, const double*, double*, double*);
-			void getConnFaceOffset(int, int, const double*, const double*, double*, double*);
-			void getRobotBodyOffset(int, const double*, const double*, double*, double*);
-			void getRobotFaceOffset(int, const double*, const double*, double*, double*);
+			virtual void getConnBodyOffset(int, const double*, const double*, double*, double*);
+			virtual void getConnFaceOffset(int, int, const double*, const double*, double*, double*);
+			virtual void getRobotBodyOffset(int, const double*, const double*, double*, double*);
+			virtual void getRobotFaceOffset(int, const double*, const double*, double*, double*);
 
 		// enumerations
 		public:
@@ -43,12 +43,12 @@ namespace rsRobots {
 			int _disabled;
 	};
 
-	class LinkbotI : public LinkbotT {
+	class LinkbotI : virtual public LinkbotT {
 		public:
 			LinkbotI(void) : Robot(rs::LINKBOTI), LinkbotT(rs::JOINT2) {};
 	};
 
-	class LinkbotL : public LinkbotT {
+	class LinkbotL : virtual public LinkbotT {
 		public:
 			LinkbotL(void) : Robot(rs::LINKBOTL), LinkbotT(rs::JOINT3) {};
 	};

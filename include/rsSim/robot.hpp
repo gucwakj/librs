@@ -144,6 +144,8 @@ namespace rsSim {
 		public:
 			BodyList& getBodyList(void);
 			double getCenter(int);
+			const double* getPosition(void);
+			const double* getQuaternion(void);
 
 		// utility functions
 		protected:

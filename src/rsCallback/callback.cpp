@@ -17,7 +17,7 @@ void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::B
 		case rs::LINKBOTI:
 		case rs::LINKBOTL:
 		case rs::LINKBOTT:
-			scene->setUpdateCallback(new linkbotCallback(dynamic_cast<rsSim::CLinkbotT *>(sim), bodies, conn, _units));
+			scene->setUpdateCallback(new linkbotCallback(dynamic_cast<rsSim::LinkbotT *>(sim), bodies, conn, _units));
 			break;
 	}
 }

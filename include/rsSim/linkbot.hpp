@@ -10,12 +10,12 @@
 namespace rsSim {
 
 	// class
-	class CLinkbotT : virtual public rsRobots::LinkbotT, virtual public ModularRobot {
+	class LinkbotT : virtual public rsRobots::LinkbotT, virtual public ModularRobot {
 			friend class Sim;
 		// public api
 		public:
-			CLinkbotT(int = -1);
-			virtual ~CLinkbotT();
+			LinkbotT(int = -1);
+			virtual ~LinkbotT();
 
 			int accelJointAngleNB(rs::JointID, double, double);
 			int accelJointCycloidalNB(rs::JointID, double, double);
@@ -89,20 +89,20 @@ namespace rsSim {
 	};
 
 	// class
-	class CLinkbotI : public rsRobots::LinkbotI, public CLinkbotT {
+	class LinkbotI : public rsRobots::LinkbotI, public LinkbotT {
 		public:
-			CLinkbotI(void) : CLinkbotT(rs::JOINT2), rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rs::JOINT1, rs::JOINT3) {}
+			LinkbotI(void) : LinkbotT(rs::JOINT2), rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rs::JOINT1, rs::JOINT3) {}
 	};
 
 	// class
-	class CLinkbotL : public CLinkbotT {
+	class LinkbotL : public LinkbotT {
 		public:
-			CLinkbotL(void) : CLinkbotT(rs::JOINT3), rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rs::JOINT1, rs::JOINT2) {}
+			LinkbotL(void) : LinkbotT(rs::JOINT3), rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rs::JOINT1, rs::JOINT2) {}
 	};
 
 	// motion threading
 	struct LinkbotMove {
-		rsSim::CLinkbotT *robot;
+		rsSim::LinkbotT *robot;
 		char *expr;
 		double x, y, radius, trackwidth;
 		double (*func)(double x);
@@ -112,11 +112,11 @@ namespace rsSim {
 } // namespace rsSim
 
 /*
-class DLLIMPORT CLinkbotTGroup : public Group<rsSim::CLinkbotT> {
+class DLLIMPORT LinkbotTGroup : public Group<rsSim::LinkbotT> {
 	// public api
 	public:
-		CLinkbotTGroup(void) : Group<rsSim::CLinkbotT>() {};
-		virtual ~CLinkbotTGroup(void) {};
+		LinkbotTGroup(void) : Group<rsSim::LinkbotT>() {};
+		virtual ~LinkbotTGroup(void) {};
 
 		inline int accelJointAngleNB(rs::JointID, double, double);
 		inline int accelJointCycloidalNB(rs::JointID, double, double);
@@ -145,8 +145,8 @@ class DLLIMPORT CLinkbotTGroup : public Group<rsSim::CLinkbotT> {
 		inline int setJointSpeeds(double, double, double);
 		inline int setJointSpeedRatios(double, double, double);
 };
-class DLLIMPORT CLinkbotIGroup : public CLinkbotTGroup {};
-class DLLIMPORT CLinkbotLGroup : public CLinkbotTGroup {};
+class DLLIMPORT CLinkbotIGroup : public LinkbotTGroup {};
+class DLLIMPORT CLinkbotLGroup : public LinkbotTGroup {};
 #include "linkbotgroup.tpp"
 */
 

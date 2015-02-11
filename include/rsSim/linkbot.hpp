@@ -67,7 +67,7 @@ namespace rsSim {
 		// inherited functions from Robot class
 		protected:
 			virtual int build(int, const double*, const double*, const double*, int);
-			virtual int buildIndividual(double, double, double, dMatrix3, double*);
+			virtual int buildIndividual(const double*, const double*, const double*);
 			virtual double getAngle(int);
 			virtual void init_params(void);
 			virtual void simPreCollisionThread(void);
@@ -91,13 +91,13 @@ namespace rsSim {
 	// class
 	class CLinkbotI : public rsRobots::LinkbotI, public CLinkbotT {
 		public:
-			CLinkbotI(void) : rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rs::JOINT1, rs::JOINT3) {}
+			CLinkbotI(void) : CLinkbotT(rs::JOINT2), rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rs::JOINT1, rs::JOINT3) {}
 	};
 
 	// class
 	class CLinkbotL : public CLinkbotT {
 		public:
-			CLinkbotL(void) : rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rs::JOINT1, rs::JOINT2) {}
+			CLinkbotL(void) : CLinkbotT(rs::JOINT3), rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rs::JOINT1, rs::JOINT2) {}
 	};
 
 	// motion threading

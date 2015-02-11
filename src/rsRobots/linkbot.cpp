@@ -102,18 +102,14 @@ void LinkbotT::getConnFaceOffset(int type, int side, const double *p, const doub
 	}
 
 	// calculate offset position
-	double v[3] = {p2[0], p2[1], p2[2]};
-	double uv[3] = {q[1]*v[2]-q[2]*v[1], q[2]*v[0]-q[0]*v[2], q[0]*v[1]-q[1]*v[0]};
-	double uuv[3] = {2*(q[1]*uv[2]-q[2]*uv[1]), 2*(q[2]*uv[0]-q[0]*uv[2]), 2*(q[0]*uv[1]-q[1]*uv[0])};
-	p1[0] = p[0] + v[0] + 2*q[3]*uv[0] + uuv[0];
-	p1[1] = p[1] + v[1] + 2*q[3]*uv[1] + uuv[1];
-	p1[2] = p[2] + v[2] + 2*q[3]*uv[2] + uuv[2];
+	double o[3];
+	this->multiplyQbyV(q, p2[0], p2[1], p2[2], o);
+	p1[0] = p[0] + o[0];
+	p1[1] = p[1] + o[1];
+	p1[2] = p[2] + o[2];
 
 	// calculate offset quaternion
-	q1[0] = q2[3]*q[0] + q2[0]*q[3] + q2[1]*q[2] - q2[2]*q[1];
-	q1[1] = q2[3]*q[1] - q2[0]*q[2] + q2[1]*q[3] + q2[2]*q[0];
-	q1[2] = q2[3]*q[2] + q2[0]*q[1] - q2[1]*q[0] + q2[2]*q[3];
-	q1[3] = q2[3]*q[3] - q2[0]*q[0] - q2[1]*q[1] - q2[2]*q[2];
+	this->multiplyQbyQ(q, q2, q1);
 }
 
 void LinkbotT::getConnBodyOffset(int type, const double *p, const double *q, double *p1, double *q1) {
@@ -162,18 +158,14 @@ void LinkbotT::getConnBodyOffset(int type, const double *p, const double *q, dou
 	}
 
 	// calculate offset position
-	double v[3] = {p2[0], p2[1], p2[2]};
-	double uv[3] = {q[1]*v[2]-q[2]*v[1], q[2]*v[0]-q[0]*v[2], q[0]*v[1]-q[1]*v[0]};
-	double uuv[3] = {2*(q[1]*uv[2]-q[2]*uv[1]), 2*(q[2]*uv[0]-q[0]*uv[2]), 2*(q[0]*uv[1]-q[1]*uv[0])};
-	p1[0] = p[0] + v[0] + 2*q[3]*uv[0] + uuv[0];
-	p1[1] = p[1] + v[1] + 2*q[3]*uv[1] + uuv[1];
-	p1[2] = p[2] + v[2] + 2*q[3]*uv[2] + uuv[2];
+	double o[3];
+	this->multiplyQbyV(q, p2[0], p2[1], p2[2], o);
+	p1[0] = p[0] + o[0];
+	p1[1] = p[1] + o[1];
+	p1[2] = p[2] + o[2];
 
 	// calculate offset quaternion
-	q1[0] = q2[3]*q[0] + q2[0]*q[3] + q2[1]*q[2] - q2[2]*q[1];
-	q1[1] = q2[3]*q[1] - q2[0]*q[2] + q2[1]*q[3] + q2[2]*q[0];
-	q1[2] = q2[3]*q[2] + q2[0]*q[1] - q2[1]*q[0] + q2[2]*q[3];
-	q1[3] = q2[3]*q[3] - q2[0]*q[0] - q2[1]*q[1] - q2[2]*q[2];
+	this->multiplyQbyQ(q, q2, q1);
 }
 
 void LinkbotT::getRobotBodyOffset(int body, const double *p, const double *q, double *p1, double *q1) {
@@ -201,18 +193,14 @@ void LinkbotT::getRobotBodyOffset(int body, const double *p, const double *q, do
 	}
 
 	// calculate offset position
-	double v[3] = {_offset[body].x, _offset[body].y, _offset[body].z};
-	double uv[3] = {q[1]*v[2]-q[2]*v[1], q[2]*v[0]-q[0]*v[2], q[0]*v[1]-q[1]*v[0]};
-	double uuv[3] = {2*(q[1]*uv[2]-q[2]*uv[1]), 2*(q[2]*uv[0]-q[0]*uv[2]), 2*(q[0]*uv[1]-q[1]*uv[0])};
-	p1[0] = p[0] + v[0] + 2*q[3]*uv[0] + uuv[0];
-	p1[1] = p[1] + v[1] + 2*q[3]*uv[1] + uuv[1];
-	p1[2] = p[2] + v[2] + 2*q[3]*uv[2] + uuv[2];
+	double o[3];
+	this->multiplyQbyV(q, _offset[body].x, _offset[body].y, _offset[body].z, o);
+	p1[0] = p[0] + o[0];
+	p1[1] = p[1] + o[1];
+	p1[2] = p[2] + o[2];
 
 	// calculate offset quaternion
-	q1[0] = q2[3]*q[0] + q2[0]*q[3] + q2[1]*q[2] - q2[2]*q[1];
-	q1[1] = q2[3]*q[1] - q2[0]*q[2] + q2[1]*q[3] + q2[2]*q[0];
-	q1[2] = q2[3]*q[2] + q2[0]*q[1] - q2[1]*q[0] + q2[2]*q[3];
-	q1[3] = q2[3]*q[3] - q2[0]*q[0] - q2[1]*q[1] - q2[2]*q[2];
+	this->multiplyQbyQ(q, q2, q1);
 }
 
 void LinkbotT::getRobotFaceOffset(int face, const double *p, const double *q, double *p1, double *q1) {
@@ -244,18 +232,14 @@ void LinkbotT::getRobotFaceOffset(int face, const double *p, const double *q, do
 	}
 
 	// calculate offset position
-	double v[3] = {_offset[face].x + p2[0], _offset[face].y + p2[1], _offset[face].z + p2[2]};
-	double uv[3] = {q[1]*v[2]-q[2]*v[1], q[2]*v[0]-q[0]*v[2], q[0]*v[1]-q[1]*v[0]};
-	double uuv[3] = {2*(q[1]*uv[2]-q[2]*uv[1]), 2*(q[2]*uv[0]-q[0]*uv[2]), 2*(q[0]*uv[1]-q[1]*uv[0])};
-	p1[0] = p[0] + v[0] + 2*q[3]*uv[0] + uuv[0];
-	p1[1] = p[1] + v[1] + 2*q[3]*uv[1] + uuv[1];
-	p1[2] = p[2] + v[2] + 2*q[3]*uv[2] + uuv[2];
+	double o[3];
+	this->multiplyQbyV(q, _offset[face].x + p2[0], _offset[face].y + p2[1], _offset[face].z + p2[2], o);
+	p1[0] = p[0] + o[0];
+	p1[1] = p[1] + o[1];
+	p1[2] = p[2] + o[2];
 
 	// calculate offset quaternion
-	q1[0] = q2[3]*q[0] + q2[0]*q[3] + q2[1]*q[2] - q2[2]*q[1];
-	q1[1] = q2[3]*q[1] - q2[0]*q[2] + q2[1]*q[3] + q2[2]*q[0];
-	q1[2] = q2[3]*q[2] + q2[0]*q[1] - q2[1]*q[0] + q2[2]*q[3];
-	q1[3] = q2[3]*q[3] - q2[0]*q[0] - q2[1]*q[1] - q2[2]*q[2];
+	this->multiplyQbyQ(q, q2, q1);
 }
 
 double LinkbotT::getWheelRatio(int standard) {
@@ -269,3 +253,4 @@ double LinkbotT::getWheelRatio(int standard) {
 	}
 	return 0;
 }
+

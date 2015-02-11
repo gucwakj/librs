@@ -163,7 +163,7 @@ namespace rsSim {
 		// virual functions for inherited classes
 		protected:
 			virtual int build(int, const double*, const double*, const double*, int) { return 0; };
-			virtual int buildIndividual(double, double, double, dMatrix3, double*) { return 0; };
+			virtual int buildIndividual(const double*, const double*, const double*) { return 0; };
 			virtual double getAngle(int) { return 0; };
 			virtual void init_params(void) { return; };
 			virtual void simPreCollisionThread(void) { return; };

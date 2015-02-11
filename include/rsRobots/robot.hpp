@@ -24,6 +24,8 @@ namespace rsRobots {
 
 		// for inherited classes
 		public:
+			void multiplyQbyV(const double*, double, double, double, double*);
+			void multiplyQbyQ(const double*, const double*, double*);
 			virtual void getRobotBodyOffset(int, const double*, const double*, double*, double*) {};
 			virtual void getRobotFaceOffset(int, const double*, const double*, double*, double*) {};
 

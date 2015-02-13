@@ -1,6 +1,7 @@
 #ifndef RSROBOTS_MODULARROBOT_HPP_
 #define RSROBOTS_MODULARROBOT_HPP_
 
+#include <rs/enum.hpp>
 #include <rsRobots/robot.hpp>
 
 namespace rsRobots {

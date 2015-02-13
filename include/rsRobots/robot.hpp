@@ -2,12 +2,9 @@
 #define RSROBOTS_ROBOT_HPP_
 
 #include <cmath>
-#include <iostream>
 #include <vector>
 
-#include <rs/enum.hpp>
 #include <rs/types.hpp>
-#include <rsRobots/rgbhashtable.h>
 
 namespace rsRobots {
 
@@ -20,12 +17,12 @@ namespace rsRobots {
 			int getForm(void);
 			int getID(void);
 			double* getRGB(void);
+			void multiplyQbyV(const double*, double, double, double, double*);
+			void multiplyQbyQ(const double*, const double*, double*);
 			void setTrace(bool);
 
 		// for inherited classes
 		public:
-			void multiplyQbyV(const double*, double, double, double, double*);
-			void multiplyQbyQ(const double*, const double*, double*);
 			virtual void getRobotBodyOffset(int, const double*, const double*, double*, double*) {};
 			virtual void getRobotFaceOffset(int, const double*, const double*, double*, double*) {};
 

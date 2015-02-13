@@ -1,3 +1,5 @@
+#include <rsRobots/rgbhashtable.h>
+
 #include <rsSim/sim.hpp>
 #include <rsSim/robot.hpp>
 

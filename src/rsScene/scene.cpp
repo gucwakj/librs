@@ -910,39 +910,62 @@ void Scene::draw_grid(void) {
 }
 
 void Scene::draw_global_hud(double w, double h, bool paused) {
-	osg::ref_ptr<osg::Geode> HUDGeode = new osg::Geode();
-	osg::ref_ptr<osgText::Text> textHUD = new osgText::Text();
-	osg::ref_ptr<osg::Projection> HUDProjectionMatrix = new osg::Projection;
-	osg::ref_ptr<osg::MatrixTransform> HUDModelViewMatrix = new osg::MatrixTransform;
-	osg::ref_ptr<osg::StateSet> HUDStateSet = new osg::StateSet();
+	// init variables
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
+	osg::ref_ptr<osg::Projection> projection = new osg::Projection;
+	osg::ref_ptr<osg::MatrixTransform> transform = new osg::MatrixTransform;
+	osg::ref_ptr<osgText::Text> text = new osgText::Text();
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry;
+	double p = 0.1;
 
-	HUDProjectionMatrix->setMatrix(osg::Matrix::ortho2D(0, w, 0, h));
-	HUDProjectionMatrix->addChild(HUDModelViewMatrix);
+	// set projection matrix
+	projection->setMatrix(osg::Matrix::ortho2D(0, w, 0, h));
+	projection->addChild(transform);
 
-	HUDModelViewMatrix->setMatrix(osg::Matrix::identity());
-	HUDModelViewMatrix->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-	HUDModelViewMatrix->addChild(HUDGeode);
+	// set view matrix
+	transform->setMatrix(osg::Matrix::identity());
+	transform->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+	transform->addChild(geode);
 
-	HUDGeode->setStateSet(HUDStateSet);
-	HUDGeode->addDrawable(textHUD);
+	// set rendering
+	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	geode->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin");
+	geode->addDrawable(text);
+	geode->addDrawable(geom);
 
-	HUDStateSet->setMode(GL_BLEND,osg::StateAttribute::ON);
-	HUDStateSet->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
-	HUDStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	HUDStateSet->setRenderBinDetails(11, "RenderBin");
+	// text
+	text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+	text->setMaximumWidth(w);
+	text->setCharacterSize(20);
+	if (paused) text->setText("Paused: Press any key to start");
+	text->setAxisAlignment(osgText::Text::SCREEN);
+	text->setAlignment(osgText::Text::CENTER_CENTER);
+	text->setDrawMode(osgText::Text::TEXT);
+	text->setPosition(osg::Vec3(0.5*w, 0.5*p*h, 0));
+	text->setColor(osg::Vec4(1, 1, 1, 1));
+	text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 
-	textHUD->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-	textHUD->setMaximumWidth(w);
-	textHUD->setCharacterSize(15);
-	if (paused) textHUD->setText("Paused: Press any key to start");
-	textHUD->setAxisAlignment(osgText::Text::SCREEN);
-	textHUD->setAlignment(osgText::Text::CENTER_CENTER);
-	textHUD->setPosition(osg::Vec3(w/2, 50, -1.5));
-	textHUD->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-	textHUD->setBackdropColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	textHUD->setBackdropOffset(0.1);
+	// background rectangle
+	osg::Vec3Array *vertices = new osg::Vec3Array;
+	vertices->push_back(osg::Vec3(0, p*h, -0.1));
+	vertices->push_back(osg::Vec3(0, 0, -0.1));
+	vertices->push_back(osg::Vec3(w, 0, -0.1));
+	vertices->push_back(osg::Vec3(w, p*h, -0.1));
+	geom->setVertexArray(vertices);
+	osg::Vec3Array *normals = new osg::Vec3Array;
+	normals->push_back(osg::Vec3(0, 0, 1));
+	geom->setNormalArray(normals, osg::Array::BIND_OVERALL);
+	osg::Vec4Array *colors = new osg::Vec4Array;
+	colors->push_back(osg::Vec4(0, 0, 0, 0.6));
+	geom->setColorArray(colors, osg::Array::BIND_OVERALL);
+	geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+	geom->getOrCreateStateSet()->setMode(GL_BLEND,osg::StateAttribute::ON);
+	geom->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
-	_root->addChild(HUDProjectionMatrix);
+	// add to scene
+	_root->addChild(projection);
 }
 
 /*int Scene::draw(rsRobots::Cubus *robot, int tracke, double *rgb) {

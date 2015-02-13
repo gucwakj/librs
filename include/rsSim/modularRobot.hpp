@@ -1,7 +1,7 @@
 #ifndef RSSIM_MODULARROBOT_HPP_
 #define RSSIM_MODULARROBOT_HPP_
 
-#include <rsRobots/modularRobot.hpp>
+#include <rsRobots/ModularRobot.hpp>
 #include <rsSim/robot.hpp>
 
 namespace rsSim {

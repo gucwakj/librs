@@ -1,7 +1,7 @@
 #ifndef RSROBOTS_LINKBOT_HPP_
 #define RSROBOTS_LINKBOT_HPP_
 
-#include <rsRobots/modularRobot.hpp>
+#include <rsRobots/ModularRobot.hpp>
 
 namespace rsRobots {
 

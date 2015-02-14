@@ -29,6 +29,7 @@ namespace rsXML {
 			int getGround(void);
 			int getID(void);
 			double* getJoints(void);
+			double* getLED(void);
 			double* getPosition(void);
 			double* getQuaternion(void);
 			bool getTrace(void);
@@ -38,6 +39,7 @@ namespace rsXML {
 			void setGround(int);
 			void setID(int);
 			void setJoints(double = 0, double = 0, double = 0, double = 0, double = 0, double = 0);
+			void setLED(double, double, double, double);
 			void setPosition(double, double, double);
 			void setPsi(double);
 			void setRotation(double, double, double);
@@ -47,6 +49,7 @@ namespace rsXML {
 			double _a[6];
 			double _p[3];
 			double _q[4];
+			double _led[4];
 			int _base;
 			int _connected;
 			int _ground;

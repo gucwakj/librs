@@ -6,7 +6,7 @@ Robot::Robot(int form) {
 	_form = form;
 	_id = 0;
 	_rgb[0] = 0;
-	_rgb[1] = 1;
+	_rgb[1] = 0;
 	_rgb[2] = 0;
 	_trace = 0;
 }

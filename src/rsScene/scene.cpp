@@ -236,23 +236,22 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 	return 0;
 }
 
-Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, bool trace) {
+Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, double *led, bool trace) {
 	// create new robot
 	osg::Group *group = new osg::Group();
-	double rgb[4] = {0};
 
 	switch (form) {
 		case rs::CUBUS:
 			//this->drawCubus(dynamic_cast<rsRobots::Cubus*>(robot), p, q, trace, rgb);
 			break;
 		case rs::LINKBOTI:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), group, p, q, trace, rgb);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), group, p, q, trace, led);
 			break;
 		case rs::LINKBOTL:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotL*>(robot), group, p, q, trace, rgb);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotL*>(robot), group, p, q, trace, led);
 			break;
 		case rs::LINKBOTT:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), group, p, q, trace, rgb);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), group, p, q, trace, led);
 			break;
 		case rs::MOBOT:
 			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
@@ -299,7 +298,7 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const
 	trackingLine->setDataVariance(osg::Object::DYNAMIC);
 	trackingLine->setUseDisplayList(false);
 	osg::Vec4Array *colors = new osg::Vec4Array;
-	colors->push_back(osg::Vec4(rgb[0], rgb[1], rgb[2], 1));
+	colors->push_back(osg::Vec4(led[0], led[1], led[2], led[3]));
 	trackingLine->setColorArray(colors);
 	trackingLine->setColorBinding(osg::Geometry::BIND_OVERALL);
 	osg::Point *point = new osg::Point();
@@ -1146,9 +1145,6 @@ void Scene::draw_robot_linkbot(rsRobots::LinkbotT *robot, Robot *group, const do
 		pat[i] = new osg::PositionAttitudeTransform;
 		group->addChild(pat[i].get());
 	}
-
-	// get led color
-	rgb = robot->getRGB();
 
 	// set tracing
 	robot->setTrace(trace);

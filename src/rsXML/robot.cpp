@@ -13,6 +13,10 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_connected = 0;
 	_ground = -1;
 	_id = -1;
+	_led[0] = 0;
+	_led[1] = 0;
+	_led[2] = 0;
+	_led[3] = 1;
 	_p[0] = 0;
 	_p[1] = 0;
 	_p[2] = 0;
@@ -61,6 +65,10 @@ int Robot::getID(void) {
 
 double* Robot::getJoints(void) {
 	return _a;
+}
+
+double* Robot::getLED(void) {
+	return _led;
 }
 
 double* Robot::getPosition(void) {
@@ -116,6 +124,13 @@ void Robot::setJoints(double a, double b, double c, double d, double e, double f
 	_a[3] = d;
 	_a[4] = e;
 	_a[5] = f;
+}
+
+void Robot::setLED(double a, double b, double c, double d) {
+	_led[0] = a;
+	_led[1] = b;
+	_led[2] = c;
+	_led[3] = d;
 }
 
 void Robot::setPsi(double c) {

@@ -480,6 +480,29 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			_robot.push_back(new LinkbotI(_trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
+			if ( (ele = node->FirstChildElement("joint")) ) {
+				ele->QueryDoubleAttribute("f1", &a);
+				ele->QueryDoubleAttribute("f2", &b);
+				ele->QueryDoubleAttribute("f3", &c);
+				_robot.back()->setJoints(a, b, c);
+			}
+			if ( (ele = node->FirstChildElement("led")) ) {
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_robot.back()->setLED(a, b, c, d);
+			}
+			if (!node->QueryIntAttribute("orientation", &i)) {
+				if (i == 1)
+					_robot.back()->setPsi(0);
+				else if (i == 2)
+					_robot.back()->setPsi(M_PI/2);
+				else if (i == 3)
+					_robot.back()->setPsi(M_PI);
+				else if (i == 4)
+					_robot.back()->setPsi(3*M_PI/2);
+			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
@@ -491,22 +514,6 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(a, b, c);
-			}
-			if ( (ele = node->FirstChildElement("joint")) ) {
-				ele->QueryDoubleAttribute("f1", &a);
-				ele->QueryDoubleAttribute("f2", &b);
-				ele->QueryDoubleAttribute("f3", &c);
-				_robot.back()->setJoints(a, b, c);
-			}
-			if (!node->QueryIntAttribute("orientation", &i)) {
-				if (i == 1)
-					_robot.back()->setPsi(0);
-				else if (i == 2)
-					_robot.back()->setPsi(M_PI/2);
-				else if (i == 3)
-					_robot.back()->setPsi(M_PI);
-				else if (i == 4)
-					_robot.back()->setPsi(3*M_PI/2);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -515,6 +522,29 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			_robot.push_back(new LinkbotL(_trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
+			if ( (ele = node->FirstChildElement("joint")) ) {
+				ele->QueryDoubleAttribute("f1", &a);
+				ele->QueryDoubleAttribute("f2", &b);
+				ele->QueryDoubleAttribute("f3", &c);
+				_robot.back()->setJoints(a, b, c);
+			}
+			if ( (ele = node->FirstChildElement("led")) ) {
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_robot.back()->setLED(a, b, c, d);
+			}
+			if (!node->QueryIntAttribute("orientation", &i)) {
+				if (i == 1)
+					_robot.back()->setPsi(0);
+				else if (i == 2)
+					_robot.back()->setPsi(M_PI/2);
+				else if (i == 3)
+					_robot.back()->setPsi(M_PI);
+				else if (i == 4)
+					_robot.back()->setPsi(3*M_PI/2);
+			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
@@ -526,22 +556,6 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(a, b, c);
-			}
-			if ( (ele = node->FirstChildElement("joint")) ) {
-				ele->QueryDoubleAttribute("f1", &a);
-				ele->QueryDoubleAttribute("f2", &b);
-				ele->QueryDoubleAttribute("f3", &c);
-				_robot.back()->setJoints(a, b, c);
-			}
-			if (!node->QueryIntAttribute("orientation", &i)) {
-				if (i == 1)
-					_robot.back()->setPsi(0);
-				else if (i == 2)
-					_robot.back()->setPsi(M_PI/2);
-				else if (i == 3)
-					_robot.back()->setPsi(M_PI);
-				else if (i == 4)
-					_robot.back()->setPsi(3*M_PI/2);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -550,6 +564,29 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			_robot.push_back(new LinkbotT(_trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
+			if ( (ele = node->FirstChildElement("joint")) ) {
+				ele->QueryDoubleAttribute("f1", &a);
+				ele->QueryDoubleAttribute("f2", &b);
+				ele->QueryDoubleAttribute("f3", &c);
+				_robot.back()->setJoints(a, b, c);
+			}
+			if ( (ele = node->FirstChildElement("led")) ) {
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_robot.back()->setLED(a, b, c, d);
+			}
+			if (!node->QueryIntAttribute("orientation", &i)) {
+				if (i == 1)
+					_robot.back()->setPsi(0);
+				else if (i == 2)
+					_robot.back()->setPsi(M_PI/2);
+				else if (i == 3)
+					_robot.back()->setPsi(M_PI);
+				else if (i == 4)
+					_robot.back()->setPsi(3*M_PI/2);
+			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
@@ -561,22 +598,6 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(a, b, c);
-			}
-			if ( (ele = node->FirstChildElement("joint")) ) {
-				ele->QueryDoubleAttribute("f1", &a);
-				ele->QueryDoubleAttribute("f2", &b);
-				ele->QueryDoubleAttribute("f3", &c);
-				_robot.back()->setJoints(a, b, c);
-			}
-			if (!node->QueryIntAttribute("orientation", &i)) {
-				if (i == 1)
-					_robot.back()->setPsi(0);
-				else if (i == 2)
-					_robot.back()->setPsi(M_PI/2);
-				else if (i == 3)
-					_robot.back()->setPsi(M_PI);
-				else if (i == 4)
-					_robot.back()->setPsi(3*M_PI/2);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);

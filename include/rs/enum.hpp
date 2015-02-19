@@ -25,25 +25,6 @@ namespace rs {
 		JOINT6
 	};
 
-	// robot connectors
-	enum Connector {
-		BIGWHEEL,
-		BRIDGE,
-		CASTER,
-		CUBE,
-		FACEPLATE,
-		GRIPPER,
-		L,
-		OMNIDRIVE,
-		SIMPLE,
-		SMALLWHEEL,
-		SQUARE,
-		TANK,
-		TINYWHEEL,
-		WHEEL,
-		NUM_CONNECTORS
-	};
-
 	// drawing objects (ground and graphic)
 	enum Drawing {
 		BOX,
@@ -58,6 +39,7 @@ namespace rs {
 
 namespace rsLinkbot {
 
+	// shapes
 	enum Preconfig {
 		ROBOT,
 		BOW,
@@ -74,31 +56,34 @@ namespace rsLinkbot {
 		NUM_PRECONFIG
 	};
 
-	/*enum Connector {
+	// connectors
+	enum Connector {
 		BIGWHEEL,
 		BRIDGE,
 		CASTER,
 		CUBE,
 		FACEPLATE,
 		GRIPPER,
-		OMNIDRIVE,
+		OMNIPLATE,
 		SIMPLE,
 		SMALLWHEEL,
 		TINYWHEEL,
 		WHEEL,
 		NUM_CONNECTORS
-	};*/
+	};
 
 } // namespace rsLinkbot
 
 /*namespace rsMobot {
 
+	// shapes
 	enum Preconfig {
 		EXPLORER,
 		LIFT,
 		NUM_PRECONFIG
 	};
 
+	// connectors
 	enum Connector {
 		BIGWHEEL,
 		CASTER,
@@ -114,10 +99,12 @@ namespace rsLinkbot {
 
 namespace rsCubus {
 
+	// shapes
 	enum Preconfig {
 		NUM_PRECONFIG
 	};
 
+	// connectors
 	enum Connector {
 		SIMPLE,
 		NUM_CONNECTORS

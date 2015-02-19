@@ -190,22 +190,22 @@ void LinkbotT::postProcess(void) {
 	else {
 		// check for wheels
 		for (int i = 0; i < _conn.size(); i++) {
-			if (_conn[i]->getConn() == rs::BIGWHEEL) {
+			if (_conn[i]->getConn() == rsLinkbot::BIGWHEEL) {
 				_p[2] += (_bigwheel_radius - _body_height/2);
 				_radius = _bigwheel_radius;
 				break;
 			}
-			else if (_conn[i]->getConn() == rs::SMALLWHEEL) {
+			else if (_conn[i]->getConn() == rsLinkbot::SMALLWHEEL) {
 				_p[2] += (_smallwheel_radius - _body_height/2);
 				_radius = _smallwheel_radius;
 				break;
 			}
-			else if (_conn[i]->getConn() == rs::TINYWHEEL) {
+			else if (_conn[i]->getConn() == rsLinkbot::TINYWHEEL) {
 				_p[2] += (_tinywheel_radius - _body_height/2);
 				_radius = _tinywheel_radius;
 				break;
 			}
-			else if (_conn[i]->getConn() == rs::WHEEL) {
+			else if (_conn[i]->getConn() == rsLinkbot::WHEEL) {
 				_p[2] += (_conn[i]->getSize() - _body_height/2);
 				_radius = _conn[i]->getSize();
 				break;
@@ -214,7 +214,7 @@ void LinkbotT::postProcess(void) {
 
 		// tilt for casters
 		for (int i = 0; i < _conn.size(); i++) {
-			if (_conn[i]->getType() == rs::CASTER && !static_cast<int>(_conn[i]->getSize()))
+			if (_conn[i]->getType() == rsLinkbot::CASTER && !static_cast<int>(_conn[i]->getSize()))
 				this->setPsi(atan2(_radius - _smallwheel_radius, 0.08575));
 		}
 

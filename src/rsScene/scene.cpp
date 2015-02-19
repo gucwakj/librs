@@ -1344,39 +1344,39 @@ void Scene::draw_robot_linkbot_conn(rsRobots::LinkbotT *robot, Robot *group, int
 	// create node to hold mesh
 	osg::ref_ptr<osg::Node> node;
 	switch (type) {
-		case rs::BIGWHEEL:
+		case rsLinkbot::BIGWHEEL:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/bigwheel.3ds");
 			break;
-		case rs::BRIDGE:
+		case rsLinkbot::BRIDGE:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/bridge.3ds");
 			break;
-		case rs::CASTER:
+		case rsLinkbot::CASTER:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/caster.3ds");
 			break;
-		case rs::CUBE:
+		case rsLinkbot::CUBE:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/cube.3ds");
 			break;
-		case rs::FACEPLATE:
+		case rsLinkbot::FACEPLATE:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/faceplate.3ds");
 			break;
-		case rs::GRIPPER:
+		case rsLinkbot::GRIPPER:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/gripper.3ds");
 			break;
-		case rs::OMNIDRIVE:
+		case rsLinkbot::OMNIPLATE:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/omnidrive.3ds");
 			break;
-		case rs::SIMPLE:
+		case rsLinkbot::SIMPLE:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/simple.3ds");
 			break;
-		case rs::SMALLWHEEL:
+		case rsLinkbot::SMALLWHEEL:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/smallwheel.3ds");
 			break;
-		case rs::TINYWHEEL:
+		case rsLinkbot::TINYWHEEL:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
 			break;
-		case rs::WHEEL:
+		case rsLinkbot::WHEEL:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
-			transform->setScale(osg::Vec3d(1, robot->getWheelRatio(rs::TINYWHEEL), robot->getWheelRatio(rs::TINYWHEEL)));
+			transform->setScale(osg::Vec3d(1, robot->getWheelRatio(rsLinkbot::TINYWHEEL), robot->getWheelRatio(rsLinkbot::TINYWHEEL)));
 			break;
 	}
 	node->setCullingActive(false);

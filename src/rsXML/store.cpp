@@ -654,60 +654,60 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 		}*/
 		else {
 			if ( !strcmp(node->Value(), "bigwheel") ) {
-				ctype = rs::BIGWHEEL;
+				ctype = rsLinkbot::BIGWHEEL;
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "bridge") ) {
-				ctype = rs::BRIDGE;
+				ctype = rsLinkbot::BRIDGE;
 				cnum = 2;
 			}
 			else if ( !strcmp(node->Value(), "caster") ) {
-				ctype = rs::CASTER;
+				ctype = rsLinkbot::CASTER;
 				cnum = 1;
 				node->QueryIntAttribute("custom", &custom);
 			}
 			else if ( !strcmp(node->Value(), "cube") ) {
-				ctype = rs::CUBE;
+				ctype = rsLinkbot::CUBE;
 				cnum = 5;
 			}
 			else if ( !strcmp(node->Value(), "faceplate") ) {
-				ctype = rs::FACEPLATE;
+				ctype = rsLinkbot::FACEPLATE;
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "gripper") ) {
-				ctype = rs::GRIPPER;
+				ctype = rsLinkbot::GRIPPER;
 				cnum = 1;
 			}
-			else if ( !strcmp(node->Value(), "l") ) {
-				ctype = rs::L;
+			/*else if ( !strcmp(node->Value(), "l") ) {
+				ctype = rsLinkbot::L;
 				cnum = 3;
-			}
+			}*/
 			else if ( !strcmp(node->Value(), "omnidrive") ) {
-				ctype = rs::OMNIDRIVE;
+				ctype = rsLinkbot::OMNIPLATE;
 				cnum = 4;
 			}
 			else if ( !strcmp(node->Value(), "simple") ) {
-				ctype = rs::SIMPLE;
+				ctype = rsLinkbot::SIMPLE;
 				cnum = 2;
 			}
 			else if ( !strcmp(node->Value(), "smallwheel") ) {
-				ctype = rs::SMALLWHEEL;
+				ctype = rsLinkbot::SMALLWHEEL;
 				cnum = 1;
 			}
-			else if ( !strcmp(node->Value(), "square") ) {
-				ctype = rs::SQUARE;
+			/*else if ( !strcmp(node->Value(), "square") ) {
+				ctype = rsLinkbot::SQUARE;
 				cnum = 4;
 			}
 			else if ( !strcmp(node->Value(), "tank") ) {
-				ctype = rs::TANK;
+				ctype = rsLinkbot::TANK;
 				cnum = 3;
-			}
+			}*/
 			else if ( !strcmp(node->Value(), "tinywheel") ) {
-				ctype = rs::TINYWHEEL;
+				ctype = rsLinkbot::TINYWHEEL;
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "wheel") ) {
-				ctype = rs::WHEEL;
+				ctype = rsLinkbot::WHEEL;
 				cnum = 1;
 				node->QueryDoubleAttribute("radius", &size);
 			}
@@ -737,9 +737,9 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 					else {
 						ftmp[i] = ntmp[i];
 						side->QueryIntAttribute("conn", &atmp[i]);
-						if (atmp[i] == rs::CASTER)
+						if (atmp[i] == rsLinkbot::CASTER)
 							side->QueryDoubleAttribute("custom", &size);
-						else if (atmp[i] == rs::WHEEL)
+						else if (atmp[i] == rsLinkbot::WHEEL)
 							side->QueryDoubleAttribute("radius", &size);
 					}
 					i++;

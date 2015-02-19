@@ -36,14 +36,14 @@ void LinkbotT::getConnFaceOffset(int type, int side, const double *p, const doub
 
 	// get offset of face
 	switch (type) {
-		case rs::BRIDGE:
+		case rsLinkbot::BRIDGE:
 			p2[1] = -_bridge_length + 2*_face_radius;
 			q2[0] = 0;
 			q2[1] = sin(1.570796);	// 0.5*PI
 			q2[2] = 0;
 			q2[3] = cos(1.570796);	// 0.5*PI
 			break;
-		case rs::CUBE:
+		case rsLinkbot::CUBE:
 			if (side == 2) {
 				p2[0] = _cubic_length/2;
 				p2[1] = _cubic_length/2;
@@ -76,7 +76,7 @@ void LinkbotT::getConnFaceOffset(int type, int side, const double *p, const doub
 				q2[3] = cos(-0.785398);	// -0.5*PI/2
 			}
 			break;
-		case rs::OMNIDRIVE:
+		case rsLinkbot::OMNIPLATE:
 			if (side == 2) {
 				p2[2] = -_omni_length + 2*_face_radius;
 			}
@@ -92,7 +92,7 @@ void LinkbotT::getConnFaceOffset(int type, int side, const double *p, const doub
 			q2[2] = sin(1.570796);	// 0.5*PI
 			q2[3] = cos(1.570796);	// 0.5*PI
 			break;
-		case rs::SIMPLE:
+		case rsLinkbot::SIMPLE:
 			p2[0] = _conn_depth;
 			q2[0] = 0;
 			q2[1] = 0;
@@ -119,40 +119,40 @@ void LinkbotT::getConnBodyOffset(int type, const double *p, const double *q, dou
 
 	// get offset of body
 	switch (type) {
-		case rs::BIGWHEEL:
+		case rsLinkbot::BIGWHEEL:
 			p2[0] = _wheel_depth/2;
 			break;
-		case rs::BRIDGE:
+		case rsLinkbot::BRIDGE:
 			p2[0] = _conn_depth/2;
 			p2[1] = _bridge_length/2 - _face_radius;
 			break;
-		case rs::CASTER:
+		case rsLinkbot::CASTER:
 			p2[0] = _conn_depth/4;
 			break;
-		case rs::CUBE:
+		case rsLinkbot::CUBE:
 			p2[0] = _cubic_length/2;
 			break;
-		case rs::FACEPLATE:
+		case rsLinkbot::FACEPLATE:
 			p2[0] = _conn_depth/2;
 			break;
-		case rs::GRIPPER:
+		case rsLinkbot::GRIPPER:
 			p2[0] = _conn_depth/2;
 			break;
-		case rs::OMNIDRIVE:
+		case rsLinkbot::OMNIPLATE:
 			p2[0] = _conn_depth/2;
 			p2[1] = _omni_length/2 - _face_radius;
 			p2[2] = -_omni_length/2 + _face_radius;
 			break;
-		case rs::SIMPLE:
+		case rsLinkbot::SIMPLE:
 			p2[0] = _conn_depth/2;
 			break;
-		case rs::SMALLWHEEL:
+		case rsLinkbot::SMALLWHEEL:
 			p2[0] = _wheel_depth/2;
 			break;
-		case rs::TINYWHEEL:
+		case rsLinkbot::TINYWHEEL:
 			p2[0] = _wheel_depth/2;
 			break;
-		case rs::WHEEL:
+		case rsLinkbot::WHEEL:
 			p2[0] = _wheel_depth/2;
 			break;
 	}
@@ -244,11 +244,11 @@ void LinkbotT::getRobotFaceOffset(int face, const double *p, const double *q, do
 
 double LinkbotT::getWheelRatio(int standard) {
 	switch (standard) {
-		case rs::BIGWHEEL:
+		case rsLinkbot::BIGWHEEL:
 			return _wheel_radius/_bigwheel_radius;
-		case rs::SMALLWHEEL:
+		case rsLinkbot::SMALLWHEEL:
 			return _wheel_radius/_smallwheel_radius;
-		case rs::TINYWHEEL:
+		case rsLinkbot::TINYWHEEL:
 			return _wheel_radius/_tinywheel_radius;
 	}
 	return 0;

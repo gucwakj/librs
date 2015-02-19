@@ -640,42 +640,42 @@ int LinkbotT::addConnector(int type, int face, double size, int side, int conn) 
 
 	// build connector
 	switch (type) {
-		case rs::BIGWHEEL:
+		case rsLinkbot::BIGWHEEL:
 			this->build_wheel(_conn.back(), _bigwheel_radius);
 			break;
-		case rs::BRIDGE:
+		case rsLinkbot::BRIDGE:
 			this->build_bridge(_conn.back());
 			break;
-		case rs::CASTER:
+		case rsLinkbot::CASTER:
 			this->build_caster(_conn.back(), static_cast<int>(size));
 			break;
-		case rs::CUBE:
+		case rsLinkbot::CUBE:
 			this->build_cube(_conn.back());
 			break;
-		case rs::FACEPLATE:
+		case rsLinkbot::FACEPLATE:
 			this->build_faceplate(_conn.back());
 			break;
-		case rs::GRIPPER:
+		case rsLinkbot::GRIPPER:
 			this->build_gripper(_conn.back(), face);
 			break;
-		case rs::OMNIDRIVE:
+		case rsLinkbot::OMNIPLATE:
 			this->build_omnidrive(_conn.back());
 			break;
-		case rs::SIMPLE:
+		case rsLinkbot::SIMPLE:
 			this->build_simple(_conn.back());
 			break;
-		case rs::SMALLWHEEL:
+		case rsLinkbot::SMALLWHEEL:
 			this->build_wheel(_conn.back(), _smallwheel_radius);
 			break;
-		case rs::TINYWHEEL:
+		case rsLinkbot::TINYWHEEL:
 			this->build_wheel(_conn.back(), _tinywheel_radius);
 			break;
-		case rs::WHEEL:
+		case rsLinkbot::WHEEL:
 			this->build_wheel(_conn.back(), size);
 			break;
 	}
 
-	if (type == rs::GRIPPER) {
+	if (type == rsLinkbot::GRIPPER) {
 		_conn.push_back(new Connector());
 		_conn.back()->d_side = -1;
 		_conn.back()->d_type = -1;

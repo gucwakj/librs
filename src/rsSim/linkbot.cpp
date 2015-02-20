@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <rsSim/sim.hpp>
 #include <rsSim/linkbot.hpp>
 
@@ -929,6 +931,25 @@ double LinkbotT::getAngle(int id) {
 		_motor[id].theta = mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
 
     return _motor[id].theta;
+}
+
+void LinkbotT::getCoM(double &x, double &y, double &z) {
+	dMass m[NUM_PARTS];
+	double total = 0;
+	x = 0, y = 0, z = 0;
+	for (int i = 0; i < NUM_PARTS; i++) {
+		dBodyGetMass(_body[i], &m[i]);
+	}
+	for (int i = 0; i < NUM_PARTS; i++) {
+		const double *p = dBodyGetPosition(_body[i]);
+		x += m[i].mass*p[0];
+		y += m[i].mass*p[1];
+		z += m[i].mass*p[2];
+		total += m[i].mass;
+	}
+	x /= total;
+	y /= total;
+	z /= total;
 }
 
 void LinkbotT::init_params(void) {

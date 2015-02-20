@@ -54,6 +54,9 @@ namespace rsSim {
 			int turnLeftNB(double, double, double);
 			int turnRightNB(double, double, double);
 
+		public:
+			virtual void getCoM(double&, double&, double&);
+
 		// inherited functions from ModularRobot class
 		protected:
 			virtual int addConnector(int, int, double, int, int);

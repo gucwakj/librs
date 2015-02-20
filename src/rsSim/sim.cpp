@@ -306,6 +306,19 @@ int Sim::getCOR(double &robot, double &ground) {
 	return 0;
 }
 
+void Sim::getCoM(double &x, double &y, double &z) {
+	double com[3] = {0}, a, b, c;
+	for (int i = 0; i < _robot.size(); i++) {
+		_robot[i]->robot->getCoM(a, b, c);
+		com[0] += a;
+		com[1] += b;
+		com[2] += c;
+	}
+	x = com[0];
+	y = com[1];
+	z = com[2];
+}
+
 int Sim::getMu(double &robot, double &ground) {
 	robot = _friction[0];
 	ground = _friction[1];

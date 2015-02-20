@@ -132,6 +132,7 @@ namespace rsSim {
 			double getCenter(int);
 			const double* getPosition(void);
 			const double* getQuaternion(void);
+			virtual void getCoM(double&, double&, double&) { return; };
 
 		// utility functions
 		protected:

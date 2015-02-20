@@ -29,6 +29,7 @@ namespace rsSim {
 			void done(void);
 			double getClock(void);
 			int getCOR(double&, double&);
+			void getCoM(double&, double&, double&);
 			int getMu(double&, double&);
 			bool getPause(void);
 			Robot* getRobot(int);

@@ -20,16 +20,6 @@ namespace rsRobots {
 			virtual void getRobotBodyOffset(int, const double*, const double*, double*, double*);
 			virtual void getRobotFaceOffset(int, const double*, const double*, double*, double*);
 
-		// enumerations
-		public:
-			enum robot_pieces_e {
-				BODY,
-				FACE1,
-				FACE2,
-				FACE3,
-				NUM_PARTS
-			};
-
 		// data
 		protected:
 			double _bigwheel_radius;

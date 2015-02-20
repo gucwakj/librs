@@ -2,6 +2,7 @@
 #include <rsSim/linkbot.hpp>
 
 using namespace rsSim;
+using namespace rsLinkbot;
 
 LinkbotT::LinkbotT(int disabled) : rsRobots::Robot(rs::LINKBOTT), rsRobots::LinkbotT(rsLinkbot::JOINT1), Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT3) {
 	// initialize parameters

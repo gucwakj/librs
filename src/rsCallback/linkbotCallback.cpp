@@ -41,7 +41,7 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		// child 2->2+NUM_PARTS: bodies
 		const double *pos, *quat;
 		osg::PositionAttitudeTransform *pat;
-		for (int i = 0; i < rsRobots::LinkbotT::NUM_PARTS; i++) {
+		for (int i = 0; i < rsLinkbot::NUM_PARTS; i++) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
@@ -56,7 +56,7 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		for (int i = 0; i < _conn.size(); i++) {
 			pos = dBodyGetPosition(_conn[i]->body);
 			quat = dBodyGetQuaternion(_conn[i]->body);
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsRobots::LinkbotT::NUM_PARTS + i));
+			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::NUM_PARTS + i));
 			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
 			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		}

@@ -29,21 +29,13 @@ namespace rs {
 
 namespace rsLinkbot {
 
-	// shapes
-	enum Preconfig {
-		ROBOT,
-		BOW,
-		EXPLORER,
-		FOURBOTDRIVE,
-		FOURWHEELDRIVE,
-		FOURWHEELEXPLORER,
-		GROUPBOW,
-		INCHWORM,
-		LIFT,
-		OMNIDRIVE,
-		SNAKE,
-		STAND,
-		NUM_PRECONFIG
+	// bodies
+	enum Body {
+		BODY,
+		FACE1,
+		FACE2,
+		FACE3,
+		NUM_PARTS
 	};
 
 	// connectors
@@ -70,16 +62,26 @@ namespace rsLinkbot {
 		NUM_JOINTS
 	};
 
+	// preconfigs
+	enum Preconfig {
+		INDIVIDUAL,
+		BOW,
+		EXPLORER,
+		FOURBOTDRIVE,
+		FOURWHEELDRIVE,
+		FOURWHEELEXPLORER,
+		GROUPBOW,
+		INCHWORM,
+		LIFT,
+		OMNIDRIVE,
+		SNAKE,
+		STAND,
+		NUM_PRECONFIG
+	};
+
 } // namespace rsLinkbot
 
 /*namespace rsMobot {
-
-	// shapes
-	enum Preconfig {
-		EXPLORER,
-		LIFT,
-		NUM_PRECONFIG
-	};
 
 	// connectors
 	enum Connector {
@@ -102,14 +104,16 @@ namespace rsLinkbot {
 		NUM_JOINTS
 	};
 
+	// preconfigs
+	enum Preconfig {
+		EXPLORER,
+		LIFT,
+		NUM_PRECONFIG
+	};
+
 } // namespace rsMobot
 
 namespace rsCubus {
-
-	// shapes
-	enum Preconfig {
-		NUM_PRECONFIG
-	};
 
 	// connectors
 	enum Connector {
@@ -126,6 +130,11 @@ namespace rsCubus {
 		JOINT5,
 		JOINT6,
 		NUM_JOINTS
+	};
+
+	// preconfigs
+	enum Preconfig {
+		NUM_PRECONFIG
 	};
 
 } // namespace rsCubus*/

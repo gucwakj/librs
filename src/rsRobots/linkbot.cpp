@@ -1,6 +1,7 @@
 #include <rsRobots/linkbot.hpp>
 
 using namespace rsRobots;
+using namespace rsLinkbot;
 
 LinkbotT::LinkbotT(int disabled) : Robot(rs::LINKBOTT) {
 	_body_length = 0.03935;

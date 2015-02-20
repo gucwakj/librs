@@ -1,12 +1,8 @@
 #ifndef RSSIM_SIM_HPP_
 #define RSSIM_SIM_HPP_
 
-#include <iostream>
 #include <vector>
 
-#include <ode/ode.h>
-
-#include <rs/macros.hpp>
 #include <rs/enum.hpp>
 #include <rsSim/modularRobot.hpp>
 #include <rsSim/robot.hpp>

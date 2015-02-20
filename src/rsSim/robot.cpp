@@ -1,5 +1,11 @@
-#include <rsRobots/rgbhashtable.h>
+#include <cstring>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif // _WIN32
 
+#include <rsRobots/rgbhashtable.h>
 #include <rsSim/sim.hpp>
 #include <rsSim/robot.hpp>
 

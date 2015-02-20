@@ -1,23 +1,9 @@
 #ifndef RSSIM_ROBOT_HPP_
 #define RSSIM_ROBOT_HPP_
 
-#include <cstring>
-#include <iostream>
-#include <vector>
-#ifdef _WIN32
-#include <windows.h>
-#include <Shlobj.h>
-#include <Shlwapi.h>
-#else
-#include <pthread.h>
-#include <unistd.h>
-#endif // _WIN32
-
 #include <ode/ode.h>
 
 #include <rs/macros.hpp>
-#include <rs/enum.hpp>
-#include <rs/types.hpp>
 #include <rsRobots/robot.hpp>
 
 namespace rsSim {

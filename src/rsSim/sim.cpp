@@ -1,3 +1,10 @@
+#include <iostream>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif // _WIN32
+
 #include <rsSim/sim.hpp>
 #include <rsSim/linkbot.hpp>
 

@@ -1,11 +1,8 @@
 #ifndef RSSIM_LINKBOT_HPP_
 #define RSSIM_LINKBOT_HPP_
 
-#include <rs/macros.hpp>
-#include <rs/enum.hpp>
 #include <rsRobots/linkbot.hpp>
 #include <rsSim/modularRobot.hpp>
-#include <rsSim/robot.hpp>
 
 namespace rsSim {
 

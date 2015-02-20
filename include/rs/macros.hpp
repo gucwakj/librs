@@ -2,6 +2,11 @@
 #define RS_MACROS_HPP_
 
 #include <cfloat>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <pthread.h>
+#endif // _WIN32
 
 #define EPSILON DBL_EPSILON
 #define RECORD_ANGLE_ALLOC_SIZE 16

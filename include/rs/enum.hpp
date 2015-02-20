@@ -15,16 +15,6 @@ namespace rs {
 		NUM_TYPES
 	};
 
-	// robot joints
-	enum JointID {
-		JOINT1,
-		JOINT2,
-		JOINT3,
-		JOINT4,
-		JOINT5,
-		JOINT6
-	};
-
 	// drawing objects (ground and graphic)
 	enum Drawing {
 		BOX,
@@ -72,6 +62,14 @@ namespace rsLinkbot {
 		NUM_CONNECTORS
 	};
 
+	// joints
+	enum Joint {
+		JOINT1,
+		JOINT2,
+		JOINT3,
+		NUM_JOINTS
+	};
+
 } // namespace rsLinkbot
 
 /*namespace rsMobot {
@@ -95,6 +93,15 @@ namespace rsLinkbot {
 		NUM_CONNECTORS
 	};
 
+	// joints
+	enum Joint {
+		JOINT1,
+		JOINT2,
+		JOINT3,
+		JOINT4,
+		NUM_JOINTS
+	};
+
 } // namespace rsMobot
 
 namespace rsCubus {
@@ -108,6 +115,17 @@ namespace rsCubus {
 	enum Connector {
 		SIMPLE,
 		NUM_CONNECTORS
+	};
+
+	// joints
+	enum Joint {
+		JOINT1,
+		JOINT2,
+		JOINT3,
+		JOINT4,
+		JOINT5,
+		JOINT6,
+		NUM_JOINTS
 	};
 
 } // namespace rsCubus*/

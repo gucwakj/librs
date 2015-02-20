@@ -32,7 +32,7 @@ namespace rsSim {
 	class Robot : virtual public rsRobots::Robot {
 		// public functions
 		public:
-			Robot(rs::JointID, rs::JointID);
+			Robot(int, int);
 			virtual ~Robot(void);
 
 			int blinkLED(double, int);
@@ -68,51 +68,51 @@ namespace rsSim {
 			int getDistance(double&, double);
 			int getFormFactor(int&);
 			int getID(void);
-			int getJointAngle(rs::JointID, double&, int = 10);
-			int getJointAngleInstant(rs::JointID, double&);
-			int getJointMaxSpeed(rs::JointID, double&);
+			int getJointAngle(int, double&, int = 10);
+			int getJointAngleInstant(int, double&);
+			int getJointMaxSpeed(int, double&);
 			int getJointSafetyAngle(double&);
 			int getJointSafetyAngleTimeout(double&);
-			int getJointSpeed(rs::JointID, double&);
-			int getJointSpeedRatio(rs::JointID, double&);
+			int getJointSpeed(int, double&);
+			int getJointSpeedRatio(int, double&);
 			int getLEDColorName(char[]);
 			int getLEDColorRGB(int&, int&, int&);
 			int getxy(double&, double&);
-			int holdJoint(rs::JointID);
+			int holdJoint(int);
 			int holdJoints(void);
 			int holdJointsAtExit(void);
 			int isConnected(void);
 			int isMoving(void);
 			int isNotMoving(void);
 			int moveForeverNB(void);
-			int moveJoint(rs::JointID, double);
-			int moveJointNB(rs::JointID, double);
-			int moveJointByPowerNB(rs::JointID, int);
-			int moveJointForeverNB(rs::JointID);
-			int moveJointTime(rs::JointID, double);
-			int moveJointTimeNB(rs::JointID, double);
-			int moveJointTo(rs::JointID, double);
-			int moveJointToNB(rs::JointID, double);
-			int moveJointToByTrackPos(rs::JointID, double);
-			int moveJointToByTrackPosNB(rs::JointID, double);
-			int moveJointWait(rs::JointID);
+			int moveJoint(int, double);
+			int moveJointNB(int, double);
+			int moveJointByPowerNB(int, int);
+			int moveJointForeverNB(int);
+			int moveJointTime(int, double);
+			int moveJointTimeNB(int, double);
+			int moveJointTo(int, double);
+			int moveJointToNB(int, double);
+			int moveJointToByTrackPos(int, double);
+			int moveJointToByTrackPosNB(int, double);
+			int moveJointWait(int);
 			int moveTime(double);
 			int moveTimeNB(double);
 			int moveToZero(void);
 			int moveToZeroNB(void);
 			int moveWait(void);
-			int recordAngle(rs::JointID, double[], double[], int, double, int = 1);
-			int recordAngleBegin(rs::JointID, robotRecordData_t&, robotRecordData_t&, double, int = 1);
-			int recordAngleEnd(rs::JointID, int&);
+			int recordAngle(int, double[], double[], int, double, int = 1);
+			int recordAngleBegin(int, robotRecordData_t&, robotRecordData_t&, double, int = 1);
+			int recordAngleEnd(int, int&);
 			int recordAnglesEnd(int&);
-			int recordDistanceBegin(rs::JointID, robotRecordData_t&, robotRecordData_t&, double, double, int = 1);
-			int recordDistanceEnd(rs::JointID, int&);
+			int recordDistanceBegin(int, robotRecordData_t&, robotRecordData_t&, double, double, int = 1);
+			int recordDistanceEnd(int, int&);
 			int recordDistanceOffset(double);
 			int recordDistancesEnd(int&);
 			int recordWait(void);
 			int recordxyBegin(robotRecordData_t&, robotRecordData_t&, double, int = 1);
 			int recordxyEnd(int&);
-			int relaxJoint(rs::JointID id);
+			int relaxJoint(int id);
 			int relaxJoints(void);
 			int resetToZero(void);
 			int resetToZeroNB(void);
@@ -123,8 +123,8 @@ namespace rsSim {
 			int setLEDColorRGB(int, int, int);
 			int setJointSafetyAngle(double);
 			int setJointSafetyAngleTimeout(double);
-			int setJointSpeed(rs::JointID, double);
-			int setJointSpeedRatio(rs::JointID, double);
+			int setJointSpeed(int, double);
+			int setJointSpeedRatio(int, double);
 			int setSpeed(double, double);
 			int systemTime(double&);
 			int traceOff(void);
@@ -190,7 +190,7 @@ namespace rsSim {
 			// recording
 			struct Recording {
 				Robot *robot;		// robot
-				rs::JointID id;		// joint to record
+				int id;		// joint to record
 				int num;			// number of points
 				int msecs;			// ms between data points
 				double *time;		// array for time
@@ -284,8 +284,8 @@ namespace rsSim {
 
 		// private data
 		private:
-			rs::JointID _leftWheel;		// joint for left wheel
-			rs::JointID _rightWheel;		// joint for right wheel
+			int _leftWheel;		// joint for left wheel
+			int _rightWheel;	// joint for right wheel
 	};
 
 	// motion threading
@@ -321,29 +321,29 @@ template<class T> class Group {
 		inline int driveForwardNB(double);
 		inline int driveTime(double);
 		inline int driveTimeNB(double);
-		inline int holdJoint(rs::JointID);
+		inline int holdJoint(int);
 		inline int holdJoints(void);
 		inline int holdJointsAtExit(void);
 		inline int isMoving(void);
 		inline int isNotMoving(void);
 		inline int moveForeverNB(void);
-		inline int moveJoint(rs::JointID, double);
-		inline int moveJointNB(rs::JointID, double);
-		inline int moveJointByPowerNB(rs::JointID, int);
-		inline int moveJointForeverNB(rs::JointID);
-		inline int moveJointTime(rs::JointID, double);
-		inline int moveJointTimeNB(rs::JointID, double);
-		inline int moveJointTo(rs::JointID, double);
-		inline int moveJointToNB(rs::JointID, double);
-		inline int moveJointToByTrackPos(rs::JointID, double);
-		inline int moveJointToByTrackPosNB(rs::JointID, double);
-		inline int moveJointWait(rs::JointID);
+		inline int moveJoint(int, double);
+		inline int moveJointNB(int, double);
+		inline int moveJointByPowerNB(int, int);
+		inline int moveJointForeverNB(int);
+		inline int moveJointTime(int, double);
+		inline int moveJointTimeNB(int, double);
+		inline int moveJointTo(int, double);
+		inline int moveJointToNB(int, double);
+		inline int moveJointToByTrackPos(int, double);
+		inline int moveJointToByTrackPosNB(int, double);
+		inline int moveJointWait(int);
 		inline int moveTime(double);
 		inline int moveTimeNB(double);
 		inline int moveToZero(void);
 		inline int moveToZeroNB(void);
 		inline int moveWait(void);
-		inline int relaxJoint(rs::JointID id);
+		inline int relaxJoint(int id);
 		inline int relaxJoints(void);
 		inline int resetToZero(void);
 		inline int resetToZeroNB(void);
@@ -354,8 +354,8 @@ template<class T> class Group {
 		inline int setLEDColorRGB(int, int, int);
 		inline int setJointSafetyAngle(double);
 		inline int setJointSafetyAngleTimeout(double);
-		inline int setJointSpeed(rs::JointID, double);
-		inline int setJointSpeedRatio(rs::JointID, double);
+		inline int setJointSpeed(int, double);
+		inline int setJointSpeedRatio(int, double);
 		inline int setSpeed(double, double);
 		inline int traceOff(void);
 		inline int traceOn(void);

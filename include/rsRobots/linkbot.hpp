@@ -45,12 +45,12 @@ namespace rsRobots {
 
 	class LinkbotI : virtual public LinkbotT {
 		public:
-			LinkbotI(void) : Robot(rs::LINKBOTI), LinkbotT(rs::JOINT2) {};
+			LinkbotI(void) : Robot(rs::LINKBOTI), LinkbotT(rsLinkbot::JOINT2) {};
 	};
 
 	class LinkbotL : virtual public LinkbotT {
 		public:
-			LinkbotL(void) : Robot(rs::LINKBOTL), LinkbotT(rs::JOINT3) {};
+			LinkbotL(void) : Robot(rs::LINKBOTL), LinkbotT(rsLinkbot::JOINT3) {};
 	};
 
 } // namespace rsRobots

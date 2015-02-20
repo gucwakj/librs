@@ -17,13 +17,13 @@ namespace rsSim {
 			LinkbotT(int = -1);
 			virtual ~LinkbotT();
 
-			int accelJointAngleNB(rs::JointID, double, double);
-			int accelJointCycloidalNB(rs::JointID, double, double);
-			int accelJointHarmonicNB(rs::JointID, double, double);
-			int accelJointSmoothNB(rs::JointID, double, double, double, double);
-			int accelJointTimeNB(rs::JointID, double, double);
-			int accelJointToMaxSpeedNB(rs::JointID, double);
-			int accelJointToVelocityNB(rs::JointID, double, double);
+			int accelJointAngleNB(rsLinkbot::Joint, double, double);
+			int accelJointCycloidalNB(rsLinkbot::Joint, double, double);
+			int accelJointHarmonicNB(rsLinkbot::Joint, double, double);
+			int accelJointSmoothNB(rsLinkbot::Joint, double, double, double, double);
+			int accelJointTimeNB(rsLinkbot::Joint, double, double);
+			int accelJointToMaxSpeedNB(rsLinkbot::Joint, double);
+			int accelJointToVelocityNB(rsLinkbot::Joint, double, double);
 			int closeGripper(void);
 			int closeGripperNB(void);
 			int driveAccelCycloidalNB(double, double, double);
@@ -91,13 +91,13 @@ namespace rsSim {
 	// class
 	class LinkbotI : public rsRobots::LinkbotI, public LinkbotT {
 		public:
-			LinkbotI(void) : LinkbotT(rs::JOINT2), rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rs::JOINT1, rs::JOINT3) {}
+			LinkbotI(void) : LinkbotT(rsLinkbot::JOINT2), rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT3) {}
 	};
 
 	// class
 	class LinkbotL : public LinkbotT {
 		public:
-			LinkbotL(void) : LinkbotT(rs::JOINT3), rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rs::JOINT1, rs::JOINT2) {}
+			LinkbotL(void) : LinkbotT(rsLinkbot::JOINT3), rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT2) {}
 	};
 
 	// motion threading
@@ -118,13 +118,13 @@ class DLLIMPORT LinkbotTGroup : public Group<rsSim::LinkbotT> {
 		LinkbotTGroup(void) : Group<rsSim::LinkbotT>() {};
 		virtual ~LinkbotTGroup(void) {};
 
-		inline int accelJointAngleNB(rs::JointID, double, double);
-		inline int accelJointCycloidalNB(rs::JointID, double, double);
-		inline int accelJointHarmonicNB(rs::JointID, double, double);
-		inline int accelJointSmoothNB(rs::JointID, double, double, double, double);
-		inline int accelJointTimeNB(rs::JointID, double, double);
-		inline int accelJointToMaxSpeedNB(rs::JointID, double);
-		inline int accelJointToVelocityNB(rs::JointID, double, double);
+		inline int accelJointAngleNB(rsLinkbot::Joint, double, double);
+		inline int accelJointCycloidalNB(rsLinkbot::Joint, double, double);
+		inline int accelJointHarmonicNB(rsLinkbot::Joint, double, double);
+		inline int accelJointSmoothNB(rsLinkbot::Joint, double, double, double, double);
+		inline int accelJointTimeNB(rsLinkbot::Joint, double, double);
+		inline int accelJointToMaxSpeedNB(rsLinkbot::Joint, double);
+		inline int accelJointToVelocityNB(rsLinkbot::Joint, double, double);
 		inline int closeGripper(void);
 		inline int closeGripperNB(void);
 		inline int driveAccelCycloidalNB(double, double, double);

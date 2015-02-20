@@ -5,7 +5,7 @@
 
 using namespace rsSim;
 
-Robot::Robot(rs::JointID leftWheel, rs::JointID rightWheel) : rsRobots::Robot(rs::ROBOT) {
+Robot::Robot(int leftWheel, int rightWheel) : rsRobots::Robot(rs::ROBOT) {
 	_leftWheel = leftWheel;
 	_rightWheel = rightWheel;
 
@@ -522,7 +522,7 @@ int Robot::getBatteryVoltage(double &voltage) {
 
 int Robot::getDistance(double &distance, double radius) {
 	double angle;
-	this->getJointAngle(rs::JOINT1, angle, 2);
+	this->getJointAngle(_leftWheel, angle, 2);
 	distance = DEG2RAD(angle) * radius;
 
 	// success
@@ -541,7 +541,7 @@ int Robot::getID(void) {
 	return _id;
 }
 
-int Robot::getJointAngle(rs::JointID id, double &angle, int numReadings) {
+int Robot::getJointAngle(int id, double &angle, int numReadings) {
 	//initialize variables
 	double d;
 	angle = 0;
@@ -561,14 +561,14 @@ int Robot::getJointAngle(rs::JointID id, double &angle, int numReadings) {
 	return 0;
 }
 
-int Robot::getJointAngleInstant(rs::JointID id, double &angle) {
+int Robot::getJointAngleInstant(int id, double &angle) {
 	angle = RAD2DEG(_motor[id].theta);
 
 	// success
 	return 0;
 }
 
-int Robot::getJointMaxSpeed(rs::JointID id, double &maxSpeed) {
+int Robot::getJointMaxSpeed(int id, double &maxSpeed) {
 	maxSpeed = RAD2DEG(_motor[id].omega_max);
 
 	// success
@@ -576,27 +576,27 @@ int Robot::getJointMaxSpeed(rs::JointID id, double &maxSpeed) {
 }
 
 int Robot::getJointSafetyAngle(double &angle) {
-	angle = _motor[rs::JOINT1].safety_angle;
+	angle = _motor[_leftWheel].safety_angle;
 
 	// success
 	return 0;
 }
 
 int Robot::getJointSafetyAngleTimeout(double &seconds) {
-	seconds = _motor[rs::JOINT1].safety_timeout;
+	seconds = _motor[_leftWheel].safety_timeout;
 
 	// success
 	return 0;
 }
 
-int Robot::getJointSpeed(rs::JointID id, double &speed) {
+int Robot::getJointSpeed(int id, double &speed) {
 	speed = RAD2DEG(_motor[id].omega);
 
 	// success
 	return 0;
 }
 
-int Robot::getJointSpeedRatio(rs::JointID id, double &ratio) {
+int Robot::getJointSpeedRatio(int id, double &ratio) {
 	ratio = _motor[id].omega/_motor[id].omega_max;
 
 	// success
@@ -631,7 +631,7 @@ int Robot::getxy(double &x, double &y) {
 	return 0;
 }
 
-int Robot::holdJoint(rs::JointID id) {
+int Robot::holdJoint(int id) {
 	this->setJointSpeed(id, 0);
 
 	// success
@@ -641,7 +641,7 @@ int Robot::holdJoint(rs::JointID id) {
 int Robot::holdJoints(void) {
 	// set joints to zero speed
 	for (int i = 0; i < _dof; i++) {
-		this->setJointSpeed(static_cast<rs::JointID>(i), 0);
+		this->setJointSpeed(static_cast<int>(i), 0);
 	}
 
 	// success
@@ -683,14 +683,14 @@ int Robot::isNotMoving(void) {
 int Robot::moveForeverNB(void) {
 	// set joint movements
 	for (int i = 0; i < _dof; i++) {
-		this->moveJointForeverNB(static_cast<rs::JointID>(i));
+		this->moveJointForeverNB(static_cast<int>(i));
 	}
 
 	// success
 	return 0;
 }
 
-int Robot::moveJoint(rs::JointID id, double angle) {
+int Robot::moveJoint(int id, double angle) {
 	this->moveJointNB(id, angle);
 	this->moveJointWait(id);
 
@@ -698,7 +698,7 @@ int Robot::moveJoint(rs::JointID id, double angle) {
 	return 0;
 }
 
-int Robot::moveJointNB(rs::JointID id, double angle) {
+int Robot::moveJointNB(int id, double angle) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
 
@@ -728,14 +728,14 @@ int Robot::moveJointNB(rs::JointID id, double angle) {
 	return 0;
 }
 
-int Robot::moveJointByPowerNB(rs::JointID id, int power) {
+int Robot::moveJointByPowerNB(int id, int power) {
 	_motor[id].omega = (power/100.0)*_motor[id].omega_max;
 
 	// success
 	return 0;
 }
 
-int Robot::moveJointForeverNB(rs::JointID id) {
+int Robot::moveJointForeverNB(int id) {
 	// lock mutexes
 	MUTEX_LOCK(&_motor[id].success_mutex);
 	// enable motor
@@ -762,7 +762,7 @@ int Robot::moveJointForeverNB(rs::JointID id) {
 	return 0;
 }
 
-int Robot::moveJointTime(rs::JointID id, double seconds) {
+int Robot::moveJointTime(int id, double seconds) {
 	// move joint
 	this->moveJointForeverNB(id);
 
@@ -776,7 +776,7 @@ int Robot::moveJointTime(rs::JointID id, double seconds) {
 	return 0;
 }
 
-int Robot::moveJointTimeNB(rs::JointID id, double seconds) {
+int Robot::moveJointTimeNB(int id, double seconds) {
 	// set up threading
 	THREAD_T moving;
 
@@ -796,7 +796,7 @@ int Robot::moveJointTimeNB(rs::JointID id, double seconds) {
 	return 0;
 }
 
-int Robot::moveJointTo(rs::JointID id, double angle) {
+int Robot::moveJointTo(int id, double angle) {
 	this->moveJointToNB(id, angle);
 	this->moveJointWait(id);
 
@@ -804,7 +804,7 @@ int Robot::moveJointTo(rs::JointID id, double angle) {
 	return 0;
 }
 
-int Robot::moveJointToNB(rs::JointID id, double angle) {
+int Robot::moveJointToNB(int id, double angle) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
 
@@ -833,7 +833,7 @@ int Robot::moveJointToNB(rs::JointID id, double angle) {
 	return 0;
 }
 
-int Robot::moveJointToByTrackPos(rs::JointID id, double angle) {
+int Robot::moveJointToByTrackPos(int id, double angle) {
 	this->moveJointToByTrackPosNB(id, angle);
 	this->moveJointWait(id);
 
@@ -841,14 +841,14 @@ int Robot::moveJointToByTrackPos(rs::JointID id, double angle) {
 	return 0;
 }
 
-int Robot::moveJointToByTrackPosNB(rs::JointID id, double angle) {
+int Robot::moveJointToByTrackPosNB(int id, double angle) {
 	this->moveJointToNB(id, angle);
 
 	// success
 	return 0;
 }
 
-int Robot::moveJointWait(rs::JointID id) {
+int Robot::moveJointWait(int id) {
 	// wait for motion to complete
 	MUTEX_LOCK(&_motor[id].success_mutex);
 	while ( !_motor[id].success ) { COND_WAIT(&_motor[id].success_cond, &_motor[id].success_mutex); }
@@ -902,7 +902,7 @@ int Robot::moveToZero(void) {
 int Robot::moveToZeroNB(void) {
 	// move joints to zero
 	for (int i = 0; i < _dof; i++) {
-		this->moveJointToNB(static_cast<rs::JointID>(i), 0);
+		this->moveJointToNB(static_cast<int>(i), 0);
 	}
 
 	// success
@@ -915,13 +915,13 @@ int Robot::moveWait(void) {
 	// get number of successes
 	int success = 0;
 	for (int i = 0; i < _dof; i++) {
-		success += _motor[static_cast<rs::JointID>(i)].success;
+		success += _motor[static_cast<int>(i)].success;
 	}
 	// wait
 	while (success != _dof) {
 		COND_WAIT(&_success_cond, &_success_mutex);
 		success = 0;
-		for (int i = 0; i < _dof; i++) { success += _motor[static_cast<rs::JointID>(i)].success; }
+		for (int i = 0; i < _dof; i++) { success += _motor[static_cast<int>(i)].success; }
 	}
 	// reset motor states
 	for (int i = 0; i < _dof; i++) {
@@ -934,7 +934,7 @@ int Robot::moveWait(void) {
 	return 0;
 }
 
-int Robot::recordAngle(rs::JointID id, double time[], double angle[], int num, double seconds, int shiftData) {
+int Robot::recordAngle(int id, double time[], double angle[], int num, double seconds, int shiftData) {
 	// check if recording already
 	if (_motor[id].record) { return -1; }
 
@@ -964,7 +964,7 @@ int Robot::recordAngle(rs::JointID id, double time[], double angle[], int num, d
 	return 0;
 }
 
-int Robot::recordAngleBegin(rs::JointID id, robotRecordData_t &time, robotRecordData_t &angle, double seconds, int shiftData) {
+int Robot::recordAngleBegin(int id, robotRecordData_t &time, robotRecordData_t &angle, double seconds, int shiftData) {
 	// check if recording already
 	if (_motor[id].record) { return -1; }
 
@@ -981,7 +981,7 @@ int Robot::recordAngleBegin(rs::JointID id, robotRecordData_t &time, robotRecord
 	angle = new double[RECORD_ANGLE_ALLOC_SIZE];
 	rec->ptime = &time;
 	rec->pangle = new double ** [_dof];
-	rec->pangle[rs::JOINT1] = &angle;
+	rec->pangle[_leftWheel] = &angle;
 
 	// store pointer to recorded angles locally
 	_motor[id].record_angle = &angle;
@@ -999,7 +999,7 @@ int Robot::recordAngleBegin(rs::JointID id, robotRecordData_t &time, robotRecord
 	return 0;
 }
 
-int Robot::recordAngleEnd(rs::JointID id, int &num) {
+int Robot::recordAngleEnd(int id, int &num) {
 	// sleep to capture last data point on ending time
 	this->doze(150);
 
@@ -1044,13 +1044,13 @@ int Robot::recordAnglesEnd(int &num) {
 	MUTEX_UNLOCK(&_active_mutex);
 
 	// report number of data points recorded
-	num = _motor[rs::JOINT1].record_num;
+	num = _motor[_leftWheel].record_num;
 
 	// success
 	return 0;
 }
 
-int Robot::recordDistanceBegin(rs::JointID id, robotRecordData_t &time, robotRecordData_t &distance, double radius, double seconds, int shiftData) {
+int Robot::recordDistanceBegin(int id, robotRecordData_t &time, robotRecordData_t &distance, double radius, double seconds, int shiftData) {
 	// record angle of desired joint
 	this->recordAngleBegin(id, time, distance, seconds, shiftData);
 
@@ -1058,7 +1058,7 @@ int Robot::recordDistanceBegin(rs::JointID id, robotRecordData_t &time, robotRec
 	return 0;
 }
 
-int Robot::recordDistanceEnd(rs::JointID id, int &num) {
+int Robot::recordDistanceEnd(int id, int &num) {
 	// end recording of angles
 	this->recordAngleEnd(id, num);
 
@@ -1154,15 +1154,15 @@ int Robot::recordxyBegin(robotRecordData_t &x, robotRecordData_t &y, double seco
 	y = new double[RECORD_ANGLE_ALLOC_SIZE];
 	rec->ptime = &x;
 	rec->pangle = new double ** [1];
-	rec->pangle[rs::JOINT1] = &y;
+	rec->pangle[_leftWheel] = &y;
 
 	// store pointer to recorded angles locally
-	_motor[rs::JOINT1].record_angle = &x;
-	_motor[rs::JOINT2].record_angle = &y;
+	_motor[_leftWheel].record_angle = &x;
+	_motor[_rightWheel].record_angle = &y;
 
 	// lock recording for joint id
-	_motor[rs::JOINT1].record = true;
-	_motor[rs::JOINT2].record = true;
+	_motor[_leftWheel].record = true;
+	_motor[_rightWheel].record = true;
 
 	// set shift data
 	_shift_data = shiftData;
@@ -1180,32 +1180,32 @@ int Robot::recordxyEnd(int &num) {
 
 	// turn off recording
 	MUTEX_LOCK(&_recording_mutex);
-	_motor[rs::JOINT1].record = false;
-	_motor[rs::JOINT2].record = false;
+	_motor[_leftWheel].record = false;
+	_motor[_rightWheel].record = false;
 	MUTEX_UNLOCK(&_recording_mutex);
 
 	// wait for last recording point to finish
 	MUTEX_LOCK(&_active_mutex);
-	while (_motor[rs::JOINT1].record_active && _motor[rs::JOINT2].record_active) {
+	while (_motor[_leftWheel].record_active && _motor[_rightWheel].record_active) {
 		COND_WAIT(&_active_cond, &_active_mutex);
 	}
 	MUTEX_UNLOCK(&_active_mutex);
 
 	// report number of data points recorded
-	num = _motor[rs::JOINT1].record_num;
+	num = _motor[_leftWheel].record_num;
 
 	// convert recorded values into in/cm
 	double m2x = (1, 0);
 	for (int i = 0; i < num; i++) {
-		(*_motor[rs::JOINT1].record_angle)[i] *= m2x;
-		(*_motor[rs::JOINT2].record_angle)[i] *= m2x;
+		(*_motor[_leftWheel].record_angle)[i] *= m2x;
+		(*_motor[_rightWheel].record_angle)[i] *= m2x;
 	}
 
 	// success
 	return 0;
 }
 
-int Robot::relaxJoint(rs::JointID id) {
+int Robot::relaxJoint(int id) {
 	dJointDisable(_motor[id].id);
 
 	// success
@@ -1214,7 +1214,7 @@ int Robot::relaxJoint(rs::JointID id) {
 
 int Robot::relaxJoints(void) {
 	for (int i = 0; i < _dof; i++) {
-		this->relaxJoint(static_cast<rs::JointID>(i));
+		this->relaxJoint(static_cast<int>(i));
 	}
 
 	// success
@@ -1315,7 +1315,7 @@ int Robot::setJointSafetyAngleTimeout(double seconds) {
 	return 0;
 }
 
-int Robot::setJointSpeed(rs::JointID id, double speed) {
+int Robot::setJointSpeed(int id, double speed) {
 	if (speed > RAD2DEG(_motor[id].omega_max)) {
 		fprintf(stderr, "Warning: Setting the speed for joint %d to %.2lf degrees per second is "
 			"beyond the hardware limit of %.2lf degrees per second.\n",
@@ -1327,7 +1327,7 @@ int Robot::setJointSpeed(rs::JointID id, double speed) {
 	return 0;
 }
 
-int Robot::setJointSpeedRatio(rs::JointID id, double ratio) {
+int Robot::setJointSpeedRatio(int id, double ratio) {
 	if ( ratio < 0 || ratio > 1 ) {
 		return -1;
 	}
@@ -1335,7 +1335,7 @@ int Robot::setJointSpeedRatio(rs::JointID id, double ratio) {
 }
 
 int Robot::setSpeed(double speed, double radius) {
-	if (RAD2DEG(speed/radius) > RAD2DEG(_motor[rs::JOINT1].omega_max)) {
+	if (RAD2DEG(speed/radius) > RAD2DEG(_motor[_leftWheel].omega_max)) {
 		fprintf(stderr, "Warning: Speed %.2lf corresponds to joint speeds of %.2lf degrees/second.\n",
 			speed, RAD2DEG(speed/radius));
 	}
@@ -1423,7 +1423,7 @@ int Robot::turnRightNB(double angle, double radius, double trackwidth) {
  **********************************************************/
 int Robot::moveNB(double *angles) {
 	for (int i = 0; i < _dof; i++) {
-		this->moveJointNB(static_cast<rs::JointID>(i), angles[i]);
+		this->moveJointNB(static_cast<int>(i), angles[i]);
 	}
 
 	// success
@@ -1432,7 +1432,7 @@ int Robot::moveNB(double *angles) {
 
 int Robot::moveToNB(double *angles) {
 	for (int i = 0; i < _dof; i++) {
-		this->moveJointToNB(static_cast<rs::JointID>(i), angles[i]);
+		this->moveJointToNB(static_cast<int>(i), angles[i]);
 	}
 
 	// success
@@ -2098,7 +2098,7 @@ void* Robot::recordAnglesBeginThread(void *arg) {
 	// loop until recording is no longer needed
 	for (int i = 0; rec->robot->_motor[rec->id].record; i++) {
 		// store locally num of data points taken
-		rec->robot->_motor[rs::JOINT1].record_num = i;
+		rec->robot->_motor[rec->robot->_leftWheel].record_num = i;
 
 		// resize array if filled current one
 		if(i >= rec->num) {
@@ -2162,15 +2162,15 @@ void* Robot::recordxyBeginThread(void *arg) {
 
 	// actively taking a new data point
 	MUTEX_LOCK(&rec->robot->_active_mutex);
-	rec->robot->_motor[rs::JOINT1].record_active = true;
-	rec->robot->_motor[rs::JOINT2].record_active = true;
+	rec->robot->_motor[rec->robot->_leftWheel].record_active = true;
+	rec->robot->_motor[rec->robot->_rightWheel].record_active = true;
 	COND_SIGNAL(&rec->robot->_active_cond);
 	MUTEX_UNLOCK(&rec->robot->_active_mutex);
 
 	// loop until recording is no longer needed
-	for (int i = 0; rec->robot->_motor[rs::JOINT1].record; i++) {
+	for (int i = 0; rec->robot->_motor[rec->robot->_leftWheel].record; i++) {
 		// store locally num of data points taken
-		rec->robot->_motor[rs::JOINT1].record_num = i;
+		rec->robot->_motor[rec->robot->_leftWheel].record_num = i;
 
 		// resize array if filled current one
 		if (i >= rec->num) {
@@ -2208,8 +2208,8 @@ void* Robot::recordxyBeginThread(void *arg) {
 
 	// signal completion of recording
 	MUTEX_LOCK(&rec->robot->_active_mutex);
-	rec->robot->_motor[rs::JOINT1].record_active = false;
-	rec->robot->_motor[rs::JOINT2].record_active = false;
+	rec->robot->_motor[rec->robot->_leftWheel].record_active = false;
+	rec->robot->_motor[rec->robot->_rightWheel].record_active = false;
 	COND_SIGNAL(&rec->robot->_active_cond);
 	MUTEX_UNLOCK(&rec->robot->_active_mutex);
 

@@ -27,6 +27,9 @@ else()
     set (CMAKE_BUILD_POSTFIX "")
 endif()
 
+# set gcc compiler version
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 # supress developer warnings
 cmake_policy (SET CMP0015 NEW)
 
@@ -34,7 +37,7 @@ cmake_policy (SET CMP0015 NEW)
 if (MSVC)
 	add_definitions (-D_CRT_SECURE_NO_WARNINGS)
 else (MSVC)
-	set (CMAKE_CXX_FLAGS "-Wno-write-strings")
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
 endif (MSVC)
 
 # include directory

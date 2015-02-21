@@ -699,6 +699,11 @@ int LinkbotT::addConnector(int type, int face, double size, int side, int conn) 
 	return 0;
 }
 
+void LinkbotT::addForce(int body, double fx, double fy, double fz) {
+	_f.push_back(std::make_tuple(body, fx, fy, fz));
+	dBodyAddForce(_body[body], fx, fy, fz);
+}
+
 int LinkbotT::build(int id, const double *p, const double *q, const double *a, int ground) {
 	// build
 	this->buildIndividual(p, q, a);
@@ -1007,6 +1012,11 @@ void LinkbotT::simPreCollisionThread(void) {
 	// lock angle and goal
 	MUTEX_LOCK(&_goal_mutex);
 	MUTEX_LOCK(&_theta_mutex);
+
+	// apply forces
+	for (int i = 0; i < _f.size(); i++) {
+		dBodyAddForce(_body[std::get<0>(_f[i])], std::get<1>(_f[i]), std::get<2>(_f[i]), std::get<3>(_f[i]));
+	}
 
 	// get body rotation from world
 	const double *R = dBodyGetRotation(_body[BODY]);

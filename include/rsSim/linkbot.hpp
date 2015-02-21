@@ -1,6 +1,8 @@
 #ifndef RSSIM_LINKBOT_HPP_
 #define RSSIM_LINKBOT_HPP_
 
+#include <tuple>
+
 #include <rsRobots/linkbot.hpp>
 #include <rsSim/modularRobot.hpp>
 
@@ -56,6 +58,7 @@ namespace rsSim {
 
 		public:
 			virtual void getCoM(double&, double&, double&);
+			void addForce(int, double, double, double);
 
 		// inherited functions from ModularRobot class
 		protected:
@@ -86,6 +89,9 @@ namespace rsSim {
 			void build_simple(Connector*);
 			void build_wheel(Connector*, double);
 			static void* closeGripperNBThread(void*);
+
+		private:
+			std::vector<std::tuple<int, double, double, double>> _f;		// forces to add to bodies
 	};
 
 	// class

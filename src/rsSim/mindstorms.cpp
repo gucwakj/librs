@@ -1,31 +1,28 @@
-#include "nxt.hpp"
+#include <iostream>
 
-CNXT::CNXT(void) : Robot(JOINT1, JOINT2) {
+#include <rsSim/sim.hpp>
+#include <rsSim/Mindstorms.hpp>
+
+using namespace rsSim;
+using namespace rsMindstorms;
+
+Mindstorms::Mindstorms(void) : rsRobots::Robot(rs::MINDSTORMS), Robot(JOINT1, JOINT2) {
 	// initialize parameters
-	this->initParams(0, NXT);
-
-	// initialize dimensions
-	this->initDims();
+	this->init_params();
 }
 
-CNXT::~CNXT(void) {
+Mindstorms::~Mindstorms(void) {
 	// remove robot from simulation
-	if ( _sim != NULL && !(_sim->deleteRobot(_pos)) )
-		delete _sim;
+	if (!_sim->deleteRobot(_pos)) { delete _sim; }
 
 	// delete mutexes
 	for (int i = 0; i < _dof; i++) {
 		MUTEX_DESTROY(&_motor[i].success_mutex);
 		COND_DESTROY(&_motor[i].success_cond);
 	}
-
-	// destroy geoms
-	if (_connected) {
-		for (int i = NUM_PARTS - 1; i >= 0; i--) { delete [] _geom[i]; }
-	}
 }
 
-int CNXT::getJointAngles(double &angle1, double &angle2, int numReadings) {
+int Mindstorms::getJointAngles(double &angle1, double &angle2, int numReadings) {
 	this->getJointAngle(JOINT1, angle1, numReadings);
 	this->getJointAngle(JOINT2, angle2, numReadings);
 
@@ -33,7 +30,7 @@ int CNXT::getJointAngles(double &angle1, double &angle2, int numReadings) {
 	return 0;
 }
 
-int CNXT::getJointAnglesInstant(double &angle1, double &angle2) {
+int Mindstorms::getJointAnglesInstant(double &angle1, double &angle2) {
 	this->getJointAngleInstant(JOINT1, angle1);
 	this->getJointAngleInstant(JOINT2, angle2);
 
@@ -41,7 +38,7 @@ int CNXT::getJointAnglesInstant(double &angle1, double &angle2) {
 	return 0;
 }
 
-int CNXT::getJointSpeeds(double &speed1, double &speed2) {
+int Mindstorms::getJointSpeeds(double &speed1, double &speed2) {
 	speed1 = RAD2DEG(_motor[JOINT1].omega);
 	speed2 = RAD2DEG(_motor[JOINT2].omega);
 
@@ -49,7 +46,7 @@ int CNXT::getJointSpeeds(double &speed1, double &speed2) {
 	return 0;
 }
 
-int CNXT::getJointSpeedRatios(double &ratio1, double &ratio2) {
+int Mindstorms::getJointSpeedRatios(double &ratio1, double &ratio2) {
 	ratio1 = _motor[JOINT1].omega/_motor[JOINT1].omega_max;
 	ratio2 = _motor[JOINT2].omega/_motor[JOINT2].omega_max;
 
@@ -57,7 +54,7 @@ int CNXT::getJointSpeedRatios(double &ratio1, double &ratio2) {
 	return 0;
 }
 
-int CNXT::move(double angle1, double angle2) {
+int Mindstorms::move(double angle1, double angle2) {
 	this->moveNB(angle1, angle2);
 	this->moveWait();
 
@@ -65,7 +62,7 @@ int CNXT::move(double angle1, double angle2) {
 	return 0;
 }
 
-int CNXT::moveNB(double angle1, double angle2) {
+int Mindstorms::moveNB(double angle1, double angle2) {
 	// store angles
 	double *angles = new double[_dof];
 	angles[JOINT1] = angle1;
@@ -81,7 +78,7 @@ int CNXT::moveNB(double angle1, double angle2) {
 	return retval;
 }
 
-int CNXT::moveTo(double angle1, double angle2) {
+int Mindstorms::moveTo(double angle1, double angle2) {
 	this->moveToNB(angle1, angle2);
 	this->moveWait();
 
@@ -89,7 +86,7 @@ int CNXT::moveTo(double angle1, double angle2) {
 	return 0;
 }
 
-int CNXT::moveToNB(double angle1, double angle2) {
+int Mindstorms::moveToNB(double angle1, double angle2) {
 	// store angles
 	double *angles = new double[_dof];
 	angles[JOINT1] = angle1;
@@ -105,7 +102,7 @@ int CNXT::moveToNB(double angle1, double angle2) {
 	return retval;
 }
 
-int CNXT::moveToByTrackPos(double angle1, double angle2) {
+int Mindstorms::moveToByTrackPos(double angle1, double angle2) {
 	this->moveToByTrackPosNB(angle1, angle2);
 	this->moveWait();
 
@@ -113,14 +110,14 @@ int CNXT::moveToByTrackPos(double angle1, double angle2) {
 	return 0;
 }
 
-int CNXT::moveToByTrackPosNB(double angle1, double angle2) {
+int Mindstorms::moveToByTrackPosNB(double angle1, double angle2) {
 	this->moveToNB(angle1, angle2);
 
 	// success
 	return 0;
 }
 
-int CNXT::recordAngles(double *time, double *angle1, double *angle2, int num, double seconds, int shiftData) {
+int Mindstorms::recordAngles(double *time, double *angle1, double *angle2, int num, double seconds, int shiftData) {
 	// check if recording already
 	for (int i = 0; i < _dof; i++) {
 		if (_motor[i].record) { return -1; }
@@ -135,7 +132,7 @@ int CNXT::recordAngles(double *time, double *angle1, double *angle2, int num, do
 	return Robot::recordAngles(time, angles, num, seconds, shiftData);
 }
 
-int CNXT::recordAnglesBegin(robotRecordData_t &time, robotRecordData_t &angle1, robotRecordData_t &angle2, double seconds, int shiftData) {
+int Mindstorms::recordAnglesBegin(robotRecordData_t &time, robotRecordData_t &angle1, robotRecordData_t &angle2, double seconds, int shiftData) {
 	// check if recording already
 	for (int i = 0; i < _dof; i++) {
 		if (_motor[i].record) { return -1; }
@@ -150,7 +147,7 @@ int CNXT::recordAnglesBegin(robotRecordData_t &time, robotRecordData_t &angle1, 
 	return Robot::recordAnglesBegin(time, angles, seconds, shiftData);
 }
 
-int CNXT::recordDistancesBegin(robotRecordData_t &time, robotRecordData_t &distance1, robotRecordData_t &distance2, double radius, double seconds, int shiftData) {
+int Mindstorms::recordDistancesBegin(robotRecordData_t &time, robotRecordData_t &distance1, robotRecordData_t &distance2, double radius, double seconds, int shiftData) {
 	// check if recording already
 	for (int i = 0; i < _dof; i++) {
 		if (_motor[i].record) { return -1; }
@@ -165,7 +162,7 @@ int CNXT::recordDistancesBegin(robotRecordData_t &time, robotRecordData_t &dista
 	return Robot::recordAnglesBegin(time, angles, seconds, shiftData);
 }
 
-int CNXT::setJointSpeeds(double speed1, double speed2) {
+int Mindstorms::setJointSpeeds(double speed1, double speed2) {
 	this->setJointSpeed(JOINT1, speed1);
 	this->setJointSpeed(JOINT2, speed2);
 
@@ -173,7 +170,7 @@ int CNXT::setJointSpeeds(double speed1, double speed2) {
 	return 0;
 }
 
-int CNXT::setJointSpeedRatios(double ratio1, double ratio2) {
+int Mindstorms::setJointSpeedRatios(double ratio1, double ratio2) {
 	this->setJointSpeedRatio(JOINT1, ratio1);
 	this->setJointSpeedRatio(JOINT2, ratio2);
 
@@ -184,22 +181,9 @@ int CNXT::setJointSpeedRatios(double ratio1, double ratio2) {
 /**********************************************************
 	inherited functions
  **********************************************************/
-int CNXT::build(XMLRobot *robot, int really) {
-	// adjust height for wheels
-	robot->z += (_wheel_radius - _body_height/2);
-	_radius = _wheel_radius;
-	if (fabs(robot->z) > (_body_radius-EPSILON)) { robot->z += _body_height/2; }
-
-	// create rotation matrix
-	double	sphi = sin(DEG2RAD(robot->phi)),		cphi = cos(DEG2RAD(robot->phi)),
-			stheta = sin(DEG2RAD(robot->theta)),	ctheta = cos(DEG2RAD(robot->theta)),
-			spsi = sin(DEG2RAD(robot->psi)),		cpsi = cos(DEG2RAD(robot->psi));
-	dMatrix3 R = {cphi*ctheta,	-cphi*stheta*spsi - sphi*cpsi,	-cphi*stheta*cpsi + sphi*spsi,	0,
-				  sphi*ctheta,	-sphi*stheta*spsi + cphi*cpsi,	-sphi*stheta*cpsi - cphi*spsi,	0,
-				  stheta,		ctheta*spsi,					ctheta*cpsi,					0};
-	// build robot
-	double rot[2] = {robot->angle1, robot->angle2};
-	this->buildIndividual(robot->x, robot->y, robot->z, R, rot);
+int Mindstorms::build(int id, const double *p, const double *q, const double *a, int ground) {
+	// build
+	this->buildIndividual(p, q, a);
 
 	// set trackwidth
 	const double *pos1, *pos2;
@@ -207,120 +191,95 @@ int CNXT::build(XMLRobot *robot, int really) {
 	pos2 = dBodyGetPosition(_body[WHEEL2]);
 	_trackwidth = sqrt(pow(pos2[0] - pos1[0], 2) + pow(pos2[1] - pos1[1], 2));
 
-	// fix to ground
-	if (robot->ground != -1) this->fixBodyToGround(_body[robot->ground]);
-
 	// success
 	return 0;
 }
 
-int CNXT::buildIndividual(double x, double y, double z, dMatrix3 R, double *rot) {
+int Mindstorms::buildIndividual(const double *p, const double *q, const double *a) {
 	// init body parts
-	for (int i = 0; i < NUM_PARTS; i++) { _body[i] = dBodyCreate(_world); }
-	_geom[BODY] = new dGeomID[1];
-	_geom[WHEEL1] = new dGeomID[1];
-	_geom[WHEEL2] = new dGeomID[1];
-
-	// adjust input height by body height
-	if (fabs(z) < (_body_radius - EPSILON)) {
-		x += R[2]*_body_height/2;
-		y += R[6]*_body_height/2;
-		z += R[10]*_body_height/2;
+	for (int i = 0; i < NUM_PARTS; i++) {
+		_body.push_back(dBodyCreate(_world));
 	}
 
-    // input angles to radians
+	// init geom arrays
+	dGeomID **geom = new dGeomID * [NUM_PARTS];
+	geom[BODY] = new dGeomID[1];
+	geom[WHEEL1] = new dGeomID[1];
+	geom[WHEEL2] = new dGeomID[1];
+
+	// convert input angles to radians
 	for (int i = 0; i < _dof; i++) {
-		_motor[i].goal = _motor[i].theta = DEG2RAD(rot[i]);
+		_motor[i].goal = _motor[i].theta = DEG2RAD(a[i]);
 	}
-
-	// offset values for each body part[0-2] and joint[3-5] from center
-	double f1[6] = {-_body_width/2 - _wheel_depth/2, 0, 0, -_body_width/2, 0, 0};
-	double f2[6] = {_body_width/2 + _wheel_depth/2, 0, 0, _body_width/2, 0, 0};
 
 	// build robot bodies
-	this->build_body(x, y, z, R, 0);
-	this->build_wheel(WHEEL1, R[0]*f1[0] + x, R[4]*f1[0] + y, R[8]*f1[0] + z, R, 0);
-	this->build_wheel(WHEEL2, R[0]*f2[0] + x, R[4]*f2[0] + y, R[8]*f2[0] + z, R, 0);
+	double p1[3], q1[4];
+	this->build_body(geom[BODY], p, q);
+	this->getRobotBodyOffset(WHEEL1, p, q, p1, q1);
+	this->build_wheel(WHEEL1, geom[WHEEL1], p1, q1);
+	this->getRobotBodyOffset(WHEEL2, p, q, p1, q1);
+	this->build_wheel(WHEEL2, geom[WHEEL2], p1, q1);
 
-	// get center of robot offset from body position
-	_center[0] = 0;
-	_center[1] = 0;
-	_center[2] = 0;
+	// joint variable
+	dJointID *joint = new dJointID[_dof];
+	double o[3];
 
-    // joint for body to wheel 1
-	_joint[0] = dJointCreateHinge(_world, 0);
-	dJointAttach(_joint[0], _body[BODY], _body[WHEEL1]);
-	dJointSetHingeAnchor(_joint[0], R[0]*f1[3] + R[1]*f1[4] + R[2]*f1[5] + x,
-									R[4]*f1[3] + R[5]*f1[4] + R[6]*f1[5] + y,
-									R[8]*f1[3] + R[9]*f1[4] + R[10]*f1[5] + z);
-	dJointSetHingeAxis(_joint[0], R[0], R[4], R[8]);
-	dBodySetFiniteRotationAxis(_body[WHEEL1], R[0], R[4], R[8]);
+	// joint for body to wheel 1
+	joint[JOINT1] = dJointCreateHinge(_world, 0);
+	dJointAttach(joint[JOINT1], _body[BODY], _body[WHEEL1]);
+	this->multiplyQbyV(q, -_body_width/2, 0, 0, o);
+	dJointSetHingeAnchor(joint[JOINT1], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+	this->multiplyQbyV(q, 1, 0, 0, o);
+	dJointSetHingeAxis(joint[JOINT1], o[0], o[1], o[2]);
+	dBodySetFiniteRotationAxis(_body[WHEEL1], o[0], o[1], o[2]);
 
-    // joint for body to wheel2
-	_joint[1] = dJointCreateHinge(_world, 0);
-	dJointAttach(_joint[1], _body[BODY], _body[WHEEL2]);
-	dJointSetHingeAnchor(_joint[1], R[0]*f2[3] + R[1]*f2[4] + R[2]*f2[5] + x,
-									R[4]*f2[3] + R[5]*f2[4] + R[6]*f2[5] + y,
-									R[8]*f2[3] + R[9]*f2[4] + R[10]*f2[5] + z);
-	dJointSetHingeAxis(_joint[1], R[0], R[4], R[8]);
-	dBodySetFiniteRotationAxis(_body[WHEEL2], R[0], R[4], R[8]);
+    // joint for body to wheel 2
+	joint[WHEEL2] = dJointCreateHinge(_world, 0);
+	dJointAttach(joint[WHEEL2], _body[BODY], _body[WHEEL2]);
+	this->multiplyQbyV(q, _body_width/2, 0, 0, o);
+	dJointSetHingeAnchor(joint[WHEEL2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+	this->multiplyQbyV(q, -1, 0, 0, o);
+	dJointSetHingeAxis(joint[WHEEL2], o[0], o[1], o[2]);
+	dBodySetFiniteRotationAxis(_body[WHEEL2], o[0], o[1], o[2]);
 
-    // create rotation matrices for each body part
-    dMatrix3 R_f, R_f1, R_f2;
-    dRFromAxisAndAngle(R_f, -1, 0, 0, _motor[JOINT1].theta);
-    dMultiply0(R_f1, R, R_f, 3, 3, 3);
-	dRSetIdentity(R_f);
-    dRFromAxisAndAngle(R_f, 1, 0, 0, _motor[JOINT2].theta);
-    dMultiply0(R_f2, R, R_f, 3, 3, 3);
-
-	// if bodies are rotated, then redraw
-	if ( _motor[JOINT1].theta != 0 || _motor[JOINT2].theta != 0 ) {
-		this->build_wheel(WHEEL1, R[0]*f1[0] + x, R[4]*f1[0] + y, R[8]*f1[0] + z, R_f1, 0);
-		this->build_wheel(WHEEL2, R[0]*f2[0] + x, R[4]*f2[0] + y, R[8]*f2[0] + z, R_f2, 0);
+	// build motors
+	for (int i = 0; i < _dof; i++) {
+		_motor[i].id = dJointCreateAMotor(_world, 0);
+		_motor[i].joint = joint[i];
+		dJointAttach(_motor[i].id, _body[BODY], _body[WHEEL1 + i]);
+		dJointSetAMotorMode(_motor[i].id, dAMotorUser);
+		dJointSetAMotorNumAxes(_motor[i].id, 1);
+		dJointSetAMotorAngle(_motor[i].id, 0, 0);
+		dJointSetAMotorParam(_motor[i].id, dParamFMax, _motor[i].tau_max);
+		dJointSetAMotorParam(_motor[i].id, dParamFudgeFactor, 0.3);
+		dJointDisable(_motor[i].id);
 	}
+	this->multiplyQbyV(q, 1, 0, 0, o);
+	dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, o[0], o[1], o[2]);
+	this->multiplyQbyV(q, -1, 0, 0, o);
+	dJointSetAMotorAxis(_motor[JOINT2].id, 0, 1, o[0], o[1], o[2]);
 
-    // motor for body to wheel 1
-    _motor[JOINT1].id = dJointCreateAMotor(_world, 0);
-    dJointAttach(_motor[JOINT1].id, _body[BODY], _body[WHEEL1]);
-    dJointSetAMotorMode(_motor[JOINT1].id, dAMotorUser);
-    dJointSetAMotorNumAxes(_motor[JOINT1].id, 1);
-    dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, R[0], R[4], R[8]);
-    dJointSetAMotorAngle(_motor[JOINT1].id, 0, 0);
-    dJointSetAMotorParam(_motor[JOINT1].id, dParamFMax, _motor[JOINT1].tau_max);
-    dJointSetAMotorParam(_motor[JOINT1].id, dParamFudgeFactor, 0.3);
-	dJointDisable(_motor[JOINT1].id);
+	// set damping on all bodies to 0.1
+	for (int i = 0; i < NUM_PARTS; i++) dBodySetDamping(_body[i], 0.1, 0.1);
 
-	// motor for body to wheel 2
-	_motor[JOINT2].id = dJointCreateAMotor(_world, 0);
-	dJointAttach(_motor[JOINT2].id, _body[BODY], _body[WHEEL2]);
-	dJointSetAMotorMode(_motor[JOINT2].id, dAMotorUser);
-	dJointSetAMotorNumAxes(_motor[JOINT2].id, 1);
-	dJointSetAMotorAxis(_motor[JOINT2].id, 0, 1, R[0], R[4], R[8]);
-	dJointSetAMotorAngle(_motor[JOINT2].id, 0, 0);
-	dJointSetAMotorParam(_motor[JOINT2].id, dParamFMax, _motor[JOINT2].tau_max);
-	dJointSetAMotorParam(_motor[JOINT2].id, dParamFudgeFactor, 0.3);
-	dJointDisable(_motor[JOINT2].id);
-
-    // set damping on all bodies to 0.1
-    for (int i = 0; i < NUM_PARTS; i++) dBodySetDamping(_body[i], 0.1, 0.1);
+	// delete arrays
+	for (int i = 0; i < NUM_PARTS; i++) { delete [] geom[i]; }
+	delete [] geom;
+	delete [] joint;
 
 	// success
 	return 0;
 }
 
-double CNXT::getAngle(int id) {
-	_motor[id].theta = mod_angle(_motor[id].theta, dJointGetHingeAngle(_joint[id]), dJointGetHingeAngleRate(_joint[id])) - _motor[id].offset;
+double Mindstorms::getAngle(int id) {
+	_motor[id].theta = mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
     return _motor[id].theta;
 }
 
-int CNXT::initParams(int disabled, int type) {
-	_dof = 2;
+void Mindstorms::init_params(void) {
+	_dof = NUM_JOINTS;
 
 	// create arrays for linkbots
-	_body = new dBodyID[NUM_PARTS];
-	_enabled = new int[_dof];
-	_geom = new dGeomID * [NUM_PARTS];
-	_joint = new dJointID[_dof];
 	_motor.resize(_dof);
 
 	// fill with default data
@@ -362,28 +321,12 @@ int CNXT::initParams(int disabled, int type) {
 	_rgb[1] = 0;
 	_rgb[2] = 1;
 	_shift_data = 0;
+	_sim = NULL;
 	_speed = 2;
 	_trace = 1;
-	_type = type;
-
-	// success
-	return 0;
 }
 
-int CNXT::initDims(void) {
-	_body_length = 0.03935;
-	_body_width = 0.07835;
-	_body_height = 0.07250;
-	_body_radius = 0.03625;
-	_radius = _body_height/2;
-	_wheel_depth = 0.00140;
-	_wheel_radius = 0.04445;
-
-	// success
-	return 0;
-}
-
-void CNXT::simPreCollisionThread(void) {
+void Mindstorms::simPreCollisionThread(void) {
 	// lock angle and goal
 	MUTEX_LOCK(&_goal_mutex);
 	MUTEX_LOCK(&_theta_mutex);
@@ -403,7 +346,7 @@ void CNXT::simPreCollisionThread(void) {
 		_motor[i].theta = getAngle(i);
 		// set rotation axis
 		dVector3 axis;
-		dJointGetHingeAxis(_joint[i], axis);
+		dJointGetHingeAxis(_motor[i].joint, axis);
 		dBodySetFiniteRotationAxis(_body[i+1], axis[0], axis[1], axis[2]);
 		// set motor angle to current angle
 		dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);
@@ -554,7 +497,7 @@ void CNXT::simPreCollisionThread(void) {
 	MUTEX_UNLOCK(&_goal_mutex);
 }
 
-void CNXT::simPostCollisionThread(void) {
+void Mindstorms::simPostCollisionThread(void) {
 	// lock angle and goal
 	MUTEX_LOCK(&_goal_mutex);
 	MUTEX_LOCK(&_theta_mutex);
@@ -591,76 +534,42 @@ void CNXT::simPostCollisionThread(void) {
 /**********************************************************
 	private functions
  **********************************************************/
-int CNXT::build_body(double x, double y, double z, dMatrix3 R, double theta) {
-	// define parameters
-	dMass m, m1, m2;
-	dMatrix3 R1, R2, R3;
-
+void Mindstorms::build_body(dGeomID *geom, const double *p, const double *q) {
 	// set mass of body
+	dMass m;
 	dMassSetBox(&m, 1000, _body_width, _body_length, _body_height);
-
-	// adjust x,y,z to position center of mass correctly
-	x += R[0]*m.c[0] + R[1]*m.c[1] + R[2]*m.c[2];
-	y += R[4]*m.c[0] + R[5]*m.c[1] + R[6]*m.c[2];
-	z += R[8]*m.c[0] + R[9]*m.c[1] + R[10]*m.c[2];
-
-	// set body parameters
-	dBodySetPosition(_body[BODY], x, y, z);
-	dBodySetRotation(_body[BODY], R);
-	dBodySetFiniteRotationMode(_body[BODY], 1);
-
-	// rotation matrix for curves
-	dRFromAxisAndAngle(R1, 0, 1, 0, M_PI/2);
-	dRFromAxisAndAngle(R3, 0, 0, 1, -theta);
-	dMultiply0(R2, R1, R3, 3, 3, 3);
-
-	// set geometry 1 - box
-	_geom[BODY][0] = dCreateBox(_space, _body_width, _body_length, _body_height);
-	dGeomSetBody(_geom[BODY][0], _body[BODY]);
-	dGeomSetOffsetPosition(_geom[BODY][0], -m.c[0], -m.c[1], -m.c[2]);
-
-	// set mass center to (0,0,0) of _bodyID
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[BODY], &m);
 
-	// success
-	return 0;
+	// set body parameters
+	dBodySetPosition(_body[BODY], p[0], p[1], p[2]);
+	dQuaternion Q = {q[3], q[0], q[1], q[2]};
+	dBodySetQuaternion(_body[BODY], Q);
+	dBodySetFiniteRotationMode(_body[BODY], 1);
+
+	// set geometry 0 - box
+	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
+	dGeomSetBody(geom[0], _body[BODY]);
+	dGeomSetOffsetPosition(geom[0], 0, 0, 0);
 }
 
-int CNXT::build_wheel(int id, double x, double y, double z, dMatrix3 R, double theta) {
-	// define parameters
+void Mindstorms::build_wheel(int id, dGeomID *geom, const double *p, const double *q) {
+	// set mass of body
 	dMass m;
-	dMatrix3 R1, R2, R3;
-
-	// set mass of wheel
 	dMassSetCylinder(&m, 270, 1, 2*_wheel_radius, _wheel_depth);
-
-	// adjust x,y,z to position center of mass correctly
-	x += R[0]*m.c[0] + R[1]*m.c[1] + R[2]*m.c[2];
-	y += R[4]*m.c[0] + R[5]*m.c[1] + R[6]*m.c[2];
-	z += R[8]*m.c[0] + R[9]*m.c[1] + R[10]*m.c[2];
-
-	// set body parameters
-	dBodySetPosition(_body[id], x, y, z);
-	dBodySetRotation(_body[id], R);
-	dBodySetFiniteRotationMode(_body[id], 1);
-
-	// rotation matrix
-	dRFromAxisAndAngle(R1, 0, 1, 0, M_PI/2);		// SWITCHED X AND Y AXIS
-	dRFromAxisAndAngle(R3, 0, 0, 1, -theta);
-	dMultiply0(R2, R1, R3, 3, 3, 3);
-
-	// set geometry
-	_geom[id][0] = dCreateCylinder(_space, _wheel_radius, _wheel_depth);
-	dGeomSetBody(_geom[id][0], _body[id]);
-	dGeomSetOffsetPosition(_geom[id][0], -m.c[0], -m.c[1], -m.c[2]);
-	dGeomSetOffsetRotation(_geom[id][0], R2);
-
-	// set mass center to (0,0,0) of _bodyID
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[id], &m);
 
-	// success
-	return 0;
+	// set body parameters
+	dBodySetPosition(_body[id], p[0], p[1], p[2]);
+	dQuaternion Q = {q[3], q[0], q[1], q[2]};
+	dBodySetQuaternion(_body[id], Q);
+	dBodySetFiniteRotationMode(_body[id], 1);
+
+	// set geometry
+	geom[0] = dCreateCylinder(_space, _wheel_radius, _wheel_depth);
+	dGeomSetBody(geom[0], _body[id]);
+	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
+	dGeomSetOffsetQuaternion(geom[0], Q1);
 }
 

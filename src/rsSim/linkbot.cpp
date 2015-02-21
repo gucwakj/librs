@@ -864,7 +864,7 @@ int LinkbotT::buildIndividual(const double *p, const double *q, const double *a)
 	}*/
 
 	// build motors
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < _dof; i++) {
 		_motor[i].id = dJointCreateAMotor(_world, 0);
 		_motor[i].joint = joint[i];
 		dJointAttach(_motor[i].id, _body[BODY], _body[FACE1 + i]);

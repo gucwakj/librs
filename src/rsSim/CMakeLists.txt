@@ -29,10 +29,8 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
 set (SRCS ${SRCS}
 	robot.cpp
 	modularRobot.cpp
-	#cubus.cpp
 	linkbot.cpp
-	#mobot.cpp
-	#nxt.cpp
+	mindstorms.cpp
 	sim.cpp
 )
 

@@ -9,8 +9,8 @@ namespace rs {
 		LINKBOTI,
 		LINKBOTL,
 		LINKBOTT,
+		MINDSTORMS,
 		MOBOT,
-		NXT,
 		ROBOT,
 		NUM_TYPES
 	};
@@ -80,6 +80,25 @@ namespace rsLinkbot {
 	};
 
 } // namespace rsLinkbot
+
+namespace rsMindstorms {
+
+	// bodies
+	enum Body {
+		BODY,
+		WHEEL1,
+		WHEEL2,
+		NUM_PARTS
+	};
+
+	// joints
+	enum Joint {
+		JOINT1,
+		JOINT2,
+		NUM_JOINTS
+	};
+
+} // namespace rsMindstorms
 
 /*namespace rsMobot {
 

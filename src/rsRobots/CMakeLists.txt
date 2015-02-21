@@ -11,10 +11,8 @@ include_directories (
 set (SRCS ${SRCS}
 	rgbhashtable.c
 	robot.cpp
-	#cubus.cpp
 	linkbot.cpp
-	#mobot.cpp
-	#nxt.cpp
+	mindstorms.cpp
 )
 
 # add the library

@@ -178,7 +178,7 @@ int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const 
 
 	// build
 	double p[3], q[4], p1[3], q1[4];
-	base->getRobotFaceOffset(face1, base->getPosition(), base->getQuaternion(), p, q);
+	dynamic_cast<rsSim::ModularRobot*>(base)->getRobotFaceOffset(face1, base->getPosition(), base->getQuaternion(), p, q);
 	dynamic_cast<rsSim::ModularRobot*>(base)->getConnFaceOffset(type, side, p, q, p1, q1);
 	robot->build(id, p1, q1, a, dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorBodyID(face1), face2, ground);
 

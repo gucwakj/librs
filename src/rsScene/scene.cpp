@@ -253,11 +253,11 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const
 		case rs::LINKBOTT:
 			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), group, p, q, trace, led);
 			break;
+		case rs::MINDSTORMS:
+			//this->draw(dynamic_cast<rsRobots::CNXT*>(robot), p, q, trace, rgb);
+			break;
 		case rs::MOBOT:
 			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
-			break;
-		case rs::NXT:
-			//this->draw(dynamic_cast<rsRobots::CNXT*>(robot), p, q, trace, rgb);
 			break;
 	}
 

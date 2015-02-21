@@ -1,7 +1,6 @@
 #ifndef RSROBOTS_MODULARROBOT_HPP_
 #define RSROBOTS_MODULARROBOT_HPP_
 
-#include <rs/enum.hpp>
 #include <rsRobots/robot.hpp>
 
 namespace rsRobots {
@@ -16,6 +15,7 @@ namespace rsRobots {
 		public:
 			virtual void getConnBodyOffset(int, const double*, const double*, double*, double*) {};
 			virtual void getConnFaceOffset(int, int, const double*, const double*, double*, double*) {};
+			virtual void getRobotFaceOffset(int, const double*, const double*, double*, double*) {};
 
 		// data
 		protected:

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 
+#include <rs/enum.hpp>
 #include <rs/types.hpp>
 
 namespace rsRobots {
@@ -24,7 +25,6 @@ namespace rsRobots {
 		// for inherited classes
 		public:
 			virtual void getRobotBodyOffset(int, const double*, const double*, double*, double*) {};
-			virtual void getRobotFaceOffset(int, const double*, const double*, double*, double*) {};
 
 		// data
 		protected:

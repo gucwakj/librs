@@ -72,11 +72,11 @@ Robot* Store::getNextRobot(int form) {
 			case rs::LINKBOTT:
 				fprintf(stderr, "Error: Could not find LinkbotT in RoboSim GUI.\n");
 				break;
+			case rs::MINDSTORMS:
+				fprintf(stderr, "Error: Could not find Mindstorms in RoboSim GUI.\n");
+				break;
 			case rs::MOBOT:
 				fprintf(stderr, "Error: Could not find Mobot in RoboSim GUI.\n");
-				break;
-			case rs::NXT:
-				fprintf(stderr, "Error: Could not find NXT in RoboSim GUI.\n");
 				break;
 		}
 		if (_preconfig) {

@@ -6,7 +6,7 @@
 using namespace rsSim;
 using namespace rsLinkbot;
 
-LinkbotT::LinkbotT(int disabled) : rsRobots::Robot(rs::LINKBOTT), rsRobots::LinkbotT(rsLinkbot::JOINT1), Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT3) {
+LinkbotT::LinkbotT(int disabled) : rsRobots::Robot(rs::LINKBOTT), rsRobots::LinkbotT(JOINT1), Robot(JOINT1, JOINT3) {
 	// initialize parameters
 	this->init_params();
 
@@ -25,14 +25,14 @@ LinkbotT::~LinkbotT(void) {
 	}
 }
 
-int LinkbotT::accelJointAngleNB(rsLinkbot::Joint id, double a, double angle) {
+int LinkbotT::accelJointAngleNB(Joint id, double a, double angle) {
 	this->accelJointTimeNB(id, a, sqrt(2*angle/a));
 
 	// success
 	return 0;
 }
 
-int LinkbotT::accelJointCycloidalNB(rsLinkbot::Joint id, double angle, double t) {
+int LinkbotT::accelJointCycloidalNB(Joint id, double angle, double t) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
 
@@ -75,7 +75,7 @@ int LinkbotT::accelJointCycloidalNB(rsLinkbot::Joint id, double angle, double t)
 	return 0;
 }
 
-int LinkbotT::accelJointHarmonicNB(rsLinkbot::Joint id, double angle, double t) {
+int LinkbotT::accelJointHarmonicNB(Joint id, double angle, double t) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
 
@@ -118,7 +118,7 @@ int LinkbotT::accelJointHarmonicNB(rsLinkbot::Joint id, double angle, double t) 
 	return 0;
 }
 
-int LinkbotT::accelJointSmoothNB(rsLinkbot::Joint id, double a0, double af, double vmax, double angle) {
+int LinkbotT::accelJointSmoothNB(Joint id, double a0, double af, double vmax, double angle) {
 	_motor[id].omega = DEG2RAD(vmax);
 	this->moveJoint(id, angle);
 
@@ -126,7 +126,7 @@ int LinkbotT::accelJointSmoothNB(rsLinkbot::Joint id, double a0, double af, doub
 	return 0;
 }
 
-int LinkbotT::accelJointTimeNB(rsLinkbot::Joint id, double a, double t) {
+int LinkbotT::accelJointTimeNB(Joint id, double a, double t) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
 
@@ -169,14 +169,14 @@ int LinkbotT::accelJointTimeNB(rsLinkbot::Joint id, double a, double t) {
 	return 0;
 }
 
-int LinkbotT::accelJointToMaxSpeedNB(rsLinkbot::Joint id, double a) {
+int LinkbotT::accelJointToMaxSpeedNB(Joint id, double a) {
 	this->accelJointTimeNB(id, a, 0);
 
 	// success
 	return 0;
 }
 
-int LinkbotT::accelJointToVelocityNB(rsLinkbot::Joint id, double a, double v) {
+int LinkbotT::accelJointToVelocityNB(Joint id, double a, double v) {
 	this->accelJointTimeNB(id, a, v/a);
 
 	// success
@@ -186,13 +186,13 @@ int LinkbotT::accelJointToVelocityNB(rsLinkbot::Joint id, double a, double v) {
 int LinkbotT::closeGripper(void) {
 	double gripperAngleOld = 0;
 	double gripperAngleNew = 0;
-	int retval = getJointAngleInstant(rsLinkbot::JOINT1, gripperAngleNew);
+	int retval = getJointAngleInstant(JOINT1, gripperAngleNew);
 	while ( fabs(gripperAngleNew - gripperAngleOld) > 0.1 ) {
 		gripperAngleOld = gripperAngleNew;
-		retval = retval || getJointAngleInstant(rsLinkbot::JOINT1, gripperAngleNew);
+		retval = retval || getJointAngleInstant(JOINT1, gripperAngleNew);
 		retval = retval || moveNB(8, 0, 8);
 		delaySeconds(1);
-		retval = retval || getJointAngleInstant(rsLinkbot::JOINT1, gripperAngleNew);
+		retval = retval || getJointAngleInstant(JOINT1, gripperAngleNew);
 	}
 	retval = retval || moveNB(8, 0, 8);
 	delaySeconds(1);
@@ -219,8 +219,8 @@ int LinkbotT::closeGripperNB(void) {
 }
 
 int LinkbotT::driveAccelCycloidalNB(double radius, double d, double t) {
-	this->accelJointCycloidalNB(rsLinkbot::JOINT1,  RAD2DEG(d/radius), t);
-	this->accelJointCycloidalNB(rsLinkbot::JOINT3, -RAD2DEG(d/radius), t);
+	this->accelJointCycloidalNB(JOINT1,  RAD2DEG(d/radius), t);
+	this->accelJointCycloidalNB(JOINT3, -RAD2DEG(d/radius), t);
 
 	// success
 	return 0;
@@ -228,24 +228,24 @@ int LinkbotT::driveAccelCycloidalNB(double radius, double d, double t) {
 
 int LinkbotT::driveAccelDistanceNB(double radius, double a, double d) {
 	a = DEG2RAD(a);
-	this->accelJointTimeNB(rsLinkbot::JOINT1,  RAD2DEG(a/radius), sqrt(2*d/a));
-	this->accelJointTimeNB(rsLinkbot::JOINT3, -RAD2DEG(a/radius), sqrt(2*d/a));
+	this->accelJointTimeNB(JOINT1,  RAD2DEG(a/radius), sqrt(2*d/a));
+	this->accelJointTimeNB(JOINT3, -RAD2DEG(a/radius), sqrt(2*d/a));
 
 	// success
 	return 0;
 }
 
 int LinkbotT::driveAccelHarmonicNB(double radius, double d, double t) {
-	this->accelJointHarmonicNB(rsLinkbot::JOINT1,  RAD2DEG(d/radius), t);
-	this->accelJointHarmonicNB(rsLinkbot::JOINT3, -RAD2DEG(d/radius), t);
+	this->accelJointHarmonicNB(JOINT1,  RAD2DEG(d/radius), t);
+	this->accelJointHarmonicNB(JOINT3, -RAD2DEG(d/radius), t);
 
 	// success
 	return 0;
 }
 
 int LinkbotT::driveAccelSmoothNB(double radius, double a0, double af, double vmax, double d) {
-	this->accelJointSmoothNB(rsLinkbot::JOINT1, a0, af, vmax, d/radius);
-	this->accelJointSmoothNB(rsLinkbot::JOINT3, a0, af, vmax, d/radius);
+	this->accelJointSmoothNB(JOINT1, a0, af, vmax, d/radius);
+	this->accelJointSmoothNB(JOINT3, a0, af, vmax, d/radius);
 
 	// success
 	return 0;
@@ -253,8 +253,8 @@ int LinkbotT::driveAccelSmoothNB(double radius, double a0, double af, double vma
 
 int LinkbotT::driveAccelTimeNB(double radius, double a, double t) {
 	a = DEG2RAD(a);
-	this->accelJointTimeNB(rsLinkbot::JOINT1,  RAD2DEG(a/radius), t);
-	this->accelJointTimeNB(rsLinkbot::JOINT3, -RAD2DEG(a/radius), t);
+	this->accelJointTimeNB(JOINT1,  RAD2DEG(a/radius), t);
+	this->accelJointTimeNB(JOINT3, -RAD2DEG(a/radius), t);
 
 	// success
 	return 0;
@@ -262,8 +262,8 @@ int LinkbotT::driveAccelTimeNB(double radius, double a, double t) {
 
 int LinkbotT::driveAccelToMaxSpeedNB(double radius, double a) {
 	a = DEG2RAD(a);
-	this->accelJointTimeNB(rsLinkbot::JOINT1,  RAD2DEG(a/radius), 0);
-	this->accelJointTimeNB(rsLinkbot::JOINT3, -RAD2DEG(a/radius), 0);
+	this->accelJointTimeNB(JOINT1,  RAD2DEG(a/radius), 0);
+	this->accelJointTimeNB(JOINT3, -RAD2DEG(a/radius), 0);
 
 	// success
 	return 0;
@@ -271,8 +271,8 @@ int LinkbotT::driveAccelToMaxSpeedNB(double radius, double a) {
 
 int LinkbotT::driveAccelToVelocityNB(double radius, double a, double v) {
 	a = DEG2RAD(a);
-	this->accelJointTimeNB(rsLinkbot::JOINT1,  RAD2DEG(a/radius), v/a);
-	this->accelJointTimeNB(rsLinkbot::JOINT3, -RAD2DEG(a/radius), v/a);
+	this->accelJointTimeNB(JOINT1,  RAD2DEG(a/radius), v/a);
+	this->accelJointTimeNB(JOINT3, -RAD2DEG(a/radius), v/a);
 
 	// success
 	return 0;
@@ -280,19 +280,19 @@ int LinkbotT::driveAccelToVelocityNB(double radius, double a, double v) {
 
 int LinkbotT::driveForeverNB(void) {
 	// negate speed to act as a car
-	_motor[rsLinkbot::JOINT3].omega = -_motor[rsLinkbot::JOINT3].omega;
+	_motor[JOINT3].omega = -_motor[JOINT3].omega;
 
 	// set joint movements
-	this->moveJointForeverNB(rsLinkbot::JOINT1);
-	this->moveJointForeverNB(rsLinkbot::JOINT3);
+	this->moveJointForeverNB(JOINT1);
+	this->moveJointForeverNB(JOINT3);
 
 	// success
 	return 0;
 }
 
 int LinkbotT::driveForwardNB(double angle) {
-	this->moveJointNB(rsLinkbot::JOINT1, angle);
-	this->moveJointNB(rsLinkbot::JOINT3, -angle);
+	this->moveJointNB(JOINT1, angle);
+	this->moveJointNB(JOINT3, -angle);
 
 	// success
 	return 0;
@@ -381,10 +381,10 @@ int LinkbotT::drivexyToSmooth(double x1, double y1, double x2, double y2, double
 	double s2 = theta*(rho - trackwidth/2);
 
 	// move joints the proper amount
-	this->setJointSpeed(rsLinkbot::JOINT1, RAD2DEG(s1/theta/rho/radius*_speed));
-	this->setJointSpeed(rsLinkbot::JOINT3, RAD2DEG(s2/theta/rho/radius*_speed));
-	this->moveJointNB(rsLinkbot::JOINT1, RAD2DEG(s1/radius));
-	this->moveJointNB(rsLinkbot::JOINT3, -RAD2DEG(s2/radius));
+	this->setJointSpeed(JOINT1, RAD2DEG(s1/theta/rho/radius*_speed));
+	this->setJointSpeed(JOINT3, RAD2DEG(s2/theta/rho/radius*_speed));
+	this->moveJointNB(JOINT1, RAD2DEG(s1/radius));
+	this->moveJointNB(JOINT3, -RAD2DEG(s2/radius));
 	this->delay(theta*rho/_speed*1000);
 
 	// success
@@ -392,36 +392,36 @@ int LinkbotT::drivexyToSmooth(double x1, double y1, double x2, double y2, double
 }
 
 int LinkbotT::getJointAngles(double &angle1, double &angle2, double &angle3, int numReadings) {
-	this->getJointAngle(rsLinkbot::JOINT1, angle1, numReadings);
-	this->getJointAngle(rsLinkbot::JOINT2, angle2, numReadings);
-	this->getJointAngle(rsLinkbot::JOINT3, angle3, numReadings);
+	this->getJointAngle(JOINT1, angle1, numReadings);
+	this->getJointAngle(JOINT2, angle2, numReadings);
+	this->getJointAngle(JOINT3, angle3, numReadings);
 
 	// success
 	return 0;
 }
 
 int LinkbotT::getJointAnglesInstant(double &angle1, double &angle2, double &angle3) {
-	this->getJointAngleInstant(rsLinkbot::JOINT1, angle1);
-	this->getJointAngleInstant(rsLinkbot::JOINT2, angle2);
-	this->getJointAngleInstant(rsLinkbot::JOINT3, angle3);
+	this->getJointAngleInstant(JOINT1, angle1);
+	this->getJointAngleInstant(JOINT2, angle2);
+	this->getJointAngleInstant(JOINT3, angle3);
 
 	// success
 	return 0;
 }
 
 int LinkbotT::getJointSpeeds(double &speed1, double &speed2, double &speed3) {
-	speed1 = RAD2DEG(_motor[rsLinkbot::JOINT1].omega);
-	speed2 = RAD2DEG(_motor[rsLinkbot::JOINT2].omega);
-	speed3 = RAD2DEG(_motor[rsLinkbot::JOINT3].omega);
+	speed1 = RAD2DEG(_motor[JOINT1].omega);
+	speed2 = RAD2DEG(_motor[JOINT2].omega);
+	speed3 = RAD2DEG(_motor[JOINT3].omega);
 
 	// success
 	return 0;
 }
 
 int LinkbotT::getJointSpeedRatios(double &ratio1, double &ratio2, double &ratio3) {
-	ratio1 = _motor[rsLinkbot::JOINT1].omega/_motor[rsLinkbot::JOINT1].omega_max;
-	ratio2 = _motor[rsLinkbot::JOINT2].omega/_motor[rsLinkbot::JOINT2].omega_max;
-	ratio3 = _motor[rsLinkbot::JOINT3].omega/_motor[rsLinkbot::JOINT3].omega_max;
+	ratio1 = _motor[JOINT1].omega/_motor[JOINT1].omega_max;
+	ratio2 = _motor[JOINT2].omega/_motor[JOINT2].omega_max;
+	ratio3 = _motor[JOINT3].omega/_motor[JOINT3].omega_max;
 
 	// success
 	return 0;
@@ -438,9 +438,9 @@ int LinkbotT::move(double angle1, double angle2, double angle3) {
 int LinkbotT::moveNB(double angle1, double angle2, double angle3) {
 	// store angles
 	double *angles = new double[_dof];
-	angles[rsLinkbot::JOINT1] = angle1;
-	angles[rsLinkbot::JOINT2] = angle2;
-	angles[rsLinkbot::JOINT3] = angle3;
+	angles[JOINT1] = angle1;
+	angles[JOINT2] = angle2;
+	angles[JOINT3] = angle3;
 
 	// call base class recording function
 	int retval = Robot::moveNB(angles);
@@ -463,9 +463,9 @@ int LinkbotT::moveTo(double angle1, double angle2, double angle3) {
 int LinkbotT::moveToNB(double angle1, double angle2, double angle3) {
 	// store angles
 	double *angles = new double[_dof];
-	angles[rsLinkbot::JOINT1] = angle1;
-	angles[rsLinkbot::JOINT2] = angle2;
-	angles[rsLinkbot::JOINT3] = angle3;
+	angles[JOINT1] = angle1;
+	angles[JOINT2] = angle2;
+	angles[JOINT3] = angle3;
 
 	// call base class recording function
 	int retval = Robot::moveToNB(angles);
@@ -502,7 +502,7 @@ int LinkbotT::openGripper(double angle) {
 
 int LinkbotT::openGripperNB(double angle) {
 	if (_form == rs::LINKBOTL)
-		this->moveJointToNB(rsLinkbot::JOINT1, -angle);
+		this->moveJointToNB(JOINT1, -angle);
 	else
 		this->moveToNB(-angle/2, 0, -angle/2);
 
@@ -518,9 +518,9 @@ int LinkbotT::recordAngles(double *time, double *angle1, double *angle2, double 
 
 	// store angles
 	double **angles = new double * [_dof];
-	angles[rsLinkbot::JOINT1] = angle1;
-	angles[rsLinkbot::JOINT2] = angle2;
-	angles[rsLinkbot::JOINT3] = angle3;
+	angles[JOINT1] = angle1;
+	angles[JOINT2] = angle2;
+	angles[JOINT3] = angle3;
 
 	// call base class recording function
 	return Robot::recordAngles(time, angles, num, seconds, shiftData);
@@ -534,9 +534,9 @@ int LinkbotT::recordAnglesBegin(robotRecordData_t &time, robotRecordData_t &angl
 
 	// store angles
 	double **angles = new double * [_dof];
-	angles[rsLinkbot::JOINT1] = angle1;
-	angles[rsLinkbot::JOINT2] = angle2;
-	angles[rsLinkbot::JOINT3] = angle3;
+	angles[JOINT1] = angle1;
+	angles[JOINT2] = angle2;
+	angles[JOINT3] = angle3;
 
 	// call base class recording function
 	return Robot::recordAnglesBegin(time, angles, seconds, shiftData);
@@ -550,27 +550,27 @@ int LinkbotT::recordDistancesBegin(robotRecordData_t &time, robotRecordData_t &d
 
 	// store angles
 	double **angles = new double * [_dof];
-	angles[rsLinkbot::JOINT1] = distance1;
-	angles[rsLinkbot::JOINT2] = distance2;
-	angles[rsLinkbot::JOINT3] = distance3;
+	angles[JOINT1] = distance1;
+	angles[JOINT2] = distance2;
+	angles[JOINT3] = distance3;
 
 	// call base class recording function
 	return Robot::recordAnglesBegin(time, angles, seconds, shiftData);
 }
 
 int LinkbotT::setJointSpeeds(double speed1, double speed2, double speed3) {
-	this->setJointSpeed(rsLinkbot::JOINT1, speed1);
-	this->setJointSpeed(rsLinkbot::JOINT2, speed2);
-	this->setJointSpeed(rsLinkbot::JOINT3, speed3);
+	this->setJointSpeed(JOINT1, speed1);
+	this->setJointSpeed(JOINT2, speed2);
+	this->setJointSpeed(JOINT3, speed3);
 
 	// success
 	return 0;
 }
 
 int LinkbotT::setJointSpeedRatios(double ratio1, double ratio2, double ratio3) {
-	this->setJointSpeedRatio(rsLinkbot::JOINT1, ratio1);
-	this->setJointSpeedRatio(rsLinkbot::JOINT2, ratio2);
-	this->setJointSpeedRatio(rsLinkbot::JOINT3, ratio3);
+	this->setJointSpeedRatio(JOINT1, ratio1);
+	this->setJointSpeedRatio(JOINT2, ratio2);
+	this->setJointSpeedRatio(JOINT3, ratio3);
 
 	// success
 	return 0;
@@ -643,42 +643,42 @@ int LinkbotT::addConnector(int type, int face, double size, int side, int conn) 
 
 	// build connector
 	switch (type) {
-		case rsLinkbot::BIGWHEEL:
+		case BIGWHEEL:
 			this->build_wheel(_conn.back(), _bigwheel_radius);
 			break;
-		case rsLinkbot::BRIDGE:
+		case BRIDGE:
 			this->build_bridge(_conn.back());
 			break;
-		case rsLinkbot::CASTER:
+		case CASTER:
 			this->build_caster(_conn.back(), static_cast<int>(size));
 			break;
-		case rsLinkbot::CUBE:
+		case CUBE:
 			this->build_cube(_conn.back());
 			break;
-		case rsLinkbot::FACEPLATE:
+		case FACEPLATE:
 			this->build_faceplate(_conn.back());
 			break;
-		case rsLinkbot::GRIPPER:
+		case GRIPPER:
 			this->build_gripper(_conn.back(), face);
 			break;
-		case rsLinkbot::OMNIPLATE:
+		case OMNIPLATE:
 			this->build_omnidrive(_conn.back());
 			break;
-		case rsLinkbot::SIMPLE:
+		case SIMPLE:
 			this->build_simple(_conn.back());
 			break;
-		case rsLinkbot::SMALLWHEEL:
+		case SMALLWHEEL:
 			this->build_wheel(_conn.back(), _smallwheel_radius);
 			break;
-		case rsLinkbot::TINYWHEEL:
+		case TINYWHEEL:
 			this->build_wheel(_conn.back(), _tinywheel_radius);
 			break;
-		case rsLinkbot::WHEEL:
+		case WHEEL:
 			this->build_wheel(_conn.back(), size);
 			break;
 	}
 
-	if (type == rsLinkbot::GRIPPER) {
+	if (type == GRIPPER) {
 		_conn.push_back(new Connector());
 		_conn.back()->d_side = -1;
 		_conn.back()->d_type = -1;
@@ -806,59 +806,59 @@ int LinkbotT::buildIndividual(const double *p, const double *q, const double *a)
 	double o[3];
 
 	// joint for body to face 1
-	joint[rsLinkbot::JOINT1] = dJointCreateHinge(_world, 0);
-	dJointAttach(joint[rsLinkbot::JOINT1], _body[BODY], _body[FACE1]);
+	joint[JOINT1] = dJointCreateHinge(_world, 0);
+	dJointAttach(joint[JOINT1], _body[BODY], _body[FACE1]);
 	this->multiplyQbyV(q, -_body_width/2, 0, 0, o);
-	dJointSetHingeAnchor(joint[rsLinkbot::JOINT1], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+	dJointSetHingeAnchor(joint[JOINT1], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 	this->multiplyQbyV(q, 1, 0, 0, o);
-	dJointSetHingeAxis(joint[rsLinkbot::JOINT1], o[0], o[1], o[2]);
+	dJointSetHingeAxis(joint[JOINT1], o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[FACE1], o[0], o[1], o[2]);
 
 	// joint for body to face 2
-	if (_disabled == rsLinkbot::JOINT2) {
-		joint[rsLinkbot::JOINT2] = dJointCreateFixed(_world, 0);
-		dJointAttach(joint[rsLinkbot::JOINT2], _body[BODY], _body[FACE2]);
-		dJointSetFixed(joint[rsLinkbot::JOINT2]);
+	if (_disabled == JOINT2) {
+		joint[JOINT2] = dJointCreateFixed(_world, 0);
+		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
+		dJointSetFixed(joint[JOINT2]);
 	}
 	else {
-		joint[rsLinkbot::JOINT2] = dJointCreateHinge(_world, 0);
-		dJointAttach(joint[rsLinkbot::JOINT2], _body[BODY], _body[FACE2]);
+		joint[JOINT2] = dJointCreateHinge(_world, 0);
+		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
 		this->multiplyQbyV(q, 0, -_body_length, 0, o);
-		dJointSetHingeAnchor(joint[rsLinkbot::JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		this->multiplyQbyV(q, 0, 1, 0, o);
-		dJointSetHingeAxis(joint[rsLinkbot::JOINT2], o[0], o[1], o[2]);
+		dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE2], o[0], o[1], o[2]);
 	}
 
 	// joint for body to face 3
-	if (_disabled == rsLinkbot::JOINT3) {
-		joint[rsLinkbot::JOINT3] = dJointCreateFixed(_world, 0);
-		dJointAttach(joint[rsLinkbot::JOINT3], _body[BODY], _body[FACE3]);
-		dJointSetFixed(joint[rsLinkbot::JOINT3]);
+	if (_disabled == JOINT3) {
+		joint[JOINT3] = dJointCreateFixed(_world, 0);
+		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
+		dJointSetFixed(joint[JOINT3]);
 	}
 	else {
-		joint[rsLinkbot::JOINT3] = dJointCreateHinge(_world, 0);
-		dJointAttach(joint[rsLinkbot::JOINT3], _body[BODY], _body[FACE3]);
+		joint[JOINT3] = dJointCreateHinge(_world, 0);
+		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
 		this->multiplyQbyV(q, _body_width/2, 0, 0, o);
-		dJointSetHingeAnchor(joint[rsLinkbot::JOINT3], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		dJointSetHingeAnchor(joint[JOINT3], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		this->multiplyQbyV(q, -1, 0, 0, o);
-		dJointSetHingeAxis(joint[rsLinkbot::JOINT3], o[0], o[1], o[2]);
+		dJointSetHingeAxis(joint[JOINT3], o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE3], o[0], o[1], o[2]);
 	}
 
 	// TODO: build rotated joints
-	/*if (_motor[rsLinkbot::JOINT1].theta != 0) {
-		dRFromAxisAndAngle(R_f, -1, 0, 0, _motor[rsLinkbot::JOINT1].theta);
+	/*if (_motor[JOINT1].theta != 0) {
+		dRFromAxisAndAngle(R_f, -1, 0, 0, _motor[JOINT1].theta);
 		this->getRobotBodyOffset(FACE1, p, q, p1, q1);
 		this->build_face(FACE1, geom[FACE1], p1, q1);
 	}
-	if (_motor[rsLinkbot::JOINT2].theta != 0) {
-		dRFromAxisAndAngle(R_f, 0, -1, 0, _motor[rsLinkbot::JOINT2].theta);
+	if (_motor[JOINT2].theta != 0) {
+		dRFromAxisAndAngle(R_f, 0, -1, 0, _motor[JOINT2].theta);
 		this->getRobotBodyOffset(FACE2, p, q, p1, q1);
 		this->build_face(FACE2, geom[FACE2], p1, q1);
 	}
-	if (_motor[rsLinkbot::JOINT3].theta != 0) {
-		dRFromAxisAndAngle(R_f, 1, 0, 0, _motor[rsLinkbot::JOINT3].theta);
+	if (_motor[JOINT3].theta != 0) {
+		dRFromAxisAndAngle(R_f, 1, 0, 0, _motor[JOINT3].theta);
 		this->getRobotBodyOffset(FACE3, p, q, p1, q1);
 		this->build_face(FACE3, geom[FACE3], p1, q1);
 	}*/
@@ -876,11 +876,11 @@ int LinkbotT::buildIndividual(const double *p, const double *q, const double *a)
 		dJointDisable(_motor[i].id);
 	}
 	this->multiplyQbyV(q, 1, 0, 0, o);
-	dJointSetAMotorAxis(_motor[rsLinkbot::JOINT1].id, 0, 1, o[0], o[1], o[2]);
+	dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, o[0], o[1], o[2]);
 	this->multiplyQbyV(q, 0, 1, 0, o);
-	dJointSetAMotorAxis(_motor[rsLinkbot::JOINT2].id, 0, 1, o[0], o[1], o[2]);
+	dJointSetAMotorAxis(_motor[JOINT2].id, 0, 1, o[0], o[1], o[2]);
 	this->multiplyQbyV(q, -1, 0, 0, o);
-	dJointSetAMotorAxis(_motor[rsLinkbot::JOINT3].id, 0, 1, o[0], o[1], o[2]);
+	dJointSetAMotorAxis(_motor[JOINT3].id, 0, 1, o[0], o[1], o[2]);
 
 	// set damping on all bodies to 0.1
 	for (int i = 0; i < NUM_PARTS; i++) dBodySetDamping(_body[i], 0.1, 0.1);
@@ -958,7 +958,7 @@ void LinkbotT::getCoM(double &x, double &y, double &z) {
 }
 
 void LinkbotT::init_params(void) {
-	_dof = rsLinkbot::NUM_JOINTS;
+	_dof = NUM_JOINTS;
 
 	// create arrays for linkbots
 	_motor.resize(_dof);
@@ -1214,7 +1214,7 @@ void LinkbotT::simPostCollisionThread(void) {
 	}
 
 	// all joints have completed their motions
-	if (_motor[rsLinkbot::JOINT1].success && _motor[rsLinkbot::JOINT2].success && _motor[rsLinkbot::JOINT3].success)
+	if (_motor[JOINT1].success && _motor[JOINT2].success && _motor[JOINT3].success)
 		COND_SIGNAL(&_success_cond);
 
 	// unlock angle and goal

@@ -602,6 +602,37 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
+		else if ( !strcmp(node->Value(), "mindstorms") ) {
+			_robot.push_back(new Mindstorms(_trace));
+			node->QueryIntAttribute("id", &i);
+			_robot.back()->setID(i);
+			if ( (ele = node->FirstChildElement("joint")) ) {
+				ele->QueryDoubleAttribute("w1", &a);
+				ele->QueryDoubleAttribute("w2", &b);
+				_robot.back()->setJoints(a, b);
+			}
+			if ( (ele = node->FirstChildElement("led")) ) {
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_robot.back()->setLED(a, b, c, d);
+			}
+			if ( (ele = node->FirstChildElement("position")) ) {
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_robot.back()->setPosition(a, b, c);
+			}
+			if ( (ele = node->FirstChildElement("rotation")) ) {
+				ele->QueryDoubleAttribute("psi", &a);
+				ele->QueryDoubleAttribute("theta", &b);
+				ele->QueryDoubleAttribute("phi", &c);
+				_robot.back()->setRotation(a, b, c);
+			}
+			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
+			_robot.back()->setGround(i);
+		}
 		/*else if ( !strcmp(node->Value(), "mobot") ) {
 			_robot.push_back(new Mobot(_trace));
 			node->QueryIntAttribute("id", &i);
@@ -624,30 +655,6 @@ void Store::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("a3", &c);
 				ele->QueryDoubleAttribute("a4", &d);
 				_robot.back()->setJoints(a, b, c, d);
-			}
-			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
-			_robot.back()->setGround(i);
-		}*/
-		/*else if ( !strcmp(node->Value(), "nxt") ) {
-			_robot.push_back(new NXT(_trace));
-			node->QueryIntAttribute("id", &i);
-			_robot.back()->setID(i);
-			if ( (ele = node->FirstChildElement("position")) ) {
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
-				_robot.back()->setPosition(a, b, c);
-			}
-			if ( (ele = node->FirstChildElement("rotation")) ) {
-				ele->QueryDoubleAttribute("psi", &a);
-				ele->QueryDoubleAttribute("theta", &b);
-				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(a, b, c);
-			}
-			if ( (ele = node->FirstChildElement("joint")) ) {
-				ele->QueryDoubleAttribute("w1", &a);
-				ele->QueryDoubleAttribute("w2", &b);
-				_robot.back()->setJoints(a, b);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);

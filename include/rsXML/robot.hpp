@@ -8,6 +8,7 @@
 #include <rs/enum.hpp>
 #include <rs/macros.hpp>
 #include <rsRobots/linkbot.hpp>
+#include <rsRobots/Mindstorms.hpp>
 #include <rsXML/conn.hpp>
 
 namespace rsXML {
@@ -69,6 +70,10 @@ namespace rsXML {
 	class LinkbotL : public rsRobots::LinkbotL, public LinkbotT {
 		public:
 			LinkbotL(bool trace) : rsRobots::Robot(rs::LINKBOTL), rsXML::LinkbotT(trace), rsXML::Robot(trace) {};
+	};
+	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
+		public:
+			Mindstorms(bool trace) :  rsRobots::Robot(rs::MINDSTORMS), rsXML::Robot(trace) {};
 	};
 
 } // namespace rsXML

@@ -1,12 +1,8 @@
 #ifndef RSCALLBACK_LINKBOTCALLBACK_HPP_
 #define RSCALLBACK_LINKBOTCALLBACK_HPP_
 
-#include <osg/Geode>
 #include <osg/Node>
 #include <osg/NodeVisitor>
-#include <osg/PositionAttitudeTransform>
-#include <osg/ShapeDrawable>
-#include <osgText/Text>
 
 #include <rsSim/linkbot.hpp>
 

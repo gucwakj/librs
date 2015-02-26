@@ -41,11 +41,9 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsScene debug rsScened)
 # add source files to library
 set (SRCS ${SRCS}
 	callback.cpp
-	#cubusCallback.cpp
 	groundCallback.cpp
 	linkbotCallback.cpp
-	#mobotCallback.cpp
-	#nxtCallback.cpp
+	mindstormsCallback.cpp
 )
 
 # add the library

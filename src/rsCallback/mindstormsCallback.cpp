@@ -2,19 +2,18 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
 
-#include <rsCallback/linkbotCallback.hpp>
+#include <rsCallback/mindstormsCallback.hpp>
 
 using namespace rsCallback;
 
-linkbotCallback::linkbotCallback(rsSim::LinkbotT *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
+mindstormsCallback::mindstormsCallback(rsSim::Mindstorms *robot, rsSim::BodyList &bodies, bool units) {
 	_bodies = bodies;
-	_conn = conn;
 	_count = 1;
 	_robot = robot;
 	_units = units;
 }
 
-void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
+void mindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		// child 0: hud
@@ -45,7 +44,7 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		// child 2->2+NUM_PARTS: bodies
 		const double *pos, *quat;
 		osg::PositionAttitudeTransform *pat;
-		for (int i = 0; i < rsLinkbot::NUM_PARTS; i++) {
+		for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
@@ -56,14 +55,6 @@ void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		//osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(0)->asGeode()->getDrawable(2));
 		//double *rgb = _robot->getRGB();
 		//led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
-		// child 7->end: connectors
-		for (int i = 0; i < _conn.size(); i++) {
-			pos = dBodyGetPosition(_conn[i]->body);
-			quat = dBodyGetQuaternion(_conn[i]->body);
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::NUM_PARTS + i));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		}
 	}
 	traverse(node, nv);
 }

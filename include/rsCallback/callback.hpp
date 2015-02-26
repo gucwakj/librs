@@ -1,13 +1,8 @@
 #ifndef RSCALLBACK_CALLBACK_HPP_
 #define RSCALLBACK_CALLBACK_HPP_
 
-#include <osg/Node>
-#include <osg/NodeVisitor>
-#include <osgText/Text>
-
 #include <rsScene/scene.hpp>
 #include <rsSim/sim.hpp>
-#include <rsSim/linkbot.hpp>
 
 namespace rsCallback {
 

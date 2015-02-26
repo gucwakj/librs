@@ -1,6 +1,10 @@
+#include <rsSim/linkbot.hpp>
+#include <rsSim/Mindstorms.hpp>
+
 #include <rsCallback/callback.hpp>
 #include <rsCallback/groundCallback.hpp>
 #include <rsCallback/linkbotCallback.hpp>
+#include <rsCallback/mindstormsCallback.hpp>
 
 using namespace rsCallback;
 
@@ -18,6 +22,9 @@ void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::B
 		case rs::LINKBOTL:
 		case rs::LINKBOTT:
 			scene->setUpdateCallback(new linkbotCallback(dynamic_cast<rsSim::LinkbotT *>(sim), bodies, conn, _units));
+			break;
+		case rs::MINDSTORMS:
+			scene->setUpdateCallback(new mindstormsCallback(dynamic_cast<rsSim::Mindstorms *>(sim), bodies, _units));
 			break;
 	}
 }

@@ -254,7 +254,7 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const
 			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), group, p, q, trace, led);
 			break;
 		case rs::MINDSTORMS:
-			//this->draw(dynamic_cast<rsRobots::CNXT*>(robot), p, q, trace, rgb);
+			this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms*>(robot), group, p, q, trace, led);
 			break;
 		case rs::MOBOT:
 			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
@@ -1781,82 +1781,65 @@ void Scene::draw_robot_linkbot_conn(rsRobots::LinkbotT *robot, Robot *group, int
 
 	// success
 	return 0;
-}
+}*/
 
-int Scene::draw(rsRobots::CNXT *robot, bool trace, double *rgb) {
+void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const double *p, const double *q, bool trace, double *rgb) {
 	// initialize variables
-	osg::ref_ptr<osg::Geode> body[robot->NUM_PARTS];
-	osg::ref_ptr<osg::PositionAttitudeTransform> pat[robot->NUM_PARTS];
-	osg::ref_ptr<osg::Texture2D> tex;
-	const double *pos;
-	dQuaternion quat;
+	//osg::ref_ptr<osg::Node> body[rsMindstorms::NUM_PARTS];	// TODO: add
+	osg::ref_ptr<osg::Geode> body[rsMindstorms::NUM_PARTS];		// TODO: remove
 	osg::Box *box;
 	osg::Cylinder *cyl;
-	for (int i = 0; i < robot->NUM_PARTS; i++) {
-		body[i] = new osg::Geode;
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsMindstorms::NUM_PARTS];
+	double p1[3], q1[4];
+
+	// create transforms
+	for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
+		body[i] = new osg::Geode;		// TODO: remove
+		pat[i] = new osg::PositionAttitudeTransform;
+		group->addChild(pat[i].get());
 	}
+
+	// set tracing
+	robot->setTrace(trace);
 
 	// body
-	pos = dGeomGetOffsetPosition(robot->_geom[robot->BODY][0]);
-	dGeomGetOffsetQuaternion(robot->_geom[robot->BODY][0], quat);
-	box = new osg::Box(osg::Vec3d(pos[0], pos[1], pos[2]), robot->_body_width, robot->_body_length, robot->_body_height);
-	box->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-	body[robot->BODY]->addDrawable(new osg::ShapeDrawable(box));
-
-	// 'led'
-	cyl = new osg::Cylinder(osg::Vec3d(pos[0], pos[1], pos[2]+0.0001), 0.01, robot->_body_height);
-	cyl->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-	_robot.back()->led = new osg::ShapeDrawable(cyl);
-	_robot.back()->led->setColor(osg::Vec4(robot->_rgb[0], robot->_rgb[1], robot->_rgb[2], 1));
-	body[robot->BODY]->addDrawable(_robot.back()->led);
+	//body[rsMindstorms::BODY] = osgDB::readNodeFile(_tex_path + "mindstorms/models/body.3ds");	// TODO: add
+	box = new osg::Box(osg::Vec3d(0, 0, 0), 0.07835, 0.03935, 0.0725);		// TODO: remove
+	body[rsMindstorms::BODY]->addDrawable(new osg::ShapeDrawable(box));		// TODO: remove
+	body[rsMindstorms::BODY]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
+	pat[rsMindstorms::BODY]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat[rsMindstorms::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// wheel1
-	pos = dGeomGetOffsetPosition(robot->_geom[robot->WHEEL1][0]);
-	dGeomGetOffsetQuaternion(robot->_geom[robot->WHEEL1][0], quat);
-	cyl = new osg::Cylinder(osg::Vec3d(pos[0], pos[1], pos[2]), robot->_wheel_radius, robot->_wheel_depth);
-	cyl->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-	body[robot->WHEEL1]->addDrawable(new osg::ShapeDrawable(cyl));
+	robot->getRobotBodyOffset(rsMindstorms::WHEEL1, p, q, p1, q1);
+	//body[rsMindstorms::WHEEL1] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
+	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.04445, 0.00140);		// TODO: remove
+	body[rsMindstorms::WHEEL1]->addDrawable(new osg::ShapeDrawable(cyl));		// TODO: remove
+	body[rsMindstorms::WHEEL1]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
+	pat[rsMindstorms::WHEEL1]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat[rsMindstorms::WHEEL1]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// wheel2
-	pos = dGeomGetOffsetPosition(robot->_geom[robot->WHEEL2][0]);
-	dGeomGetOffsetQuaternion(robot->_geom[robot->WHEEL2][0], quat);
-	cyl = new osg::Cylinder(osg::Vec3d(pos[0], pos[1], pos[2]), robot->_wheel_radius, robot->_wheel_depth);
-	cyl->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-	body[robot->WHEEL2]->addDrawable(new osg::ShapeDrawable(cyl));
+	robot->getRobotBodyOffset(rsMindstorms::WHEEL2, p, q, p1, q1);
+	//body[rsMindstorms::WHEEL2] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
+	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.04445, 0.00140);		// TODO: remove
+	body[rsMindstorms::WHEEL2]->addDrawable(new osg::ShapeDrawable(cyl));		// TODO: remove
+	body[rsMindstorms::WHEEL2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
+	pat[rsMindstorms::WHEEL2]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat[rsMindstorms::WHEEL2]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
-	// apply texture to robot
-	tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/textures/body.png"));
-	tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-	tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
-	tex->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
-
-	for (int i = 0; i < robot->NUM_PARTS; i++) {
+	// set rendering
+	for (int i = 0; i < rsLinkbot::NUM_PARTS; i++) {
 		// set rendering properties
-		body[i]->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
 		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-		// position in robot
-		pat[i] = new osg::PositionAttitudeTransform;
-		pat[i]->addChild(body[i].get());
-		_robot.back()->robot->addChild(pat[i].get());
+		body[i]->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		body[i]->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+		body[i]->setCullingActive(false);
+		// add bodies to transforms
+		pat[i]->addChild(body[i]);
 	}
-
-	// set update callback for robot
-	_robot.back()->robot->setUpdateCallback(new nxtNodeCallback(robot, _robot.back()->led));
-
-	// set tracking
-	robot->_trace = trace;
-
-	// send back rgb
-	rgb[0] = robot->_rgb[0];
-	rgb[1] = robot->_rgb[1];
-	rgb[2] = robot->_rgb[2];
-	rgb[3] = 1;
-
-	// success
-	return 0;
-}*/
+}
 
 void Scene::draw_scene_outdoors(double w, double h, bool pause) {
 	// load terrain node

@@ -23,6 +23,7 @@
 #include <rs/enum.hpp>
 #include <rsRobots/robot.hpp>
 #include <rsRobots/linkbot.hpp>
+#include <rsRobots/Mindstorms.hpp>
 #include <rsScene/keyboardHandler.hpp>
 
 extern osg::Node::NodeMask NOT_VISIBLE_MASK;
@@ -87,8 +88,8 @@ namespace rsScene {
 			//int draw_cubus(rsRobots::Cubus*, osg::Group*, const double*, const double*, bool, double*);
 			void draw_robot_linkbot(rsRobots::LinkbotT*, Robot*, const double*, const double*, bool, double*);
 			void draw_robot_linkbot_conn(rsRobots::LinkbotT*, Robot*, int, int, double, int, int);
+			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const double*, const double*, bool, double*);
 			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);
-			//int draw_nxt(rsRobots::NXT*, osg::Group*, const double*, const double*, bool, double*);
 			void draw_scene_outdoors(double, double, bool);
 			void draw_scene_board(double, double, bool);
 			static void* graphics_thread(void*);

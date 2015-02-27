@@ -1,10 +1,10 @@
 #include <cmath>
 #include <iostream>
-#include <rsXML/Store>
+#include <rsXML/Reader>
 
 using namespace rsXML;
 
-Store::Store(char *name) {
+Reader::Reader(char *name) {
 	// set default values
 	_pause = true;
 	_preconfig = false;
@@ -28,30 +28,36 @@ Store::Store(char *name) {
 	this->read_sim(&doc);
 }
 
-Store::~Store(void) {
-std::cerr << "deleting Store" << std::endl;
+Reader::~Reader(void) {
+std::cerr << "deleting Reader" << std::endl;
 	for (int i = 0; i < _robot.size(); i++) {
 		delete _robot[i];
+	}
+	for (int i = 0; i < _ground.size(); i++) {
+		delete _ground[i];
+	}
+	for (int i = 0; i < _marker.size(); i++) {
+		delete _marker[i];
 	}
 }
 
 /**********************************************************
 	public functions
  **********************************************************/
-int Store::addNewRobot(Robot *bot) {
+int Reader::addNewRobot(Robot *bot) {
 	_robot.push_back(bot);
 	return 0;
 }
 
-Ground* Store::getGround(int id) {
+Ground* Reader::getGround(int id) {
 	return _ground[id];
 }
 
-Marker* Store::getMarker(int id) {
+Marker* Reader::getMarker(int id) {
 	return _marker[id];
 }
 
-Robot* Store::getNextRobot(int form) {
+Robot* Reader::getNextRobot(int form) {
 	// find next robot in xml list
 	int i = 0;
 	for (i = 0; i < _robot.size(); i++) {
@@ -95,50 +101,50 @@ Robot* Store::getNextRobot(int form) {
 	return _robot[i];
 }
 
-std::string Store::getDoc(void) {
+std::string Reader::getDoc(void) {
 	return _path;
 }
 
-std::vector<double> Store::getFriction(void) {
+std::vector<double> Reader::getFriction(void) {
 	return _friction;
 }
 
-std::vector<double> Store::getGrid(void) {
+std::vector<double> Reader::getGrid(void) {
 	return _grid;
 }
 
-std::vector<double> Store::getRestitution(void) {
+std::vector<double> Reader::getRestitution(void) {
 	return _restitution;
 }
 
-int Store::getNumGrounds(void) {
+int Reader::getNumGrounds(void) {
 	return _ground.size();
 }
 
-int Store::getNumMarkers(void) {
+int Reader::getNumMarkers(void) {
 	return _marker.size();
 }
 
-int Store::getNumRobots(void) {
+int Reader::getNumRobots(void) {
 	return _robot.size();
 }
 
-bool Store::getPause(void) {
+bool Reader::getPause(void) {
 	return _pause;
 }
 
-bool Store::getRealTime(void) {
+bool Reader::getRealTime(void) {
 	return _rt;
 }
 
-bool Store::getUnits(void) {
+bool Reader::getUnits(void) {
 	return _units;
 }
 
 /**********************************************************
 	private functions
  **********************************************************/
-void Store::load_file(char *name, tinyxml2::XMLDocument *doc) {
+void Reader::load_file(char *name, tinyxml2::XMLDocument *doc) {
 #ifdef _WIN32
 	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path))) {
 		_path.append("\\robosimrc");
@@ -166,7 +172,7 @@ void Store::load_file(char *name, tinyxml2::XMLDocument *doc) {
 	}
 }
 
-void Store::read_config(tinyxml2::XMLDocument *doc) {
+void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 
@@ -193,7 +199,7 @@ void Store::read_config(tinyxml2::XMLDocument *doc) {
 	}
 }
 
-void Store::read_graphics(tinyxml2::XMLDocument *doc) {
+void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
@@ -305,7 +311,7 @@ void Store::read_graphics(tinyxml2::XMLDocument *doc) {
 	}
 }
 
-void Store::read_ground(tinyxml2::XMLDocument *doc) {
+void Reader::read_ground(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
@@ -433,7 +439,7 @@ void Store::read_ground(tinyxml2::XMLDocument *doc) {
 	}
 }
 
-void Store::read_sim(tinyxml2::XMLDocument *doc) {
+void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;

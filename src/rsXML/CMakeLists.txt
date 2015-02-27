@@ -25,7 +25,7 @@ set (SRCS ${SRCS}
 	ground.cpp
 	marker.cpp
 	robot.cpp
-	store.cpp
+	reader.cpp
 	writer.cpp
 )
 

@@ -1,5 +1,5 @@
-#ifndef RSXML_STORE_HPP_
-#define RSXML_STORE_HPP_
+#ifndef RSXML_READER_HPP_
+#define RSXML_READER_HPP_
 
 #include <string>
 #include <vector>
@@ -13,11 +13,11 @@
 namespace rsXML {
 
 	// class
-	class Store {
+	class Reader {
 		// public functions
 		public:
-			Store(char*);
-			virtual ~Store(void);
+			Reader(char*);
+			virtual ~Reader(void);
 
 			int addNewRobot(Robot*);
 			Ground* getGround(int);
@@ -60,5 +60,5 @@ namespace rsXML {
 
 } // namespace rsXML
 
-#endif // RSXML_STORE_HPP_
+#endif // RSXML_READER_HPP_
 

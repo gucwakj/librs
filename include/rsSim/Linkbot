@@ -124,44 +124,5 @@ namespace rsSim {
 
 } // namespace rsSim
 
-/*
-class DLLIMPORT LinkbotTGroup : public Group<rsSim::LinkbotT> {
-	// public api
-	public:
-		LinkbotTGroup(void) : Group<rsSim::LinkbotT>() {};
-		virtual ~LinkbotTGroup(void) {};
-
-		inline int accelJointAngleNB(rsLinkbot::Joint, double, double);
-		inline int accelJointCycloidalNB(rsLinkbot::Joint, double, double);
-		inline int accelJointHarmonicNB(rsLinkbot::Joint, double, double);
-		inline int accelJointSmoothNB(rsLinkbot::Joint, double, double, double, double);
-		inline int accelJointTimeNB(rsLinkbot::Joint, double, double);
-		inline int accelJointToMaxSpeedNB(rsLinkbot::Joint, double);
-		inline int accelJointToVelocityNB(rsLinkbot::Joint, double, double);
-		inline int closeGripper(void);
-		inline int closeGripperNB(void);
-		inline int driveAccelCycloidalNB(double, double, double);
-		inline int driveAccelDistanceNB(double, double, double);
-		inline int driveAccelHarmonicNB(double, double, double);
-		inline int driveAccelSmoothNB(double, double, double, double, double);
-		inline int driveAccelTimeNB(double, double, double);
-		inline int driveAccelToMaxSpeedNB(double, double);
-		inline int driveAccelToVelocityNB(double, double, double);
-		inline int move(double, double, double);
-		inline int moveNB(double, double, double);
-		inline int moveTo(double, double, double);
-		inline int moveToNB(double, double, double);
-		inline int moveToByTrackPos(double, double, double);
-		inline int moveToByTrackPosNB(double, double, double);
-		inline int openGripper(double);
-		inline int openGripperNB(double);
-		inline int setJointSpeeds(double, double, double);
-		inline int setJointSpeedRatios(double, double, double);
-};
-class DLLIMPORT CLinkbotIGroup : public LinkbotTGroup {};
-class DLLIMPORT CLinkbotLGroup : public LinkbotTGroup {};
-#include "linkbotgroup.tpp"
-*/
-
 #endif // RSSIM_LINKBOT_HPP_
 

@@ -74,22 +74,5 @@ class DLLIMPORT Cubus : public ModularRobot {
 				_face_radius;
 };
 
-class DLLIMPORT CubusGroup : public Group<Cubus> {
-	public:
-		CubusGroup(void) : Group<Cubus>() {};
-		virtual ~CubusGroup(void) {};
-
-		inline int move(double, double, double, double, double, double);
-		inline int moveNB(double, double, double, double, double, double);
-		inline int moveTo(double, double, double, double, double, double);
-		inline int moveToNB(double, double, double, double, double, double);
-		inline int setJointSpeeds(double, double, double, double, double, double);
-		inline int setJointSpeedRatios(double, double, double, double, double, double);
-};
-#include "cubusgroup.tpp"
-
-// simulation
-//extern RoboSim *g_sim;
-
 #endif // RSSIM_CUBUS_HPP_
 

@@ -1,4 +1,4 @@
-#include <rsRobots/Mindstorms.hpp>
+#include <rsRobots/Mindstorms>
 
 using namespace rsRobots;
 using namespace rsMindstorms;

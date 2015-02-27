@@ -1,10 +1,11 @@
 #ifndef RSROBOTS_MINDSTORMS_HPP_
 #define RSROBOTS_MINDSTORMS_HPP_
 
-#include <rsRobots/robot.hpp>
+#include <rsRobots/Robot>
 
 namespace rsRobots {
 
+	// class
 	class Mindstorms : virtual public Robot {
 		// public functions
 		public:

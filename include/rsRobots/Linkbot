@@ -1,10 +1,11 @@
 #ifndef RSROBOTS_LINKBOT_HPP_
 #define RSROBOTS_LINKBOT_HPP_
 
-#include <rsRobots/ModularRobot.hpp>
+#include <rsRobots/ModularRobot>
 
 namespace rsRobots {
 
+	// base class
 	class Linkbot : virtual public ModularRobot {
 		// public functions
 		public:
@@ -33,16 +34,19 @@ namespace rsRobots {
 			int _disabled;
 	};
 
+	// class
 	class LinkbotI : public Linkbot {
 		public:
 			LinkbotI(void) : Robot(rs::LINKBOTI), Linkbot(rsLinkbot::JOINT2) {};
 	};
 
+	// class
 	class LinkbotL : public Linkbot {
 		public:
 			LinkbotL(void) : Robot(rs::LINKBOTL), Linkbot(rsLinkbot::JOINT3) {};
 	};
 
+	// class
 	class LinkbotT : public Linkbot {
 		public:
 			LinkbotT(void) : Robot(rs::LINKBOTT) {};

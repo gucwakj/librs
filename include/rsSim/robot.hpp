@@ -4,7 +4,7 @@
 #include <ode/ode.h>
 
 #include <rs/macros.hpp>
-#include <rsRobots/robot.hpp>
+#include <rsRobots/Robot>
 
 namespace rsSim {
 

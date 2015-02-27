@@ -1,4 +1,4 @@
-#include <rsRobots/linkbot.hpp>
+#include <rsRobots/Linkbot>
 
 using namespace rsRobots;
 using namespace rsLinkbot;

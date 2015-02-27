@@ -1,10 +1,11 @@
 #ifndef RSROBOTS_MODULARROBOT_HPP_
 #define RSROBOTS_MODULARROBOT_HPP_
 
-#include <rsRobots/robot.hpp>
+#include <rsRobots/Robot>
 
 namespace rsRobots {
 
+	// class
 	class ModularRobot : virtual public Robot {
 		// public functions
 		public:

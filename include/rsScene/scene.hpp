@@ -21,9 +21,8 @@
 
 #include <rs/macros.hpp>
 #include <rs/enum.hpp>
-#include <rsRobots/robot.hpp>
-#include <rsRobots/linkbot.hpp>
-#include <rsRobots/Mindstorms.hpp>
+#include <rsRobots/Linkbot>
+#include <rsRobots/Mindstorms>
 #include <rsScene/keyboardHandler.hpp>
 
 extern osg::Node::NodeMask NOT_VISIBLE_MASK;

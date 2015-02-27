@@ -9,6 +9,7 @@
 
 namespace rsRobots {
 
+	// class
 	class Robot {
 		// public functions
 		public:

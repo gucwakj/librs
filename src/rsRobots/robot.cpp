@@ -1,4 +1,4 @@
-#include <rsRobots/robot.hpp>
+#include <rsRobots/Robot>
 
 using namespace rsRobots;
 

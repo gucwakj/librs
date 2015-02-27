@@ -5,8 +5,8 @@
 
 #include <rs/enum.hpp>
 #include <rs/macros.hpp>
-#include <rsRobots/linkbot.hpp>
-#include <rsRobots/Mindstorms.hpp>
+#include <rsRobots/Linkbot>
+#include <rsRobots/Mindstorms>
 #include <rsXML/Conn>
 
 namespace rsXML {

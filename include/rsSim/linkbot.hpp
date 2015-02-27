@@ -3,7 +3,7 @@
 
 #include <tuple>
 
-#include <rsRobots/linkbot.hpp>
+#include <rsRobots/Linkbot>
 #include <rsSim/modularRobot.hpp>
 
 namespace rsSim {

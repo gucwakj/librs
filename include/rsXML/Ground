@@ -1,7 +1,7 @@
 #ifndef RSXML_GROUND_HPP_
 #define RSXML_GROUND_HPP_
 
-#include <rs/enum.hpp>
+#include <rs/Enum>
 
 namespace rsXML {
 

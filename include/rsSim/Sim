@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <rs/enum.hpp>
+#include <rs/Enum>
 #include <rsSim/ModularRobot>
 #include <rsSim/Robot>
 

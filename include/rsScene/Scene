@@ -19,8 +19,8 @@
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 
-#include <rs/macros.hpp>
-#include <rs/enum.hpp>
+#include <rs/Macros>
+#include <rs/Enum>
 #include <rsRobots/Linkbot>
 #include <rsRobots/Mindstorms>
 #include <rsScene/KeyboardHandler>

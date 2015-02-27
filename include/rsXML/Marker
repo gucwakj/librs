@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <rs/enum.hpp>
+#include <rs/Enum>
 
 namespace rsXML {
 

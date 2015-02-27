@@ -3,7 +3,7 @@
 
 #include <ode/ode.h>
 
-#include <rs/macros.hpp>
+#include <rs/Macros>
 #include <rsRobots/Robot>
 
 namespace rsSim {

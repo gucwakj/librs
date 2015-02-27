@@ -26,6 +26,7 @@ set (SRCS ${SRCS}
 	marker.cpp
 	robot.cpp
 	store.cpp
+	writer.cpp
 )
 
 # add the library

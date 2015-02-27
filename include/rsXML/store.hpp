@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include <tinyxml2.h>
@@ -27,6 +28,7 @@ namespace rsXML {
 			std::vector<double> getFriction(void);
 			std::vector<double> getGrid(void);
 			std::vector<double> getRestitution(void);
+			std::string getDoc(void);
 			int getNumGrounds(void);
 			int getNumMarkers(void);
 			int getNumRobots(void);
@@ -49,6 +51,7 @@ namespace rsXML {
 			bool _trace;						// flag: trace robot positions
 			bool _rt;							// flag: real time motion
 			bool _units;						// flag: SI (true) or customary (false)
+			std::string _path;					// path of xml file
 			std::vector<double> _friction;		// coefficient of friction [body/ground, body/body]
 			std::vector<double> _grid;			// grid [tics, major, minx, maxx, miny, maxy, enabled]
 			std::vector<double> _restitution;	// coefficient of restitution [body/ground, body/body]

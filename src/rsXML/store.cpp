@@ -93,6 +93,10 @@ Robot* Store::getNextRobot(int form) {
 	return _robot[i];
 }
 
+std::string Store::getDoc(void) {
+	return _path;
+}
+
 std::vector<double> Store::getFriction(void) {
 	return _friction;
 }
@@ -133,28 +137,27 @@ bool Store::getUnits(void) {
 	private functions
  **********************************************************/
 void Store::load_file(char *name, tinyxml2::XMLDocument *doc) {
-	char path[512];
 #ifdef _WIN32
 	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path))) {
-		strcat(path, "\\robosimrc");
+		_path.append("\\robosimrc");
 	}
 #else
-	strcpy(path, getenv("HOME"));
+	_path = getenv("HOME");
 	if (name) {
 		FILE *fp = fopen(name, "r");
 		if (fp) {
-			strcpy(path, name);
+			_path = name;
 			fclose(fp);
 		}
 		else {
-			strcat(path, "/.robosimrc");
+			_path.append("/.robosimrc");
 		}
 	}
 	else {
-		strcat(path, "/.robosimrc");
+		_path.append("/.robosimrc");
 	}
 #endif
-	int output = doc->LoadFile(path);
+	int output = doc->LoadFile(_path.c_str());
 	if (output) {
 		fprintf(stderr, "Error: Could not find RoboSim config file.\nPlease run RoboSim GUI.\n");
 		exit(-1);

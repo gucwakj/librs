@@ -1,0 +1,35 @@
+#ifndef RSXML_WRITER_HPP_
+#define RSXML_WRITER_HPP_
+
+#include <string>
+#include <vector>
+
+#include <tinyxml2.h>
+
+#include <rsXML/robot.hpp>
+
+namespace rsXML {
+
+	class Writer {
+		// public functions
+		public:
+			Writer(std::string, std::string = NULL);
+			virtual ~Writer(void);
+
+			void addRobot(int, int, double*, double*, double*, double*);
+			void setGrid(bool, std::vector<double>);
+
+		// private functions
+		private:
+			void save(void);
+
+		// private data
+		private:
+			std::string _path;
+			tinyxml2::XMLDocument _doc;
+	};
+
+} // namespace rsXML
+
+#endif // RSXML_WRITER_HPP_
+

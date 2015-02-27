@@ -104,31 +104,6 @@ int Sim::addRobot(rsSim::Robot *robot, int id, const double *p, const double *r,
 	return 0;
 }
 
-int Sim::addRobot(rsSim::ModularRobot *robot, int id, const double *p, const double *r, const double *a, int ground, int trace) {
-	// lock robot data
-	MUTEX_LOCK(&_robot_mutex);
-
-	// create new robot
-	_robot.push_back(new RobotNode());
-	_robot.back()->robot = robot;
-
-	// get form of new robot
-	int form = 0;
-	robot->getFormFactor(form);
-
-	// give simulation data to robot
-	robot->addToSim(_world, _space, id, _robot.size()-1, this);
-
-	// build
-	robot->build(id, p, r, a, ground);
-
-	// unlock robot data
-	MUTEX_UNLOCK(&_robot_mutex);
-
-	// success
-	return 0;
-}
-
 int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const double *a, int face1, int face2, int type, int side, int ground, int trace) {
 	// lock robot data to insert a new one into simulation
 	MUTEX_LOCK(&_robot_mutex);

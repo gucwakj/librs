@@ -58,18 +58,22 @@ namespace rsXML {
 			int _trace;
 			ConnectorList _conn;
 	};
-	class LinkbotT : virtual public rsRobots::LinkbotT, virtual public Robot {
+	class Linkbot : virtual public rsRobots::Linkbot, virtual public Robot {
 		public:
-			LinkbotT(bool trace) :  rsRobots::Robot(rs::LINKBOTT), rsXML::Robot(trace) {};
+			Linkbot(void) :  rsRobots::Robot(rs::LINKBOTT), rsXML::Robot(1) {};
 			void postProcess(void);
 	};
-	class LinkbotI : virtual public rsRobots::LinkbotI, virtual public LinkbotT {
+	class LinkbotI : public Linkbot {
 		public:
-			LinkbotI(bool trace) : rsRobots::Robot(rs::LINKBOTI), rsXML::LinkbotT(trace), rsXML::Robot(trace) {};
+			LinkbotI(bool trace) : rsRobots::Robot(rs::LINKBOTI), rsXML::Robot(trace) {};
 	};
-	class LinkbotL : public rsRobots::LinkbotL, public LinkbotT {
+	class LinkbotL : public Linkbot {
 		public:
-			LinkbotL(bool trace) : rsRobots::Robot(rs::LINKBOTL), rsXML::LinkbotT(trace), rsXML::Robot(trace) {};
+			LinkbotL(bool trace) : rsRobots::Robot(rs::LINKBOTL), rsXML::Robot(trace) {};
+	};
+	class LinkbotT : public Linkbot {
+		public:
+			LinkbotT(bool trace) : rsRobots::Robot(rs::LINKBOTT), rsXML::Robot(trace) {};
 	};
 	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
 		public:

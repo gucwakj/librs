@@ -11,7 +11,7 @@ namespace rsCallback {
 	class linkbotCallback : public osg::NodeCallback {
 		// public functions
 		public:
-			linkbotCallback(rsSim::LinkbotT*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
+			linkbotCallback(rsSim::Linkbot*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
 			virtual ~linkbotCallback(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
@@ -20,7 +20,7 @@ namespace rsCallback {
 		private:
 			bool _units;
 			int _count;
-			rsSim::LinkbotT *_robot;
+			rsSim::Linkbot *_robot;
 			rsSim::BodyList _bodies;
 			rsSim::ConnectorList _conn;
 	};

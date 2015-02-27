@@ -29,7 +29,7 @@ void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::B
 		case rs::LINKBOTI:
 		case rs::LINKBOTL:
 		case rs::LINKBOTT:
-			scene->setUpdateCallback(new linkbotCallback(dynamic_cast<rsSim::LinkbotT *>(sim), bodies, conn, _units));
+			scene->setUpdateCallback(new linkbotCallback(dynamic_cast<rsSim::Linkbot *>(sim), bodies, conn, _units));
 			break;
 		case rs::MINDSTORMS:
 			scene->setUpdateCallback(new mindstormsCallback(dynamic_cast<rsSim::Mindstorms *>(sim), bodies, _units));

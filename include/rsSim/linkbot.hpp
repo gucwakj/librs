@@ -9,12 +9,13 @@
 namespace rsSim {
 
 	// class
-	class LinkbotT : virtual public rsRobots::LinkbotT, virtual public ModularRobot {
+	class Linkbot : virtual public rsRobots::Linkbot, virtual public ModularRobot {
+			// TODO: remove
 			friend class Sim;
 		// public api
 		public:
-			LinkbotT(int = -1);
-			virtual ~LinkbotT();
+			Linkbot(void);
+			virtual ~Linkbot(void);
 
 			int accelJointAngleNB(rsLinkbot::Joint, double, double);
 			int accelJointCycloidalNB(rsLinkbot::Joint, double, double);
@@ -95,20 +96,26 @@ namespace rsSim {
 	};
 
 	// class
-	class LinkbotI : public rsRobots::LinkbotI, public LinkbotT {
+	class LinkbotI : public Linkbot {
 		public:
-			LinkbotI(void) : LinkbotT(rsLinkbot::JOINT2), rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT3) {}
+			LinkbotI(void) : rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT3) {}
 	};
 
 	// class
-	class LinkbotL : public LinkbotT {
+	class LinkbotL : public Linkbot {
 		public:
-			LinkbotL(void) : LinkbotT(rsLinkbot::JOINT3), rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT2) {}
+			LinkbotL(void) : rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT2) {}
+	};
+
+	// class
+	class LinkbotT : public Linkbot {
+		public:
+			LinkbotT(void) : rsRobots::Robot(rs::LINKBOTT), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT3) {}
 	};
 
 	// motion threading
 	struct LinkbotMove {
-		rsSim::LinkbotT *robot;
+		rsSim::Linkbot *robot;
 		char *expr;
 		double x, y, radius, trackwidth;
 		double (*func)(double x);

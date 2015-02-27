@@ -3,7 +3,7 @@
 using namespace rsRobots;
 using namespace rsLinkbot;
 
-LinkbotT::LinkbotT(int disabled) : Robot(rs::LINKBOTT) {
+Linkbot::Linkbot(int disabled) : Robot(rs::LINKBOTT) {
 	_body_length = 0.03935;
 	_body_width = 0.07835;
 	_body_height = 0.07250;
@@ -30,7 +30,7 @@ LinkbotT::LinkbotT(int disabled) : Robot(rs::LINKBOTT) {
 /**********************************************************
 	public functions
  **********************************************************/
-void LinkbotT::getConnFaceOffset(int type, int side, const double *p, const double *q, double *p1, double *q1) {
+void Linkbot::getConnFaceOffset(int type, int side, const double *p, const double *q, double *p1, double *q1) {
 	// offsets
 	double p2[3] = {0};
 	double q2[4] = {0, 0, 0, 1};
@@ -113,7 +113,7 @@ void LinkbotT::getConnFaceOffset(int type, int side, const double *p, const doub
 	this->multiplyQbyQ(q, q2, q1);
 }
 
-void LinkbotT::getConnBodyOffset(int type, const double *p, const double *q, double *p1, double *q1) {
+void Linkbot::getConnBodyOffset(int type, const double *p, const double *q, double *p1, double *q1) {
 	// offsets
 	double p2[3] = {0};
 	double q2[4] = {0, 0, 0, 1};
@@ -169,7 +169,7 @@ void LinkbotT::getConnBodyOffset(int type, const double *p, const double *q, dou
 	this->multiplyQbyQ(q, q2, q1);
 }
 
-void LinkbotT::getRobotBodyOffset(int body, const double *p, const double *q, double *p1, double *q1) {
+void Linkbot::getRobotBodyOffset(int body, const double *p, const double *q, double *p1, double *q1) {
 	// offset quaternion
 	double q2[4] = {0, 0, 0, 1};
 	switch (body) {
@@ -204,7 +204,7 @@ void LinkbotT::getRobotBodyOffset(int body, const double *p, const double *q, do
 	this->multiplyQbyQ(q, q2, q1);
 }
 
-void LinkbotT::getRobotFaceOffset(int face, const double *p, const double *q, double *p1, double *q1) {
+void Linkbot::getRobotFaceOffset(int face, const double *p, const double *q, double *p1, double *q1) {
 	// get offset of face
 	double p2[3] = {0};
 	double q2[4];
@@ -243,7 +243,7 @@ void LinkbotT::getRobotFaceOffset(int face, const double *p, const double *q, do
 	this->multiplyQbyQ(q, q2, q1);
 }
 
-double LinkbotT::getWheelRatio(int standard) {
+double Linkbot::getWheelRatio(int standard) {
 	switch (standard) {
 		case rsLinkbot::BIGWHEEL:
 			return _wheel_radius/_bigwheel_radius;

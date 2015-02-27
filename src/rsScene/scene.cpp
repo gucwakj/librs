@@ -113,13 +113,9 @@ void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type,
 			//this->drawCubus(dynamic_cast<rsRobots::Cubus*>(robot), p, q, trace, rgb);
 			break;
 		case rs::LINKBOTI:
-			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::LinkbotI*>(robot), group, type, face, size, side, conn);
-			break;
 		case rs::LINKBOTL:
-			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::LinkbotL*>(robot), group, type, face, size, side, conn);
-			break;
 		case rs::LINKBOTT:
-			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::LinkbotT*>(robot), group, type, face, size, side, conn);
+			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::Linkbot*>(robot), group, type, face, size, side, conn);
 			break;
 		case rs::MOBOT:
 			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
@@ -245,13 +241,13 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const
 			//this->drawCubus(dynamic_cast<rsRobots::Cubus*>(robot), p, q, trace, rgb);
 			break;
 		case rs::LINKBOTI:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotI*>(robot), group, p, q, trace, led);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, trace, led);
 			break;
 		case rs::LINKBOTL:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotL*>(robot), group, p, q, trace, led);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, trace, led);
 			break;
 		case rs::LINKBOTT:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::LinkbotT*>(robot), group, p, q, trace, led);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, trace, led);
 			break;
 		case rs::MINDSTORMS:
 			this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms*>(robot), group, p, q, trace, led);
@@ -1134,7 +1130,7 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 	return 0;
 }*/
 
-void Scene::draw_robot_linkbot(rsRobots::LinkbotT *robot, Robot *group, const double *p, const double *q, bool trace, double *rgb) {
+void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const double *p, const double *q, bool trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Node> body[rsLinkbot::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsLinkbot::NUM_PARTS];
@@ -1266,7 +1262,7 @@ void Scene::draw_robot_linkbot(rsRobots::LinkbotT *robot, Robot *group, const do
 	}
 }
 
-void Scene::draw_robot_linkbot_conn(rsRobots::LinkbotT *robot, Robot *group, int type, int face, double size, int side, int conn) {
+void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int type, int face, double size, int side, int conn) {
 	// get robot p&q
 	osg::PositionAttitudeTransform *pat;
 	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::BODY));
@@ -1275,7 +1271,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::LinkbotT *robot, Robot *group, int
 	double p1[3], p2[3], q1[4], q2[4];
 
 	// get face p&q
-	dynamic_cast<rsRobots::LinkbotI *>(robot)->getRobotFaceOffset(face, p.ptr(), q.asVec4().ptr(), p1, q1);
+	robot->getRobotFaceOffset(face, p.ptr(), q.asVec4().ptr(), p1, q1);
 	if (side <= -10) {
 		/* // initialize variables
 		osg::ref_ptr<osg::Geode> body = new osg::Geode;
@@ -1329,11 +1325,11 @@ void Scene::draw_robot_linkbot_conn(rsRobots::LinkbotT *robot, Robot *group, int
 		return 0;*/
 	}
 	else if (conn == -1)
-		dynamic_cast<rsRobots::LinkbotI *>(robot)->getConnBodyOffset(type, p1, q1, p2, q2);
+		robot->getConnBodyOffset(type, p1, q1, p2, q2);
 	else {
-		dynamic_cast<rsRobots::LinkbotI *>(robot)->getConnFaceOffset(type, side, p1, q1, p2, q2);
+		robot->getConnFaceOffset(type, side, p1, q1, p2, q2);
 		type = conn;
-		dynamic_cast<rsRobots::LinkbotI *>(robot)->getConnBodyOffset(type, p2, q2, p2, q2);
+		robot->getConnBodyOffset(type, p2, q2, p2, q2);
 	}
 
 	// PAT to transform mesh

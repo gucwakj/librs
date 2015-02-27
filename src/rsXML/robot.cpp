@@ -174,7 +174,7 @@ void Robot::setRotation(double a, double b, double c) {
 			q3[2]*q2[3]*q1[2] - q3[2]*q2[0]*q1[1] + q3[2]*q2[1]*q1[0] - q3[2]*q2[2]*q1[3];
 }
 
-void LinkbotT::postProcess(void) {
+void Linkbot::postProcess(void) {
 	// find if i am connected to another robot
 	for (int i = 0; i < _conn.size(); i++) {
 		if (_conn[i]->getRobot() != _id) {

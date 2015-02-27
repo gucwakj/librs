@@ -86,8 +86,8 @@ namespace rsScene {
 			void draw_grid(void);
 			void draw_global_hud(double, double, bool);
 			//int draw_cubus(rsRobots::Cubus*, osg::Group*, const double*, const double*, bool, double*);
-			void draw_robot_linkbot(rsRobots::LinkbotT*, Robot*, const double*, const double*, bool, double*);
-			void draw_robot_linkbot_conn(rsRobots::LinkbotT*, Robot*, int, int, double, int, int);
+			void draw_robot_linkbot(rsRobots::Linkbot*, Robot*, const double*, const double*, bool, double*);
+			void draw_robot_linkbot_conn(rsRobots::Linkbot*, Robot*, int, int, double, int, int);
 			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const double*, const double*, bool, double*);
 			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);
 			void draw_scene_outdoors(double, double, bool);

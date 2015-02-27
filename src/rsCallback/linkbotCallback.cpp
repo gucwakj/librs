@@ -6,7 +6,7 @@
 
 using namespace rsCallback;
 
-linkbotCallback::linkbotCallback(rsSim::LinkbotT *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
+linkbotCallback::linkbotCallback(rsSim::Linkbot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
 	_bodies = bodies;
 	_conn = conn;
 	_count = 1;

@@ -5,11 +5,11 @@
 
 namespace rsRobots {
 
-	class LinkbotT : virtual public ModularRobot {
+	class Linkbot : virtual public ModularRobot {
 		// public functions
 		public:
-			LinkbotT(int = -1);
-			virtual ~LinkbotT(void) {};
+			Linkbot(int = -1);
+			virtual ~Linkbot(void) {};
 
 			double getWheelRatio(int);
 
@@ -33,14 +33,19 @@ namespace rsRobots {
 			int _disabled;
 	};
 
-	class LinkbotI : virtual public LinkbotT {
+	class LinkbotI : public Linkbot {
 		public:
-			LinkbotI(void) : Robot(rs::LINKBOTI), LinkbotT(rsLinkbot::JOINT2) {};
+			LinkbotI(void) : Robot(rs::LINKBOTI), Linkbot(rsLinkbot::JOINT2) {};
 	};
 
-	class LinkbotL : virtual public LinkbotT {
+	class LinkbotL : public Linkbot {
 		public:
-			LinkbotL(void) : Robot(rs::LINKBOTL), LinkbotT(rsLinkbot::JOINT3) {};
+			LinkbotL(void) : Robot(rs::LINKBOTL), Linkbot(rsLinkbot::JOINT3) {};
+	};
+
+	class LinkbotT : public Linkbot {
+		public:
+			LinkbotT(void) : Robot(rs::LINKBOTT) {};
 	};
 
 } // namespace rsRobots

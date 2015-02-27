@@ -11,11 +11,12 @@ class Cubus;
 
 namespace rsCallback {
 
-	class cubusCallback : public osg::NodeCallback {
+	// class
+	class CubusCallback : public osg::NodeCallback {
 		// public functions
 		public:
-			cubusCallback(Cubus*, osg::ShapeDrawable*);
-			virtual ~cubusCallback(void) {};
+			CubusCallback(Cubus*, osg::ShapeDrawable*);
+			virtual ~CubusCallback(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 

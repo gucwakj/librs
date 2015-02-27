@@ -1,15 +1,14 @@
-#include "mobotCallback.hpp"
-#include "mobot.hpp"
+#include <rsCallback/MobotCallback>
 
 using namespace rsCallback;
 
-mobotCallback::mobotCallback(CMobot *robot, osg::ShapeDrawable *led) {
+MobotCallback::MobotCallback(CMobot *robot, osg::ShapeDrawable *led) {
 	_robot = robot;
 	_led = led;
 	_count = 1;
 }
 
-void mobotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
+void MobotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		const double *pos, *quat;

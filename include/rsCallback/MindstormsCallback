@@ -8,11 +8,12 @@
 
 namespace rsCallback {
 
-	class mindstormsCallback : public osg::NodeCallback {
+	// class
+	class MindstormsCallback : public osg::NodeCallback {
 		// public functions
 		public:
-			mindstormsCallback(rsSim::Mindstorms*, rsSim::BodyList&, bool);
-			virtual ~mindstormsCallback(void) {};
+			MindstormsCallback(rsSim::Mindstorms*, rsSim::BodyList&, bool);
+			virtual ~MindstormsCallback(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 

@@ -1,15 +1,14 @@
-#include "cubusCallback.hpp"
-#include "cubus.hpp"
+#include <rsCallback/CubusCallback>
 
 using namespace rsCallback;
 
-cubusCallback::cubusCallback(Cubus *robot, osg::ShapeDrawable *led) {
+CubusCallback::CubusCallback(Cubus *robot, osg::ShapeDrawable *led) {
 	_robot = robot;
 	_led = led;
 	_count = 1;
 }
 
-void cubusCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
+void CubusCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		const double *pos, *quat;

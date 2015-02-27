@@ -11,11 +11,12 @@ class CMobot;
 
 namespace rsCallback {
 
-	class mobotCallback : public osg::NodeCallback {
+	// class
+	class MobotCallback : public osg::NodeCallback {
 		// public functions
 		public:
-			mobotCallback(CMobot*, osg::ShapeDrawable*);
-			virtual ~mobotCallback(void) {};
+			MobotCallback(CMobot*, osg::ShapeDrawable*);
+			virtual ~MobotCallback(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 

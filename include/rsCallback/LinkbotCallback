@@ -8,11 +8,12 @@
 
 namespace rsCallback {
 
-	class linkbotCallback : public osg::NodeCallback {
+	// class
+	class LinkbotCallback : public osg::NodeCallback {
 		// public functions
 		public:
-			linkbotCallback(rsSim::Linkbot*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
-			virtual ~linkbotCallback(void) {};
+			LinkbotCallback(rsSim::Linkbot*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
+			virtual ~LinkbotCallback(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 

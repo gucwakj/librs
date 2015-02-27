@@ -2,18 +2,18 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
 
-#include <rsCallback/mindstormsCallback.hpp>
+#include <rsCallback/MindstormsCallback>
 
 using namespace rsCallback;
 
-mindstormsCallback::mindstormsCallback(rsSim::Mindstorms *robot, rsSim::BodyList &bodies, bool units) {
+MindstormsCallback::MindstormsCallback(rsSim::Mindstorms *robot, rsSim::BodyList &bodies, bool units) {
 	_bodies = bodies;
 	_count = 1;
 	_robot = robot;
 	_units = units;
 }
 
-void mindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
+void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		// child 0: hud

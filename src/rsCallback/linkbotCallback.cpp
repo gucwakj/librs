@@ -2,11 +2,11 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
 
-#include <rsCallback/linkbotCallback.hpp>
+#include <rsCallback/LinkbotCallback>
 
 using namespace rsCallback;
 
-linkbotCallback::linkbotCallback(rsSim::Linkbot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
+LinkbotCallback::LinkbotCallback(rsSim::Linkbot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
 	_bodies = bodies;
 	_conn = conn;
 	_count = 1;
@@ -14,7 +14,7 @@ linkbotCallback::linkbotCallback(rsSim::Linkbot *robot, rsSim::BodyList &bodies,
 	_units = units;
 }
 
-void linkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
+void LinkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		// child 0: hud

@@ -1,10 +1,7 @@
-#include <rsSim/linkbot.hpp>
-#include <rsSim/Mindstorms.hpp>
-
-#include <rsCallback/callback.hpp>
-#include <rsCallback/groundCallback.hpp>
-#include <rsCallback/linkbotCallback.hpp>
-#include <rsCallback/mindstormsCallback.hpp>
+#include <rsCallback/Callback>
+#include <rsCallback/GroundCallback>
+#include <rsCallback/LinkbotCallback>
+#include <rsCallback/MindstormsCallback>
 
 using namespace rsCallback;
 
@@ -13,13 +10,13 @@ Callback::Callback(void) {
 }
 
 void Callback::attachCallback(rsScene::Ground *scene, rsSim::Ground *sim) {
-	scene->setUpdateCallback(new groundCallback(sim));
+	scene->setUpdateCallback(new GroundCallback(sim));
 }
 
 void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::BodyList &bodies) {
 	switch (sim->getForm()) {
 		case rs::MINDSTORMS:
-			scene->setUpdateCallback(new mindstormsCallback(dynamic_cast<rsSim::Mindstorms *>(sim), bodies, _units));
+			scene->setUpdateCallback(new MindstormsCallback(dynamic_cast<rsSim::Mindstorms *>(sim), bodies, _units));
 			break;
 	}
 }
@@ -29,10 +26,7 @@ void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::B
 		case rs::LINKBOTI:
 		case rs::LINKBOTL:
 		case rs::LINKBOTT:
-			scene->setUpdateCallback(new linkbotCallback(dynamic_cast<rsSim::Linkbot *>(sim), bodies, conn, _units));
-			break;
-		case rs::MINDSTORMS:
-			scene->setUpdateCallback(new mindstormsCallback(dynamic_cast<rsSim::Mindstorms *>(sim), bodies, _units));
+			scene->setUpdateCallback(new LinkbotCallback(dynamic_cast<rsSim::Linkbot *>(sim), bodies, conn, _units));
 			break;
 	}
 }

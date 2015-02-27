@@ -10,11 +10,12 @@
 
 namespace rsCallback {
 
-	class groundCallback : public osg::NodeCallback {
+	// class
+	class GroundCallback : public osg::NodeCallback {
 		// public functions
 		public:
-			groundCallback(rsSim::Ground*);
-			virtual ~groundCallback(void) {};
+			GroundCallback(rsSim::Ground*);
+			virtual ~GroundCallback(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 

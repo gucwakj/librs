@@ -6,6 +6,7 @@
 
 namespace rsCallback {
 
+	// class
 	class Callback {
 		// public functions
 		public:

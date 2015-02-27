@@ -1,12 +1,12 @@
-#include <rsCallback/groundCallback.hpp>
+#include <rsCallback/GroundCallback>
 
 using namespace rsCallback;
 
-groundCallback::groundCallback(rsSim::Ground *ground) {
+GroundCallback::GroundCallback(rsSim::Ground *ground) {
 	_ground = ground;
 }
 
-void groundCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
+void GroundCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		const double *pos = dBodyGetPosition(*_ground);

@@ -704,7 +704,7 @@ void LinkbotT::addForce(int body, double fx, double fy, double fz) {
 	dBodyAddForce(_body[body], fx, fy, fz);
 }
 
-int LinkbotT::build(int id, const double *p, const double *q, const double *a, int ground) {
+int LinkbotT::build(const double *p, const double *q, const double *a, int ground) {
 	// build
 	this->buildIndividual(p, q, a);
 
@@ -735,7 +735,7 @@ int LinkbotT::build(int id, const double *p, const double *q, const double *a, i
 	return 0;
 }
 
-int LinkbotT::build(int id, const double *p, const double *q, const double *a, dBodyID base, int face, int ground) {
+int LinkbotT::build(const double *p, const double *q, const double *a, dBodyID base, int face, int ground) {
 	// get offset of robot
 	double o[3], p1[3], p2[3] = {0};
 	double q1[4], q2[4] = {0, 0, 0, 1};

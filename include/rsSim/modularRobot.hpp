@@ -45,13 +45,13 @@ namespace rsSim {
 
 		// pure virual functions for inherited classes
 		protected:
-			virtual int build(int, const double*, const double*, const double*, dBodyID, int, int) = 0;
+			virtual int build(const double*, const double*, const double*, dBodyID, int, int) = 0;
 			virtual int fixBodyToConnector(dBodyID, int) = 0;
 			virtual int fixConnectorToBody(int, dBodyID, int = -1) = 0;
 
 		// virtual functions from Robot class
 		protected:
-			virtual int build(int, const double*, const double*, const double*, int) { return 0; };
+			virtual int build(const double*, const double*, const double*, int) { return 0; };
 			virtual int buildIndividual(double, double, double, dMatrix3, double*) { return 0; };
 			virtual double getAngle(int) { return 0; };
 			virtual int initParams(int, int) { return 0; };

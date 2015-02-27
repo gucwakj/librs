@@ -32,7 +32,7 @@ namespace rsSim {
 
 		// inherited functions from Robot class
 		private:
-			virtual int build(int, const double*, const double*, const double*, int);
+			virtual int build(const double*, const double*, const double*, int);
 			virtual int buildIndividual(const double*, const double*, const double*);
 			virtual double getAngle(int);
 			virtual void init_params(void);

@@ -181,7 +181,7 @@ int Mindstorms::setJointSpeedRatios(double ratio1, double ratio2) {
 /**********************************************************
 	inherited functions
  **********************************************************/
-int Mindstorms::build(int id, const double *p, const double *q, const double *a, int ground) {
+int Mindstorms::build(const double *p, const double *q, const double *a, int ground) {
 	// build
 	this->buildIndividual(p, q, a);
 

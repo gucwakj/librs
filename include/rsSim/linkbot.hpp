@@ -63,13 +63,13 @@ namespace rsSim {
 		// inherited functions from ModularRobot class
 		protected:
 			virtual int addConnector(int, int, double, int, int);
-			virtual int build(int, const double*, const double*, const double*, dBodyID, int, int);
+			virtual int build(const double*, const double*, const double*, dBodyID, int, int);
 			virtual int fixBodyToConnector(dBodyID, int);
 			virtual int fixConnectorToBody(int, dBodyID, int = -1);
 
 		// inherited functions from Robot class
 		protected:
-			virtual int build(int, const double*, const double*, const double*, int);
+			virtual int build(const double*, const double*, const double*, int);
 			virtual int buildIndividual(const double*, const double*, const double*);
 			virtual double getAngle(int);
 			virtual void init_params(void);

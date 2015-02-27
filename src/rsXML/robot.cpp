@@ -1,4 +1,5 @@
-#include <rsXML/robot.hpp>
+#include <iostream>
+#include <rsXML/Robot>
 
 using namespace rsXML;
 

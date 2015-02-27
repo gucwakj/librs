@@ -1,4 +1,4 @@
-#include <rsXML/marker.hpp>
+#include <rsXML/Marker>
 
 using namespace rsXML;
 

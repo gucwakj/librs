@@ -1,3 +1,4 @@
+#include <iostream>
 #include <rsXML/Writer>
 
 using namespace rsXML;

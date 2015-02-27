@@ -1,4 +1,5 @@
-#include <rsXML/conn.hpp>
+#include <iostream>
+#include <rsXML/Conn>
 
 using namespace rsXML;
 

@@ -1,4 +1,6 @@
-#include "store.hpp"
+#include <cmath>
+#include <iostream>
+#include <rsXML/Store>
 
 using namespace rsXML;
 

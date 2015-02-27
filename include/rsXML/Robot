@@ -1,22 +1,20 @@
 #ifndef RSXML_ROBOT_HPP_
 #define RSXML_ROBOT_HPP_
 
-#include <cmath>
-#include <iostream>
 #include <vector>
 
 #include <rs/enum.hpp>
 #include <rs/macros.hpp>
 #include <rsRobots/linkbot.hpp>
 #include <rsRobots/Mindstorms.hpp>
-#include <rsXML/conn.hpp>
+#include <rsXML/Conn>
 
 namespace rsXML {
 
 	// typedefs
 	typedef std::vector<Conn*> ConnectorList;
 
-	// classes
+	// class
 	class Robot : virtual public rsRobots::Robot {
 		// public functions
 		public:
@@ -58,23 +56,33 @@ namespace rsXML {
 			int _trace;
 			ConnectorList _conn;
 	};
+
+	// class
 	class Linkbot : virtual public rsRobots::Linkbot, virtual public Robot {
 		public:
 			Linkbot(void) :  rsRobots::Robot(rs::LINKBOTT), rsXML::Robot(1) {};
 			void postProcess(void);
 	};
+
+	// class
 	class LinkbotI : public Linkbot {
 		public:
 			LinkbotI(bool trace) : rsRobots::Robot(rs::LINKBOTI), rsXML::Robot(trace) {};
 	};
+
+	// class
 	class LinkbotL : public Linkbot {
 		public:
 			LinkbotL(bool trace) : rsRobots::Robot(rs::LINKBOTL), rsXML::Robot(trace) {};
 	};
+
+	// class
 	class LinkbotT : public Linkbot {
 		public:
 			LinkbotT(bool trace) : rsRobots::Robot(rs::LINKBOTT), rsXML::Robot(trace) {};
 	};
+
+	// class
 	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
 		public:
 			Mindstorms(bool trace) :  rsRobots::Robot(rs::MINDSTORMS), rsXML::Robot(trace) {};

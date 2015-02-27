@@ -7,6 +7,7 @@
 
 namespace rsXML {
 
+	// class
 	class Marker {
 		// public functions
 		public:

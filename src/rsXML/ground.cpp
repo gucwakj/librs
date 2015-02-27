@@ -1,4 +1,5 @@
-#include <rsXML/ground.hpp>
+#include <cmath>
+#include <rsXML/Ground>
 
 using namespace rsXML;
 

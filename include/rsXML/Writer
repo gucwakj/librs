@@ -6,10 +6,11 @@
 
 #include <tinyxml2.h>
 
-#include <rsXML/robot.hpp>
+#include <rsXML/Robot>
 
 namespace rsXML {
 
+	// class
 	class Writer {
 		// public functions
 		public:

@@ -1,20 +1,19 @@
 #ifndef RSXML_STORE_HPP_
 #define RSXML_STORE_HPP_
 
-#include <cmath>
-#include <iostream>
 #include <string>
 #include <vector>
 
 #include <tinyxml2.h>
 
 #include <rs/enum.hpp>
-#include <rsXML/ground.hpp>
-#include <rsXML/marker.hpp>
-#include <rsXML/robot.hpp>
+#include <rsXML/Ground>
+#include <rsXML/Marker>
+#include <rsXML/Robot>
 
 namespace rsXML {
 
+	// class
 	class Store {
 		// public functions
 		public:

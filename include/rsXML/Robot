@@ -3,8 +3,6 @@
 
 #include <vector>
 
-#include <rs/Enum>
-#include <rs/Macros>
 #include <rsRobots/Linkbot>
 #include <rsRobots/Mindstorms>
 #include <rsXML/Conn>

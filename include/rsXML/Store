@@ -6,7 +6,6 @@
 
 #include <tinyxml2.h>
 
-#include <rs/Enum>
 #include <rsXML/Ground>
 #include <rsXML/Marker>
 #include <rsXML/Robot>

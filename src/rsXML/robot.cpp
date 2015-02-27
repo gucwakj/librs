@@ -1,4 +1,5 @@
 #include <iostream>
+#include <rs/Macros>
 #include <rsXML/Robot>
 
 using namespace rsXML;

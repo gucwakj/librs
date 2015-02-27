@@ -1,8 +1,6 @@
 #ifndef RSXML_CONN_HPP_
 #define RSXML_CONN_HPP_
 
-#include <rs/Enum>
-
 namespace rsXML {
 
 	// class

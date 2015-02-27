@@ -1,4 +1,4 @@
-#include <rsSim/modularRobot.hpp>
+#include <rsSim/ModularRobot>
 
 using namespace rsSim;
 

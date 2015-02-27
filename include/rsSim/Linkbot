@@ -4,11 +4,11 @@
 #include <tuple>
 
 #include <rsRobots/Linkbot>
-#include <rsSim/modularRobot.hpp>
+#include <rsSim/ModularRobot>
 
 namespace rsSim {
 
-	// class
+	// base class
 	class Linkbot : virtual public rsRobots::Linkbot, virtual public ModularRobot {
 			// TODO: remove
 			friend class Sim;

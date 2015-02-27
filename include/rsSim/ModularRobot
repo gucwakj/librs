@@ -2,7 +2,7 @@
 #define RSSIM_MODULARROBOT_HPP_
 
 #include <rsRobots/ModularRobot>
-#include <rsSim/robot.hpp>
+#include <rsSim/Robot>
 
 namespace rsSim {
 
@@ -17,6 +17,7 @@ namespace rsSim {
 	// typedefs
 	typedef std::vector<Connector*> ConnectorList;
 
+	// class
 	class ModularRobot : virtual public rsRobots::ModularRobot, virtual public rsSim::Robot {
 			// TODO: remove
 			friend class Sim;

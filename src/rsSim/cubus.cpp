@@ -1,4 +1,4 @@
-#include "cubus.hpp"
+#include <rsSim/Cubus>
 
 Cubus::Cubus(void) : Robot(JOINT1, JOINT3) {
 	// initialize parameters

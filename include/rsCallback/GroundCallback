@@ -1,12 +1,10 @@
 #ifndef RSCALLBACK_GROUNDCALLBACK_HPP_
 #define RSCALLBACK_GROUNDCALLBACK_HPP_
 
-#include <osg/Group>
 #include <osg/Node>
 #include <osg/NodeVisitor>
-#include <osg/PositionAttitudeTransform>
 
-#include <rsSim/sim.hpp>
+#include <rsSim/Sim>
 
 namespace rsCallback {
 

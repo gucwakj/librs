@@ -4,8 +4,8 @@
 #include <vector>
 
 #include <rs/enum.hpp>
-#include <rsSim/modularRobot.hpp>
-#include <rsSim/robot.hpp>
+#include <rsSim/ModularRobot>
+#include <rsSim/Robot>
 
 namespace rsSim {
 

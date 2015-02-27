@@ -6,8 +6,8 @@
 #endif // _WIN32
 
 #include <rsRobots/rgbhashtable.h>
-#include <rsSim/sim.hpp>
-#include <rsSim/robot.hpp>
+#include <rsSim/Sim>
+#include <rsSim/Robot>
 
 using namespace rsSim;
 

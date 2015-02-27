@@ -1,7 +1,7 @@
-#ifndef CUBUS_HPP_
-#define CUBUS_HPP_
+#ifndef RSSIM_CUBUS_HPP_
+#define RSSIM_CUBUS_HPP_
 
-#include "robosim.hpp"
+#include <rsSim/modularRobot>
 
 class DLLIMPORT Cubus : public ModularRobot {
 #ifdef ENABLE_GRAPHICS
@@ -91,5 +91,5 @@ class DLLIMPORT CubusGroup : public Group<Cubus> {
 // simulation
 //extern RoboSim *g_sim;
 
-#endif // CUBUS_HPP_
+#endif // RSSIM_CUBUS_HPP_
 

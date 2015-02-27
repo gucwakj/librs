@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <rsSim/sim.hpp>
-#include <rsSim/linkbot.hpp>
+#include <rsSim/Sim>
+#include <rsSim/Linkbot>
 
 using namespace rsSim;
 using namespace rsLinkbot;

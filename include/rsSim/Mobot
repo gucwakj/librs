@@ -1,8 +1,6 @@
 #ifndef MOBOT_HPP_
 #define MOBOT_HPP_
 
-#include "robosim.hpp"
-
 class DLLIMPORT CMobot : public ModularRobot {
 #ifdef ENABLE_GRAPHICS
 		friend class mobotNodeCallback;

@@ -2,7 +2,7 @@
 #define RSSIM_MINDSTORMS_HPP_
 
 #include <rsRobots/Mindstorms>
-#include <rsSim/modularRobot.hpp>
+#include <rsSim/ModularRobot>
 
 namespace rsSim {
 

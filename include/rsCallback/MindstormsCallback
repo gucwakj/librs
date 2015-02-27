@@ -4,7 +4,7 @@
 #include <osg/Node>
 #include <osg/NodeVisitor>
 
-#include <rsSim/Mindstorms.hpp>
+#include <rsSim/Mindstorms>
 
 namespace rsCallback {
 

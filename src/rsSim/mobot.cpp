@@ -1,4 +1,4 @@
-#include "mobot.hpp"
+#include <rsSim/Mobot>
 
 CMobot::CMobot(void) : Robot(JOINT1, JOINT4) {
 	// initialize parameters

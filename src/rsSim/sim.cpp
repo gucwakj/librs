@@ -5,8 +5,7 @@
 #include <unistd.h>
 #endif // _WIN32
 
-#include <rsSim/sim.hpp>
-#include <rsSim/linkbot.hpp>
+#include <rsSim/Sim>
 
 using namespace rsSim;
 

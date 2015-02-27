@@ -1,3 +1,6 @@
+#include <osg/Group>
+#include <osg/PositionAttitudeTransform>
+
 #include <rsCallback/GroundCallback>
 
 using namespace rsCallback;

@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <rsSim/sim.hpp>
-#include <rsSim/Mindstorms.hpp>
+#include <rsSim/Sim>
+#include <rsSim/Mindstorms>
 
 using namespace rsSim;
 using namespace rsMindstorms;

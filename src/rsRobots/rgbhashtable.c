@@ -16,7 +16,7 @@
 #include <string.h>
 #include <limits.h>
 #include <math.h>
-#include "rgbhashtable.h"
+#include <rsRobots/rgbhashtable.h>
 
 //The hash function
 unsigned long _hash(rgbHashTable * rgbHT, char *key) {

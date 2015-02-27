@@ -1829,7 +1829,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	pat[rsMindstorms::WHEEL2]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// set rendering
-	for (int i = 0; i < rsLinkbot::NUM_PARTS; i++) {
+	for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
 		// set rendering properties
 		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);

@@ -16,6 +16,8 @@ namespace rsSim {
 
 	// class
 	class Robot : virtual public rsRobots::Robot {
+			// TODO: remove
+			friend class Sim;
 		// public functions
 		public:
 			Robot(int, int);

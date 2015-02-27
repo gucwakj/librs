@@ -79,66 +79,30 @@ Sim::~Sim(void) {
 /**********************************************************
 	Public member functions
  **********************************************************/
-/*int Sim::addRobot(Robot *robot) {
-	// lock robot data to insert a new one into simulation
+int Sim::addRobot(rsSim::Robot *robot, int id, const double *p, const double *r, const double *a, int ground, int trace) {
+	// lock robot data
 	MUTEX_LOCK(&_robot_mutex);
 
 	// create new robot
-	_robot.push_back(new Robots());
+	_robot.push_back(new RobotNode());
 	_robot.back()->robot = robot;
 
 	// get form of new robot
 	int form = 0;
 	robot->getFormFactor(form);
 
-	// find next robot in xml list
-	int i = 0;
-	for (i = 0; i < _xmlbot.size(); i++) {
-		if (_xmlbot[i]->type == form && !_xmlbot[i]->connected)
-			break;
-	}
-
-	// no robot found
-	if (i == _xmlbot.size() || _xmlbot[i]->type != form) {
-		switch (form) {
-			case NXT:
-				fprintf(stderr, "Error: Could not find NXT in Sim GUI.\n");
-				break;
-		}
-		if (_preconfig) {
-			fprintf(stderr, "       Preconfigured Robot Configuration selected.\n");
-			fprintf(stderr, "       Please uncheck if you want to use the Individual Robot List.\n");
-		}
-		exit(-1);
-	}
-
 	// give simulation data to robot
-	robot->addToSim(_world, _space, _xmlbot[i]->id, _robot.size()-1, this);
+	robot->addToSim(_world, _space, id, _robot.size()-1, this);
 
-	// check if robot is colliding with others
-	for (int j = 0; j < _robot.size() - 1; j++) {
-		if ( (fabs(_robot[j]->robot->getCenter(0) - _xmlbot[i]->x) < 0.1) && (fabs(_robot[j]->robot->getCenter(1) - _xmlbot[i]->y) < 0.1) ) {
-			fprintf(stderr, "Warning: Robot %d and Robot %d are possibly colliding.\n", _robot[j]->robot->getID() + 1, _xmlbot[i]->id + 1);
-			fprintf(stderr, "         Please check Sim GUI for x and y positions that may be too close.\n");
-		}
-	}
-
-	// build robot
-	robot->build(_xmlbot[i]);
-
-	// robot now connected
-	_xmlbot[i]->connected = 1;
-
-#ifdef ENABLE_GRAPHICS
-	//if (_lib) _robot.back()->node = _graphics->drawRobot(robot, _xmlbot[i], form, _xmlbot[i]->tracking);
-#endif // ENABLE_GRAPHICS
+	// build
+	robot->build(id, p, r, a, ground);
 
 	// unlock robot data
 	MUTEX_UNLOCK(&_robot_mutex);
 
 	// success
 	return 0;
-}*/
+}
 
 int Sim::addRobot(rsSim::ModularRobot *robot, int id, const double *p, const double *r, const double *a, int ground, int trace) {
 	// lock robot data

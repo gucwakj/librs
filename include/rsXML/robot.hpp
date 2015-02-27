@@ -74,6 +74,7 @@ namespace rsXML {
 	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
 		public:
 			Mindstorms(bool trace) :  rsRobots::Robot(rs::MINDSTORMS), rsXML::Robot(trace) {};
+			void postProcess(void);
 	};
 
 } // namespace rsXML

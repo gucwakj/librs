@@ -16,6 +16,14 @@ void Callback::attachCallback(rsScene::Ground *scene, rsSim::Ground *sim) {
 	scene->setUpdateCallback(new groundCallback(sim));
 }
 
+void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::BodyList &bodies) {
+	switch (sim->getForm()) {
+		case rs::MINDSTORMS:
+			scene->setUpdateCallback(new mindstormsCallback(dynamic_cast<rsSim::Mindstorms *>(sim), bodies, _units));
+			break;
+	}
+}
+
 void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::BodyList &bodies, rsSim::ConnectorList &conn) {
 	switch (sim->getForm()) {
 		case rs::LINKBOTI:

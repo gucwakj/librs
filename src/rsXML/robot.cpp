@@ -230,3 +230,15 @@ void LinkbotT::postProcess(void) {
 	}
 }
 
+void Mindstorms::postProcess(void) {
+	// adjust height to be above zero
+	if (fabs(_p[2]) < (_body_height/2 - EPSILON)) {
+		double v[3] = {0, 0, _body_height/2};
+		double uv[3] = {_q[1]*v[2]-_q[2]*v[1], _q[2]*v[0]-_q[0]*v[2], _q[0]*v[1]-_q[1]*v[0]};
+		double uuv[3] = {2*(_q[1]*uv[2]-_q[2]*uv[1]), 2*(_q[2]*uv[0]-_q[0]*uv[2]), 2*(_q[0]*uv[1]-_q[1]*uv[0])};
+		_p[0] += v[0] + 2*_q[3]*uv[0] + uuv[0];
+		_p[1] += v[1] + 2*_q[3]*uv[1] + uuv[1];
+		_p[2] += v[2] + 2*_q[3]*uv[2] + uuv[2];
+	}
+}
+

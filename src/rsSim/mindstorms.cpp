@@ -234,12 +234,12 @@ int Mindstorms::buildIndividual(const double *p, const double *q, const double *
 	dBodySetFiniteRotationAxis(_body[WHEEL1], o[0], o[1], o[2]);
 
     // joint for body to wheel 2
-	joint[WHEEL2] = dJointCreateHinge(_world, 0);
-	dJointAttach(joint[WHEEL2], _body[BODY], _body[WHEEL2]);
+	joint[JOINT2] = dJointCreateHinge(_world, 0);
+	dJointAttach(joint[JOINT2], _body[BODY], _body[WHEEL2]);
 	this->multiplyQbyV(q, _body_width/2, 0, 0, o);
-	dJointSetHingeAnchor(joint[WHEEL2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+	dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 	this->multiplyQbyV(q, -1, 0, 0, o);
-	dJointSetHingeAxis(joint[WHEEL2], o[0], o[1], o[2]);
+	dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[WHEEL2], o[0], o[1], o[2]);
 
 	// build motors

@@ -23,7 +23,7 @@
 #include <rs/enum.hpp>
 #include <rsRobots/Linkbot>
 #include <rsRobots/Mindstorms>
-#include <rsScene/keyboardHandler.hpp>
+#include <rsScene/KeyboardHandler>
 
 extern osg::Node::NodeMask NOT_VISIBLE_MASK;
 extern osg::Node::NodeMask RECEIVES_SHADOW_MASK;
@@ -32,13 +32,12 @@ extern osg::Node::NodeMask IS_PICKABLE_MASK;
 extern osg::Node::NodeMask VISIBLE_MASK;
 
 namespace rsScene {
+
+	// typedefs
 	typedef osg::Group Ground;
 	typedef osg::Group Robot;
-}
 
-namespace rsScene {
-
-	// enum - Levels
+	// enum
 	enum Levels {
 		OUTDOORS,
 		BOARD,
@@ -47,8 +46,8 @@ namespace rsScene {
 		NUM_LEVELS
 	};
 
-	// class - Scene
-	class Scene : public keyboardHandler {
+	// class
+	class Scene : public KeyboardHandler {
 		// public functions
 		public:
 			Scene(void);

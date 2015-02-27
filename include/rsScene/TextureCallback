@@ -9,11 +9,11 @@
 
 namespace rsScene {
 
-	class textureCallback : public osg::NodeCallback {
+	class TextureCallback : public osg::NodeCallback {
 		// public functions
 		public:
-			textureCallback(osg::TexMat &tm) : _texMat(tm) {};
-			virtual ~textureCallback(void) {};
+			TextureCallback(osg::TexMat &tm) : _texMat(tm) {};
+			virtual ~TextureCallback(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 

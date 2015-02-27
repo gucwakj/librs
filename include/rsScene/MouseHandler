@@ -20,11 +20,11 @@ namespace rsScene {
 	class Scene;
 
 	// classes
-	class mouseHandler : public osgGA::GUIEventHandler {
+	class MouseHandler : public osgGA::GUIEventHandler {
 		// public functions
 		public:
-			mouseHandler(rsScene::Scene*);
-			virtual ~mouseHandler(void) {};
+			MouseHandler(rsScene::Scene*);
+			virtual ~MouseHandler(void) {};
 
 			// from GUIEventHandler
 			bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);

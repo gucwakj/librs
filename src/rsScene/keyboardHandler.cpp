@@ -1,12 +1,12 @@
-#include <rsScene/keyboardHandler.hpp>
+#include <rsScene/KeyboardHandler>
 
 using namespace rsScene;
 
-void keyboardHandler::accept(osgGA::GUIEventHandlerVisitor &v) {
+void KeyboardHandler::accept(osgGA::GUIEventHandlerVisitor &v) {
 	v.visit(*this);
 }
 
-bool keyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
+bool KeyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
 	osgViewer::Viewer *viewer = dynamic_cast<osgViewer::Viewer *>(&aa);
 	if (!viewer) return false;
 

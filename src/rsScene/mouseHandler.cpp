@@ -1,9 +1,9 @@
-#include <rsScene/mouseHandler.hpp>
-#include <rsScene/scene.hpp>
+#include <rsScene/MouseHandler>
+#include <rsScene/Scene>
 
 using namespace rsScene;
 
-mouseHandler::mouseHandler(rsScene::Scene *scene) {
+MouseHandler::MouseHandler(rsScene::Scene *scene) {
 	// default mouse position
 	_mx = 0.0;
 	_my = 0.0;
@@ -12,7 +12,7 @@ mouseHandler::mouseHandler(rsScene::Scene *scene) {
 	_scene = scene;
 }
 
-bool mouseHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
+bool MouseHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
 	osgViewer::Viewer *viewer = dynamic_cast<osgViewer::Viewer *>(&aa);
 	if (!viewer) return false;
 
@@ -31,7 +31,7 @@ bool mouseHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdap
 	}
 }
 
-void mouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *viewer) {
+void MouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *viewer) {
 	osg::Node *scene = viewer->getSceneData();
 	if (!scene) return;
 

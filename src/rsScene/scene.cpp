@@ -1,10 +1,10 @@
 #include <osgFX/Scribe>
 #include <osgDB/FileUtils>
 
-#include <rsScene/mouseHandler.hpp>
-#include <rsScene/scene.hpp>
-#include <rsScene/skyTransform.hpp>
-#include <rsScene/textureCallback.hpp>
+#include <rsScene/MouseHandler>
+#include <rsScene/Scene>
+#include <rsScene/SkyTransform>
+#include <rsScene/TextureCallback>
 
 using namespace rsScene;
 
@@ -14,7 +14,7 @@ osg::Node::NodeMask CASTS_SHADOW_MASK = 0x2;
 osg::Node::NodeMask IS_PICKABLE_MASK = 0x3;
 osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
 
-Scene::Scene(void) : keyboardHandler() {
+Scene::Scene(void) : KeyboardHandler() {
 	// set notification level to no output
 	osg::setNotifyLevel(osg::ALWAYS);
 
@@ -455,8 +455,8 @@ int Scene::setupScene(double w, double h, bool pause) {
 	optimizer.optimize(_root);
 
 	// event handler
-	_viewer->addEventHandler(dynamic_cast<keyboardHandler*>(this));
-	_viewer->addEventHandler(new mouseHandler(this));
+	_viewer->addEventHandler(dynamic_cast<KeyboardHandler*>(this));
+	_viewer->addEventHandler(new MouseHandler(this));
 
 	// show scene
 	_viewer->setSceneData(_root);
@@ -1915,12 +1915,12 @@ void Scene::draw_scene_outdoors(double w, double h, bool pause) {
 	geode->setCullingActive(false);
 	geode->setStateSet(stateset);
 	geode->addDrawable(drawable);
-	osg::ref_ptr<osg::Transform> transform = new skyTransform;
+	osg::ref_ptr<osg::Transform> transform = new SkyTransform;
 	transform->setCullingActive(false);
 	transform->addChild(geode);
 	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
 	clearNode->setRequiresClear(false);
-	clearNode->setCullCallback(new textureCallback(*tm));
+	clearNode->setCullCallback(new TextureCallback(*tm));
 	clearNode->addChild(transform);
 	clearNode->setNodeMask(~IS_PICKABLE_MASK);
 	_root->addChild(clearNode);

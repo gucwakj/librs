@@ -1,8 +1,8 @@
-#include <rsScene/textureCallback.hpp>
+#include <rsScene/TextureCallback>
 
 using namespace rsScene;
 
-void textureCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
+void TextureCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor *>(nv);
 	if (cv) {
 		const osg::Matrix &MV = *(cv->getModelViewMatrix());

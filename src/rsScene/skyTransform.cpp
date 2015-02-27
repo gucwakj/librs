@@ -1,8 +1,8 @@
-#include <rsScene/skyTransform.hpp>
+#include <rsScene/SkyTransform>
 
 using namespace rsScene;
 
-bool skyTransform::computeLocalToWorldMatrix(osg::Matrix &matrix, osg::NodeVisitor *nv) const {
+bool SkyTransform::computeLocalToWorldMatrix(osg::Matrix &matrix, osg::NodeVisitor *nv) const {
 	osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor *>(nv);
 	if (cv) {
 		osg::Vec3 eyePointLocal = cv->getEyeLocal();
@@ -11,7 +11,7 @@ bool skyTransform::computeLocalToWorldMatrix(osg::Matrix &matrix, osg::NodeVisit
 	return true;
 }
 
-bool skyTransform::computeWorldToLocalMatrix(osg::Matrix &matrix, osg::NodeVisitor *nv) const {
+bool SkyTransform::computeWorldToLocalMatrix(osg::Matrix &matrix, osg::NodeVisitor *nv) const {
 	osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor *>(nv);
 	if (cv) {
 		osg::Vec3 eyePointLocal = cv->getEyeLocal();

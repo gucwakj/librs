@@ -573,32 +573,74 @@ int Linkbot::setJointSpeedRatios(double ratio1, double ratio2, double ratio3) {
 	return 0;
 }
 
-int Linkbot::turnLeftNB(double angle, double radius, double trackwidth) {
-	// use internally calculated track width
-	double width = this->convert(_trackwidth, 0);
+int Linkbot::turnLeft(double angle, double radius, double trackwidth) {
+	// calculate angle to turn
+	double r0 = this->getRotation(BODY, 2);
+	angle = DEG2RAD(angle);
+	double rf = r0 + angle;
 
-	// calculate joint angle from global turn angle
-	angle = (angle*width)/(2*radius);
+	// get speed of robot
+	double *speed = new double[_dof]();
+	this->getJointSpeeds(speed[0], speed[1], speed[2]);
 
-	// move
-	this->moveNB(-angle, 0, -angle);
+	// turn toward new postition until pointing correctly
+	while (fabs(angle) > 0.005) {
+		// turn in shortest path
+		double theta = (angle*trackwidth)/(2*radius);
+
+		// turn
+		if (angle > 0.005)
+			this->move(-RAD2DEG(theta), 0, -RAD2DEG(theta));
+		else if (RAD2DEG(angle) < -0.005)
+			this->move(RAD2DEG(theta), 0, RAD2DEG(theta));
+
+		// calculate new rotation from error
+		angle = rf - this->getRotation(BODY, 2);
+
+		// move slowly
+		this->setJointSpeeds(45, 45, 45);
+	}
+
+	// reset to original speed after turning
+	this->setJointSpeeds(speed[0], speed[1], speed[2]);
 
 	// success
-	return 0;
+	return 1;
 }
 
-int Linkbot::turnRightNB(double angle, double radius, double trackwidth) {
-	// use internally calculated track width
-	double width = this->convert(_trackwidth, 0);
+int Linkbot::turnRight(double angle, double radius, double trackwidth) {
+	// calculate angle to turn
+	double r0 = this->getRotation(BODY, 2);
+	angle = DEG2RAD(angle);
+	double rf = r0 - angle;
 
-	// calculate joint angle from global turn angle
-	angle = (angle*width)/(2*radius);
+	// get speed of robot
+	double *speed = new double[_dof]();
+	this->getJointSpeeds(speed[0], speed[1], speed[2]);
 
-	// move
-	this->moveNB(angle, 0, angle);
+	// turn toward new postition until pointing correctly
+	while (fabs(angle) > 0.005) {
+		// turn in shortest path
+		double theta = (angle*trackwidth)/(2*radius);
+
+		// turn
+		if (angle > 0.005)
+			this->move(RAD2DEG(theta), 0, RAD2DEG(theta));
+		else if (RAD2DEG(angle) < -0.005)
+			this->move(-RAD2DEG(theta), 0, -RAD2DEG(theta));
+
+		// calculate new rotation from error
+		angle = rf - this->getRotation(BODY, 2);
+
+		// move slowly
+		this->setJointSpeeds(45, 45, 45);
+	}
+
+	// reset to original speed after turning
+	this->setJointSpeeds(speed[0], speed[1], speed[2]);
 
 	// success
-	return 0;
+	return 1;
 }
 
 /**********************************************************
@@ -724,6 +766,7 @@ int Linkbot::build(const double *p, const double *q, const double *a, int ground
 		}
 	}
 	_trackwidth = sqrt(pow(wheel[0] - wheel[2], 2) + pow(wheel[1] - wheel[3], 2));*/
+	_trackwidth = 0.094;
 
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);

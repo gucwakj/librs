@@ -5,6 +5,7 @@
 #include <unistd.h>
 #endif // _WIN32
 
+#include <iostream>
 #include <rsRobots/rgbhashtable.h>
 #include <rsSim/Sim>
 #include <rsSim/Robot>
@@ -921,7 +922,7 @@ int Robot::moveWait(void) {
 	// get number of successes
 	int success = 0;
 	for (int i = 0; i < _dof; i++) {
-		success += _motor[static_cast<int>(i)].success;
+		success += _motor[i].success;
 	}
 	// wait
 	while (success != _dof) {
@@ -1377,48 +1378,128 @@ int Robot::traceOn(void) {
 }
 
 int Robot::turnLeft(double angle, double radius, double trackwidth) {
-	this->turnLeftNB(angle, radius, trackwidth);
-	this->moveWait();
+	// calculate angle to turn
+	double r0 = this->getRotation(0, 2);
+	angle = DEG2RAD(angle);
+	double rf = r0 + angle;
+
+	// get speed of robot
+	double *speed = new double[2]();
+	this->getJointSpeed(_leftWheel, speed[0]);
+	this->getJointSpeed(_rightWheel, speed[1]);
+
+	// turn toward new postition until pointing correctly
+	while (fabs(angle) > 0.005) {
+		// turn in shortest path
+		double theta = (angle*trackwidth)/(2*radius);
+
+		// turn
+		if (RAD2DEG(angle) > 0.005) {
+			this->moveJoint(_leftWheel, -RAD2DEG(theta));
+			this->moveJoint(_rightWheel, RAD2DEG(theta));
+		}
+		else if (RAD2DEG(angle) < -0.005) {
+			this->moveJoint(_leftWheel, RAD2DEG(theta));
+			this->moveJoint(_rightWheel, -RAD2DEG(theta));
+		}
+
+		// calculate new rotation from error
+		angle = rf - this->getRotation(0, 2);
+
+		// move slowly
+		this->setJointSpeed(_leftWheel, 45);
+		this->setJointSpeed(_rightWheel, 45);
+	}
+
+	// reset to original speed after turning
+	this->setJointSpeed(_leftWheel, speed[0]);
+	this->setJointSpeed(_rightWheel, speed[1]);
 
 	// success
-	return 0;
+	return 1;
 }
 
 int Robot::turnLeftNB(double angle, double radius, double trackwidth) {
-	// use internally calculated track width
-	double width = this->convert(_trackwidth, 0);
+	// create thread
+	THREAD_T moving;
 
-	// calculate joint angle from global turn angle
-	angle = (angle*width)/(2*radius);
+	// store args
+	RobotMove *move = new RobotMove;
+	move->robot = this;
+	move->x = angle;
+	move->radius = radius;
+	move->trackwidth = trackwidth;
+	move->i = 1;
 
-	// move left joint backward
-	this->moveJointNB(_leftWheel, -angle);
-	// move right joint forward
-	this->moveJointNB(_rightWheel, angle);
+	// motion in progress
+	_motion = true;
+
+	// start thread
+	THREAD_CREATE(&moving, turnThread, (void *)move);
 
 	// success
 	return 0;
 }
 
 int Robot::turnRight(double angle, double radius, double trackwidth) {
-	this->turnRightNB(angle, radius, trackwidth);
-	this->moveWait();
+	// calculate angle to turn
+	double r0 = this->getRotation(0, 2);
+	angle = DEG2RAD(angle);
+	double rf = r0 - angle;
+
+	// get speed of robot
+	double *speed = new double[2]();
+	this->getJointSpeed(_leftWheel, speed[0]);
+	this->getJointSpeed(_rightWheel, speed[1]);
+
+	// turn toward new postition until pointing correctly
+	while (fabs(angle) > 0.005) {
+		// turn in shortest path
+		double theta = (angle*trackwidth)/(2*radius);
+
+		// turn
+		if (RAD2DEG(angle) > 0.005) {
+			this->moveJoint(_leftWheel, RAD2DEG(theta));
+			this->moveJoint(_rightWheel, -RAD2DEG(theta));
+		}
+		else if (RAD2DEG(angle) < -0.005) {
+			this->moveJoint(_leftWheel, -RAD2DEG(theta));
+			this->moveJoint(_rightWheel, RAD2DEG(theta));
+		}
+
+		// calculate new rotation from error
+		angle = rf - this->getRotation(0, 2);
+
+		// move slowly
+		this->setJointSpeed(_leftWheel, 45);
+		this->setJointSpeed(_rightWheel, 45);
+	}
+
+	// reset to original speed after turning
+	this->setJointSpeed(_leftWheel, speed[0]);
+	this->setJointSpeed(_rightWheel, speed[1]);
 
 	// success
-	return 0;
+	return 1;
 }
 
 int Robot::turnRightNB(double angle, double radius, double trackwidth) {
-	// use internally calculated track width
-	double width = this->convert(_trackwidth, 0);
+	// create thread
+	THREAD_T moving;
 
-	// calculate joint angle from global turn angle
-	angle = (angle*width)/(2*radius);
+	// store args
+	RobotMove *move = new RobotMove;
+	move->robot = this;
+	move->x = angle;
+	move->radius = radius;
+	move->trackwidth = trackwidth;
+	move->i = 0;
 
-	// move left joint forward
-	this->moveJointNB(_leftWheel, angle);
-	// move right joint backward
-	this->moveJointNB(_rightWheel, -angle);
+	// motion in progress
+	_motion = true;
+
+	// start thread
+	THREAD_CREATE(&moving, turnThread, (void *)move);
 
 	// success
 	return 0;
@@ -1429,7 +1510,7 @@ int Robot::turnRightNB(double angle, double radius, double trackwidth) {
  **********************************************************/
 int Robot::moveNB(double *angles) {
 	for (int i = 0; i < _dof; i++) {
-		this->moveJointNB(static_cast<int>(i), angles[i]);
+		this->moveJointNB(i, angles[i]);
 	}
 
 	// success
@@ -2221,6 +2302,26 @@ void* Robot::recordxyBeginThread(void *arg) {
 
 	// cleanup
 	delete rec;
+
+	// success
+	return NULL;
+}
+
+void* Robot::turnThread(void *arg) {
+	// cast arg
+	RobotMove *move = (RobotMove *)arg;
+
+	// perform motion
+	if (move->i)
+		move->robot->turnLeft(move->x, move->radius, move->trackwidth);
+	else
+		move->robot->turnRight(move->x, move->radius, move->trackwidth);
+
+	// signal successful completion
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+
+	// cleanup
+	delete move;
 
 	// success
 	return NULL;

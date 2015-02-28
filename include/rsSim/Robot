@@ -117,10 +117,10 @@ namespace rsSim {
 			int systemTime(double&);
 			int traceOff(void);
 			int traceOn(void);
-			int turnLeft(double, double, double);
-			virtual int turnLeftNB(double, double, double);
-			int turnRight(double, double, double);
-			virtual int turnRightNB(double, double, double);
+			virtual int turnLeft(double, double, double);
+			int turnLeftNB(double, double, double);
+			virtual int turnRight(double, double, double);
+			int turnRightNB(double, double, double);
 
 		// condensed argument versions of function calls
 		protected:
@@ -270,6 +270,7 @@ namespace rsSim {
 			static void* recordAnglesThread(void*);
 			static void* recordAnglesBeginThread(void*);
 			static void* recordxyBeginThread(void*);
+			static void* turnThread(void*);
 
 		// private data
 		private:

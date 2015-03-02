@@ -28,6 +28,10 @@ if (OPENGL_FOUND)
 	set (EXTRA_LIBS ${EXTRA_LIBS} ${OPENGL_LIBRARIES})
 endif (OPENGL_FOUND)
 
+# add threading
+find_package (Threads)
+set (EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+
 # add rsRobots
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
 

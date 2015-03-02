@@ -12,9 +12,6 @@ Linkbot::Linkbot(void) : rsRobots::Robot(rs::LINKBOTT), Robot(JOINT1, JOINT3) {
 }
 
 Linkbot::~Linkbot(void) {
-	// remove robot from simulation
-	if (!_sim->deleteRobot(_pos)) { delete _sim; }
-
 	// delete mutexes
 	for (int i = 0; i < _dof; i++) {
 		MUTEX_DESTROY(&_motor[i].success_mutex);

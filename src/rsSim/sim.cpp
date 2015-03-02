@@ -9,7 +9,7 @@
 
 using namespace rsSim;
 
-Sim::Sim(int pause) {
+Sim::Sim(bool pause, bool rt) {
 	// create ODE simulation space
 	dInitODE2(0);										// initialized ode library
 	_world = dWorldCreate();							// create world for simulation
@@ -34,8 +34,8 @@ Sim::Sim(int pause) {
 	// simulation variables
 	_clock = 0;											// start clock
 	_collision = true;									// perform inter-robot collisions
-	_pause = true;										// start paused
-	_rt = true;											// real time
+	_pause = pause;										// start paused
+	_rt = rt;											// real time
 	_running = true;									// is simulation running
 	_step = 0.004;										// initial time step
 

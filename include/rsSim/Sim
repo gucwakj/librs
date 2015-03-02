@@ -16,7 +16,7 @@ namespace rsSim {
 	class Sim {
 		// public functions
 		public:
-			Sim(int);
+			Sim(bool, bool);
 			virtual ~Sim(void);
 
 			int addRobot(Robot*, int, const double*, const double*, const double*, int, int);

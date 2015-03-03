@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <rs/Macros>
 #include <rsXML/Reader>
 
 using namespace rsXML;
@@ -524,7 +525,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(a, b, c);
+				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -566,7 +567,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(a, b, c);
+				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -608,7 +609,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(a, b, c);
+				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -639,7 +640,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(a, b, c);
+				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);

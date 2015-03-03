@@ -631,6 +631,9 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		case CUBE:
 			this->build_cube(_conn.back());
 			break;
+		case DOUBLEBRIDGE:
+			this->build_doublebridge(_conn.back());
+			break;
 		case FACEPLATE:
 			this->build_faceplate(_conn.back());
 			break;
@@ -1311,6 +1314,21 @@ void Linkbot::build_cube(Connector *conn) {
 
 	// set geometry
 	geom[0] = dCreateBox(_space, _cubic_length, _cubic_length, _cubic_length);
+	dGeomSetBody(geom[0], conn->body);
+}
+
+void Linkbot::build_doublebridge(Connector *conn) {
+	// create body
+	dGeomID *geom = new dGeomID[1];
+
+	// set mass of body
+	dMass m;
+	dMassSetBox(&m, 170, 2*_conn_depth, _bridge_length, _conn_height);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(conn->body, &m);
+
+	// set geometry
+	geom[0] = dCreateBox(_space, 2*_conn_depth, _bridge_length, _conn_height);
 	dGeomSetBody(geom[0], conn->body);
 }
 

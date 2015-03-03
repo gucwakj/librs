@@ -85,6 +85,22 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 				q2[3] = cos(-0.785398);	// -0.5*PI/2
 			}
 			break;
+		case rsLinkbot::DOUBLEBRIDGE:
+			if (side == 2) {
+				p2[1] = -_bridge_length + 2*_face_radius;
+				q2[0] = 0;
+				q2[1] = sin(1.570796);	// 0.5*PI
+				q2[2] = 0;
+				q2[3] = cos(1.570796);	// 0.5*PI
+			}
+			else if (side == 3) {
+				p2[0] = 2*_conn_depth;
+			}
+			else if (side == 4) {
+				p2[0] = 2*_conn_depth;
+				p2[1] = -_bridge_length + 2*_face_radius;
+			}
+			break;
 		case rsLinkbot::OMNIPLATE:
 			if (side == 2) {
 				p2[2] = -_omni_length + 2*_face_radius;
@@ -147,6 +163,10 @@ void Linkbot::getConnBodyOffset(int type, int orientation, const double *p, cons
 			break;
 		case rsLinkbot::CUBE:
 			p2[0] = _cubic_length/2;
+			break;
+		case rsLinkbot::DOUBLEBRIDGE:
+			p2[0] = _conn_depth;
+			p2[1] = _bridge_length/2 - _face_radius;
 			break;
 		case rsLinkbot::FACEPLATE:
 			p2[0] = _conn_depth/2;

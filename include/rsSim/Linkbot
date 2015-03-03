@@ -82,6 +82,7 @@ namespace rsSim {
 			void build_bridge(Connector*);
 			void build_caster(Connector*, int);
 			void build_cube(Connector*);
+			void build_doublebridge(Connector*);
 			void build_face(int, dGeomID*, const double*, const double*);
 			void build_faceplate(Connector*);
 			void build_gripper(Connector*, int);

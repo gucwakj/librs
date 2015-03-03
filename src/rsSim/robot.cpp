@@ -2265,12 +2265,12 @@ void* Robot::recordxyBeginThread(void *arg) {
 			// create larger array for time
 			double *newbuf = new double[rec->num];
 			memcpy(newbuf, *rec->ptime, sizeof(double)*i);
-			delete *(rec->ptime);
+			delete [] *(rec->ptime);
 			*(rec->ptime) = newbuf;
 			// create larger array for angle
 			newbuf = new double[rec->num];
 			memcpy(newbuf, *(rec->pangle), sizeof(double)*i);
-			delete (*(rec->pangle));
+			delete [] (*(rec->pangle));
 			*(rec->pangle[0]) = newbuf;
 		}
 

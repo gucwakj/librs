@@ -14,6 +14,7 @@ Linkbot::Linkbot(void) : rsRobots::Robot(rs::LINKBOTT), Robot(JOINT1, JOINT3) {
 Linkbot::~Linkbot(void) {
 	// delete mutexes
 	for (int i = 0; i < _dof; i++) {
+		delete [] _motor[i].record_angle;
 		MUTEX_DESTROY(&_motor[i].success_mutex);
 		COND_DESTROY(&_motor[i].success_cond);
 	}
@@ -347,7 +348,7 @@ int Linkbot::drivexyTo(double x, double y, double radius, double trackwidth) {
 	this->driveDistance(sqrt(x*x - 2*x*x0 + x0*x0 + y*y - 2*y*y0 + y0*y0), radius);
 
 	// clean up
-	delete speed;
+	delete [] speed;
 
 	// success
 	return 0;
@@ -440,7 +441,7 @@ int Linkbot::moveNB(double angle1, double angle2, double angle3) {
 	int retval = Robot::moveNB(angles);
 
 	// clean up
-	delete angles;
+	delete [] angles;
 
 	// success
 	return retval;
@@ -465,7 +466,7 @@ int Linkbot::moveToNB(double angle1, double angle2, double angle3) {
 	int retval = Robot::moveToNB(angles);
 
 	// clean up
-	delete angles;
+	delete [] angles;
 
 	// success
 	return retval;

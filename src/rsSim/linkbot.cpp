@@ -293,67 +293,6 @@ int Linkbot::driveForwardNB(double angle) {
 	return 0;
 }
 
-int Linkbot::drivexyTo(double x, double y, double radius, double trackwidth) {
-	// get current position
-	double x0, y0;
-	this->getxy(x0, y0);
-
-	// if movement is too small, just call it good
-	if (fabs(x-x0) < 0.1 && fabs(y-y0) < 0.1) {
-		return 1;
-	}
-
-	// get current rotation
-	double r0 = this->getRotation(BODY, 2);
-
-	// compute rotation matrix for body frame
-	dMatrix3 R;
-	dRFromAxisAndAngle(R, 0, 0, 1, r0);
-
-	// get angle to turn in body coordinates (transform of R)
-	double angle = atan2(R[0]*(x-x0) + R[4]*(y-y0), R[1]*(x-x0) + R[5]*(y-y0));
-
-	// get speed of robot
-	double *speed = new double[_dof]();
-	this->getJointSpeeds(speed[0], speed[1], speed[2]);
-
-	if (fabs(speed[0]) > 120) {
-		this->setJointSpeeds(45, 45, 45);
-	}
-
-	// turn toward new postition until pointing correctly
-	while (fabs(angle) > 0.005) {
-		// turn in shortest path
-		if (angle > 0.005)
-			this->turnRight(RAD2DEG(angle), radius, trackwidth);
-		else if (angle < -0.005)
-			this->turnLeft(RAD2DEG(-angle), radius, trackwidth);
-
-		// calculate new rotation from error
-		this->getxy(x0, y0);
-		r0 = this->getRotation(BODY, 2);
-		dRSetIdentity(R);
-		dRFromAxisAndAngle(R, 0, 0, 1, r0);
-		angle = atan2(R[0]*(x-x0) + R[4]*(y-y0), R[1]*(x-x0) + R[5]*(y-y0));
-
-		// move slowly
-		this->setJointSpeeds(45, 45, 45);
-	}
-
-	// reset to original speed after turning
-	this->setJointSpeeds(speed[0], speed[1], speed[2]);
-
-	// move along length of line
-	this->getxy(x0, y0);
-	this->driveDistance(sqrt(x*x - 2*x*x0 + x0*x0 + y*y - 2*y*y0 + y0*y0), radius);
-
-	// clean up
-	delete [] speed;
-
-	// success
-	return 0;
-}
-
 int Linkbot::drivexyToSmooth(double x1, double y1, double x2, double y2, double x3, double y3, double radius, double trackwidth) {
 	// get midpoints
 	double p[2] = {(x1 + x2)/2, (y1 + y2)/2};

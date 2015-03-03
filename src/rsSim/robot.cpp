@@ -246,21 +246,11 @@ int Robot::drivexyTo(double x, double y, double radius, double trackwidth) {
 	// get angle to turn in body coordinates (transform of R)
 	double angle = atan2(R[0]*(x-x0) + R[4]*(y-y0), R[1]*(x-x0) + R[5]*(y-y0));
 
-	// turn toward new postition until pointing correctly
-	while (fabs(angle) > 0.01) {
-		// turn in shortest path
-		if (angle > 0.01)
-			this->turnRight(RAD2DEG(angle), radius, trackwidth);
-		else if (angle < -0.01)
-			this->turnLeft(RAD2DEG(-angle), radius, trackwidth);
-
-		// calculate new rotation from error
-		this->getxy(x0, y0);
-		r0 = this->getRotation(0, 2);
-		dRSetIdentity(R);
-		dRFromAxisAndAngle(R, 0, 0, 1, r0);
-		angle = atan2(R[0]*(x-x0) + R[4]*(y-y0), R[1]*(x-x0) + R[5]*(y-y0));
-	}
+	// turn in shortest path
+	if (angle > 0.005)
+		this->turnRight(RAD2DEG(angle), radius, trackwidth);
+	else if (angle < -0.005)
+		this->turnLeft(RAD2DEG(-angle), radius, trackwidth);
 
 	// move along length of line
 	this->getxy(x0, y0);

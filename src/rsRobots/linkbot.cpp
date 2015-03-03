@@ -46,7 +46,7 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 	// get offset of face
 	switch (type) {
 		case rsLinkbot::BRIDGE:
-			p2[1] = -_bridge_length + 2*_face_radius;
+			p2[1] = _bridge_length - 2*_face_radius;
 			q2[0] = 0;
 			q2[1] = sin(1.570796);	// 0.5*PI
 			q2[2] = 0;
@@ -87,7 +87,7 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 			break;
 		case rsLinkbot::DOUBLEBRIDGE:
 			if (side == 2) {
-				p2[1] = -_bridge_length + 2*_face_radius;
+				p2[1] = _bridge_length - 2*_face_radius;
 				q2[0] = 0;
 				q2[1] = sin(1.570796);	// 0.5*PI
 				q2[2] = 0;
@@ -98,7 +98,7 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 			}
 			else if (side == 4) {
 				p2[0] = 2*_conn_depth;
-				p2[1] = -_bridge_length + 2*_face_radius;
+				p2[1] = _bridge_length - 2*_face_radius;
 			}
 			break;
 		case rsLinkbot::OMNIPLATE:

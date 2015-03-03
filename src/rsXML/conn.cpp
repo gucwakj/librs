@@ -13,10 +13,11 @@ Conn::Conn(void) {
 	_type = 0;
 }
 
-Conn::Conn(double size, int conn, int face1, int face2, int robot, int side, int type) {
+Conn::Conn(double size, int orientation, int conn, int face1, int face2, int robot, int side, int type) {
 	_conn = conn;
 	_face1 = face1;
 	_face2 = face2;
+	_orientation = orientation;
 	_robot = robot;
 	_side = side;
 	_size = size;
@@ -39,6 +40,10 @@ int Conn::getFace2(void) {
 	return _face2;
 }
 
+int Conn::getOrientation(void) {
+	return _orientation;
+}
+
 int Conn::getRobot(void) {
 	return _robot;
 }
@@ -59,4 +64,5 @@ void Conn::printDebug(void) {
 	std::cerr << "type: " << _type << std::endl;
 	std::cerr << "side: " << _side << std::endl;
 	std::cerr << "conn: " << _conn << std::endl;
+	std::cerr << "orie: " << _orientation << std::endl;
 }

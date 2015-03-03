@@ -56,7 +56,7 @@ namespace rsScene {
 			int addChild(void);
 			void addHighlight(int, bool = 1);
 			int deleteChild(int);
-			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, double, int, int);
+			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, int, double, int, int);
 			Ground* drawGround(int, const double*, const double*, const double*, const double*);
 			int drawMarker(int, const double*, const double*, const double*, int, std::string);
 			Robot* drawRobot(rsRobots::Robot*, int, const double*, const double*, double*, bool);
@@ -85,7 +85,7 @@ namespace rsScene {
 			void draw_global_hud(double, double, bool);
 			//int draw_cubus(rsRobots::Cubus*, osg::Group*, const double*, const double*, bool, double*);
 			void draw_robot_linkbot(rsRobots::Linkbot*, Robot*, const double*, const double*, bool, double*);
-			void draw_robot_linkbot_conn(rsRobots::Linkbot*, Robot*, int, int, double, int, int);
+			void draw_robot_linkbot_conn(rsRobots::Linkbot*, Robot*, int, int, int, double, int, int);
 			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const double*, const double*, bool, double*);
 			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);
 			void draw_scene_outdoors(double, double, bool);

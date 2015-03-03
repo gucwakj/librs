@@ -32,7 +32,7 @@ namespace rsSim {
 		// undocumented public functions
 		public:
 			ConnectorList& getConnectorList(void);
-			virtual int addConnector(int, int, double, int, int) = 0;
+			virtual int addConnector(int, int, int, double, int, int) = 0;
 
 		// utility functions
 		protected:

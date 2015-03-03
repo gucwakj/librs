@@ -11,7 +11,7 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_a[3] = 0;
 	_a[4] = 0;
 	_a[5] = 0;
-	_base = -1;
+	_base == NULL;
 	_connected = 0;
 	_ground = -1;
 	_id = -1;
@@ -43,10 +43,7 @@ int Robot::addConnector(Conn *conn) {
 }
 
 Conn* Robot::getBaseConnector(void) {
-	if (_base == -1)
-		return NULL;
-	else
-		return _conn[_base];
+	return _base;
 }
 
 ConnectorList& Robot::getConnectorList(void) {
@@ -164,16 +161,14 @@ void Linkbot::postProcess(void) {
 	// find if i am connected to another robot
 	for (int i = 0; i < _conn.size(); i++) {
 		if (_conn[i]->getRobot() != _id) {
-			_base = i;
+			_base = _conn[i];
+			_conn.erase(_conn.begin() + i);
 			break;
 		}
 	}
 
 	// reposition robot in space
-	if (_base != -1) {
-		_base = _base;
-	}
-	else {
+	if (_base == NULL) {
 		// check for wheels
 		for (int i = 0; i < _conn.size(); i++) {
 			if (_conn[i]->getConn() == rsLinkbot::BIGWHEEL) {

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <rsRobots/Linkbot>
 
 using namespace rsRobots;
@@ -30,7 +31,14 @@ Linkbot::Linkbot(int disabled) : Robot(rs::LINKBOTT) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Linkbot::getConnFaceOffset(int type, int side, const double *p, const double *q, double *p1, double *q1) {
+void Linkbot::getConnFaceOffset(int type, int side, int orientation, const double *p, const double *q, double *p1, double *q1) {
+	// rotate for orientation
+	double q3[4] = {sin(0.5*1.570796*(orientation-1)),	// 0.5*90
+					0, 0,
+					cos(0.5*1.570796*(orientation-1))};	// 0.5*90
+	double q4[4] = {0, 0, 0, 1};
+	this->multiplyQbyQ(q, q3, q4);
+
 	// offsets
 	double p2[3] = {0};
 	double q2[4] = {0, 0, 0, 1};
@@ -104,16 +112,23 @@ void Linkbot::getConnFaceOffset(int type, int side, const double *p, const doubl
 
 	// calculate offset position
 	double o[3];
-	this->multiplyQbyV(q, p2[0], p2[1], p2[2], o);
+	this->multiplyQbyV(q4, p2[0], p2[1], p2[2], o);
 	p1[0] = p[0] + o[0];
 	p1[1] = p[1] + o[1];
 	p1[2] = p[2] + o[2];
 
 	// calculate offset quaternion
-	this->multiplyQbyQ(q, q2, q1);
+	this->multiplyQbyQ(q4, q2, q1);
 }
 
-void Linkbot::getConnBodyOffset(int type, const double *p, const double *q, double *p1, double *q1) {
+void Linkbot::getConnBodyOffset(int type, int orientation, const double *p, const double *q, double *p1, double *q1) {
+	// rotate for orientation
+	double q3[4] = {sin(0.5*1.570796*(orientation-1)),	// 0.5*90
+					0, 0,
+					cos(0.5*1.570796*(orientation-1))};	// 0.5*90
+	double q4[4] = {0, 0, 0, 1};
+	this->multiplyQbyQ(q, q3, q4);
+
 	// offsets
 	double p2[3] = {0};
 	double q2[4] = {0, 0, 0, 1};
@@ -160,13 +175,13 @@ void Linkbot::getConnBodyOffset(int type, const double *p, const double *q, doub
 
 	// calculate offset position
 	double o[3];
-	this->multiplyQbyV(q, p2[0], p2[1], p2[2], o);
+	this->multiplyQbyV(q4, p2[0], p2[1], p2[2], o);
 	p1[0] = p[0] + o[0];
 	p1[1] = p[1] + o[1];
 	p1[2] = p[2] + o[2];
 
 	// calculate offset quaternion
-	this->multiplyQbyQ(q, q2, q1);
+	this->multiplyQbyQ(q4, q2, q1);
 }
 
 void Linkbot::getRobotBodyOffset(int body, const double *p, const double *q, double *p1, double *q1) {

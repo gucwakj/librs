@@ -103,7 +103,7 @@ int Sim::addRobot(rsSim::Robot *robot, int id, const double *p, const double *r,
 	return 0;
 }
 
-int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const double *a, int face1, int face2, int type, int side, int ground, int trace) {
+int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const double *a, int face1, int face2, int type, int side, int orientation, int ground, int trace) {
 	// lock robot data to insert a new one into simulation
 	MUTEX_LOCK(&_robot_mutex);
 
@@ -117,7 +117,7 @@ int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const 
 	// build
 	double p[3], q[4], p1[3], q1[4];
 	dynamic_cast<rsSim::ModularRobot*>(base)->getRobotFaceOffset(face1, base->getPosition(), base->getQuaternion(), p, q);
-	dynamic_cast<rsSim::ModularRobot*>(base)->getConnFaceOffset(type, side, p, q, p1, q1);
+	dynamic_cast<rsSim::ModularRobot*>(base)->getConnFaceOffset(type, side, orientation, p, q, p1, q1);
 	robot->build(p1, q1, a, dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorBodyID(face1), face2, ground);
 
 	// unlock robot data

@@ -14,8 +14,8 @@ namespace rsRobots {
 
 		// for inherited classes
 		public:
-			virtual void getConnBodyOffset(int, const double*, const double*, double*, double*) {};
-			virtual void getConnFaceOffset(int, int, const double*, const double*, double*, double*) {};
+			virtual void getConnBodyOffset(int, int, const double*, const double*, double*, double*) {};
+			virtual void getConnFaceOffset(int, int, int, const double*, const double*, double*, double*) {};
 			virtual void getRobotFaceOffset(int, const double*, const double*, double*, double*) {};
 
 		// data

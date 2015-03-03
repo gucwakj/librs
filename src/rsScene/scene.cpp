@@ -107,7 +107,7 @@ int Scene::deleteChild(int id) {
 	return _scene->getNumChildren();
 }
 
-void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type, int face, double size, int side, int conn) {
+void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type, int face, int orientation, double size, int side, int conn) {
 	switch (robot->getForm()) {
 		case rs::CUBUS:
 			//this->drawCubus(dynamic_cast<rsRobots::Cubus*>(robot), p, q, trace, rgb);
@@ -115,7 +115,7 @@ void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type,
 		case rs::LINKBOTI:
 		case rs::LINKBOTL:
 		case rs::LINKBOTT:
-			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::Linkbot*>(robot), group, type, face, size, side, conn);
+			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::Linkbot*>(robot), group, type, face, orientation, size, side, conn);
 			break;
 		case rs::MOBOT:
 			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
@@ -1262,7 +1262,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const dou
 	}
 }
 
-void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int type, int face, double size, int side, int conn) {
+void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int type, int face, int orientation, double size, int side, int conn) {
 	// get robot p&q
 	osg::PositionAttitudeTransform *pat;
 	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::BODY));
@@ -1325,11 +1325,11 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 		return 0;*/
 	}
 	else if (conn == -1)
-		robot->getConnBodyOffset(type, p1, q1, p2, q2);
+		robot->getConnBodyOffset(type, orientation, p1, q1, p2, q2);
 	else {
-		robot->getConnFaceOffset(type, side, p1, q1, p2, q2);
+		robot->getConnFaceOffset(type, side, orientation, p1, q1, p2, q2);
 		type = conn;
-		robot->getConnBodyOffset(type, p2, q2, p2, q2);
+		robot->getConnBodyOffset(type, orientation, p2, q2, p2, q2);
 	}
 
 	// PAT to transform mesh

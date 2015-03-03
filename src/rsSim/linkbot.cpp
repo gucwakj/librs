@@ -583,7 +583,7 @@ int Linkbot::turnRight(double angle, double radius, double trackwidth) {
 /**********************************************************
 	inherited functions
  **********************************************************/
-int Linkbot::addConnector(int type, int face, double size, int side, int conn) {
+int Linkbot::addConnector(int type, int face, int orientation, double size, int side, int conn) {
 	// get connector body position
 	const double *pos = dBodyGetPosition(_body[BODY]);
 	const double *quat = dBodyGetQuaternion(_body[BODY]);
@@ -591,10 +591,10 @@ int Linkbot::addConnector(int type, int face, double size, int side, int conn) {
 	double q[4] = {quat[1], quat[2], quat[3], quat[0]}, q1[4], q2[4];
 	this->getRobotFaceOffset(face, p, q, p1, q1);
 	if (conn == -1)
-		this->getConnBodyOffset(type, p1, q1, p2, q2);
+		this->getConnBodyOffset(type, orientation, p1, q1, p2, q2);
 	else {
-		this->getConnFaceOffset(type, side, p1, q1, p2, q2);
-		this->getConnBodyOffset(conn, p2, q2, p2, q2);
+		this->getConnFaceOffset(type, side, orientation, p1, q1, p2, q2);
+		this->getConnBodyOffset(conn, orientation, p2, q2, p2, q2);
 	}
 
 	// create new connector

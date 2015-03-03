@@ -47,12 +47,12 @@ namespace rsXML {
 			double _p[3];
 			double _q[4];
 			double _led[4];
-			int _base;
 			int _connected;
 			int _ground;
 			int _id;
 			int _trace;
 			ConnectorList _conn;
+			Conn *_base;
 	};
 
 	// class

@@ -446,7 +446,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 	tinyxml2::XMLElement *ele = NULL;
 	tinyxml2::XMLElement *side = NULL;
 	int *rtmp, *ftmp, *ntmp, *atmp, ctype = 0, cnum = 0;
-	int custom = 0, i = 0;
+	int custom = 0, i = 0, orientation = 1;
 	double size = 0, a, b, c, d, e, f;
 
 	// check for existence of node
@@ -679,15 +679,18 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			else if ( !strcmp(node->Value(), "bridge") ) {
 				ctype = rsLinkbot::BRIDGE;
 				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "caster") ) {
 				ctype = rsLinkbot::CASTER;
 				cnum = 1;
 				node->QueryIntAttribute("custom", &custom);
+				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "cube") ) {
 				ctype = rsLinkbot::CUBE;
 				cnum = 5;
+				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "faceplate") ) {
 				ctype = rsLinkbot::FACEPLATE;
@@ -704,10 +707,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			else if ( !strcmp(node->Value(), "omnidrive") ) {
 				ctype = rsLinkbot::OMNIPLATE;
 				cnum = 4;
+				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "simple") ) {
 				ctype = rsLinkbot::SIMPLE;
 				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "smallwheel") ) {
 				ctype = rsLinkbot::SMALLWHEEL;
@@ -770,7 +775,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			for (int j = 0; j < i; j++) {
 				for (int k = 0; k < _robot.size(); k++) {
 					if (_robot[k]->getID() == rtmp[j]) {
-						_robot[k]->addConnector(new Conn(size, atmp[j], ftmp[0], ftmp[j], rtmp[0], ntmp[j], ctype));
+						_robot[k]->addConnector(new Conn(size, orientation, atmp[j], ftmp[0], ftmp[j], rtmp[0], ntmp[j], ctype));
 						break;
 					}
 				}

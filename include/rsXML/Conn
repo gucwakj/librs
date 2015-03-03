@@ -8,13 +8,14 @@ namespace rsXML {
 		// public functions
 		public:
 			Conn(void);
-			Conn(double, int, int, int, int, int, int);
+			Conn(double, int, int, int, int, int, int, int);
 			virtual ~Conn(void) {};
 
 			double getSize(void);
 			int getConn(void);
 			int getFace1(void);
 			int getFace2(void);
+			int getOrientation(void);
 			int getRobot(void);
 			int getSide(void);
 			int getType(void);
@@ -26,6 +27,7 @@ namespace rsXML {
 			int _conn;
 			int _face1;
 			int _face2;
+			int _orientation;
 			int _robot;
 			int _side;
 			int _type;

@@ -259,6 +259,7 @@ namespace rsSim {
 			bool is_shift_enabled(void);
 			double normal(double);
 			double uniform(void);
+			static void* driveDistanceThread(void*);
 			static void* driveTimeNBThread(void*);
 			static void* drivexyToThread(void*);
 			static void* drivexyToFuncThread(void*);

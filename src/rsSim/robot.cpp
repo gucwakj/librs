@@ -132,15 +132,52 @@ int Robot::driveBackwardNB(double angle) {
 }
 
 int Robot::driveDistance(double distance, double radius) {
-	this->driveForwardNB(RAD2DEG(distance/radius));
-	this->moveWait();
+	// get current position
+	double x0, y0;
+	this->getxy(x0, y0);
+
+	// get current rotation
+	double r0 = this->getRotation(0, 2);
+
+	// calculate distance to move
+	double x = x0 + distance*sin(this->getRotation(0, 2));
+	double y = y0 + distance*cos(this->getRotation(0, 2));
+	double d = sqrt((x-x0)*(x-x0) + (y-y0)*(y-y0));
+
+	// move until close to goal
+	while (fabs(d) > 0.005) {
+		// turn
+		if (d > 0.005) {
+			this->driveForward(RAD2DEG(d/radius));
+		}
+		else if (d < -0.005) {
+			this->driveBackward(RAD2DEG(d/radius));
+		}
+
+		// calculate new distance to move
+		this->getxy(x0, y0);
+		d = sqrt((x-x0)*(x-x0) + (y-y0)*(y-y0));
+	}
 
 	// success
 	return 0;
 }
 
 int Robot::driveDistanceNB(double distance, double radius) {
-	this->driveForwardNB(RAD2DEG(distance/radius));
+	// create thread
+	THREAD_T moving;
+
+	// store args
+	RobotMove *move = new RobotMove;
+	move->robot = this;
+	move->x = distance;
+	move->radius = radius;
+
+	// motion in progress
+	_motion = true;
+
+	// start thread
+	THREAD_CREATE(&moving, driveDistanceThread, (void *)move);
 
 	// success
 	return 0;
@@ -1822,6 +1859,23 @@ double Robot::uniform(void) {
 	if (_seed < 0)
 		_seed = _seed + 2147483647;
 	return ((double)(_seed) * 4.656612875E-10);
+}
+
+void* Robot::driveDistanceThread(void *arg) {
+	// cast arg
+	RobotMove *move = (RobotMove *)arg;
+
+	// perform motion
+	move->robot->driveDistance(move->x, move->radius);
+
+	// signal successful completion
+	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
+
+	// cleanup
+	delete move;
+
+	// success
+	return NULL;
 }
 
 void* Robot::driveTimeNBThread(void *arg) {

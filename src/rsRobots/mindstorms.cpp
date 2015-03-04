@@ -45,6 +45,6 @@ void Mindstorms::getRobotBodyOffset(int body, const double *p, const double *q, 
 	p1[2] = p[2] + o[2];
 
 	// calculate offset quaternion
-	this->multiplyQbyQ(q, q2, q1);
+	this->multiplyQbyQ(q2, q, q1);
 }
 

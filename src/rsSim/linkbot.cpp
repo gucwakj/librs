@@ -738,7 +738,7 @@ int Linkbot::build(const double *p, const double *q, const double *a, dBodyID ba
 	p1[0] = p[0] + o[0];
 	p1[1] = p[1] + o[1];
 	p1[2] = p[2] + o[2];
-	this->multiplyQbyQ(q, q2, q1);
+	this->multiplyQbyQ(q2, q, q1);
 
     // build new module
 	this->buildIndividual(p1, q1, a);

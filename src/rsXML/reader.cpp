@@ -791,6 +791,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			delete [] ftmp;
 			delete [] ntmp;
 			delete [] atmp;
+
+			// reset temporary variables
+			custom = 0;
+			i = 0;
+			orientation = 1;
+			size = 0;
 		}
 
 		// go to next node

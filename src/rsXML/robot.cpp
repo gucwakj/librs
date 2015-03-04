@@ -138,7 +138,7 @@ void Robot::setPsi(double c) {
 	double q2[4] = {0, 0, sin(0.5*c), cos(0.5*c)};
 
 	// calculate new quaternion
-	this->multiplyQbyQ(q1, q2, _q);
+	this->multiplyQbyQ(q2, q1, _q);
 }
 
 void Robot::setPosition(double a, double b, double c) {

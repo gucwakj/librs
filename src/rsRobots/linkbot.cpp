@@ -15,7 +15,7 @@ Linkbot::Linkbot(int disabled) : Robot(rs::LINKBOTT) {
 	_conn_depth = 0.00570;
 	_conn_height = 0.03715;
 	_bigwheel_radius = 0.05080;
-	_bridge_length = 0.14025;
+	_bridge_length = 0.13350;
 	_cubic_length = 0.07115;
 	_omni_length = 0.17360;
 	_smallwheel_radius = 0.04445;

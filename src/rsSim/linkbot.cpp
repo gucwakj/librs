@@ -724,7 +724,7 @@ int Linkbot::build(const double *p, const double *q, const double *a, dBodyID ba
 			p2[0] = _body_width/2 + _face_depth;
 			break;
 		case FACE2:
-			p2[1] = _face_depth + _body_length;
+			p2[0] = _face_depth + _body_length;
 			q2[2] = sin(-0.785398);	// 0.5*PI/2
 			q2[3] = cos(-0.785398);	// 0.5*PI/2
 			break;

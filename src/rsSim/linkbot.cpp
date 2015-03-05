@@ -718,27 +718,34 @@ int Linkbot::build(const double *p, const double *q, const double *a, int ground
 int Linkbot::build(const double *p, const double *q, const double *a, dBodyID base, int face, int ground) {
 	// get offset of robot
 	double o[3], p1[3], p2[3] = {0};
-	double q1[4], q2[4] = {0, 0, 0, 1};
+	double q1[4], q2[4] = {0, 0, 0, 1}, q3[4] = {0, 0, 0, 1}, q4[4];
 	switch (face) {
 		case FACE1:
 			p2[0] = _body_width/2 + _face_depth;
+			q3[0] = sin(DEG2RAD(-0.5*a[JOINT1]));
+			q3[3] = cos(DEG2RAD(-0.5*a[JOINT1]));
 			break;
 		case FACE2:
 			p2[0] = _face_depth + _body_length;
 			q2[2] = sin(-0.785398);	// 0.5*PI/2
 			q2[3] = cos(-0.785398);	// 0.5*PI/2
+			q3[0] = sin(DEG2RAD(-0.5*a[JOINT2]));
+			q3[3] = cos(DEG2RAD(-0.5*a[JOINT2]));
 			break;
 		case FACE3:
 			p2[0] = _body_width/2 + _face_depth;
 			q2[2] = sin(1.570796);	// 0.5*PI
 			q2[3] = cos(1.570796);	// 0.5*PI
+			q3[0] = sin(DEG2RAD(-0.5*a[JOINT3]));
+			q3[3] = cos(DEG2RAD(-0.5*a[JOINT3]));
 			break;
 	}
 	this->multiplyQbyV(q, p2[0], p2[1], p2[2], o);
 	p1[0] = p[0] + o[0];
 	p1[1] = p[1] + o[1];
 	p1[2] = p[2] + o[2];
-	this->multiplyQbyQ(q2, q, q1);
+	this->multiplyQbyQ(q2, q, q4);
+	this->multiplyQbyQ(q3, q4, q1);
 
     // build new module
 	this->buildIndividual(p1, q1, a);

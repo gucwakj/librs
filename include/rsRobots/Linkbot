@@ -18,8 +18,8 @@ namespace rsRobots {
 		public:
 			virtual void getConnBodyOffset(int, int, const double*, const double*, double*, double*);
 			virtual void getConnFaceOffset(int, int, int, const double*, const double*, double*, double*);
-			virtual void getRobotBodyOffset(int, const double*, const double*, double*, double*);
-			virtual void getRobotFaceOffset(int, const double*, const double*, double*, double*);
+			virtual void getRobotBodyOffset(int, double, const double*, const double*, double*, double*);
+			virtual void getRobotFaceOffset(int, double, const double*, const double*, double*, double*);
 
 		// data
 		protected:

@@ -589,7 +589,7 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 	const double *quat = dBodyGetQuaternion(_body[BODY]);
 	double p[3] = {pos[0], pos[1], pos[2]}, p1[3], p2[3];
 	double q[4] = {quat[1], quat[2], quat[3], quat[0]}, q1[4], q2[4];
-	this->getRobotFaceOffset(face, p, q, p1, q1);
+	this->getRobotFaceOffset(face, _motor[face-1].theta, p, q, p1, q1);
 	if (conn == -1)
 		this->getConnBodyOffset(type, orientation, p1, q1, p2, q2);
 	else {
@@ -770,15 +770,16 @@ int Linkbot::buildIndividual(const double *p, const double *q, const double *a) 
 	for (int i = 0; i < _dof; i++) {
 		_motor[i].goal = _motor[i].theta = DEG2RAD(a[i]);
 	}
+	_motor[_disabled].goal = _motor[_disabled].theta = 0;
 
 	// build robot bodies
 	double p1[3], q1[4];
 	this->build_body(geom[BODY], p, q);
-	this->getRobotBodyOffset(FACE1, p, q, p1, q1);
+	this->getRobotBodyOffset(FACE1, 0, p, q, p1, q1);
 	this->build_face(FACE1, geom[FACE1], p1, q1);
-	this->getRobotBodyOffset(FACE2, p, q, p1, q1);
+	this->getRobotBodyOffset(FACE2, 0, p, q, p1, q1);
 	this->build_face(FACE2, geom[FACE2], p1, q1);
-	this->getRobotBodyOffset(FACE3, p, q, p1, q1);
+	this->getRobotBodyOffset(FACE3, 0, p, q, p1, q1);
 	this->build_face(FACE3, geom[FACE3], p1, q1);
 
 	// joint variable
@@ -826,22 +827,19 @@ int Linkbot::buildIndividual(const double *p, const double *q, const double *a) 
 		dBodySetFiniteRotationAxis(_body[FACE3], o[0], o[1], o[2]);
 	}
 
-	// TODO: build rotated joints
-	/*if (_motor[JOINT1].theta != 0) {
-		dRFromAxisAndAngle(R_f, -1, 0, 0, _motor[JOINT1].theta);
-		this->getRobotBodyOffset(FACE1, p, q, p1, q1);
+	// build rotated joints
+	if (_motor[JOINT1].theta != 0) {
+		this->getRobotBodyOffset(FACE1, _motor[JOINT1].theta, p, q, p1, q1);
 		this->build_face(FACE1, geom[FACE1], p1, q1);
 	}
 	if (_motor[JOINT2].theta != 0) {
-		dRFromAxisAndAngle(R_f, 0, -1, 0, _motor[JOINT2].theta);
-		this->getRobotBodyOffset(FACE2, p, q, p1, q1);
+		this->getRobotBodyOffset(FACE2, _motor[JOINT2].theta, p, q, p1, q1);
 		this->build_face(FACE2, geom[FACE2], p1, q1);
 	}
 	if (_motor[JOINT3].theta != 0) {
-		dRFromAxisAndAngle(R_f, 1, 0, 0, _motor[JOINT3].theta);
-		this->getRobotBodyOffset(FACE3, p, q, p1, q1);
+		this->getRobotBodyOffset(FACE3, _motor[JOINT3].theta, p, q, p1, q1);
 		this->build_face(FACE3, geom[FACE3], p1, q1);
-	}*/
+	}
 
 	// build motors
 	for (int i = 0; i < _dof; i++) {

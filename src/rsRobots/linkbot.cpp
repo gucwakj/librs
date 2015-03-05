@@ -204,27 +204,25 @@ void Linkbot::getConnBodyOffset(int type, int orientation, const double *p, cons
 	this->multiplyQbyQ(q2, q4, q1);
 }
 
-void Linkbot::getRobotBodyOffset(int body, const double *p, const double *q, double *p1, double *q1) {
+void Linkbot::getRobotBodyOffset(int body, double theta, const double *p, const double *q, double *p1, double *q1) {
 	// offset quaternion
-	double q2[4] = {0, 0, 0, 1};
+	double q2[4] = {0, 0, 0, 1}, q3[4] = {0, 0, 0, 1}, q4[4];
 	switch (body) {
 		case FACE1:
-			q2[0] = 0;
-			q2[1] = 0;
 			q2[2] = sin(1.570796);	// 0.5 * PI
 			q2[3] = cos(1.570796);	// 0.5 * PI
+			q3[0] = sin(0.5*theta);
+			q3[3] = cos(0.5*theta);
 			break;
 		case FACE2:
-			q2[0] = 0;
-			q2[1] = 0;
 			q2[2] = sin(-0.785398);	// -0.5 * PI/2
 			q2[3] = cos(-0.785398);	// -0.5 * PI/2
+			q3[0] = sin(0.5*theta);
+			q3[3] = cos(0.5*theta);
 			break;
 		case FACE3:
-			q2[0] = 0;
-			q2[1] = 0;
-			q2[2] = 0;
-			q2[3] = 1;
+			q3[0] = sin(0.5*theta);
+			q3[3] = cos(0.5*theta);
 			break;
 	}
 
@@ -236,34 +234,33 @@ void Linkbot::getRobotBodyOffset(int body, const double *p, const double *q, dou
 	p1[2] = p[2] + o[2];
 
 	// calculate offset quaternion
-	this->multiplyQbyQ(q2, q, q1);
+	this->multiplyQbyQ(q2, q, q4);
+	this->multiplyQbyQ(q3, q4, q1);
 }
 
-void Linkbot::getRobotFaceOffset(int face, const double *p, const double *q, double *p1, double *q1) {
+void Linkbot::getRobotFaceOffset(int face, double theta, const double *p, const double *q, double *p1, double *q1) {
 	// get offset of face
 	double p2[3] = {0};
-	double q2[4];
+	double q2[4] = {0, 0, 0, 1}, q3[4] = {0, 0, 0, 1}, q4[4];
 	switch (face) {
 		case FACE1:
 			p2[0] = -_face_depth/2;
-			q2[0] = 0;
-			q2[1] = 0;
 			q2[2] = sin(1.570796);	// 0.5*PI
 			q2[3] = cos(1.570796);	// 0.5*PI
+			q3[0] = sin(0.5*theta);
+			q3[3] = cos(0.5*theta);
 			break;
 		case FACE2:
 			p2[1] = -_face_depth/2;
-			q2[0] = 0;
-			q2[1] = 0;
 			q2[2] = sin(-0.785398);	// 0.5*PI/2
 			q2[3] = cos(-0.785398);	// 0.5*PI/2
+			q3[0] = sin(0.5*theta);
+			q3[3] = cos(0.5*theta);
 			break;
 		case FACE3:
 			p2[0] = _face_depth/2;
-			q2[0] = 0;
-			q2[1] = 0;
-			q2[2] = 0;
-			q2[3] = 1;
+			q3[0] = sin(0.5*theta);
+			q3[3] = cos(0.5*theta);
 			break;
 	}
 
@@ -275,7 +272,8 @@ void Linkbot::getRobotFaceOffset(int face, const double *p, const double *q, dou
 	p1[2] = p[2] + o[2];
 
 	// calculate offset quaternion
-	this->multiplyQbyQ(q2, q, q1);
+	this->multiplyQbyQ(q2, q, q4);
+	this->multiplyQbyQ(q3, q4, q1);
 }
 
 double Linkbot::getWheelRatio(int standard) {

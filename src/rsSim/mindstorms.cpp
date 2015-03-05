@@ -212,9 +212,9 @@ int Mindstorms::buildIndividual(const double *p, const double *q, const double *
 	// build robot bodies
 	double p1[3], q1[4];
 	this->build_body(geom[BODY], p, q);
-	this->getRobotBodyOffset(WHEEL1, p, q, p1, q1);
+	this->getRobotBodyOffset(WHEEL1, 0, p, q, p1, q1);
 	this->build_wheel(WHEEL1, geom[WHEEL1], p1, q1);
-	this->getRobotBodyOffset(WHEEL2, p, q, p1, q1);
+	this->getRobotBodyOffset(WHEEL2, 0, p, q, p1, q1);
 	this->build_wheel(WHEEL2, geom[WHEEL2], p1, q1);
 
 	// joint variable

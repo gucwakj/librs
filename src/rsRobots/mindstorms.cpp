@@ -19,7 +19,7 @@ Mindstorms::Mindstorms(void) : Robot(rs::MINDSTORMS) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Mindstorms::getRobotBodyOffset(int body, const double *p, const double *q, double *p1, double *q1) {
+void Mindstorms::getRobotBodyOffset(int body, double theta, const double *p, const double *q, double *p1, double *q1) {
 	// offset quaternion
 	double q2[4] = {0, 0, 0, 1};
 	switch (body) {

@@ -68,24 +68,6 @@ int Linkbot::recordDistancesBegin(robotRecordData_t &time, robotRecordData_t &di
 	return Robot::recordAnglesBegin(time, angles, seconds, shiftData);
 }
 
-int Linkbot::setJointSpeeds(double speed1, double speed2, double speed3) {
-	this->setJointSpeed(JOINT1, speed1);
-	this->setJointSpeed(JOINT2, speed2);
-	this->setJointSpeed(JOINT3, speed3);
-
-	// success
-	return 0;
-}
-
-int Linkbot::setJointSpeedRatios(double ratio1, double ratio2, double ratio3) {
-	this->setJointSpeedRatio(JOINT1, ratio1);
-	this->setJointSpeedRatio(JOINT2, ratio2);
-	this->setJointSpeedRatio(JOINT3, ratio3);
-
-	// success
-	return 0;
-}
-
 /**********************************************************
 	inherited functions
  **********************************************************/
@@ -959,21 +941,4 @@ void Linkbot::build_wheel(Connector *conn, double size) {
 	dQuaternion Q = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom[0], Q);
 }
-
-/*void* Linkbot::closeGripperNBThread(void *arg) {
-	// cast arg
-	LinkbotMove *move = (LinkbotMove *)arg;
-
-	// perform motion
-	move->robot->closeGripper();
-
-	// signal successful completion
-	COND_ACTION(&move->robot->_motion_cond, &move->robot->_motion_mutex, move->robot->_motion = false);
-
-	// cleanup
-	delete move;
-
-	// success
-	return NULL;
-}*/
 

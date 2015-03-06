@@ -51,8 +51,6 @@ namespace rsSim {
 			int recordDistancesBegin(robotRecordData_t&, robotRecordData_t&, robotRecordData_t&, robotRecordData_t&, double, double, int = 1);
 			int setJointSpeeds(double, double, double);
 			int setJointSpeedRatios(double, double, double);
-			int turnLeft(double, double, double);
-			int turnRight(double, double, double);
 
 		public:
 			virtual int addConnector(int, int, int, double, int, int);
@@ -94,10 +92,10 @@ namespace rsSim {
 	};
 
 	// class
-	class LinkbotI : public Linkbot {
+	/*class LinkbotI : public Linkbot {
 		public:
 			LinkbotI(void) : rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT3) {}
-	};
+	};*/
 
 	// class
 	class LinkbotL : public Linkbot {

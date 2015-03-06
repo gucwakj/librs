@@ -36,8 +36,6 @@ namespace rsSim {
 		// utility functions
 		protected:
 			int addNeighbor(ModularRobot*, int, int);
-			//int addSensor(int, int);
-			//static void collideSensor(void*, dGeomID, dGeomID);
 			int getNeighborCount(int = -1, int = 0);
 			double getNeighborForce(int, int = 0);
 			double getNeighborTorque(int, int = 0);
@@ -64,18 +62,9 @@ namespace rsSim {
 				ModularRobot *robot;
 				int face;
 			};
-			// sensors
-			struct Sensor {
-				dSpaceID space;
-				dBodyID body;
-				dGeomID geom;
-				int face;
-				int type;
-			};
 
 			ConnectorList _conn;		// connectors
 			std::vector<Neighbor> _neighbor;	// connected robots
-			std::vector<Sensor*> _sensor;		// connected sensors
 			std::vector<dJointFeedback*> _fb;	// feedback forces from joints
 	};
 

@@ -5,7 +5,6 @@ namespace rs {
 
 	// robot forms
 	enum Form {
-		CUBUS,
 		LINKBOTI,
 		LINKBOTL,
 		LINKBOTT,
@@ -131,33 +130,7 @@ namespace rsMindstorms {
 		NUM_PRECONFIG
 	};
 
-} // namespace rsMobot
-
-namespace rsCubus {
-
-	// connectors
-	enum Connector {
-		SIMPLE,
-		NUM_CONNECTORS
-	};
-
-	// joints
-	enum Joint {
-		JOINT1,
-		JOINT2,
-		JOINT3,
-		JOINT4,
-		JOINT5,
-		JOINT6,
-		NUM_JOINTS
-	};
-
-	// preconfigs
-	enum Preconfig {
-		NUM_PRECONFIG
-	};
-
-} // namespace rsCubus*/
+} // namespace rsMobot*/
 
 #endif // RS_ENUM_HPP_
 

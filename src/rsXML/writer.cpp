@@ -69,8 +69,6 @@ void Writer::addRobot(int id, int form, double *p, double *q, double *r, double 
 	// set robot type
 	tinyxml2::XMLElement *robot;
 	switch (form) {
-		case rs::CUBUS:
-			break;
 		case rs::LINKBOTI:
 			robot = _doc.NewElement("linkboti");
 			break;
@@ -110,14 +108,6 @@ void Writer::addRobot(int id, int form, double *p, double *q, double *r, double 
 	// set joints
 	tinyxml2::XMLElement *joint = _doc.NewElement("joint");
 	switch (form) {
-		case rs::CUBUS:
-			joint->SetAttribute("a1", r[0]);
-			joint->SetAttribute("a2", r[1]);
-			joint->SetAttribute("a3", r[2]);
-			joint->SetAttribute("a4", r[3]);
-			joint->SetAttribute("a5", r[4]);
-			joint->SetAttribute("a6", r[5]);
-			break;
 		case rs::LINKBOTI:
 		case rs::LINKBOTL:
 		case rs::LINKBOTT:

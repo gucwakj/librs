@@ -17,13 +17,6 @@ namespace rsSim {
 
 			int closeGripper(void);
 			int closeGripperNB(void);
-			int driveForeverNB(void);
-			int driveForwardNB(double);
-			int drivexyToSmooth(double, double, double, double, double, double, double, double);
-			int getJointAngles(double&, double&, double&, int = 10);
-			int getJointAnglesInstant(double&, double&, double&);
-			int getJointSpeeds(double&, double&, double&);
-			int getJointSpeedRatios(double&, double&, double&);
 			int move(double, double, double);
 			int moveNB(double, double, double);
 			int moveTo(double, double, double);

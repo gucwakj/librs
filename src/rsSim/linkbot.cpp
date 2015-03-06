@@ -20,54 +20,6 @@ Linkbot::~Linkbot(void) {
 	}
 }
 
-int Linkbot::recordAngles(double *time, double *angle1, double *angle2, double *angle3, int num, double seconds, int shiftData) {
-	// check if recording already
-	for (int i = 0; i < _dof; i++) {
-		if (_motor[i].record) { return -1; }
-	}
-
-	// store angles
-	double **angles = new double * [_dof];
-	angles[JOINT1] = angle1;
-	angles[JOINT2] = angle2;
-	angles[JOINT3] = angle3;
-
-	// call base class recording function
-	return Robot::recordAngles(time, angles, num, seconds, shiftData);
-}
-
-int Linkbot::recordAnglesBegin(robotRecordData_t &time, robotRecordData_t &angle1, robotRecordData_t &angle2, robotRecordData_t &angle3, double seconds, int shiftData) {
-	// check if recording already
-	for (int i = 0; i < _dof; i++) {
-		if (_motor[i].record) { return -1; }
-	}
-
-	// store angles
-	double **angles = new double * [_dof];
-	angles[JOINT1] = angle1;
-	angles[JOINT2] = angle2;
-	angles[JOINT3] = angle3;
-
-	// call base class recording function
-	return Robot::recordAnglesBegin(time, angles, seconds, shiftData);
-}
-
-int Linkbot::recordDistancesBegin(robotRecordData_t &time, robotRecordData_t &distance1, robotRecordData_t &distance2, robotRecordData_t &distance3, double radius, double seconds, int shiftData) {
-	// check if recording already
-	for (int i = 0; i < _dof; i++) {
-		if (_motor[i].record) { return -1; }
-	}
-
-	// store angles
-	double **angles = new double * [_dof];
-	angles[JOINT1] = distance1;
-	angles[JOINT2] = distance2;
-	angles[JOINT3] = distance3;
-
-	// call base class recording function
-	return Robot::recordAnglesBegin(time, angles, seconds, shiftData);
-}
-
 /**********************************************************
 	inherited functions
  **********************************************************/

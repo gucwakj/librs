@@ -149,7 +149,7 @@ namespace rsSim {
 			double mod_angle(double, double, double);
 			int noisy(double*, int, double);
 
-		// virual functions for inherited classes
+		// virtual functions for inherited classes
 		protected:
 			virtual int buildIndividual(const double*, const double*, const double*) { return 0; };
 			virtual void init_params(void) { return; };

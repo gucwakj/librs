@@ -112,7 +112,7 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 	dBodySetQuaternion(_conn.back()->body, Q);
 
 	// fix connector to body
-	this->fixConnectorToBody(face, _conn.back()->body, conn);
+	this->fix_connector_to_body(face, _conn.back()->body, conn);
 
 	// success
 	return 0;
@@ -191,7 +191,7 @@ int Linkbot::build(const double *p, const double *q, const double *a, dBodyID ba
 	this->buildIndividual(p1, q1, a);
 
     // add fixed joint to attach two modules
-	this->fixBodyToConnector(base, face);
+	this->fix_body_to_connector(base, face);
 
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);

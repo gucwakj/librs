@@ -24,33 +24,20 @@ namespace rsSim {
 			ModularRobot(void);
 			virtual ~ModularRobot(void);
 
-			int connect(char* = NULL, int = 3);
-
-		// undocumented public functions
-		public:
-			ConnectorList& getConnectorList(void);
 			virtual int addConnector(int, int, int, double, int, int) = 0;
 			virtual int build(const double*, const double*, const double*, dBodyID, int, int) = 0;
+			int connect(char* = NULL, int = 3);
 			dBodyID getConnectorBodyID(int);
+			ConnectorList& getConnectorList(void);
 
 		// utility functions
 		protected:
-			int addNeighbor(ModularRobot*, int, int);
-			int getNeighborCount(int = -1, int = 0);
-			double getNeighborForce(int, int = 0);
-			double getNeighborTorque(int, int = 0);
-			int fixBodyToConnector(dBodyID, int);
-			int fixConnectorToBody(int, dBodyID, int = -1);
-
-		// virtual functions from Robot class
-		protected:
-			virtual int build(const double*, const double*, const double*, int) { return 0; };
-			virtual int buildIndividual(double, double, double, dMatrix3, double*) { return 0; };
-			virtual double getAngle(int) { return 0; };
-			virtual int initParams(int, int) { return 0; };
-			virtual int initDims(void) { return 0; };
-			virtual void simPreCollisionThread(void) { return; };
-			virtual void simPostCollisionThread(void) { return; };
+			int add_neighbor(ModularRobot*, int, int);
+			int get_neighbor_count(int = -1, int = 0);
+			double get_neighbor_force(int, int = 0);
+			double get_neighbor_torque(int, int = 0);
+			int fix_body_to_connector(dBodyID, int);
+			int fix_connector_to_body(int, dBodyID, int = -1);
 
 		// data members
 		protected:

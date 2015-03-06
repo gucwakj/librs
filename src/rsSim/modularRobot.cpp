@@ -36,15 +36,22 @@ ConnectorList& ModularRobot::getConnectorList(void) {
 	return _conn;
 }
 
+dBodyID ModularRobot::getConnectorBodyID(int face) {
+	for (int i = 0; i < _conn.size(); i++) {
+		if (_conn[i]->face == face) return _conn[i]->body;
+	}
+	return NULL;
+}
+
 /**********************************************************
 	protected functions for inherited classes
  **********************************************************/
-int ModularRobot::addNeighbor(ModularRobot *robot, int myface, int hisface) {
+int ModularRobot::add_neighbor(ModularRobot *robot, int myface, int hisface) {
 	_neighbor[myface].robot = robot;
 	_neighbor[myface].face = hisface;
 }
 
-int ModularRobot::fixBodyToConnector(dBodyID cBody, int face) {
+int ModularRobot::fix_body_to_connector(dBodyID cBody, int face) {
 	// fixed joint
 	dJointID joint = dJointCreateFixed(_world, 0);
 
@@ -58,7 +65,7 @@ int ModularRobot::fixBodyToConnector(dBodyID cBody, int face) {
 	return 0;
 }
 
-int ModularRobot::fixConnectorToBody(int face, dBodyID cBody, int conn) {
+int ModularRobot::fix_connector_to_body(int face, dBodyID cBody, int conn) {
 	// fixed joint
 	dJointID joint = dJointCreateFixed(_world, 0);
 
@@ -79,23 +86,16 @@ int ModularRobot::fixConnectorToBody(int face, dBodyID cBody, int conn) {
 	return 0;
 }
 
-dBodyID ModularRobot::getConnectorBodyID(int face) {
-	for (int i = 0; i < _conn.size(); i++) {
-		if (_conn[i]->face == face) return _conn[i]->body;
-	}
-	return NULL;
-}
-
-int ModularRobot::getNeighborCount(int face, int back) {
+int ModularRobot::get_neighbor_count(int face, int back) {
 	int val = 0;
 	if (face != -1) {
-		if (_neighbor[face].robot) val += _neighbor[face].robot->getNeighborCount(-1, _neighbor[face].face);
+		if (_neighbor[face].robot) val += _neighbor[face].robot->get_neighbor_count(-1, _neighbor[face].face);
 	}
 	else {
 		for (int i = 0; i < _neighbor.size(); i++)
 			if (_neighbor[i].robot) {
 				if (i != back)
-					val += _neighbor[i].robot->getNeighborCount(-1, _neighbor[i].face);
+					val += _neighbor[i].robot->get_neighbor_count(-1, _neighbor[i].face);
 				else
 					val += 1;
 			}
@@ -103,11 +103,11 @@ int ModularRobot::getNeighborCount(int face, int back) {
 	return val;
 }
 
-double ModularRobot::getNeighborForce(int face, int dir) {
+double ModularRobot::get_neighbor_force(int face, int dir) {
 	return _fb[face]->f1[dir];
 }
 
-double ModularRobot::getNeighborTorque(int face, int dir) {
+double ModularRobot::get_neighbor_torque(int face, int dir) {
 	return _fb[face]->t1[dir];
 }
 

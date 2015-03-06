@@ -10,8 +10,6 @@ namespace rsSim {
 
 	// base class
 	class Linkbot : virtual public rsRobots::Linkbot, virtual public ModularRobot {
-			// TODO: remove
-			friend class Sim;
 		// public api
 		public:
 			Linkbot(void);

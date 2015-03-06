@@ -8,7 +8,6 @@ namespace rsSim {
 
 	// class
 	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
-			friend class Sim;
 		// public api
 		public:
 			Mindstorms(void);

@@ -16,8 +16,6 @@ namespace rsSim {
 
 	// class
 	class Robot : virtual public rsRobots::Robot {
-			// TODO: remove
-			friend class Sim;
 		// public functions
 		public:
 			Robot(int, int);
@@ -130,15 +128,19 @@ namespace rsSim {
 			int recordAnglesBegin(robotRecordData_t&, robotRecordData_t*&, double, int = 1);
 
 		public:
+			int addToSim(dWorldID&, dSpaceID&, int, int, rsSim::Sim*);
+			virtual int build(const double*, const double*, const double*, int) { return 0; };
+			virtual double getAngle(int) { return 0; };
 			BodyList& getBodyList(void);
 			double getCenter(int);
 			const double* getPosition(void);
 			const double* getQuaternion(void);
 			virtual void getCoM(double&, double&, double&) { return; };
+			static void* simPreCollisionThreadEntry(void*);
+			static void* simPostCollisionThreadEntry(void*);
 
 		// utility functions
 		protected:
-			int addToSim(dWorldID&, dSpaceID&, int, int, rsSim::Sim*);
 			double convert(double, int);
 			int doze(double);
 			int fixBodyToGround(dBodyID);
@@ -146,14 +148,10 @@ namespace rsSim {
 			double getRotation(int, int);
 			double mod_angle(double, double, double);
 			int noisy(double*, int, double);
-			static void* simPreCollisionThreadEntry(void*);
-			static void* simPostCollisionThreadEntry(void*);
 
 		// virual functions for inherited classes
 		protected:
-			virtual int build(const double*, const double*, const double*, int) { return 0; };
 			virtual int buildIndividual(const double*, const double*, const double*) { return 0; };
-			virtual double getAngle(int) { return 0; };
 			virtual void init_params(void) { return; };
 			virtual void simPreCollisionThread(void) { return; };
 			virtual void simPostCollisionThread(void) { return; };

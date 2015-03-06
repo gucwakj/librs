@@ -2,11 +2,6 @@
 #define MOBOT_HPP_
 
 class DLLIMPORT CMobot : public ModularRobot {
-#ifdef ENABLE_GRAPHICS
-		friend class mobotNodeCallback;
-		friend class Graphics;
-#endif // ENABLE_GRAPHICS
-
 	// public api
 	public:
 		CMobot(void);

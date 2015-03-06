@@ -20,124 +20,6 @@ Linkbot::~Linkbot(void) {
 	}
 }
 
-int Linkbot::closeGripper(void) {
-	double gripperAngleOld = 0;
-	double gripperAngleNew = 0;
-	int retval = getJointAngleInstant(JOINT1, gripperAngleNew);
-	while ( fabs(gripperAngleNew - gripperAngleOld) > 0.1 ) {
-		gripperAngleOld = gripperAngleNew;
-		retval = retval || getJointAngleInstant(JOINT1, gripperAngleNew);
-		retval = retval || moveNB(8, 0, 8);
-		delaySeconds(1);
-		retval = retval || getJointAngleInstant(JOINT1, gripperAngleNew);
-	}
-	retval = retval || moveNB(8, 0, 8);
-	delaySeconds(1);
-	retval = retval || holdJoints();
-	return retval;
-}
-
-int Linkbot::closeGripperNB(void) {
-	// create thread
-	THREAD_T moving;
-
-	// store args
-	LinkbotMove *move = new LinkbotMove;
-	move->robot = this;
-
-	// motion in progress
-	_motion = true;
-
-	// start thread
-	THREAD_CREATE(&moving, closeGripperNBThread, (void *)move);
-
-	// success
-	return 0;
-}
-
-int Linkbot::move(double angle1, double angle2, double angle3) {
-	this->moveNB(angle1, angle2, angle3);
-	this->moveWait();
-
-	// success
-	return 0;
-}
-
-int Linkbot::moveNB(double angle1, double angle2, double angle3) {
-	// store angles
-	double *angles = new double[_dof];
-	angles[JOINT1] = angle1;
-	angles[JOINT2] = angle2;
-	angles[JOINT3] = angle3;
-
-	// call base class recording function
-	int retval = Robot::moveNB(angles);
-
-	// clean up
-	delete [] angles;
-
-	// success
-	return retval;
-}
-
-int Linkbot::moveTo(double angle1, double angle2, double angle3) {
-	this->moveToNB(angle1, angle2, angle3);
-	this->moveWait();
-
-	// success
-	return 0;
-}
-
-int Linkbot::moveToNB(double angle1, double angle2, double angle3) {
-	// store angles
-	double *angles = new double[_dof];
-	angles[JOINT1] = angle1;
-	angles[JOINT2] = angle2;
-	angles[JOINT3] = angle3;
-
-	// call base class recording function
-	int retval = Robot::moveToNB(angles);
-
-	// clean up
-	delete [] angles;
-
-	// success
-	return retval;
-}
-
-int Linkbot::moveToByTrackPos(double angle1, double angle2, double angle3) {
-	this->moveToByTrackPosNB(angle1, angle2, angle3);
-	this->moveWait();
-
-	// success
-	return 0;
-}
-
-int Linkbot::moveToByTrackPosNB(double angle1, double angle2, double angle3) {
-	this->moveToNB(angle1, angle2, angle3);
-
-	// success
-	return 0;
-}
-
-int Linkbot::openGripper(double angle) {
-	this->openGripperNB(angle);
-	this->moveWait();
-
-	// success
-	return 0;
-}
-
-int Linkbot::openGripperNB(double angle) {
-	if (_form == rs::LINKBOTL)
-		this->moveJointToNB(JOINT1, -angle);
-	else
-		this->moveToNB(-angle/2, 0, -angle/2);
-
-	// success
-	return 0;
-}
-
 int Linkbot::recordAngles(double *time, double *angle1, double *angle2, double *angle3, int num, double seconds, int shiftData) {
 	// check if recording already
 	for (int i = 0; i < _dof; i++) {
@@ -1078,7 +960,7 @@ void Linkbot::build_wheel(Connector *conn, double size) {
 	dGeomSetOffsetQuaternion(geom[0], Q);
 }
 
-void* Linkbot::closeGripperNBThread(void *arg) {
+/*void* Linkbot::closeGripperNBThread(void *arg) {
 	// cast arg
 	LinkbotMove *move = (LinkbotMove *)arg;
 
@@ -1093,5 +975,5 @@ void* Linkbot::closeGripperNBThread(void *arg) {
 
 	// success
 	return NULL;
-}
+}*/
 

@@ -15,16 +15,6 @@ namespace rsSim {
 			Linkbot(void);
 			virtual ~Linkbot(void);
 
-			int closeGripper(void);
-			int closeGripperNB(void);
-			int move(double, double, double);
-			int moveNB(double, double, double);
-			int moveTo(double, double, double);
-			int moveToNB(double, double, double);
-			int moveToByTrackPos(double, double, double);
-			int moveToByTrackPosNB(double, double, double);
-			int openGripper(double);
-			int openGripperNB(double);
 			int recordAngles(double[], double[], double[], double[], int, double, int = 1);
 			int recordAnglesBegin(robotRecordData_t&, robotRecordData_t&, robotRecordData_t&, robotRecordData_t&, double, int = 1);
 			int recordDistancesBegin(robotRecordData_t&, robotRecordData_t&, robotRecordData_t&, robotRecordData_t&, double, double, int = 1);
@@ -64,37 +54,9 @@ namespace rsSim {
 			void build_omnidrive(Connector*);
 			void build_simple(Connector*);
 			void build_wheel(Connector*, double);
-			static void* closeGripperNBThread(void*);
 
 		private:
 			std::vector<std::tuple<int, double, double, double>> _f;		// forces to add to bodies
-	};
-
-	// class
-	/*class LinkbotI : public Linkbot {
-		public:
-			LinkbotI(void) : rsRobots::Robot(rs::LINKBOTI), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT3) {}
-	};
-
-	// class
-	class LinkbotL : public Linkbot {
-		public:
-			LinkbotL(void) : rsRobots::Robot(rs::LINKBOTL), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT2) {}
-	};
-
-	// class
-	class LinkbotT : public Linkbot {
-		public:
-			LinkbotT(void) : rsRobots::Robot(rs::LINKBOTT), rsSim::Robot(rsLinkbot::JOINT1, rsLinkbot::JOINT3) {}
-	};*/
-
-	// motion threading
-	struct LinkbotMove {
-		rsSim::Linkbot *robot;
-		char *expr;
-		double x, y, radius, trackwidth;
-		double (*func)(double x);
-		int i;
 	};
 
 } // namespace rsSim

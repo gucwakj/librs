@@ -39,11 +39,8 @@ namespace rsSim {
 			int getNeighborCount(int = -1, int = 0);
 			double getNeighborForce(int, int = 0);
 			double getNeighborTorque(int, int = 0);
-
-		// pure virual functions for inherited classes
-		protected:
-			virtual int fixBodyToConnector(dBodyID, int) = 0;
-			virtual int fixConnectorToBody(int, dBodyID, int = -1) = 0;
+			int fixBodyToConnector(dBodyID, int);
+			int fixConnectorToBody(int, dBodyID, int = -1);
 
 		// virtual functions from Robot class
 		protected:
@@ -63,7 +60,7 @@ namespace rsSim {
 				int face;
 			};
 
-			ConnectorList _conn;		// connectors
+			ConnectorList _conn;				// connectors
 			std::vector<Neighbor> _neighbor;	// connected robots
 			std::vector<dJointFeedback*> _fb;	// feedback forces from joints
 	};

@@ -319,41 +319,6 @@ int Linkbot::buildIndividual(const double *p, const double *q, const double *a) 
 	return 0;
 }
 
-int Linkbot::fixBodyToConnector(dBodyID cBody, int face) {
-	// fixed joint
-	dJointID joint = dJointCreateFixed(_world, 0);
-
-	// attach to correct body
-	dJointAttach(joint, cBody, this->getBodyID(face));
-
-	// set joint params
-	dJointSetFixed(joint);
-
-	// success
-	return 0;
-}
-
-int Linkbot::fixConnectorToBody(int face, dBodyID cBody, int conn) {
-	// fixed joint
-	dJointID joint = dJointCreateFixed(_world, 0);
-
-	// connector or body part
-	dBodyID body;
-	if (conn != -1)
-		body = this->getConnectorBodyID(face);
-	else
-		body = this->getBodyID(face);
-
-	// attach to correct body
-	dJointAttach(joint, body, cBody);
-
-	// set joint params
-	dJointSetFixed(joint);
-
-	// success
-	return 0;
-}
-
 double Linkbot::getAngle(int id) {
 	if (id == _disabled)
 		_motor[id].theta = 0;

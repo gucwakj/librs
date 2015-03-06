@@ -13,9 +13,6 @@
 using namespace rsSim;
 
 Robot::Robot(int leftWheel, int rightWheel) : rsRobots::Robot(rs::ROBOT) {
-	_leftWheel = leftWheel;
-	_rightWheel = rightWheel;
-
 	MUTEX_INIT(&_active_mutex);
 	COND_INIT(&_active_cond);
 	MUTEX_INIT(&_goal_mutex);
@@ -27,6 +24,12 @@ Robot::Robot(int leftWheel, int rightWheel) : rsRobots::Robot(rs::ROBOT) {
 	COND_INIT(&_success_cond);
 	MUTEX_INIT(&_theta_mutex);
 
+	_connected = 1;
+	_leftWheel = leftWheel;
+	_rightWheel = rightWheel;
+	_rgb[0] = 0;
+	_rgb[1] = 1;
+	_rgb[2] = 0;
 	_seed = time(NULL);
 }
 
@@ -60,19 +63,6 @@ int Robot::blinkLED(double delay, int num) {
 	_rgb[0] = 1; _rgb[1] = 1; _rgb[2] = 1;
 	this->doze(delay);
 	_rgb[0] = rgb[0]; _rgb[1] = rgb[1]; _rgb[2] = rgb[2];
-
-	// success
-	return 0;
-}
-
-int Robot::connect(char *name, int pause) {
-	// set initial 'led' color
-	_rgb[0] = 0;
-	_rgb[1] = 1;
-	_rgb[2] = 0;
-
-	// and we are connected
-	_connected = 1;
 
 	// success
 	return 0;

@@ -26,7 +26,6 @@ namespace rsSim {
 
 			virtual int addConnector(int, int, int, double, int, int) = 0;
 			virtual int build(const double*, const double*, const double*, dBodyID, int, int) = 0;
-			int connect(char* = NULL, int = 3);
 			dBodyID getConnectorBodyID(int);
 			ConnectorList& getConnectorList(void);
 

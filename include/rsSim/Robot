@@ -22,7 +22,6 @@ namespace rsSim {
 			virtual ~Robot(void);
 
 			int blinkLED(double, int);
-			int connect(char* = NULL, int = 3);
 			int delay(double);
 			int delaySeconds(double);
 			int disableRecordDataShift(void);

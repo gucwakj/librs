@@ -229,11 +229,11 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 	return 0;
 }
 
-Robot* Scene::drawRobot(rsRobots::Robot *robot, int form, const double *p, const double *q, double *led, bool trace) {
+Robot* Scene::drawRobot(rsRobots::Robot *robot, const double *p, const double *q, double *led, bool trace) {
 	// create new robot
 	osg::Group *group = new osg::Group();
 
-	switch (form) {
+	switch (robot->getForm()) {
 		case rs::LINKBOTI:
 			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, trace, led);
 			break;

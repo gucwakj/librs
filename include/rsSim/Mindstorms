@@ -13,7 +13,7 @@ namespace rsSim {
 			Mindstorms(void);
 			virtual ~Mindstorms(void);
 
-			int getJointAngles(double&, double&, int = 10);
+			/*int getJointAngles(double&, double&, int = 10);
 			int getJointAnglesInstant(double&, double&);
 			int getJointSpeeds(double&, double&);
 			int getJointSpeedRatios(double&, double&);
@@ -27,7 +27,7 @@ namespace rsSim {
 			int recordAnglesBegin(robotRecordData_t&, robotRecordData_t&, robotRecordData_t&, double, int = 1);
 			int recordDistancesBegin(robotRecordData_t&, robotRecordData_t&, robotRecordData_t&, double, double, int = 1);
 			int setJointSpeeds(double, double);
-			int setJointSpeedRatios(double, double);
+			int setJointSpeedRatios(double, double);*/
 
 		// inherited functions from Robot class
 		private:

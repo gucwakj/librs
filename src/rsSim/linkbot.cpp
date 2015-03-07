@@ -6,7 +6,7 @@
 using namespace rsSim;
 using namespace rsLinkbot;
 
-Linkbot::Linkbot(void) : rsRobots::Robot(rs::LINKBOTT), Robot(JOINT1, JOINT3) {
+Linkbot::Linkbot(void) : rsRobots::Robot(rs::LINKBOTT) {
 	// initialize parameters
 	this->init_params();
 }
@@ -385,14 +385,11 @@ void Linkbot::init_params(void) {
 	}
 	_connected = 0;
 	_distOffset = 0;
-	_g_shift_data = 0;
-	_g_shift_data_en = 0;
 	_id = -1;
 	_motion = false;
 	_rgb[0] = 0;
 	_rgb[1] = 0;
 	_rgb[2] = 1;
-	_shift_data = 0;
 	_sim = NULL;
 	_speed = 2;
 	_trace = 1;

@@ -86,10 +86,6 @@ int Sim::addRobot(rsSim::Robot *robot, int id, const double *p, const double *r,
 	_robot.push_back(new RobotNode());
 	_robot.back()->robot = robot;
 
-	// get form of new robot
-	int form = 0;
-	robot->getFormFactor(form);
-
 	// give simulation data to robot
 	robot->addToSim(_world, _space, id, _robot.size()-1, this);
 

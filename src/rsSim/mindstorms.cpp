@@ -6,7 +6,7 @@
 using namespace rsSim;
 using namespace rsMindstorms;
 
-Mindstorms::Mindstorms(void) : rsRobots::Robot(rs::MINDSTORMS), Robot(JOINT1, JOINT2) {
+Mindstorms::Mindstorms(void) : rsRobots::Robot(rs::MINDSTORMS) {
 	// initialize parameters
 	this->init_params();
 }
@@ -19,7 +19,7 @@ Mindstorms::~Mindstorms(void) {
 	}
 }
 
-int Mindstorms::getJointAngles(double &angle1, double &angle2, int numReadings) {
+/*int Mindstorms::getJointAngles(double &angle1, double &angle2, int numReadings) {
 	this->getJointAngle(JOINT1, angle1, numReadings);
 	this->getJointAngle(JOINT2, angle2, numReadings);
 
@@ -173,7 +173,7 @@ int Mindstorms::setJointSpeedRatios(double ratio1, double ratio2) {
 
 	// success
 	return 0;
-}
+}*/
 
 /**********************************************************
 	inherited functions
@@ -310,14 +310,11 @@ void Mindstorms::init_params(void) {
 	}
 	_connected = 0;
 	_distOffset = 0;
-	_g_shift_data = 0;
-	_g_shift_data_en = 0;
 	_id = -1;
 	_motion = false;
 	_rgb[0] = 0;
 	_rgb[1] = 0;
 	_rgb[2] = 1;
-	_shift_data = 0;
 	_sim = NULL;
 	_speed = 2;
 	_trace = 1;

@@ -2,7 +2,7 @@
 
 using namespace rsSim;
 
-ModularRobot::ModularRobot(void) : rsRobots::Robot(rs::ROBOT), rsSim::Robot(0, 0) {
+ModularRobot::ModularRobot(void) : rsRobots::Robot(rs::ROBOT) {
 }
 
 ModularRobot::~ModularRobot(void) {

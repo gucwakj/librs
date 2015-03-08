@@ -21,6 +21,7 @@ namespace rsRobots {
 			double* getRGB(void);
 			void multiplyQbyV(const double*, double, double, double, double*);
 			void multiplyQbyQ(const double*, const double*, double*);
+			void setID(int);
 			void setTrace(bool);
 
 		// for inherited classes

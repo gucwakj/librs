@@ -45,6 +45,10 @@ void Robot::multiplyQbyQ(const double *q, const double *q2, double *o) {
 	o[3] = q2[3]*q[3] - q2[0]*q[0] - q2[1]*q[1] - q2[2]*q[2];
 }
 
+void Robot::setID(int id) {
+	_id = id;
+}
+
 void Robot::setTrace(bool trace) {
 	_trace = trace;
 }

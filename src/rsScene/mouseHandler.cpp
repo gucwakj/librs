@@ -55,7 +55,7 @@ void MouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *vie
 		for (int i = 0; i < nodePath.size() - 2; i++) {
 			test = dynamic_cast<osg::Group *>(nodePath[i]);
 			// get robot node
-			if (test && (test->getName() == "robot" || test->getName() == "ground")) {
+			if (test && (!test->getName().compare(0, 5, "robot") || !test->getName().compare(0, 6, "ground"))) {
 				_scene->toggleHighlight(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
 				_scene->toggleLabel(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
 				break;

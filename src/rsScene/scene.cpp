@@ -74,7 +74,7 @@ int Scene::addChild(void) {
 	if (_staging->getNumChildren()) {
 		_scene->addChild(_staging->getChild(0));
 		_staging->removeChild(0, 1);
-		return _scene->getNumChildren() - 1;
+		return 0;
 	}
 	return -1;
 }
@@ -84,27 +84,41 @@ void Scene::addHighlight(int id, bool exclusive) {
 	if (exclusive) {
 		// find nodes of intersection
 		osg::Group *test = NULL;
-		for (int i = 6; i < _scene->getNumChildren(); i++) {
+		for (int i = 0; i < _scene->getNumChildren(); i++) {
 			test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 			// get robot node
-			if (test && (test->getName() == "robot" || test->getName() == "ground")) {
+			if (test && (!test->getName().compare(0, 5, "robot"))) {
 				if (dynamic_cast<osgFX::Scribe *>(test->getChild(2)->asTransform()->getChild(0)))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)));
+			}
+			// get ground node
+			if (test && !test->getName().compare(0, 6, "ground")) {
+				if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0)))
+					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)));
 			}
 		}
 	}
 
 	// set highlight of item
-	osg::Group *parent = _scene->getChild(id)->asGroup();
-	osg::Node *child = parent->getChild(2)->asTransform()->getChild(0);
-	if (parent && child) {
-		this->toggleHighlight(parent, child);
+	osg::Group *test = NULL;
+	for (int i = 0; i < _scene->getNumChildren(); i++) {
+		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		// get robot node
+		if (test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
+			this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0));
+		}
 	}
 }
 
 int Scene::deleteChild(int id) {
-	_scene->removeChild(_scene->getChild(id));
-	return _scene->getNumChildren();
+	for (int i = 0; i < _scene->getNumChildren(); i++) {
+		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		if (test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
+			_scene->removeChild(test);
+			return 0;
+		}
+	}
+	return -1;
 }
 
 void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type, int face, int orientation, double size, int side, int conn) {
@@ -303,7 +317,7 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const double *p, const double *q
 	group->insertChild(1, label_geode);
 
 	// set user properties of node
-	group->setName("robot");
+	group->setName(std::string("robot").append(std::to_string(robot->getID())));
 
 	// optimize robot
 	osgUtil::Optimizer optimizer;
@@ -530,7 +544,7 @@ void Scene::start(int pause) {
 void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
 	if (!_highlight) return;
 
-	if (parent->getName() == "robot") {
+	if (!parent->getName().compare(0, 5, "robot")) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
 			for (int i = 2; i < parent->getNumChildren(); i++) {
@@ -551,7 +565,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
 			}
 		}
 	}
-	else if (parent->getName() == "ground") {
+	else if (!parent->getName().compare("ground")) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
 			osgFX::Scribe *scribe = new osgFX::Scribe();

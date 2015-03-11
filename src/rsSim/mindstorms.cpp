@@ -294,7 +294,6 @@ void Mindstorms::init_params(void) {
 		_motor[i].omega_max = 4.1888;		// 240 deg/sec
 		_motor[i].record = false;
 		_motor[i].record_active = false;
-		_motor[i].record_angle = new double * [_dof];
 		_motor[i].record_num = 0;
 		_motor[i].safety_angle = 10;
 		_motor[i].safety_timeout = 4;

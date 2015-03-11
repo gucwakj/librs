@@ -114,6 +114,8 @@ int Scene::deleteChild(int id) {
 	for (int i = 0; i < _scene->getNumChildren(); i++) {
 		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		if (test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
+			if (test->getUpdateCallback() != NULL)
+				test->removeUpdateCallback(test->getUpdateCallback());
 			_scene->removeChild(test);
 			return 0;
 		}

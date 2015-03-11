@@ -50,7 +50,7 @@ Sim::Sim(bool pause, bool rt) {
 }
 
 Sim::~Sim(void) {
-	std::cerr << "deleting Sim" << std::endl;
+std::cerr << "rsSim/~Sim start" << std::endl;
 	// remove simulation
 	MUTEX_LOCK(&_running_mutex);
 	_running = false;
@@ -71,8 +71,9 @@ Sim::~Sim(void) {
 
 	// remove robots
 	for (int i = 0; i < _robot.size(); i++) {
-		delete _robot[i];
+		_robot.erase(_robot.begin() + i);
 	}
+std::cerr << "rsSim/~Sim end" << std::endl;
 }
 
 /**********************************************************
@@ -83,8 +84,8 @@ int Sim::addRobot(rsSim::Robot *robot, int id, const double *p, const double *r,
 	MUTEX_LOCK(&_robot_mutex);
 
 	// create new robot
-	_robot.push_back(new RobotNode());
-	_robot.back()->robot = robot;
+	_robot.push_back(RobotNode());
+	_robot.back().robot = robot;
 
 	// give simulation data to robot
 	robot->addToSim(_world, _space, id, _robot.size()-1, this);
@@ -104,8 +105,8 @@ int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const 
 	MUTEX_LOCK(&_robot_mutex);
 
 	// create new robot
-	_robot.push_back(new RobotNode());
-	_robot.back()->robot = robot;
+	_robot.push_back(RobotNode());
+	_robot.back().robot = robot;
 
 	// give simulation data to robot
 	robot->addToSim(_world, _space, id, _robot.size()-1, this);
@@ -207,12 +208,17 @@ Ground* Sim::addGround(const double *p, const double *l, double mass) {
 	return body;
 }
 
-int Sim::deleteRobot(int loc) {
+int Sim::deleteRobot(int id) {
 	// lock robot data to delete
 	MUTEX_LOCK(&_robot_mutex);
 
-	// remove robot
-	_robot.erase(_robot.begin()+loc);
+	// find robot by id and remove
+	for (int i = 0; i < _robot.size(); i++) {
+		if (_robot[i].robot->getID() == id) {
+			_robot.erase(_robot.begin() + i);
+			break;
+		}
+	}
 
 	// unlock robot data
 	MUTEX_UNLOCK(&_robot_mutex);
@@ -243,7 +249,7 @@ int Sim::getCOR(double &robot, double &ground) {
 void Sim::getCoM(double &x, double &y, double &z) {
 	double com[3] = {0}, a, b, c;
 	for (int i = 0; i < _robot.size(); i++) {
-		_robot[i]->robot->getCoM(a, b, c);
+		_robot[i].robot->getCoM(a, b, c);
 		com[0] += a;
 		com[1] += b;
 		com[2] += c;
@@ -270,8 +276,8 @@ bool Sim::getPause(void) {
 
 Robot* Sim::getRobot(int id) {
 	for (int i = 0; i < _robot.size(); i++) {
-		if (_robot[i]->robot->getID() == id)
-			return _robot[i]->robot;
+		if (_robot[i].robot->getID() == id)
+			return _robot[i].robot;
 	}
 	return NULL;
 }
@@ -403,10 +409,10 @@ void* Sim::simulation_thread(void *arg) {
 			// perform pre-collision updates
 			MUTEX_LOCK(&(sim->_robot_mutex));
 			for (int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_CREATE(&(sim->_robot[j]->thread), (void* (*)(void *))&rsSim::Robot::simPreCollisionThreadEntry, (void *)sim->_robot[j]->robot);
+				THREAD_CREATE(&(sim->_robot[j].thread), (void* (*)(void *))&rsSim::Robot::simPreCollisionThreadEntry, (void *)sim->_robot[j].robot);
 			}
 			for (int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_JOIN(sim->_robot[j]->thread);
+				THREAD_JOIN(sim->_robot[j].thread);
 			}
 
 			// perform ode update
@@ -419,10 +425,10 @@ void* Sim::simulation_thread(void *arg) {
 
 			// perform post-collision updates
 			for (int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_CREATE(&(sim->_robot[j]->thread), (void* (*)(void *))&rsSim::Robot::simPostCollisionThreadEntry, (void *)sim->_robot[j]->robot);
+				THREAD_CREATE(&(sim->_robot[j].thread), (void* (*)(void *))&rsSim::Robot::simPostCollisionThreadEntry, (void *)sim->_robot[j].robot);
 			}
 			for (int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_JOIN(sim->_robot[j]->thread);
+				THREAD_JOIN(sim->_robot[j].thread);
 			}
 			MUTEX_UNLOCK(&(sim->_robot_mutex));
 

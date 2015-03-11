@@ -15,7 +15,7 @@ namespace rsSim {
 	};
 
 	// typedefs
-	typedef std::vector<Connector*> ConnectorList;
+	typedef std::vector<Connector> ConnectorList;
 
 	// class
 	class ModularRobot : virtual public rsRobots::ModularRobot, virtual public rsSim::Robot {
@@ -48,7 +48,7 @@ namespace rsSim {
 
 			ConnectorList _conn;				// connectors
 			std::vector<Neighbor> _neighbor;	// connected robots
-			std::vector<dJointFeedback*> _fb;	// feedback forces from joints
+			std::vector<dJointFeedback> _fb;	// feedback forces from joints
 	};
 
 } // namepsace rsSim

@@ -30,7 +30,7 @@ Reader::Reader(char *name) {
 }
 
 Reader::~Reader(void) {
-std::cerr << "deleting Reader" << std::endl;
+std::cerr << "~Reader start" << std::endl;
 	for (int i = 0; i < _robot.size(); i++) {
 		delete _robot[i];
 	}
@@ -40,6 +40,7 @@ std::cerr << "deleting Reader" << std::endl;
 	for (int i = 0; i < _marker.size(); i++) {
 		delete _marker[i];
 	}
+std::cerr << "~Reader end" << std::endl;
 }
 
 /**********************************************************

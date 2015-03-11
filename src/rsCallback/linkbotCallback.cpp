@@ -2,6 +2,7 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
 
+#include <iostream>
 #include <rsCallback/LinkbotCallback>
 
 using namespace rsCallback;
@@ -16,7 +17,7 @@ LinkbotCallback::LinkbotCallback(rsSim::Linkbot *robot, rsSim::BodyList &bodies,
 
 void LinkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
-	if (group) {
+	if (group && _robot && &_bodies && &_conn) {
 		// child 0: hud
 		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
 		char text[50];
@@ -58,8 +59,8 @@ void LinkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		//led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
 		// child 7->end: connectors
 		for (int i = 0; i < _conn.size(); i++) {
-			pos = dBodyGetPosition(_conn[i]->body);
-			quat = dBodyGetQuaternion(_conn[i]->body);
+			pos = dBodyGetPosition(_conn[i].body);
+			quat = dBodyGetQuaternion(_conn[i].body);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::NUM_PARTS + i));
 			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
 			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));

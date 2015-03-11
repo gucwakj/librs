@@ -1,4 +1,5 @@
 #include <rsSim/ModularRobot>
+#include <iostream>
 
 using namespace rsSim;
 
@@ -6,10 +7,10 @@ ModularRobot::ModularRobot(void) : rsRobots::Robot(rs::ROBOT) {
 }
 
 ModularRobot::~ModularRobot(void) {
+std::cerr << "rsSim/~ModularRobot start" << std::endl;
 	// destroy connectors array
-	for (int i = 0; i < _conn.size(); i++) {
-		delete _conn[i];
-	}
+	_conn.empty();
+std::cerr << "rsSim/~ModularRobot end" << std::endl;
 }
 
 ConnectorList& ModularRobot::getConnectorList(void) {
@@ -18,7 +19,7 @@ ConnectorList& ModularRobot::getConnectorList(void) {
 
 dBodyID ModularRobot::getConnectorBodyID(int face) {
 	for (int i = 0; i < _conn.size(); i++) {
-		if (_conn[i]->face == face) return _conn[i]->body;
+		if (_conn[i].face == face) return _conn[i].body;
 	}
 	return NULL;
 }
@@ -84,10 +85,10 @@ int ModularRobot::get_neighbor_count(int face, int back) {
 }
 
 double ModularRobot::get_neighbor_force(int face, int dir) {
-	return _fb[face]->f1[dir];
+	return _fb[face].f1[dir];
 }
 
 double ModularRobot::get_neighbor_torque(int face, int dir) {
-	return _fb[face]->t1[dir];
+	return _fb[face].t1[dir];
 }
 

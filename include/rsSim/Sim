@@ -58,7 +58,7 @@ namespace rsSim {
 			dWorldID _world;					// ode: world
 			dSpaceID _space;					// ode: space for robots
 			dJointGroupID _group;				// ode: joint group
-			std::vector<RobotNode*> _robot;		// list: robots
+			std::vector<RobotNode> _robot;		// list: robots
 			COND_T _running_cond;				// condition: actively running simulation
 			MUTEX_T _clock_mutex;				// mutex: getting the clock
 			MUTEX_T _pause_mutex;				// mutex: paused simulation

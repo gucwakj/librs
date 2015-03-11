@@ -12,7 +12,7 @@ namespace rsSim {
 	class Linkbot : virtual public rsRobots::Linkbot, virtual public ModularRobot {
 		// public api
 		public:
-			Linkbot(void);
+			Linkbot(int);
 			virtual ~Linkbot(void);
 
 			virtual int addConnector(int, int, int, double, int, int);
@@ -34,17 +34,17 @@ namespace rsSim {
 
 		// private functions
 		private:
-			void build_body(dGeomID*, const double*, const double*);
-			void build_bridge(Connector*);
-			void build_caster(Connector*, int);
-			void build_cube(Connector*);
-			void build_doublebridge(Connector*);
-			void build_face(int, dGeomID*, const double*, const double*);
-			void build_faceplate(Connector*);
-			void build_gripper(Connector*, int);
-			void build_omnidrive(Connector*);
-			void build_simple(Connector*);
-			void build_wheel(Connector*, double);
+			void build_body(const double*, const double*);
+			void build_bridge(Connector&);
+			void build_caster(Connector&, int);
+			void build_cube(Connector&);
+			void build_doublebridge(Connector&);
+			void build_face(int, const double*, const double*);
+			void build_faceplate(Connector&);
+			void build_gripper(Connector&, int);
+			void build_omnidrive(Connector&);
+			void build_simple(Connector&);
+			void build_wheel(Connector&, double);
 
 		// private variables
 		private:

@@ -1,4 +1,5 @@
 #include <rsRobots/Robot>
+#include <iostream>
 
 using namespace rsRobots;
 

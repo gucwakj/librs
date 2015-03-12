@@ -56,7 +56,7 @@ Scene::Scene(void) : KeyboardHandler() {
 }
 
 Scene::~Scene(void) {
-	std::cerr << "deleting Scene" << std::endl;
+std::cerr << "rsScene/~Scene start" << std::endl;
 	// stop thread
 	MUTEX_LOCK(&_thread_mutex);
 	_thread = false;
@@ -65,6 +65,7 @@ Scene::~Scene(void) {
 
 	// clean mutexes
 	MUTEX_DESTROY(&_thread_mutex);
+std::cerr << "rsScene/~Scene end" << std::endl;
 }
 
 /**********************************************************

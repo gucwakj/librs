@@ -58,10 +58,12 @@ Scene::Scene(void) : KeyboardHandler() {
 Scene::~Scene(void) {
 std::cerr << "rsScene/~Scene start" << std::endl;
 	// stop thread
-	MUTEX_LOCK(&_thread_mutex);
-	_thread = false;
-	MUTEX_UNLOCK(&_thread_mutex);
-	THREAD_JOIN(_osgThread);
+	if (_osgThread) {
+		MUTEX_LOCK(&_thread_mutex);
+		_thread = false;
+		MUTEX_UNLOCK(&_thread_mutex);
+		THREAD_JOIN(_osgThread);
+	}
 
 	// clean mutexes
 	MUTEX_DESTROY(&_thread_mutex);

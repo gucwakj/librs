@@ -67,6 +67,7 @@ namespace rsScene {
 			void setHighlight(bool);
 			void setHUD(bool);
 			void setLabel(bool);
+			void setLevel(int);
 			void setPauseText(int);
 			int setupCamera(osg::GraphicsContext*, double, double);
 			int setupScene(double, double, bool);
@@ -82,14 +83,15 @@ namespace rsScene {
 		// private functions
 		private:
 			osg::Material* create_material(osg::Vec4);
-			void draw_grid(void);
+			void draw_grid(double, double, double, double, double, double, double);
 			void draw_global_hud(double, double, bool);
 			void draw_robot_linkbot(rsRobots::Linkbot*, Robot*, const double*, const double*, bool, double*);
 			void draw_robot_linkbot_conn(rsRobots::Linkbot*, Robot*, int, int, int, double, int, int);
 			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const double*, const double*, bool, double*);
 			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);
-			void draw_scene_outdoors(double, double, bool);
-			void draw_scene_board(double, double, bool);
+			void draw_scene_outdoors(void);
+			void draw_scene_board(void);
+			void draw_skybox(void);
 			static void* graphics_thread(void*);
 
 		// private data
@@ -101,6 +103,7 @@ namespace rsScene {
 			int _deleting;						// temp variable for deleting robots
 			int _level;							// level to load
 			osg::Camera *_camera;				// camera to view scene
+			osg::Group *_background;			// pieces of each level which are interchangeable
 			osg::Group *_root;					// root node of scene
 			osg::Group *_staging;				// temp variable for adding objects
 			osgViewer::Viewer *_viewer;			// viewer

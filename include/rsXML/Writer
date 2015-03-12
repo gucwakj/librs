@@ -18,6 +18,7 @@ namespace rsXML {
 			virtual ~Writer(void);
 
 			void addRobot(int, int, double*, double*, double*, double*);
+			tinyxml2::XMLElement* getRobot(int);
 			void setGrid(bool, std::vector<double>);
 
 		// private functions

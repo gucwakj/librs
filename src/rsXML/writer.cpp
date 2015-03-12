@@ -139,6 +139,7 @@ void Writer::addRobot(int id, int form, double *p, double *q, double *r, double 
 	// write to disk
 	this->save();
 }
+
 /*
 void Writer::addConnector(int id) {
 	// add wheels
@@ -186,6 +187,18 @@ void Writer::addConnector(int id) {
 	sim->InsertAfterChild(simple2, simple3);
 }
 */
+
+tinyxml2::XMLElement* Writer::getRobot(int id) {
+	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
+	tinyxml2::XMLElement *node = sim->FirstChildElement();
+	int j;
+	while (node) {
+		node->QueryIntAttribute("id", &j);
+		if (j == id)
+			return node;
+		node = node->NextSiblingElement();
+	}
+}
 
 void Writer::setGrid(bool units, std::vector<double> grid) {
 	// clear old grid settings

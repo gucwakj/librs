@@ -2,6 +2,7 @@
 #define RSROBOTS_ROBOT_HPP_
 
 #include <cmath>
+#include <string>
 #include <vector>
 
 #include <rs/Enum>
@@ -18,10 +19,12 @@ namespace rsRobots {
 
 			int getForm(void);
 			int getID(void);
+			std::string getName(void);
 			double* getRGB(void);
 			void multiplyQbyV(const double*, double, double, double, double*);
 			void multiplyQbyQ(const double*, const double*, double*);
 			void setID(int);
+			void setName(std::string);
 			void setTrace(bool);
 
 		// for inherited classes
@@ -41,6 +44,7 @@ namespace rsRobots {
 			double _rgb[3];
 			int _form;
 			int _id;
+			std::string _name;
 			std::vector<rs::Vec3> _offset;
 	};
 

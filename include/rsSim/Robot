@@ -21,8 +21,6 @@ namespace rsSim {
 			Robot(void);
 			virtual ~Robot(void);
 
-			int getForm(void);
-			int getID(void);
 			int holdJoint(int);
 			int holdJoints(void);
 			int moveJoint(int, double);

@@ -475,6 +475,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
 			}
+			if ( (ele = node->FirstChildElement("name")) ) {
+				std::string str(ele->GetText());
+				_robot.back()->setName(str);
+			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				if (i == 1)
 					_robot.back()->setPsi(0);
@@ -516,6 +520,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("b", &c);
 				ele->QueryDoubleAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
+			}
+			if ( (ele = node->FirstChildElement("name")) ) {
+				std::string str(ele->GetText());
+				_robot.back()->setName(str);
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				if (i == 1)
@@ -559,6 +567,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
 			}
+			if ( (ele = node->FirstChildElement("name")) ) {
+				std::string str(ele->GetText());
+				_robot.back()->setName(str);
+			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				if (i == 1)
 					_robot.back()->setPsi(0);
@@ -599,6 +611,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("b", &c);
 				ele->QueryDoubleAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
+			}
+			if ( (ele = node->FirstChildElement("name")) ) {
+				std::string str(ele->GetText());
+				_robot.back()->setName(str);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);

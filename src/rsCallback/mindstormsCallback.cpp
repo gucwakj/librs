@@ -17,16 +17,20 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		// child 0: hud
-		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
-		char text[50];
-		if (_units)
-			sprintf(text, "Robot %d\n(%.4lf, %.4lf) [cm]", _robot->getID()+1, _robot->getCenter(0)*100, _robot->getCenter(1)*100);
-		else
-			sprintf(text, "Robot %d\n(%.4lf, %.4lf) [in]", _robot->getID()+1, _robot->getCenter(0)*39.37, _robot->getCenter(1)*39.37);
-		label->setText(text);
+		std::string text;
 		double x = _robot->getCenter(0);
 		double y = _robot->getCenter(1);
 		double z = _robot->getCenter(2) + (_robot->getID() % 2 ? 0.08 : 0) + 0.08;
+		if (_robot->getName().size())
+			text.append(_robot->getName());
+		else
+			text.append("Robot " + std::to_string(_robot->getID()+1));
+		if (_units)
+			text.append("\n\n(" + std::to_string(x*100) + ", " + std::to_string(y*100) + ") [cm]");
+		else
+			text.append("\n\n(" + std::to_string(y*39.37) + ", " + std::to_string(y*39.37) + ") [cm]");
+		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
+		label->setText(text);
 		label->setPosition(osg::Vec3(x, y, z));
 		// child 1: tracking line
 		/*if (_robot->_trace) {

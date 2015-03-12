@@ -27,6 +27,10 @@ int Robot::getID(void) {
 	return _id;
 }
 
+std::string Robot::getName(void) {
+	return _name;
+}
+
 double* Robot::getRGB(void) {
 	return _rgb;
 }
@@ -48,6 +52,10 @@ void Robot::multiplyQbyQ(const double *q, const double *q2, double *o) {
 
 void Robot::setID(int id) {
 	_id = id;
+}
+
+void Robot::setName(std::string name) {
+	_name = name;
 }
 
 void Robot::setTrace(bool trace) {

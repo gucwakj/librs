@@ -39,15 +39,6 @@ std::cerr << "rsSim/~Robot start" << std::endl;
 std::cerr << "rsSim/~Robot end" << std::endl;
 }
 
-int Robot::getForm(void) {
-	return _form;
-}
-
-int Robot::getID(void) {
-	// get id of robot
-	return _id;
-}
-
 int Robot::holdJoint(int id) {
 	this->setJointSpeed(id, 0);
 

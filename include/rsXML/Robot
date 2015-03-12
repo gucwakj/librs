@@ -1,6 +1,7 @@
 #ifndef RSXML_ROBOT_HPP_
 #define RSXML_ROBOT_HPP_
 
+#include <string>
 #include <vector>
 
 #include <rsRobots/Linkbot>
@@ -27,6 +28,7 @@ namespace rsXML {
 			int getID(void);
 			double* getJoints(void);
 			double* getLED(void);
+			std::string getName(void);
 			double* getPosition(void);
 			double* getQuaternion(void);
 			bool getTrace(void);
@@ -37,6 +39,7 @@ namespace rsXML {
 			void setID(int);
 			void setJoints(double = 0, double = 0, double = 0, double = 0, double = 0, double = 0);
 			void setLED(double, double, double, double);
+			void setName(std::string);
 			void setPosition(double, double, double);
 			void setPsi(double);
 			void setRotation(double, double, double);
@@ -53,6 +56,7 @@ namespace rsXML {
 			int _trace;
 			ConnectorList _conn;
 			Conn *_base;
+			std::string _name;
 	};
 
 	// class

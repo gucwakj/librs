@@ -276,8 +276,15 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const double *p, const double *q
 
 	// draw HUD
 	osgText::Text *label = new osgText::Text();
-	char text[50];
-	sprintf(text, "Robot %d\n(%.4lf, %.4lf) [cm]", robot->getID() + 1, p[0]*100, p[1]*100);
+	std::string text;
+	if (robot->getName().size())
+		text.append(robot->getName());
+	else
+		text.append("Robot " + std::to_string(robot->getID()+1));
+	if (_units)
+		text.append("\n\n(" + std::to_string(p[0]*100) + ", " + std::to_string(p[1]*100) + ") [cm]");
+	else
+		text.append("\n\n(" + std::to_string(p[0]*39.37) + ", " + std::to_string(p[1]*39.37) + ") [cm]");
 	label->setText(text);
 	label->setPosition(osg::Vec3(p[0], p[1], p[2] + (robot->getID() % 2 ? 0.08 : 0) + 0.08));
 	osg::Geode *label_geode = new osg::Geode();
@@ -603,7 +610,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
 void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
 	if (!_label) return;
 
-	if (parent->getName() == "robot") {
+	if (!parent->getName().compare(0, 5, "robot")) {
 		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
 		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
 	}

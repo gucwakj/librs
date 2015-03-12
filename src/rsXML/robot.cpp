@@ -70,6 +70,10 @@ double* Robot::getLED(void) {
 	return _led;
 }
 
+std::string Robot::getName(void) {
+	return _name;
+}
+
 double* Robot::getPosition(void) {
 	return _p;
 }
@@ -130,6 +134,10 @@ void Robot::setLED(double a, double b, double c, double d) {
 	_led[1] = b;
 	_led[2] = c;
 	_led[3] = d;
+}
+
+void Robot::setName(std::string name) {
+	_name = name;
 }
 
 void Robot::setPsi(double c) {

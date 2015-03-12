@@ -384,6 +384,17 @@ void Scene::setHighlight(bool highlight) {
 	_highlight = highlight;
 }
 
+void Scene::setHUD(bool enable) {
+	for (int i = 0; i < _root->getNumChildren(); i++) {
+		if (!_root->getChild(i)->getName().compare("HUDProjection")) {
+			if (enable)
+				_root->getChild(i)->setNodeMask(VISIBLE_MASK);
+			else
+				_root->getChild(i)->setNodeMask(NOT_VISIBLE_MASK);
+		}
+	}
+}
+
 void Scene::setLabel(bool label) {
 	_label = label;
 }
@@ -918,6 +929,7 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 	// init variables
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 	osg::ref_ptr<osg::Projection> projection = new osg::Projection;
+	projection->setName("HUDProjection");
 	osg::ref_ptr<osg::MatrixTransform> transform = new osg::MatrixTransform;
 	osg::ref_ptr<osgText::Text> text = new osgText::Text();
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry;

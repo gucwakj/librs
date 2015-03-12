@@ -65,6 +65,7 @@ namespace rsScene {
 			void setDelete(int);
 			void setGrid(bool, std::vector<double>);
 			void setHighlight(bool);
+			void setHUD(bool);
 			void setLabel(bool);
 			void setPauseText(int);
 			int setupCamera(osg::GraphicsContext*, double, double);

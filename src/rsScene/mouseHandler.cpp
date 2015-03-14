@@ -31,9 +31,9 @@ bool MouseHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdap
 	}
 }
 
-void MouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *viewer) {
+int MouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *viewer) {
 	osg::Node *scene = viewer->getSceneData();
-	if (!scene) return;
+	if (!scene) return -1;
 
 	// run intersector from mouse through scene graph
 	double x = ea.getXnormalized(), y = ea.getYnormalized();
@@ -58,9 +58,10 @@ void MouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *vie
 			if (test && (!test->getName().compare(0, 5, "robot") || !test->getName().compare(0, 6, "ground"))) {
 				_scene->toggleHighlight(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
 				_scene->toggleLabel(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
-				break;
+				return atoi(&(test->getName()[5]));
 			}
 		}
 	}
+	return -1;
 }
 

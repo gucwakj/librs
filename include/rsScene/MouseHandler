@@ -28,7 +28,7 @@ namespace rsScene {
 
 			// from GUIEventHandler
 			bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
-			void pick(const osgGA::GUIEventAdapter&, osgViewer::Viewer*);
+			virtual int pick(const osgGA::GUIEventAdapter&, osgViewer::Viewer*);
 
 		// private data
 		private:

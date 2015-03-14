@@ -426,6 +426,21 @@ void Scene::setLevel(int level) {
 	}
 }
 
+void Scene::setMouseHandler(rsScene::MouseHandler *mh) {
+	// find and remove old handler
+	osgViewer::View::EventHandlers eh = _viewer->getEventHandlers();
+	for (osgViewer::View::EventHandlers::iterator it = eh.begin(); it != eh.end(); it++) {
+		if (!(*it)->getName().compare(0, 5, "mouse")) {
+			_viewer->removeEventHandler((*it));
+			break;
+		}
+	}
+
+	// set new handler
+	mh->setName("mouse");
+	_viewer->addEventHandler(mh);
+}
+
 void Scene::setPauseText(int pause) {
 	if (pause)
 		this->getHUDText()->setText("Paused: Press any key to restart");
@@ -514,7 +529,11 @@ int Scene::setupScene(double w, double h, bool pause) {
 
 	// event handler
 	_viewer->addEventHandler(dynamic_cast<KeyboardHandler*>(this));
-	_viewer->addEventHandler(new MouseHandler(this));
+
+	// create and add mouse handler
+	osg::ref_ptr<MouseHandler> mh = new MouseHandler(this);
+	mh->setName("mouse");
+	_viewer->addEventHandler(mh);
 
 	// show scene
 	_viewer->setSceneData(_root);

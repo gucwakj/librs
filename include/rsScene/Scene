@@ -24,6 +24,7 @@
 #include <rsRobots/Linkbot>
 #include <rsRobots/Mindstorms>
 #include <rsScene/KeyboardHandler>
+#include <rsScene/MouseHandler>
 
 extern osg::Node::NodeMask NOT_VISIBLE_MASK;
 extern osg::Node::NodeMask RECEIVES_SHADOW_MASK;
@@ -54,7 +55,7 @@ namespace rsScene {
 			virtual ~Scene(void);
 
 			int addChild(void);
-			void addHighlight(int, bool = 1);
+			void addHighlight(int, bool = true);
 			int deleteChild(int);
 			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, int, double, int, int);
 			Ground* drawGround(int, const double*, const double*, const double*, const double*);
@@ -68,6 +69,7 @@ namespace rsScene {
 			void setHUD(bool);
 			void setLabel(bool);
 			void setLevel(int);
+			void setMouseHandler(rsScene::MouseHandler*);
 			void setPauseText(int);
 			int setupCamera(osg::GraphicsContext*, double, double);
 			int setupScene(double, double, bool);

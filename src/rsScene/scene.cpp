@@ -379,8 +379,8 @@ void Scene::setDelete(int id) {
 }
 
 void Scene::setGrid(bool units, std::vector<double> grid) {
+	// save new values
 	_units = units;
-
 	_grid[0] = grid[0];
 	_grid[1] = grid[1];
 	_grid[2] = grid[2];
@@ -388,6 +388,12 @@ void Scene::setGrid(bool units, std::vector<double> grid) {
 	_grid[4] = grid[4];
 	_grid[5] = grid[5];
 	_grid[6] = grid[6];
+
+	// remove old grid
+	_background->removeChildren(1, _background->getNumChildren());
+
+	// draw new grid
+	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 }
 
 void Scene::setHighlight(bool highlight) {
@@ -696,25 +702,30 @@ osg::Material* Scene::create_material(osg::Vec4 color) {
 }
 
 void Scene::draw_grid(double tics, double hash, double minx, double maxx, double miny, double maxy, double enabled) {
+	if ((maxx - minx < -EPSILON) || (maxy - miny < -EPSILON))
+		return;
+
 	if ( (int)(enabled) ) {
 		// grid lines for each sub-foot
-		double min_x = (int)((minx*1.01)/tics)*tics;
-		double min_y = (int)((miny*1.01)/tics)*tics;
-		int numx = (int)((maxx - min_x)/tics+1);
-		int numy = (int)((maxy - min_y)/tics+1);
-		int numVertices = 2*numx + 2*numy;
+		double minx1 = static_cast<int>(ceil(((minx < -EPSILON) ? 1.001 : 0.999)*minx/tics))*tics;
+		double miny1 = static_cast<int>(ceil(((miny < -EPSILON) ? 1.001 : 0.999)*miny/tics))*tics;
+		double maxx1 = static_cast<int>(floor(((maxx < -EPSILON) ? 0.999 : 1.001)*maxx/tics))*tics;
+		double maxy1 = static_cast<int>(floor(((maxy < -EPSILON) ? 0.999 : 1.001)*maxy/tics))*tics;
+		int numx1 = static_cast<int>(ceil(1.001*(maxx1 - minx1)/tics));
+		int numy1 = static_cast<int>(ceil(1.001*(maxy1 - miny1)/tics));
+		int numVertices = 2*numx1 + 2*numy1;
 		osg::Geode *gridGeode = new osg::Geode();
 		osg::Geometry *gridLines = new osg::Geometry();
 		osg::Vec3 *myCoords = new osg::Vec3[numVertices]();
 		// draw x lines
-		for (int i = 0, j = 0; i < numx; i++) {
-			myCoords[j++] = osg::Vec3(min_x + i*tics, miny, 0.0);
-			myCoords[j++] = osg::Vec3(min_x + i*tics, maxy, 0.0);
+		for (int i = 0, j = 0; i < numx1; i++) {
+			myCoords[j++] = osg::Vec3(minx1 + i*tics, miny, 0.0);
+			myCoords[j++] = osg::Vec3(minx1 + i*tics, maxy, 0.0);
 		}
 		// draw y lines
-		for (int i = 0, j = 2*numx; i < numy; i++) {
-			myCoords[j++] = osg::Vec3(minx, min_y + i*tics, 0.0);
-			myCoords[j++] = osg::Vec3(maxx, min_y + i*tics, 0.0);
+		for (int i = 0, j = 2*numx1; i < numy1; i++) {
+			myCoords[j++] = osg::Vec3(minx, miny1 + i*tics, 0.0);
+			myCoords[j++] = osg::Vec3(maxx, miny1 + i*tics, 0.0);
 		}
 		// add vertices
 		osg::Vec3Array *vertices = new osg::Vec3Array(numVertices, myCoords);
@@ -722,7 +733,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		gridLines->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices));
 		// set color
 		osg::Vec4Array *colors = new osg::Vec4Array;
-		colors->push_back(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f) );	// white
+		colors->push_back(osg::Vec4(1, 1, 1, 1));
 		gridLines->setColorArray(colors);
 		gridLines->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
@@ -741,10 +752,12 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		_background->addChild(gridGeode);
 
 		// grid lines for each foot
-		double minx2 = (int)((minx*1.01)/hash)*hash;
-		double miny2 = (int)((maxx*1.01)/hash)*hash;
-		int numx2 = (int)((maxx - minx2)/hash+1);
-		int numy2 = (int)((maxy - miny2)/hash+1);
+		double minx2 = static_cast<int>(ceil(((minx < -EPSILON) ? 1.01 : 0.99)*minx/hash))*hash;
+		double miny2 = static_cast<int>(ceil(((miny < -EPSILON) ? 1.01 : 0.99)*miny/hash))*hash;
+		double maxx2 = static_cast<int>(floor(((maxx < -EPSILON) ? 0.99 : 1.01)*maxx/hash))*hash;
+		double maxy2 = static_cast<int>(floor(((maxy < -EPSILON) ? 0.99 : 1.01)*maxy/hash))*hash;
+		int numx2 = static_cast<int>(ceil(1.01*(maxx2 - minx2)/hash));
+		int numy2 = static_cast<int>(ceil(1.01*(maxy2 - miny2)/hash));
 		int numVertices2 = 2*numx2 + 2*numy2;
 		osg::Geode *gridGeode2 = new osg::Geode();
 		osg::Geometry *gridLines2 = new osg::Geometry();
@@ -765,7 +778,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		gridLines2->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices2));
 		// set color
 		osg::Vec4Array *colors2 = new osg::Vec4Array;
-		colors2->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f) );	// red
+		colors2->push_back(osg::Vec4(1, 0, 0, 1));
 		gridLines2->setColorArray(colors2);
 		gridLines2->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
@@ -789,7 +802,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		osg::Vec3 myCoords3[4];
 		if ( fabs(maxx) > fabs(minx) ) {
 			if (minx < -EPSILON)
-				myCoords3[0] = osg::Vec3(-maxx, 0, 0);
+				myCoords3[0] = osg::Vec3(minx, 0, 0);
 			else
 				myCoords3[0] = osg::Vec3(0, 0, 0);
 			myCoords3[1] = osg::Vec3(maxx, 0, 0);
@@ -803,7 +816,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		}
 		if ( fabs(maxy) > fabs(miny) ) {
 			if (miny < -EPSILON)
-				myCoords3[2] = osg::Vec3(-maxy, 0, 0);
+				myCoords3[2] = osg::Vec3(0, miny, 0);
 			else
 				myCoords3[2] = osg::Vec3(0, 0, 0);
 			myCoords3[3] = osg::Vec3(0, maxy, 0);
@@ -821,7 +834,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		gridLines3->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 4));
 		// set color
 		osg::Vec4Array *colors3 = new osg::Vec4Array;
-		colors3->push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f) );
+		colors3->push_back(osg::Vec4(0, 0, 0, 1));
 		gridLines3->setColorArray(colors3);
 		gridLines3->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
@@ -851,15 +864,15 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xtext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 		if ( fabs(maxx) > fabs(minx) ) {
 			if (maxx < EPSILON)
-				xbillboard->addDrawable(xtext, osg::Vec3d(0.05, 0.0, 0.0));
+				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
 			else
-				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.05, 0.0, 0.0));
+				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
 		}
 		else {
 			if (minx < -EPSILON)
-				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.05, 0.0, 0.0));
+				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
 			else
-				xbillboard->addDrawable(xtext, osg::Vec3d(0.05, 0.0, 0.0));
+				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
 		}
 		xbillboard->setMode(osg::Billboard::AXIAL_ROT);
 		xbillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
@@ -878,15 +891,15 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ytext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 		if ( fabs(maxy) > fabs(miny) ) {
 			if (maxy < EPSILON)
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.05, 0.0));
+				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
 			else
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.05, 0.0));
+				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
 		}
 		else {
 			if (miny < -EPSILON)
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.05, 0.0));
+				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
 			else
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.05, 0.0));
+				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
 		}
 		ybillboard->setMode(osg::Billboard::AXIAL_ROT);
 		ybillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
@@ -906,30 +919,34 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xzero_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 		xnum_billboard->addDrawable(xzero_text, osg::Vec3d(-0.5*tics, -0.5*tics, 0.0));
 		// positive
-		for (int i = 1; i < (int)(maxx/hash+1); i++) {
-			osg::ref_ptr<osgText::Text> xnumpos_text = new osgText::Text();
-			if (_units) sprintf(text, "   %.0lf", 100*i*hash);
-			else sprintf(text, "   %.0lf", 39.37*i*hash);
-			xnumpos_text->setText(text);
-			xnumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-			xnumpos_text->setAlignment(osgText::Text::CENTER_CENTER);
-			xnumpos_text->setCharacterSize(30);
-			xnumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
-			xnumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-			xnum_billboard->addDrawable(xnumpos_text, osg::Vec3d(i*hash, -0.5*tics, 0.0));
+		if (maxx > EPSILON) {
+			for (int i = 1; i < static_cast<int>(1.01*maxx/hash + 1); i++) {
+				osg::ref_ptr<osgText::Text> xnumpos_text = new osgText::Text();
+				if (_units) sprintf(text, "   %.0lf ", 100*i*hash);
+				else sprintf(text, "   %.0lf ", 39.37*i*hash);
+				xnumpos_text->setText(text);
+				xnumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+				xnumpos_text->setAlignment(osgText::Text::CENTER_TOP);
+				xnumpos_text->setCharacterSize(30);
+				xnumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
+				xnumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+				xnum_billboard->addDrawable(xnumpos_text, osg::Vec3d(i*hash, 0, 0));
+			}
 		}
 		// negative
-		for (int i = 1; i < (int)(fabs(minx)/hash+1); i++) {
-			osg::ref_ptr<osgText::Text> xnumneg_text = new osgText::Text();
-			if (_units) sprintf(text, "%.0lf   ", -100*i*hash);
-			else sprintf(text, "%.0lf   ", -39.37*i*hash);
-			xnumneg_text->setText(text);
-			xnumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-			xnumneg_text->setAlignment(osgText::Text::CENTER_CENTER);
-			xnumneg_text->setCharacterSize(30);
-			xnumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
-			xnumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-			xnum_billboard->addDrawable(xnumneg_text, osg::Vec3d(-i*hash, -0.5*tics, 0.0));
+		if (minx < -EPSILON) {
+			for (int i = 1; i < static_cast<int>(fabs(1.01*minx)/hash + 1); i++) {
+				osg::ref_ptr<osgText::Text> xnumneg_text = new osgText::Text();
+				if (_units) sprintf(text, "%.0lf    ", -100*i*hash);
+				else sprintf(text, "%.0lf    ", -39.37*i*hash);
+				xnumneg_text->setText(text);
+				xnumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+				xnumneg_text->setAlignment(osgText::Text::CENTER_TOP);
+				xnumneg_text->setCharacterSize(30);
+				xnumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
+				xnumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+				xnum_billboard->addDrawable(xnumneg_text, osg::Vec3d(-i*hash, 0, 0));
+			}
 		}
 		xnum_billboard->setMode(osg::Billboard::AXIAL_ROT);
 		xnum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
@@ -944,30 +961,34 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		// y grid numbering
 		osg::ref_ptr<osg::Billboard> ynum_billboard = new osg::Billboard();
 		// positive
-		for (int i = 1; i < (int)(maxy/hash+1); i++) {
-			osg::ref_ptr<osgText::Text> ynumpos_text = new osgText::Text();
-			if (_units) sprintf(text, "   %.0lf", 100*i*hash);
-			else sprintf(text, "   %.0lf", 39.37*i*hash);
-			ynumpos_text->setText(text);
-			ynumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-			ynumpos_text->setAlignment(osgText::Text::CENTER_CENTER);
-			ynumpos_text->setCharacterSize(30);
-			ynumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
-			ynumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-			ynum_billboard->addDrawable(ynumpos_text, osg::Vec3d(0, i*hash + 0.5*tics, 0.0));
+		if (maxy > EPSILON) {
+			for (int i = 1; i < static_cast<int>(1.01*maxy/hash + 1); i++) {
+				osg::ref_ptr<osgText::Text> ynumpos_text = new osgText::Text();
+				if (_units) sprintf(text, "    %.0lf", 100*i*hash);
+				else sprintf(text, "    %.0lf", 39.37*i*hash);
+				ynumpos_text->setText(text);
+				ynumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+				ynumpos_text->setAlignment(osgText::Text::CENTER_TOP);
+				ynumpos_text->setCharacterSize(30);
+				ynumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
+				ynumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+				ynum_billboard->addDrawable(ynumpos_text, osg::Vec3d(0, i*hash, 0));
+			}
 		}
 		// negative
-		for (int i = 1; i < (int)(fabs(miny)/hash+1); i++) {
-			osg::ref_ptr<osgText::Text> ynumneg_text = new osgText::Text();
-			if (_units) sprintf(text, "%.0lf   ", -100*i*hash);
-			else sprintf(text, "%.0lf   ", -39.37*i*hash);
-			ynumneg_text->setText(text);
-			ynumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-			ynumneg_text->setAlignment(osgText::Text::CENTER_CENTER);
-			ynumneg_text->setCharacterSize(30);
-			ynumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
-			ynumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-			ynum_billboard->addDrawable(ynumneg_text, osg::Vec3d(0, -i*hash - 0.5*tics, 0.0));
+		if (miny < -EPSILON) {
+			for (int i = 1; i < static_cast<int>(fabs(1.01*miny)/hash + 1); i++) {
+				osg::ref_ptr<osgText::Text> ynumneg_text = new osgText::Text();
+				if (_units) sprintf(text, "%.0lf    ", -100*i*hash);
+				else sprintf(text, "%.0lf    ", -39.37*i*hash);
+				ynumneg_text->setText(text);
+				ynumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+				ynumneg_text->setAlignment(osgText::Text::CENTER_TOP);
+				ynumneg_text->setCharacterSize(30);
+				ynumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
+				ynumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+				ynum_billboard->addDrawable(ynumneg_text, osg::Vec3d(0, -i*hash, 0));
+			}
 		}
 		ynum_billboard->setMode(osg::Billboard::AXIAL_ROT);
 		ynum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));

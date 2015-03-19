@@ -126,6 +126,19 @@ int Scene::deleteChild(int id) {
 	return -1;
 }
 
+int Scene::deleteObstacle(int id) {
+	for (int i = 0; i < _scene->getNumChildren(); i++) {
+		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		if (test && !test->getName().compare(std::string("ground").append(std::to_string(id)))) {
+			if (test->getUpdateCallback() != NULL)
+				test->removeUpdateCallback(test->getUpdateCallback());
+			_scene->removeChild(test);
+			return 0;
+		}
+	}
+	return -1;
+}
+
 void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type, int face, int orientation, double size, int side, int conn) {
 	switch (robot->getForm()) {
 		case rs::LINKBOTI:
@@ -139,7 +152,7 @@ void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type,
 	}
 }
 
-Ground* Scene::drawGround(int type, const double *p, const double *c, const double *l, const double *q) {
+Ground* Scene::drawGround(int id, int type, const double *p, const double *c, const double *l, const double *q) {
 	// create ground objects
 	osg::ref_ptr<osg::Group> ground = new osg::Group();
 	osg::ref_ptr<osg::Geode> body = new osg::Geode;
@@ -175,7 +188,7 @@ Ground* Scene::drawGround(int type, const double *p, const double *c, const doub
 	ground->addChild(pat.get());
 
 	// set user properties of node
-	ground->setName("ground");
+	ground->setName(std::string("ground").append(std::to_string(id)));
 
 	// optimize object
 	osgUtil::Optimizer optimizer;
@@ -640,7 +653,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
 			}
 		}
 	}
-	else if (!parent->getName().compare("ground")) {
+	else if (!parent->getName().compare(0, 6, "ground")) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
 			osgFX::Scribe *scribe = new osgFX::Scribe();
@@ -666,7 +679,9 @@ void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
 		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
 		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
 	}
-	else if (parent->getName() == "ground") {
+	else if (!parent->getName().compare(0, 6, "ground")) {
+		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
+		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
 	}
 }
 

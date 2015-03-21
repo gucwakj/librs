@@ -21,7 +21,7 @@ namespace rsSim {
 
 		// inherited functions from ModularRobot class
 		protected:
-			virtual int build(const double*, const double*, const double*, dBodyID, int, int);
+			virtual int build(const double*, const double*, const double*, dBodyID, int, int, int);
 
 		// inherited functions from Robot class
 		protected:

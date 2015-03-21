@@ -31,6 +31,7 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 	double p[3] = {pos[0], pos[1], pos[2]}, p1[3], p2[3];
 	double q[4] = {quat[1], quat[2], quat[3], quat[0]}, q1[4], q2[4];
 	this->getRobotFaceOffset(face, _motor[face-1].theta, p, q, p1, q1);
+
 	if (conn == -1)
 		this->getConnBodyOffset(type, orientation, p1, q1, p2, q2);
 	else {
@@ -48,6 +49,7 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		_conn.back().face = face;
 		_conn.back().type = type;
 		_conn.back().body = dBodyCreate(_world);
+		_conn.back().orientation = orientation;
 	}
 	else {
 		_conn.back().d_side = side;
@@ -55,6 +57,7 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		_conn.back().face = face;
 		_conn.back().type = conn;
 		_conn.back().body = dBodyCreate(_world);
+		_conn.back().orientation = orientation;
 		type = conn;
 	}
 
@@ -104,6 +107,7 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		_conn.back().d_type = -1;
 		_conn.back().face = face;
 		_conn.back().type = type;
+		_conn.back().orientation = orientation;
 		this->build_gripper(_conn.back(), 3);
 	}
 
@@ -156,36 +160,43 @@ int Linkbot::build(const double *p, const double *q, const double *a, int ground
 	return 0;
 }
 
-int Linkbot::build(const double *p, const double *q, const double *a, dBodyID base, int face, int ground) {
+int Linkbot::build(const double *p, const double *q, const double *a, dBodyID base, int face, int orientation, int ground) {
+	// rotate for orientation
+	double q5[4] = {sin(0.5*1.570796*(orientation-1)),  // 0.5*90
+	0, 0,
+	cos(0.5*1.570796*(orientation-1))}; // 0.5*90
+	double q6[4] = {0, 0, 0, 1};
+	this->multiplyQbyQ(q5, q, q6);
+
 	// get offset of robot
 	double o[3], p1[3], p2[3] = {0};
 	double q1[4], q2[4] = {0, 0, 0, 1}, q3[4] = {0, 0, 0, 1}, q4[4];
 	switch (face) {
 		case FACE1:
 			p2[0] = _body_width/2 + _face_depth;
-			q3[0] = sin(DEG2RAD(-0.5*a[JOINT1]));
-			q3[3] = cos(DEG2RAD(-0.5*a[JOINT1]));
+			q3[0] = sin(DEG2RAD(0.5*a[JOINT1]));	// 0.5*angle
+			q3[3] = cos(DEG2RAD(0.5*a[JOINT1]));	// 0.5*angle
 			break;
 		case FACE2:
 			p2[0] = _face_depth + _body_length;
-			q2[2] = sin(-0.785398);	// 0.5*PI/2
-			q2[3] = cos(-0.785398);	// 0.5*PI/2
-			q3[0] = sin(DEG2RAD(-0.5*a[JOINT2]));
-			q3[3] = cos(DEG2RAD(-0.5*a[JOINT2]));
+			q2[2] = sin(-0.785398);					// 0.5*PI/2
+			q2[3] = cos(-0.785398);					// 0.5*PI/2
+			q3[0] = sin(DEG2RAD(0.5*a[JOINT2]));	// 0.5*angle
+			q3[3] = cos(DEG2RAD(0.5*a[JOINT2]));	// 0.5*angle
 			break;
 		case FACE3:
 			p2[0] = _body_width/2 + _face_depth;
-			q2[2] = sin(1.570796);	// 0.5*PI
-			q2[3] = cos(1.570796);	// 0.5*PI
-			q3[0] = sin(DEG2RAD(-0.5*a[JOINT3]));
-			q3[3] = cos(DEG2RAD(-0.5*a[JOINT3]));
+			q2[2] = sin(1.570796);					// 0.5*PI
+			q2[3] = cos(1.570796);					// 0.5*PI
+			q3[0] = sin(DEG2RAD(-0.5*a[JOINT3]));	// 0.5*angle
+			q3[3] = cos(DEG2RAD(-0.5*a[JOINT3]));	// 0.5*angle
 			break;
 	}
-	this->multiplyQbyV(q, p2[0], p2[1], p2[2], o);
+	this->multiplyQbyV(q6, p2[0], p2[1], p2[2], o);
 	p1[0] = p[0] + o[0];
 	p1[1] = p[1] + o[1];
 	p1[2] = p[2] + o[2];
-	this->multiplyQbyQ(q2, q, q4);
+	this->multiplyQbyQ(q2, q6, q4);
 	this->multiplyQbyQ(q3, q4, q1);
 
     // build new module

@@ -24,6 +24,7 @@ namespace rsSim {
 			Ground* addGround(const double*, const double*, const double*, double);
 			Ground* addGround(const double*, const double*, const double*, double, int);
 			Ground* addGround(const double*, const double*, double);
+			void beginSimulation(void);
 			virtual int deleteRobot(int);
 			void done(void);
 			double getClock(void);

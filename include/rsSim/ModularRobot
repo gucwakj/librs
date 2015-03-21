@@ -12,6 +12,7 @@ namespace rsSim {
 		double o[3];
 		int face, type;
 		int d_side, d_type;
+		int orientation;
 	};
 
 	// typedefs
@@ -25,8 +26,9 @@ namespace rsSim {
 			virtual ~ModularRobot(void);
 
 			virtual int addConnector(int, int, int, double, int, int) = 0;
-			virtual int build(const double*, const double*, const double*, dBodyID, int, int) = 0;
+			virtual int build(const double*, const double*, const double*, dBodyID, int, int, int) = 0;
 			dBodyID getConnectorBodyID(int);
+			int getConnectorOrientation(int);
 			ConnectorList& getConnectorList(void);
 
 		// utility functions

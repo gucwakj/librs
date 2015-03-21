@@ -24,6 +24,13 @@ dBodyID ModularRobot::getConnectorBodyID(int face) {
 	return NULL;
 }
 
+int ModularRobot::getConnectorOrientation(int face) {
+	for (int i = 0; i < _conn.size(); i++) {
+		if (_conn[i].face == face) return _conn[i].orientation;
+	}
+	return -1;
+}
+
 /**********************************************************
 	protected functions for inherited classes
  **********************************************************/

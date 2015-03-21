@@ -47,32 +47,22 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 	switch (type) {
 		case rsLinkbot::BRIDGE:
 			p2[1] = _bridge_length - 2*_face_radius;
-			q2[0] = 0;
-			q2[1] = sin(1.570796);	// 0.5*PI
-			q2[2] = 0;
+			q2[2] = sin(1.570796);	// 0.5*PI
 			q2[3] = cos(1.570796);	// 0.5*PI
 			break;
 		case rsLinkbot::CUBE:
 			if (side == 2) {
 				p2[0] = _cubic_length/2;
 				p2[1] = _cubic_length/2;
-				q2[0] = 0;
-				q2[1] = 0;
 				q2[2] = sin(0.785398);	// 0.5*PI/2
 				q2[3] = cos(0.785398);	// 0.5*PI/2
 			}
 			else if (side == 3) {
 				p2[0] = _cubic_length;
-				q2[0] = 0;
-				q2[1] = 0;
-				q2[2] = 0;
-				q2[3] = 1;
 			}
 			else if (side == 4) {
 				p2[0] = _cubic_length/2;
 				p2[1] = -_cubic_length/2;
-				q2[0] = 0;
-				q2[1] = 0;
 				q2[2] = sin(-0.785398);	// -0.5*PI/2
 				q2[3] = cos(-0.785398);	// -0.5*PI/2
 			}
@@ -80,7 +70,6 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 				p2[0] = _cubic_length/2;
 				p2[2] = _cubic_length/2;
 				q2[0] = sin(-0.785398);	// -0.5*PI/2
-				q2[1] = 0;
 				q2[2] = sin(-0.785398);	// -0.5*PI/2
 				q2[3] = cos(-0.785398);	// -0.5*PI/2
 			}
@@ -88,9 +77,7 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 		case rsLinkbot::DOUBLEBRIDGE:
 			if (side == 2) {
 				p2[1] = _bridge_length - 2*_face_radius;
-				q2[0] = 0;
-				q2[1] = sin(1.570796);	// 0.5*PI
-				q2[2] = 0;
+				q2[2] = sin(1.570796);	// 0.5*PI
 				q2[3] = cos(1.570796);	// 0.5*PI
 			}
 			else if (side == 3) {
@@ -112,17 +99,11 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 				p2[1] = _omni_length - 2*_face_radius;
 				p2[2] = -_omni_length + 2*_face_radius;
 			}
-			q2[0] = 0;
-			q2[1] = 0;
 			q2[2] = sin(1.570796);	// 0.5*PI
 			q2[3] = cos(1.570796);	// 0.5*PI
 			break;
 		case rsLinkbot::SIMPLE:
 			p2[0] = _conn_depth;
-			q2[0] = 0;
-			q2[1] = 0;
-			q2[2] = 0;
-			q2[3] = 1;
 			break;
 	}
 

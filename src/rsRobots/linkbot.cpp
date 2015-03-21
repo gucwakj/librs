@@ -33,9 +33,9 @@ Linkbot::Linkbot(int disabled) : Robot(rs::LINKBOTT) {
  **********************************************************/
 void Linkbot::getConnFaceOffset(int type, int side, int orientation, const double *p, const double *q, double *p1, double *q1) {
 	// rotate for orientation
-	double q3[4] = {sin(0.5*1.570796*(orientation-1)),	// 0.5*90
+	double q3[4] = {sin(0.5*1.570796*orientation),	// 0.5*90
 					0, 0,
-					cos(0.5*1.570796*(orientation-1))};	// 0.5*90
+					cos(0.5*1.570796*orientation)};	// 0.5*90
 	double q4[4] = {0, 0, 0, 1};
 	this->multiplyQbyQ(q3, q, q4);
 
@@ -51,22 +51,22 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 			q2[3] = cos(1.570796);	// 0.5*PI
 			break;
 		case rsLinkbot::CUBE:
-			if (side == 2) {
+			if (side == SIDE2) {
 				p2[0] = _cubic_length/2;
 				p2[1] = _cubic_length/2;
 				q2[2] = sin(0.785398);	// 0.5*PI/2
 				q2[3] = cos(0.785398);	// 0.5*PI/2
 			}
-			else if (side == 3) {
+			else if (side == SIDE3) {
 				p2[0] = _cubic_length;
 			}
-			else if (side == 4) {
+			else if (side == SIDE4) {
 				p2[0] = _cubic_length/2;
 				p2[1] = -_cubic_length/2;
 				q2[2] = sin(-0.785398);	// -0.5*PI/2
 				q2[3] = cos(-0.785398);	// -0.5*PI/2
 			}
-			else if (side == 5) {
+			else if (side == SIDE5) {
 				p2[0] = _cubic_length/2;
 				p2[2] = _cubic_length/2;
 				q2[0] = sin(-0.785398);	// -0.5*PI/2
@@ -75,27 +75,27 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 			}
 			break;
 		case rsLinkbot::DOUBLEBRIDGE:
-			if (side == 2) {
+			if (side == SIDE2) {
 				p2[1] = _bridge_length - 2*_face_radius;
 				q2[2] = sin(1.570796);	// 0.5*PI
 				q2[3] = cos(1.570796);	// 0.5*PI
 			}
-			else if (side == 3) {
+			else if (side == SIDE3) {
 				p2[0] = 2*_conn_depth;
 			}
-			else if (side == 4) {
+			else if (side == SIDE4) {
 				p2[0] = 2*_conn_depth;
 				p2[1] = _bridge_length - 2*_face_radius;
 			}
 			break;
 		case rsLinkbot::OMNIPLATE:
-			if (side == 2) {
+			if (side == SIDE2) {
 				p2[2] = -_omni_length + 2*_face_radius;
 			}
-			else if (side == 3) {
+			else if (side == SIDE3) {
 				p2[1] = +_omni_length - 2*_face_radius;
 			}
-			else if (side == 4) {
+			else if (side == SIDE4) {
 				p2[1] = _omni_length - 2*_face_radius;
 				p2[2] = -_omni_length + 2*_face_radius;
 			}
@@ -120,9 +120,9 @@ void Linkbot::getConnFaceOffset(int type, int side, int orientation, const doubl
 
 void Linkbot::getConnBodyOffset(int type, int orientation, const double *p, const double *q, double *p1, double *q1) {
 	// rotate for orientation
-	double q3[4] = {sin(0.5*1.570796*(orientation-1)),	// 0.5*90
+	double q3[4] = {sin(0.5*1.570796*orientation),	// 0.5*90
 					0, 0,
-					cos(0.5*1.570796*(orientation-1))};	// 0.5*90
+					cos(0.5*1.570796*orientation)};	// 0.5*90
 	double q4[4] = {0, 0, 0, 1};
 	this->multiplyQbyQ(q3, q, q4);
 

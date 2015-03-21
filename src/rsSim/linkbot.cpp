@@ -162,9 +162,9 @@ int Linkbot::build(const double *p, const double *q, const double *a, int ground
 
 int Linkbot::build(const double *p, const double *q, const double *a, dBodyID base, int face, int orientation, int ground) {
 	// rotate for orientation
-	double q5[4] = {sin(0.5*1.570796*(orientation-1)),  // 0.5*90
+	double q5[4] = {sin(0.5*1.570796*orientation),  // 0.5*90
 	0, 0,
-	cos(0.5*1.570796*(orientation-1))}; // 0.5*90
+	cos(0.5*1.570796*orientation)}; // 0.5*90
 	double q6[4] = {0, 0, 0, 1};
 	this->multiplyQbyQ(q5, q, q6);
 

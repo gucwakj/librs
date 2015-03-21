@@ -444,7 +444,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 	tinyxml2::XMLElement *ele = NULL;
 	tinyxml2::XMLElement *side = NULL;
 	int *rtmp, *ftmp, *ntmp, *atmp, ctype = 0, cnum = 0;
-	int custom = 0, i = 0, orientation = 1;
+	int custom = 0, i = 0, orientation = 0;
 	double size = 0, a, b, c, d, e, f;
 
 	// check for existence of node
@@ -480,13 +480,14 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				_robot.back()->setName(str);
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
-				if (i == 1)
+				_robot.back()->setOrientation(i);
+				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
-				else if (i == 2)
+				else if (i == rs::UP)
 					_robot.back()->setPsi(M_PI/2);
-				else if (i == 3)
+				else if (i == rs::LEFT)
 					_robot.back()->setPsi(M_PI);
-				else if (i == 4)
+				else if (i == rs::DOWN)
 					_robot.back()->setPsi(3*M_PI/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -526,13 +527,13 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				_robot.back()->setName(str);
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
-				if (i == 1)
+				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
-				else if (i == 2)
+				else if (i == rs::UP)
 					_robot.back()->setPsi(M_PI/2);
-				else if (i == 3)
+				else if (i == rs::LEFT)
 					_robot.back()->setPsi(M_PI);
-				else if (i == 4)
+				else if (i == rs::DOWN)
 					_robot.back()->setPsi(3*M_PI/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -572,13 +573,13 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				_robot.back()->setName(str);
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
-				if (i == 1)
+				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
-				else if (i == 2)
+				else if (i == rs::UP)
 					_robot.back()->setPsi(M_PI/2);
-				else if (i == 3)
+				else if (i == rs::LEFT)
 					_robot.back()->setPsi(M_PI);
-				else if (i == 4)
+				else if (i == rs::DOWN)
 					_robot.back()->setPsi(3*M_PI/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -781,7 +782,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			// reset temporary variables
 			custom = 0;
 			i = 0;
-			orientation = 1;
+			orientation = 0;
 			size = 0;
 		}
 

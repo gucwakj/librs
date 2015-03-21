@@ -24,6 +24,14 @@ namespace rs {
 		TEXT
 	};
 
+	// orientation
+	enum Orientation {
+		RIGHT,
+		UP,
+		LEFT,
+		DOWN
+	};
+
 } // namespace rs
 
 namespace rsLinkbot {
@@ -77,6 +85,15 @@ namespace rsLinkbot {
 		SNAKE,
 		STAND,
 		NUM_PRECONFIG
+	};
+
+	// connector sides
+	enum Side {
+		SIDE1 = 1,
+		SIDE2,
+		SIDE3,
+		SIDE4,
+		SIDE5
 	};
 
 } // namespace rsLinkbot

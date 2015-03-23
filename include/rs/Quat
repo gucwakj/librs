@@ -3,6 +3,9 @@
 
 namespace rs {
 
+	// forward declare
+	class Pos;
+
 	// quaternion class
 	class Quat {
 		public:
@@ -10,9 +13,13 @@ namespace rs {
 			Quat(double, double, double, double);
 			Quat(const Quat&);
 
+			// multiply by vector
+			const Pos multiply(const rs::Pos&);
+			const Pos multiply(double, double, double) const;
+
+			// multiply by quaternion
 			const Quat multiply(const rs::Quat&);
-			const Quat multiply(double, double, double, double);	// _v*q[4]
-			void multiply(double, double, double, double*) const;		// _v*p[3]
+			const Quat multiply(double, double, double, double);
 
 			// access operators
 			inline double& operator[](int i) { return _v[i]; }

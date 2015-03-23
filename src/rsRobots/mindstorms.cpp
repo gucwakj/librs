@@ -19,20 +19,22 @@ Mindstorms::Mindstorms(void) : Robot(rs::MINDSTORMS) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Mindstorms::getRobotBodyPosition(int body, double theta, const double *p, const rs::Quat &q, double *p1) {
+const rs::Pos Mindstorms::getRobotBodyPosition(int body, const rs::Pos &p, const rs::Quat &q) {
+	// new position
+	rs::Pos P(p);
+
 	// calculate offset position
-	double o[3];
-	q.multiply(_offset[body].x, _offset[body].y, _offset[body].z, o);
-	p1[0] = p[0] + o[0];
-	p1[1] = p[1] + o[1];
-	p1[2] = p[2] + o[2];
+	P.add(q.multiply(_offset[body].x, _offset[body].y, _offset[body].z));
+
+	// return offset position
+	return P;
 }
 
 const rs::Quat Mindstorms::getRobotBodyQuaternion(int body, double theta, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
-	// offset quaternion
+	// calculate offset quaternion
 	if (body == WHEEL1)
 		Q.multiply(rs::Quat(0, 0, sin(1.570796), cos(1.570796)));
 

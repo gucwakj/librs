@@ -19,7 +19,7 @@ namespace rsRobots {
 			virtual void getConnBodyOffset(int, int, const double*, const double*, double*, double*);
 			virtual void getConnFaceOffset(int, int, int, const double*, const double*, double*, double*);
 
-			virtual void getRobotBodyPosition(int, double, const double*, const rs::Quat&, double*);
+			virtual const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&);
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
 
 			virtual void getRobotFacePosition(int, const double*, const rs::Quat&, double*);

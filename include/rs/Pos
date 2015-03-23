@@ -1,0 +1,27 @@
+#ifndef RS_POS_
+#define RS_POS_
+
+namespace rs {
+
+	// position class
+	class Pos {
+		public:
+			Pos(void);
+			Pos(double, double, double);
+			Pos(const Pos&);
+
+			const Pos add(double, double, double);
+			const Pos add(const Pos&);
+
+			// access operators
+			inline double& operator[](int i) { return _v[i]; }
+			inline double  operator[](int i) const { return _v[i]; }
+
+		private:
+			double _v[3];
+	};
+
+} // namespace rs
+
+#endif // RS_POS_
+

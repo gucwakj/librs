@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <rs/Enum>
+#include <rs/Pos>
 #include <rs/Quat>
 #include <rs/Types>
 
@@ -30,7 +31,7 @@ namespace rsRobots {
 
 		// for inherited classes
 		public:
-			virtual void getRobotBodyPosition(int, double, const double*, const rs::Quat&, double*) {};
+			virtual const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&) {};
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&) {};
 
 		// data

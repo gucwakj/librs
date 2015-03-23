@@ -9,6 +9,7 @@ include_directories (
 
 # add source files to library
 set (SRCS ${SRCS}
+	pos.cpp
 	quat.cpp
 )
 

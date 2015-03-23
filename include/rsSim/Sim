@@ -20,7 +20,7 @@ namespace rsSim {
 			Sim(bool, bool);
 			virtual ~Sim(void);
 
-			int addRobot(Robot*, int, const double*, const rs::Quat&, const double*, int = -1);
+			int addRobot(Robot*, int, const rs::Pos&, const rs::Quat&, const double*, int = -1);
 			int addRobot(ModularRobot*, int, Robot*, const double*, int, int, int, int, int = rs::RIGHT, int = -1);
 			Ground* addGround(const double*, const double*, const double*, double);
 			Ground* addGround(const double*, const double*, const double*, double, int);

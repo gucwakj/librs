@@ -261,7 +261,7 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 	return 0;
 }
 
-Robot* Scene::drawRobot(rsRobots::Robot *robot, const double *p, const rs::Quat &q, double *led, bool trace) {
+Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat &q, double *led, bool trace) {
 	// create new robot
 	osg::Group *group = new osg::Group();
 
@@ -1077,11 +1077,10 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 	_root->addChild(projection);
 }
 
-void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const double *p, const rs::Quat &q, bool trace, double *rgb) {
+void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, bool trace, double *rgb) {
 	// initialize variables
 	osg::ref_ptr<osg::Node> body[rsLinkbot::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsLinkbot::NUM_PARTS];
-	double p1[3];
 
 	// create transforms
 	for (int i = 0; i < rsLinkbot::NUM_PARTS; i++) {
@@ -1165,7 +1164,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const dou
 
 	// draw face1
 	rs::Quat q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE1, 0, q);
-	robot->getRobotBodyPosition(rsLinkbot::FACE1, 0, p, q, p1);
+	rs::Pos p1 = robot->getRobotBodyPosition(rsLinkbot::FACE1, p, q);
 	body[rsLinkbot::FACE1] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
 	body[rsLinkbot::FACE1]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	pat[rsLinkbot::FACE1]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
@@ -1173,7 +1172,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const dou
 
 	// draw face 2
 	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE2, 0, q);
-	robot->getRobotBodyPosition(rsLinkbot::FACE2, 0, p, q, p1);
+	p1 = robot->getRobotBodyPosition(rsLinkbot::FACE2, p, q);
 	if (robot->getForm() == rs::LINKBOTI) {
 		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_fixed.3ds");
 		body[rsLinkbot::FACE2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
@@ -1187,7 +1186,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const dou
 
 	// draw face 3
 	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE3, 0, q);
-	robot->getRobotBodyPosition(rsLinkbot::FACE3, 0, p, q, p1);
+	p1 = robot->getRobotBodyPosition(rsLinkbot::FACE3, p, q);
 	if (robot->getForm() == rs::LINKBOTL) {
 		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_fixed.3ds");
 		body[rsLinkbot::FACE3]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
@@ -1733,14 +1732,13 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 	return 0;
 }*/
 
-void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const double *p, const rs::Quat &q, bool trace, double *rgb) {
+void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, bool trace, double *rgb) {
 	// initialize variables
 	//osg::ref_ptr<osg::Node> body[rsMindstorms::NUM_PARTS];	// TODO: add
 	osg::ref_ptr<osg::Geode> body[rsMindstorms::NUM_PARTS];		// TODO: remove
 	osg::Box *box;
 	osg::Cylinder *cyl;
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsMindstorms::NUM_PARTS];
-	double p1[3];
 
 	// create transforms
 	for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
@@ -1762,7 +1760,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 
 	// wheel1
 	rs::Quat q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL1, 0, q);
-	robot->getRobotBodyPosition(rsMindstorms::WHEEL1, 0, p, q, p1);
+	rs::Pos p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL1, p, q);
 	//body[rsMindstorms::WHEEL1] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
 	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.04445, 0.00140);		// TODO: remove
 	body[rsMindstorms::WHEEL1]->addDrawable(new osg::ShapeDrawable(cyl));		// TODO: remove
@@ -1772,7 +1770,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 
 	// wheel2
 	q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL2, 0, q);
-	robot->getRobotBodyPosition(rsMindstorms::WHEEL2, 0, p, q, p1);
+	p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL2, p, q);
 	//body[rsMindstorms::WHEEL2] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
 	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.04445, 0.00140);		// TODO: remove
 	body[rsMindstorms::WHEEL2]->addDrawable(new osg::ShapeDrawable(cyl));		// TODO: remove

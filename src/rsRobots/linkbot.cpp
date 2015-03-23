@@ -185,13 +185,15 @@ void Linkbot::getConnBodyOffset(int type, int orientation, const double *p, cons
 	this->multiplyQbyQ(q2, q4, q1);
 }
 
-void Linkbot::getRobotBodyPosition(int body, double theta, const double *p, const rs::Quat &q, double *p1) {
+const rs::Pos Linkbot::getRobotBodyPosition(int body, const rs::Pos &p, const rs::Quat &q) {
+	// new position
+	rs::Pos P(p);
+
 	// calculate offset position
-	double o[3];
-	q.multiply(_offset[body].x, _offset[body].y, _offset[body].z, o);
-	p1[0] = p[0] + o[0];
-	p1[1] = p[1] + o[1];
-	p1[2] = p[2] + o[2];
+	P.add(q.multiply(_offset[body].x, _offset[body].y, _offset[body].z));
+
+	// return offset position
+	return P;
 }
 
 const rs::Quat Linkbot::getRobotBodyQuaternion(int body, double theta, const rs::Quat &q) {
@@ -213,18 +215,19 @@ const rs::Quat Linkbot::getRobotBodyQuaternion(int body, double theta, const rs:
 
 void Linkbot::getRobotFacePosition(int face, const double *p, const rs::Quat &q, double *p1) {
 	// get offset of face
-	double o[3];
+	//double o[3];
+	rs::Pos O;
 	if (face == FACE1)
-		q.multiply(_offset[face].x - _face_depth/2, _offset[face].y, _offset[face].z, o);
+		O = q.multiply(_offset[face].x - _face_depth/2, _offset[face].y, _offset[face].z);
 	else if (face == FACE2)
-		q.multiply(_offset[face].x, _offset[face].y - _face_depth/2, _offset[face].z, o);
+		O = q.multiply(_offset[face].x, _offset[face].y - _face_depth/2, _offset[face].z);
 	else if (face == FACE3)
-		q.multiply(_offset[face].x + _face_depth/2, _offset[face].y, _offset[face].z, o);
+		O = q.multiply(_offset[face].x + _face_depth/2, _offset[face].y, _offset[face].z);
 
 	// calculate offset position
-	p1[0] = p[0] + o[0];
-	p1[1] = p[1] + o[1];
-	p1[2] = p[2] + o[2];
+	p1[0] = p[0] + O[0];
+	p1[1] = p[1] + O[1];
+	p1[2] = p[2] + O[2];
 }
 
 double Linkbot::getWheelRatio(int standard) {

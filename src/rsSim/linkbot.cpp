@@ -128,7 +128,7 @@ void Linkbot::addForce(int body, double fx, double fy, double fz) {
 	dBodyAddForce(_body[body], fx, fy, fz);
 }
 
-int Linkbot::build(const double *p, const rs::Quat &q, const double *a, int ground) {
+int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const double *a, int ground) {
 	// build
 	this->buildIndividual(p, q, a);
 
@@ -160,48 +160,36 @@ int Linkbot::build(const double *p, const rs::Quat &q, const double *a, int grou
 	return 0;
 }
 
-int Linkbot::build(const double *p, const rs::Quat &q, const double *a, dBodyID base, int face, int orientation, int ground) {
-	// new quaternion
-	rs::Quat q1(q);
+int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const double *a, dBodyID base, int face, int orientation, int ground) {
+	// new position & quaternion classes
+	rs::Pos P(p);
+	rs::Quat Q(q);
 
 	// rotate for orientation
-	q1.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
+	Q.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
 
 	// get position of robot
-	double o[3], p1[3], p2[3] = {0};
-	switch (face) {
-		case FACE1:
-			p2[0] = _body_width/2 + _face_depth;
-			break;
-		case FACE2:
-			p2[0] = _face_depth + _body_length;
-			break;
-		case FACE3:
-			p2[0] = _body_width/2 + _face_depth;
-			break;
-	}
-	q1.multiply(p2[0], p2[1], p2[2], o);
-	p1[0] = p[0] + o[0];
-	p1[1] = p[1] + o[1];
-	p1[2] = p[2] + o[2];
+	if (face == FACE1)
+		P.add(Q.multiply(_body_width/2 + _face_depth, 0, 0));
+	else if (face == FACE2)
+		P.add(Q.multiply(_face_depth + _body_length, 0, 0));
+	else if (face == FACE3)
+		P.add(Q.multiply(_body_width/2 + _face_depth, 0, 0));
 
 	// get quaternion of robot
-	switch (face) {
-		case FACE1:
-			q1.multiply(sin(DEG2RAD(0.5*a[JOINT1])), 0, 0, cos(DEG2RAD(0.5*a[JOINT1])));
-			break;
-		case FACE2:
-			q1.multiply(0, 0, sin(-0.785398), cos(-0.785398));
-			q1.multiply(sin(DEG2RAD(0.5*a[JOINT2])), 0, 0, cos(DEG2RAD(0.5*a[JOINT2])));
-			break;
-		case FACE3:
-			q1.multiply(0, 0, sin(1.570796), cos(1.570796));
-			q1.multiply(sin(DEG2RAD(-0.5*a[JOINT3])), 0, 0, cos(DEG2RAD(-0.5*a[JOINT3])));
-			break;
+	if (face == FACE1)
+		Q.multiply(sin(DEG2RAD(0.5*a[JOINT1])), 0, 0, cos(DEG2RAD(0.5*a[JOINT1])));
+	else if (face == FACE2) {
+		Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
+		Q.multiply(sin(DEG2RAD(0.5*a[JOINT2])), 0, 0, cos(DEG2RAD(0.5*a[JOINT2])));
+	}
+	else if (face == FACE3) {
+		Q.multiply(0, 0, sin(1.570796), cos(1.570796));
+		Q.multiply(sin(DEG2RAD(-0.5*a[JOINT3])), 0, 0, cos(DEG2RAD(-0.5*a[JOINT3])));
 	}
 
     // build new module
-	this->buildIndividual(p1, q1, a);
+	this->buildIndividual(P, Q, a);
 
     // add fixed joint to attach two modules
 	this->fix_body_to_connector(base, face);
@@ -213,7 +201,7 @@ int Linkbot::build(const double *p, const rs::Quat &q, const double *a, dBodyID 
 	return 0;
 }
 
-int Linkbot::buildIndividual(const double *p, const rs::Quat &q, const double *a) {
+int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const double *a) {
 	// init body parts
 	for (int i = 0; i < NUM_PARTS; i++) {
 		_body.push_back(dBodyCreate(_world));
@@ -226,25 +214,21 @@ int Linkbot::buildIndividual(const double *p, const rs::Quat &q, const double *a
 	_motor[_disabled].goal = _motor[_disabled].theta = 0;
 
 	// build robot bodies
-	double p1[3], q1[4];
 	this->build_body(p, q);
-	this->getRobotBodyPosition(FACE1, 0, p, q, p1);
-	this->build_face(FACE1, p1, this->getRobotBodyQuaternion(FACE1, 0, q));
-	this->getRobotBodyPosition(FACE2, 0, p, q, p1);
-	this->build_face(FACE2, p1, this->getRobotBodyQuaternion(FACE2, 0, q));
-	this->getRobotBodyPosition(FACE3, 0, p, q, p1);
-	this->build_face(FACE3, p1, this->getRobotBodyQuaternion(FACE3, 0, q));
+	this->build_face(FACE1, this->getRobotBodyPosition(FACE1, p, q), this->getRobotBodyQuaternion(FACE1, 0, q));
+	this->build_face(FACE2, this->getRobotBodyPosition(FACE2, p, q), this->getRobotBodyQuaternion(FACE2, 0, q));
+	this->build_face(FACE3, this->getRobotBodyPosition(FACE3, p, q), this->getRobotBodyQuaternion(FACE3, 0, q));
 
 	// joint variable
 	dJointID joint[_dof];
-	double o[3];
+	rs::Pos o;
 
 	// joint for body to face 1
 	joint[JOINT1] = dJointCreateHinge(_world, 0);
 	dJointAttach(joint[JOINT1], _body[BODY], _body[FACE1]);
-	q.multiply(-_body_width/2, 0, 0, o);
+	o = q.multiply(-_body_width/2, 0, 0);
 	dJointSetHingeAnchor(joint[JOINT1], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-	q.multiply(1, 0, 0, o);
+	o = q.multiply(1, 0, 0);
 	dJointSetHingeAxis(joint[JOINT1], o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[FACE1], o[0], o[1], o[2]);
 
@@ -257,9 +241,9 @@ int Linkbot::buildIndividual(const double *p, const rs::Quat &q, const double *a
 	else {
 		joint[JOINT2] = dJointCreateHinge(_world, 0);
 		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
-		q.multiply(0, -_body_width/2, 0, o);
+		o = q.multiply(0, -_body_width/2, 0);
 		dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-		q.multiply(0, 1, 0, o);
+		o = q.multiply(0, 1, 0);
 		dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE2], o[0], o[1], o[2]);
 	}
@@ -273,26 +257,20 @@ int Linkbot::buildIndividual(const double *p, const rs::Quat &q, const double *a
 	else {
 		joint[JOINT3] = dJointCreateHinge(_world, 0);
 		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
-		q.multiply(-_body_width/2, 0, 0, o);
+		o = q.multiply(-_body_width/2, 0, 0);
 		dJointSetHingeAnchor(joint[JOINT3], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-		q.multiply(-1, 0, 0, o);
+		o = q.multiply(-1, 0, 0);
 		dJointSetHingeAxis(joint[JOINT3], o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE3], o[0], o[1], o[2]);
 	}
 
 	// build rotated joints
-	if (_motor[JOINT1].theta != 0) {
-		this->getRobotBodyPosition(FACE1, _motor[JOINT1].theta, p, q, p1);
-		this->build_face(FACE1, p1, this->getRobotBodyQuaternion(FACE1, _motor[JOINT1].theta, q));
-	}
-	if (_motor[JOINT2].theta != 0) {
-		this->getRobotBodyPosition(FACE2, _motor[JOINT2].theta, p, q, p1);
-		this->build_face(FACE2, p1, this->getRobotBodyQuaternion(FACE2, _motor[JOINT2].theta, q));
-	}
-	if (_motor[JOINT3].theta != 0) {
-		this->getRobotBodyPosition(FACE3, _motor[JOINT3].theta, p, q, p1);
-		this->build_face(FACE3, p1, this->getRobotBodyQuaternion(FACE3, _motor[JOINT3].theta, q));
-	}
+	if (_motor[JOINT1].theta != 0)
+		this->build_face(FACE1, this->getRobotBodyPosition(FACE1, p, q), this->getRobotBodyQuaternion(FACE1, _motor[JOINT1].theta, q));
+	if (_motor[JOINT2].theta != 0)
+		this->build_face(FACE2, this->getRobotBodyPosition(FACE2, p, q), this->getRobotBodyQuaternion(FACE2, _motor[JOINT2].theta, q));
+	if (_motor[JOINT3].theta != 0)
+		this->build_face(FACE3, this->getRobotBodyPosition(FACE3, p, q), this->getRobotBodyQuaternion(FACE3, _motor[JOINT3].theta, q));
 
 	// build motors
 	for (int i = 0; i < _dof; i++) {
@@ -306,11 +284,11 @@ int Linkbot::buildIndividual(const double *p, const rs::Quat &q, const double *a
 		dJointSetAMotorParam(_motor[i].id, dParamFudgeFactor, 0.3);
 		dJointDisable(_motor[i].id);
 	}
-	q.multiply(1, 0, 0, o);
+	o = q.multiply(1, 0, 0);
 	dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, o[0], o[1], o[2]);
-	q.multiply(0, 1, 0, o);
+	o = q.multiply(0, 1, 0);
 	dJointSetAMotorAxis(_motor[JOINT2].id, 0, 1, o[0], o[1], o[2]);
-	q.multiply(-1, 0, 0, o);
+	o = q.multiply(-1, 0, 0);
 	dJointSetAMotorAxis(_motor[JOINT3].id, 0, 1, o[0], o[1], o[2]);
 
 	// set damping on all bodies to 0.1
@@ -613,7 +591,7 @@ void Linkbot::simPostCollisionThread(void) {
 /**********************************************************
 	private functions
  **********************************************************/
-void Linkbot::build_body(const double *p, const rs::Quat &q) {
+void Linkbot::build_body(const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m, m1;
 	dMassSetBox(&m, 1000, _body_width, _body_length, _body_height);
@@ -733,7 +711,7 @@ void Linkbot::build_doublebridge(Connector &conn) {
 	dGeomSetBody(geom, conn.body);
 }
 
-void Linkbot::build_face(int id, const double *p, const rs::Quat &q) {
+void Linkbot::build_face(int id, const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m;
 	if (id == 2)

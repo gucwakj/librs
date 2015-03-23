@@ -26,7 +26,7 @@ namespace rsSim {
 			virtual ~ModularRobot(void);
 
 			virtual int addConnector(int, int, int = rs::RIGHT, double = 0, int = 1, int = -1) = 0;
-			virtual int build(const double*, const rs::Quat&, const double*, dBodyID, int, int, int) = 0;
+			virtual int build(const rs::Pos&, const rs::Quat&, const double*, dBodyID, int, int, int) = 0;
 			dBodyID getConnectorBodyID(int);
 			int getConnectorOrientation(int);
 			ConnectorList& getConnectorList(void);

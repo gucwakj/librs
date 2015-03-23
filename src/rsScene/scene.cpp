@@ -1279,10 +1279,11 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 		Q1.multiply(robot->getConnBodyQuaternion(type, orientation, Q1));
 	}
 	else {
-		robot->getConnFaceOffset(type, side, orientation, p1, q1, p2, q2);
+		P1 = robot->getConnFacePosition(type, side, orientation, P1, Q1);
+		Q1 = robot->getConnFaceQuaternion(type, side, orientation, Q1);
 		type = conn;
-		P1.add(robot->getConnBodyPosition(type, P1, Q1));
-		Q1.multiply(robot->getConnBodyQuaternion(type, orientation, Q1));
+		P1 = robot->getConnBodyPosition(type, P1, Q1);
+		Q1 = robot->getConnBodyQuaternion(type, orientation, Q1);
 	}
 
 	// PAT to transform mesh

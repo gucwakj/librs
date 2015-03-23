@@ -23,6 +23,7 @@ namespace rsRobots {
 			int getID(void);
 			std::string getName(void);
 			double* getRGB(void);
+			const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&);
 			void multiplyQbyV(const double*, double, double, double, double*);
 			void multiplyQbyQ(const double*, const double*, double*);
 			void setID(int);
@@ -31,7 +32,6 @@ namespace rsRobots {
 
 		// for inherited classes
 		public:
-			const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&);
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&) {};
 
 		// data

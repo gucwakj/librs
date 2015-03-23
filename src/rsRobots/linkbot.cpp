@@ -31,91 +31,79 @@ Linkbot::Linkbot(int disabled) : Robot(rs::LINKBOTT) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Linkbot::getConnFaceOffset(int type, int side, int orientation, const double *p, const double *q, double *p1, double *q1) {
-	// rotate for orientation
-	double q3[4] = {sin(0.5*1.570796*orientation),	// 0.5*90
-					0, 0,
-					cos(0.5*1.570796*orientation)};	// 0.5*90
-	double q4[4] = {0, 0, 0, 1};
-	this->multiplyQbyQ(q3, q, q4);
+const rs::Pos Linkbot::getConnFacePosition(int type, int side, int orientation, const rs::Pos &p, const rs::Quat &q) {
+	// new position
+	rs::Pos P(p);
 
-	// offsets
-	double p2[3] = {0};
-	double q2[4] = {0, 0, 0, 1};
+	rs::Quat Q(this->getConnBodyQuaternion(type, orientation, q));
 
 	// get offset of face
-	switch (type) {
-		case rsLinkbot::BRIDGE:
-			p2[1] = _bridge_length - 2*_face_radius;
-			q2[2] = sin(1.570796);	// 0.5*PI
-			q2[3] = cos(1.570796);	// 0.5*PI
-			break;
-		case rsLinkbot::CUBE:
-			if (side == SIDE2) {
-				p2[0] = _cubic_length/2;
-				p2[1] = _cubic_length/2;
-				q2[2] = sin(0.785398);	// 0.5*PI/2
-				q2[3] = cos(0.785398);	// 0.5*PI/2
-			}
-			else if (side == SIDE3) {
-				p2[0] = _cubic_length;
-			}
-			else if (side == SIDE4) {
-				p2[0] = _cubic_length/2;
-				p2[1] = -_cubic_length/2;
-				q2[2] = sin(-0.785398);	// -0.5*PI/2
-				q2[3] = cos(-0.785398);	// -0.5*PI/2
-			}
-			else if (side == SIDE5) {
-				p2[0] = _cubic_length/2;
-				p2[2] = _cubic_length/2;
-				q2[0] = sin(-0.785398);	// -0.5*PI/2
-				q2[2] = sin(-0.785398);	// -0.5*PI/2
-				q2[3] = cos(-0.785398);	// -0.5*PI/2
-			}
-			break;
-		case rsLinkbot::DOUBLEBRIDGE:
-			if (side == SIDE2) {
-				p2[1] = _bridge_length - 2*_face_radius;
-				q2[2] = sin(1.570796);	// 0.5*PI
-				q2[3] = cos(1.570796);	// 0.5*PI
-			}
-			else if (side == SIDE3) {
-				p2[0] = 2*_conn_depth;
-			}
-			else if (side == SIDE4) {
-				p2[0] = 2*_conn_depth;
-				p2[1] = _bridge_length - 2*_face_radius;
-			}
-			break;
-		case rsLinkbot::OMNIPLATE:
-			if (side == SIDE2) {
-				p2[2] = -_omni_length + 2*_face_radius;
-			}
-			else if (side == SIDE3) {
-				p2[1] = +_omni_length - 2*_face_radius;
-			}
-			else if (side == SIDE4) {
-				p2[1] = _omni_length - 2*_face_radius;
-				p2[2] = -_omni_length + 2*_face_radius;
-			}
-			q2[2] = sin(1.570796);	// 0.5*PI
-			q2[3] = cos(1.570796);	// 0.5*PI
-			break;
-		case rsLinkbot::SIMPLE:
-			p2[0] = _conn_depth;
-			break;
+	if (type == rsLinkbot::BRIDGE)
+		return P.add(Q.multiply(0, _bridge_length - 2*_face_radius, 0));
+	else if (type == rsLinkbot::CUBE) {
+		if (side == SIDE2)
+			return P.add(Q.multiply(_cubic_length/2, _cubic_length/2, 0));
+		else if (side == SIDE3)
+			return P.add(Q.multiply(_cubic_length, 0, 0));
+		else if (side == SIDE4)
+			return P.add(Q.multiply(_cubic_length/2, -_cubic_length/2, 0));
+		else if (side == SIDE5)
+			return P.add(Q.multiply(_cubic_length/2, 0, _cubic_length/2));
 	}
+	else if (type == rsLinkbot::DOUBLEBRIDGE) {
+		if (side == SIDE2)
+			return P.add(Q.multiply(0, _bridge_length - 2*_face_radius, 0));
+		else if (side == SIDE3)
+			return P.add(Q.multiply(2*_conn_depth, 0, 0));
+		else if (side == SIDE4)
+			return P.add(Q.multiply(2*_conn_depth, _bridge_length - 2*_face_radius, 0));
+	}
+	else if (type == rsLinkbot::OMNIPLATE) {
+		if (side == SIDE2)
+			return P.add(Q.multiply(0, 0, -_omni_length + 2*_face_radius));
+		else if (side == SIDE3)
+			return P.add(Q.multiply(0, _omni_length - 2*_face_radius, 0));
+		else if (side == SIDE4)
+			return P.add(Q.multiply(0, _omni_length - 2*_face_radius, -_omni_length + 2*_face_radius));
+	}
+	else if (type == rsLinkbot::SIMPLE)
+		return P.add(Q.multiply(_conn_depth, 0, 0));
+}
 
-	// calculate offset position
-	double o[3];
-	this->multiplyQbyV(q4, p2[0], p2[1], p2[2], o);
-	p1[0] = p[0] + o[0];
-	p1[1] = p[1] + o[1];
-	p1[2] = p[2] + o[2];
+const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientation, const rs::Quat &q) {
+	// new quaternion
+	rs::Quat Q(q);
 
-	// calculate offset quaternion
-	this->multiplyQbyQ(q2, q4, q1);
+	// rotate for orientation
+	Q.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
+
+	// get offset of face
+	if (type == rsLinkbot::BRIDGE)
+		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
+	else if (type == rsLinkbot::CUBE) {
+		if (side == SIDE2)
+			return Q.multiply(0, 0, sin(0.785398), cos(0.785398));
+		else if (side == SIDE3)
+			return Q;
+		else if (side == SIDE4)
+			return Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
+		else if (side == SIDE5) {
+			Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
+			return Q.multiply(sin(-0.785398), 0, 0, cos(-0.785398));
+		}
+	}
+	else if (type == rsLinkbot::DOUBLEBRIDGE) {
+		if (side == SIDE2)
+			return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
+		else if (side == SIDE3)
+			return Q;
+		else if (side == SIDE4)
+			return Q;
+	}
+	else if (type == rsLinkbot::OMNIPLATE)
+		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
+	else if (type == rsLinkbot::SIMPLE)
+		return Q;
 }
 
 const rs::Pos Linkbot::getConnBodyPosition(int type, const rs::Pos &p, const rs::Quat &q) {

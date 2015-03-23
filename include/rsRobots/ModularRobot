@@ -14,12 +14,12 @@ namespace rsRobots {
 
 		// for inherited classes
 		public:
-			virtual void getConnFaceOffset(int, int, int, const double*, const double*, double*, double*) {};
-
 			virtual const rs::Pos getConnBodyPosition(int, const rs::Pos&, const rs::Quat&) {};
+			virtual const rs::Pos getConnFacePosition(int, int, int, const rs::Pos&, const rs::Quat&) {};
 			virtual const rs::Pos getRobotFacePosition(int, const rs::Pos&, const rs::Quat&) {};
 
 			virtual const rs::Quat getConnBodyQuaternion(int, int, const rs::Quat&) {};
+			virtual const rs::Quat getConnFaceQuaternion(int, int, int, const rs::Quat&) {};
 
 		// data
 		protected:

@@ -79,7 +79,7 @@ std::cerr << "rsSim/~Sim end" << std::endl;
 /**********************************************************
 	Public member functions
  **********************************************************/
-int Sim::addRobot(rsSim::Robot *robot, int id, const double *p, const double *r, const double *a, int ground) {
+int Sim::addRobot(rsSim::Robot *robot, int id, const double *p, const rs::Quat &q, const double *a, int ground) {
 	// lock robot data
 	MUTEX_LOCK(&_robot_mutex);
 
@@ -91,7 +91,7 @@ int Sim::addRobot(rsSim::Robot *robot, int id, const double *p, const double *r,
 	robot->addToSim(_world, _space, id, _robot.size()-1, this);
 
 	// build
-	robot->build(p, r, a, ground);
+	robot->build(p, q, a, ground);
 
 	// unlock robot data
 	MUTEX_UNLOCK(&_robot_mutex);
@@ -116,7 +116,7 @@ int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const 
 	dynamic_cast<rsSim::ModularRobot*>(base)->getRobotFaceOffset(face1, base->getAngle(face1-1), base->getPosition(), base->getQuaternion(), p, q);
 	int conn_orientation = dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorOrientation(face1);
 	dynamic_cast<rsSim::ModularRobot*>(base)->getConnFaceOffset(type, side, conn_orientation, p, q, p1, q1);
-	robot->build(p1, q1, a, dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorBodyID(face1), face2, orientation, ground);
+	robot->build(p1, rs::Quat(q1[0], q1[1], q1[2], q1[3]), a, dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorBodyID(face1), face2, orientation, ground);
 
 	// unlock robot data
 	MUTEX_UNLOCK(&_robot_mutex);

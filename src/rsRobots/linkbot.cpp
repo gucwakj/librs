@@ -185,38 +185,34 @@ void Linkbot::getConnBodyOffset(int type, int orientation, const double *p, cons
 	this->multiplyQbyQ(q2, q4, q1);
 }
 
-void Linkbot::getRobotBodyOffset(int body, double theta, const double *p, const double *q, double *p1, double *q1) {
-	// offset quaternion
-	double q2[4] = {0, 0, 0, 1}, q3[4] = {0, 0, 0, 1}, q4[4];
-	switch (body) {
-		case FACE1:
-			q2[2] = sin(1.570796);	// 0.5 * PI
-			q2[3] = cos(1.570796);	// 0.5 * PI
-			q3[0] = sin(0.5*theta);
-			q3[3] = cos(0.5*theta);
-			break;
-		case FACE2:
-			q2[2] = sin(-0.785398);	// -0.5 * PI/2
-			q2[3] = cos(-0.785398);	// -0.5 * PI/2
-			q3[0] = sin(0.5*theta);
-			q3[3] = cos(0.5*theta);
-			break;
-		case FACE3:
-			q3[0] = sin(0.5*theta);
-			q3[3] = cos(0.5*theta);
-			break;
-	}
-
+void Linkbot::getRobotBodyPosition(int body, double theta, const double *p, const rs::Quat &q, double *p1) {
 	// calculate offset position
 	double o[3];
-	this->multiplyQbyV(q, _offset[body].x, _offset[body].y, _offset[body].z, o);
+	q.multiply(_offset[body].x, _offset[body].y, _offset[body].z, o);
 	p1[0] = p[0] + o[0];
 	p1[1] = p[1] + o[1];
 	p1[2] = p[2] + o[2];
+}
 
-	// calculate offset quaternion
-	this->multiplyQbyQ(q2, q, q4);
-	this->multiplyQbyQ(q3, q4, q1);
+const rs::Quat Linkbot::getRobotBodyQuaternion(int body, double theta, const rs::Quat &q) {
+	// new quaternion
+	rs::Quat Q(q);
+
+	// offset quaternion
+	switch (body) {
+		case FACE1:
+			Q.multiply(rs::Quat(0, 0, sin(1.570796), cos(1.570796)));
+			break;
+		case FACE2:
+			Q.multiply(rs::Quat(0, 0, sin(-0.785398), cos(-0.785398)));
+			break;
+	}
+
+	// face rotation
+	Q.multiply(rs::Quat(sin(0.5*theta), 0, 0, cos(0.5*theta)));
+
+	// return offset quaternion
+	return Q;
 }
 
 void Linkbot::getRobotFaceOffset(int face, double theta, const double *p, const double *q, double *p1, double *q1) {

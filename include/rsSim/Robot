@@ -4,6 +4,7 @@
 #include <ode/ode.h>
 
 #include <rs/Macros>
+#include <rs/Quat>
 #include <rsRobots/Robot>
 
 namespace rsSim {
@@ -34,7 +35,7 @@ namespace rsSim {
 			int setJointSpeed(int, double);
 			int setJointSpeedRatio(int, double);
 			int addToSim(dWorldID&, dSpaceID&, int, int, rsSim::Sim*);
-			virtual int build(const double*, const double*, const double*, int) { return 0; };
+			virtual int build(const double*, const rs::Quat&, const double*, int) { return 0; };
 			virtual double getAngle(int) { return 0; };
 			BodyList& getBodyList(void);
 			double getCenter(int);

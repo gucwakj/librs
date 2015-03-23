@@ -19,32 +19,27 @@ Mindstorms::Mindstorms(void) : Robot(rs::MINDSTORMS) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Mindstorms::getRobotBodyOffset(int body, double theta, const double *p, const double *q, double *p1, double *q1) {
-	// offset quaternion
-	double q2[4] = {0, 0, 0, 1};
-	switch (body) {
-		case WHEEL1:
-			q2[0] = 0;
-			q2[1] = 0;
-			q2[2] = sin(1.570796);	// 0.5 * PI
-			q2[3] = cos(1.570796);	// 0.5 * PI
-			break;
-		case WHEEL2:
-			q2[0] = 0;
-			q2[1] = 0;
-			q2[2] = 0;
-			q2[3] = 1;
-			break;
-	}
-
+void Mindstorms::getRobotBodyPosition(int body, double theta, const double *p, const rs::Quat &q, double *p1) {
 	// calculate offset position
 	double o[3];
-	this->multiplyQbyV(q, _offset[body].x, _offset[body].y, _offset[body].z, o);
+	q.multiply(_offset[body].x, _offset[body].y, _offset[body].z, o);
 	p1[0] = p[0] + o[0];
 	p1[1] = p[1] + o[1];
 	p1[2] = p[2] + o[2];
+}
 
-	// calculate offset quaternion
-	this->multiplyQbyQ(q2, q, q1);
+const rs::Quat Mindstorms::getRobotBodyQuaternion(int body, double theta, const rs::Quat &q) {
+	// new quaternion
+	rs::Quat Q(q);
+
+	// offset quaternion
+	if (body == WHEEL1)
+		Q.multiply(rs::Quat(0, 0, sin(1.570796), cos(1.570796)));
+
+	// wheel rotation
+	Q.multiply(rs::Quat(sin(0.5*theta), 0, 0, cos(0.5*theta)));
+
+	// return offset quaternion
+	return Q;
 }
 

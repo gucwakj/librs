@@ -21,12 +21,12 @@ namespace rsSim {
 
 		// inherited functions from ModularRobot class
 		protected:
-			virtual int build(const double*, const double*, const double*, dBodyID, int, int, int);
+			virtual int build(const double*, const rs::Quat&, const double*, dBodyID, int, int, int);
 
 		// inherited functions from Robot class
 		protected:
-			virtual int build(const double*, const double*, const double*, int);
-			virtual int buildIndividual(const double*, const double*, const double*);
+			virtual int build(const double*, const rs::Quat&, const double*, int);
+			virtual int buildIndividual(const double*, const rs::Quat&, const double*);
 			virtual double getAngle(int);
 			virtual void init_params(void);
 			virtual void simPreCollisionThread(void);
@@ -34,12 +34,12 @@ namespace rsSim {
 
 		// private functions
 		private:
-			void build_body(const double*, const double*);
+			void build_body(const double*, const rs::Quat&);
 			void build_bridge(Connector&);
 			void build_caster(Connector&, int);
 			void build_cube(Connector&);
 			void build_doublebridge(Connector&);
-			void build_face(int, const double*, const double*);
+			void build_face(int, const double*, const rs::Quat&);
 			void build_faceplate(Connector&);
 			void build_gripper(Connector&, int);
 			void build_omnidrive(Connector&);

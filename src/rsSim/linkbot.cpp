@@ -128,7 +128,7 @@ void Linkbot::addForce(int body, double fx, double fy, double fz) {
 	dBodyAddForce(_body[body], fx, fy, fz);
 }
 
-int Linkbot::build(const double *p, const double *q, const double *a, int ground) {
+int Linkbot::build(const double *p, const rs::Quat &q, const double *a, int ground) {
 	// build
 	this->buildIndividual(p, q, a);
 
@@ -160,44 +160,45 @@ int Linkbot::build(const double *p, const double *q, const double *a, int ground
 	return 0;
 }
 
-int Linkbot::build(const double *p, const double *q, const double *a, dBodyID base, int face, int orientation, int ground) {
-	// rotate for orientation
-	double q5[4] = {sin(0.5*1.570796*orientation),  // 0.5*90
-	0, 0,
-	cos(0.5*1.570796*orientation)}; // 0.5*90
-	double q6[4] = {0, 0, 0, 1};
-	this->multiplyQbyQ(q5, q, q6);
+int Linkbot::build(const double *p, const rs::Quat &q, const double *a, dBodyID base, int face, int orientation, int ground) {
+	// new quaternion
+	rs::Quat q1(q);
 
-	// get offset of robot
+	// rotate for orientation
+	q1.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
+
+	// get position of robot
 	double o[3], p1[3], p2[3] = {0};
-	double q1[4], q2[4] = {0, 0, 0, 1}, q3[4] = {0, 0, 0, 1}, q4[4];
 	switch (face) {
 		case FACE1:
 			p2[0] = _body_width/2 + _face_depth;
-			q3[0] = sin(DEG2RAD(0.5*a[JOINT1]));	// 0.5*angle
-			q3[3] = cos(DEG2RAD(0.5*a[JOINT1]));	// 0.5*angle
 			break;
 		case FACE2:
 			p2[0] = _face_depth + _body_length;
-			q2[2] = sin(-0.785398);					// 0.5*PI/2
-			q2[3] = cos(-0.785398);					// 0.5*PI/2
-			q3[0] = sin(DEG2RAD(0.5*a[JOINT2]));	// 0.5*angle
-			q3[3] = cos(DEG2RAD(0.5*a[JOINT2]));	// 0.5*angle
 			break;
 		case FACE3:
 			p2[0] = _body_width/2 + _face_depth;
-			q2[2] = sin(1.570796);					// 0.5*PI
-			q2[3] = cos(1.570796);					// 0.5*PI
-			q3[0] = sin(DEG2RAD(-0.5*a[JOINT3]));	// 0.5*angle
-			q3[3] = cos(DEG2RAD(-0.5*a[JOINT3]));	// 0.5*angle
 			break;
 	}
-	this->multiplyQbyV(q6, p2[0], p2[1], p2[2], o);
+	q1.multiply(p2[0], p2[1], p2[2], o);
 	p1[0] = p[0] + o[0];
 	p1[1] = p[1] + o[1];
 	p1[2] = p[2] + o[2];
-	this->multiplyQbyQ(q2, q6, q4);
-	this->multiplyQbyQ(q3, q4, q1);
+
+	// get quaternion of robot
+	switch (face) {
+		case FACE1:
+			q1.multiply(sin(DEG2RAD(0.5*a[JOINT1])), 0, 0, cos(DEG2RAD(0.5*a[JOINT1])));
+			break;
+		case FACE2:
+			q1.multiply(0, 0, sin(-0.785398), cos(-0.785398));
+			q1.multiply(sin(DEG2RAD(0.5*a[JOINT2])), 0, 0, cos(DEG2RAD(0.5*a[JOINT2])));
+			break;
+		case FACE3:
+			q1.multiply(0, 0, sin(1.570796), cos(1.570796));
+			q1.multiply(sin(DEG2RAD(-0.5*a[JOINT3])), 0, 0, cos(DEG2RAD(-0.5*a[JOINT3])));
+			break;
+	}
 
     // build new module
 	this->buildIndividual(p1, q1, a);
@@ -212,7 +213,7 @@ int Linkbot::build(const double *p, const double *q, const double *a, dBodyID ba
 	return 0;
 }
 
-int Linkbot::buildIndividual(const double *p, const double *q, const double *a) {
+int Linkbot::buildIndividual(const double *p, const rs::Quat &q, const double *a) {
 	// init body parts
 	for (int i = 0; i < NUM_PARTS; i++) {
 		_body.push_back(dBodyCreate(_world));
@@ -227,12 +228,12 @@ int Linkbot::buildIndividual(const double *p, const double *q, const double *a) 
 	// build robot bodies
 	double p1[3], q1[4];
 	this->build_body(p, q);
-	this->getRobotBodyOffset(FACE1, 0, p, q, p1, q1);
-	this->build_face(FACE1, p1, q1);
-	this->getRobotBodyOffset(FACE2, 0, p, q, p1, q1);
-	this->build_face(FACE2, p1, q1);
-	this->getRobotBodyOffset(FACE3, 0, p, q, p1, q1);
-	this->build_face(FACE3, p1, q1);
+	this->getRobotBodyPosition(FACE1, 0, p, q, p1);
+	this->build_face(FACE1, p1, this->getRobotBodyQuaternion(FACE1, 0, q));
+	this->getRobotBodyPosition(FACE2, 0, p, q, p1);
+	this->build_face(FACE2, p1, this->getRobotBodyQuaternion(FACE2, 0, q));
+	this->getRobotBodyPosition(FACE3, 0, p, q, p1);
+	this->build_face(FACE3, p1, this->getRobotBodyQuaternion(FACE3, 0, q));
 
 	// joint variable
 	dJointID joint[_dof];
@@ -241,9 +242,9 @@ int Linkbot::buildIndividual(const double *p, const double *q, const double *a) 
 	// joint for body to face 1
 	joint[JOINT1] = dJointCreateHinge(_world, 0);
 	dJointAttach(joint[JOINT1], _body[BODY], _body[FACE1]);
-	this->multiplyQbyV(q, -_body_width/2, 0, 0, o);
+	q.multiply(-_body_width/2, 0, 0, o);
 	dJointSetHingeAnchor(joint[JOINT1], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-	this->multiplyQbyV(q, 1, 0, 0, o);
+	q.multiply(1, 0, 0, o);
 	dJointSetHingeAxis(joint[JOINT1], o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[FACE1], o[0], o[1], o[2]);
 
@@ -256,9 +257,9 @@ int Linkbot::buildIndividual(const double *p, const double *q, const double *a) 
 	else {
 		joint[JOINT2] = dJointCreateHinge(_world, 0);
 		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
-		this->multiplyQbyV(q, 0, -_body_length, 0, o);
+		q.multiply(0, -_body_width/2, 0, o);
 		dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-		this->multiplyQbyV(q, 0, 1, 0, o);
+		q.multiply(0, 1, 0, o);
 		dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE2], o[0], o[1], o[2]);
 	}
@@ -272,25 +273,25 @@ int Linkbot::buildIndividual(const double *p, const double *q, const double *a) 
 	else {
 		joint[JOINT3] = dJointCreateHinge(_world, 0);
 		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
-		this->multiplyQbyV(q, _body_width/2, 0, 0, o);
+		q.multiply(-_body_width/2, 0, 0, o);
 		dJointSetHingeAnchor(joint[JOINT3], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-		this->multiplyQbyV(q, -1, 0, 0, o);
+		q.multiply(-1, 0, 0, o);
 		dJointSetHingeAxis(joint[JOINT3], o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE3], o[0], o[1], o[2]);
 	}
 
 	// build rotated joints
 	if (_motor[JOINT1].theta != 0) {
-		this->getRobotBodyOffset(FACE1, _motor[JOINT1].theta, p, q, p1, q1);
-		this->build_face(FACE1, p1, q1);
+		this->getRobotBodyPosition(FACE1, _motor[JOINT1].theta, p, q, p1);
+		this->build_face(FACE1, p1, this->getRobotBodyQuaternion(FACE1, _motor[JOINT1].theta, q));
 	}
 	if (_motor[JOINT2].theta != 0) {
-		this->getRobotBodyOffset(FACE2, _motor[JOINT2].theta, p, q, p1, q1);
-		this->build_face(FACE2, p1, q1);
+		this->getRobotBodyPosition(FACE2, _motor[JOINT2].theta, p, q, p1);
+		this->build_face(FACE2, p1, this->getRobotBodyQuaternion(FACE2, _motor[JOINT2].theta, q));
 	}
 	if (_motor[JOINT3].theta != 0) {
-		this->getRobotBodyOffset(FACE3, _motor[JOINT3].theta, p, q, p1, q1);
-		this->build_face(FACE3, p1, q1);
+		this->getRobotBodyPosition(FACE3, _motor[JOINT3].theta, p, q, p1);
+		this->build_face(FACE3, p1, this->getRobotBodyQuaternion(FACE3, _motor[JOINT3].theta, q));
 	}
 
 	// build motors
@@ -305,11 +306,11 @@ int Linkbot::buildIndividual(const double *p, const double *q, const double *a) 
 		dJointSetAMotorParam(_motor[i].id, dParamFudgeFactor, 0.3);
 		dJointDisable(_motor[i].id);
 	}
-	this->multiplyQbyV(q, 1, 0, 0, o);
+	q.multiply(1, 0, 0, o);
 	dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, o[0], o[1], o[2]);
-	this->multiplyQbyV(q, 0, 1, 0, o);
+	q.multiply(0, 1, 0, o);
 	dJointSetAMotorAxis(_motor[JOINT2].id, 0, 1, o[0], o[1], o[2]);
-	this->multiplyQbyV(q, -1, 0, 0, o);
+	q.multiply(-1, 0, 0, o);
 	dJointSetAMotorAxis(_motor[JOINT3].id, 0, 1, o[0], o[1], o[2]);
 
 	// set damping on all bodies to 0.1
@@ -612,7 +613,7 @@ void Linkbot::simPostCollisionThread(void) {
 /**********************************************************
 	private functions
  **********************************************************/
-void Linkbot::build_body(const double *p, const double *q) {
+void Linkbot::build_body(const double *p, const rs::Quat &q) {
 	// set mass of body
 	dMass m, m1;
 	dMassSetBox(&m, 1000, _body_width, _body_length, _body_height);
@@ -732,7 +733,7 @@ void Linkbot::build_doublebridge(Connector &conn) {
 	dGeomSetBody(geom, conn.body);
 }
 
-void Linkbot::build_face(int id, const double *p, const double *q) {
+void Linkbot::build_face(int id, const double *p, const rs::Quat &q) {
 	// set mass of body
 	dMass m;
 	if (id == 2)

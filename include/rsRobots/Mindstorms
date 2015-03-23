@@ -14,7 +14,8 @@ namespace rsRobots {
 
 		// inherited functions
 		public:
-			virtual void getRobotBodyOffset(int, double, const double*, const double*, double*, double*);
+			void getRobotBodyPosition(int, double, const double*, const rs::Quat&, double*);
+			const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
 	};
 
 } // namespace rsRobots

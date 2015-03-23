@@ -61,7 +61,7 @@ namespace rsScene {
 			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, int, double, int, int);
 			Ground* drawGround(int, int, const double*, const double*, const double*, const double*);
 			int drawMarker(int, const double*, const double*, const double*, int, std::string);
-			Robot* drawRobot(rsRobots::Robot*, const double*, const double*, double*, bool);
+			Robot* drawRobot(rsRobots::Robot*, const double*, const rs::Quat&, double*, bool);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			void setDelete(int);
@@ -88,9 +88,9 @@ namespace rsScene {
 			osg::Material* create_material(osg::Vec4);
 			void draw_grid(double, double, double, double, double, double, double);
 			void draw_global_hud(double, double, bool);
-			void draw_robot_linkbot(rsRobots::Linkbot*, Robot*, const double*, const double*, bool, double*);
+			void draw_robot_linkbot(rsRobots::Linkbot*, Robot*, const double*, const rs::Quat&, bool, double*);
 			void draw_robot_linkbot_conn(rsRobots::Linkbot*, Robot*, int, int, int, double, int, int);
-			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const double*, const double*, bool, double*);
+			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const double*, const rs::Quat&, bool, double*);
 			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);
 			void draw_scene_outdoors(void);
 			void draw_scene_board(void);

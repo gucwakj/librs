@@ -1,0 +1,28 @@
+#ifndef RS_QUAT_
+#define RS_QUAT_
+
+namespace rs {
+
+	// quaternion class
+	class Quat {
+		public:
+			Quat(void);
+			Quat(double, double, double, double);
+			Quat(const Quat&);
+
+			const Quat multiply(const rs::Quat&);
+			const Quat multiply(double, double, double, double);	// _v*q[4]
+			void multiply(double, double, double, double*) const;		// _v*p[3]
+
+			// access operators
+			inline double& operator[](int i) { return _v[i]; }
+			inline double  operator[](int i) const { return _v[i]; }
+
+		private:
+			double _v[4];
+	};
+
+} // namespace rs
+
+#endif // RS_QUAT_
+

@@ -16,7 +16,8 @@ namespace rsRobots {
 		public:
 			virtual void getConnBodyOffset(int, int, const double*, const double*, double*, double*) {};
 			virtual void getConnFaceOffset(int, int, int, const double*, const double*, double*, double*) {};
-			virtual void getRobotFaceOffset(int, double, const double*, const double*, double*, double*) {};
+
+			virtual void getRobotFacePosition(int, const double*, const rs::Quat&, double*) {};
 
 		// data
 		protected:

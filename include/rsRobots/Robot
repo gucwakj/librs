@@ -30,8 +30,8 @@ namespace rsRobots {
 
 		// for inherited classes
 		public:
-			void getRobotBodyPosition(int, double, const double*, const rs::Quat&, double*) {};
-			const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&) {};
+			virtual void getRobotBodyPosition(int, double, const double*, const rs::Quat&, double*) {};
+			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&) {};
 
 		// data
 		protected:

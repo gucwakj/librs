@@ -36,10 +36,10 @@ void Quat::multiply(double x, double y, double z, double *o) const {
 }
 
 const Quat Quat::multiply(const Quat &q1) {
-	double x = q1[3]*_v[0] + q1[0]*_v[3] + q1[1]*_v[2] - q1[2]*_v[1];
-	double y = q1[3]*_v[1] - q1[0]*_v[2] + q1[1]*_v[3] + q1[2]*_v[0];
-	double z = q1[3]*_v[2] + q1[0]*_v[1] - q1[1]*_v[0] + q1[2]*_v[3];
-	_v[3] = q1[3]*_v[3] - q1[0]*_v[0] - q1[1]*_v[1] - q1[2]*_v[2];
+	double x = _v[3]*q1[0] + _v[0]*q1[3] + _v[1]*q1[2] - _v[2]*q1[1];
+	double y = _v[3]*q1[1] - _v[0]*q1[2] + _v[1]*q1[3] + _v[2]*q1[0];
+	double z = _v[3]*q1[2] + _v[0]*q1[1] - _v[1]*q1[0] + _v[2]*q1[3];
+	_v[3] = _v[3]*q1[3] - _v[0]*q1[0] - _v[1]*q1[1] - _v[2]*q1[2];
 	_v[2] = z;
 	_v[1] = y;
 	_v[0] = x;

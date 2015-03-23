@@ -1221,7 +1221,8 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 	double p1[3], p2[3], q1[4], q2[4];
 
 	// get face p&q
-	robot->getRobotFaceOffset(face, 0, p.ptr(), q.asVec4().ptr(), p1, q1);
+	rs::Quat Q1 = robot->getRobotBodyQuaternion(face, 0, rs::Quat(q[0], q[1], q[2], q[3]));
+	robot->getRobotFacePosition(face, p.ptr(), rs::Quat(q[0], q[1], q[2], q[3]), p1);
 	if (side <= -10) {
 		/* // initialize variables
 		osg::ref_ptr<osg::Geode> body = new osg::Geode;

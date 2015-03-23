@@ -40,7 +40,7 @@ namespace rsSim {
 			BodyList& getBodyList(void);
 			double getCenter(int);
 			const double* getPosition(void);
-			const double* getQuaternion(void);
+			const rs::Quat getQuaternion(void);
 			virtual void getCoM(double&, double&, double&) { return; };
 			static void* simPreCollisionThreadEntry(void*);
 			static void* simPostCollisionThreadEntry(void*);

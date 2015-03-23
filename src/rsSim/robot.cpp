@@ -273,14 +273,14 @@ double Robot::getCenter(int i) {
 	return pos[i] + p[i];
 }
 
-const double* Robot::getPosition(void) {
-	return dBodyGetPosition(_body[0]);
+const rs::Pos Robot::getPosition(void) {
+	const double *p = dBodyGetPosition(_body[0]);
+	return rs::Pos(p[0], p[1], p[2]);
 }
 
 const rs::Quat Robot::getQuaternion(void) {
-	const double *quat = dBodyGetQuaternion(_body[0]);
-	rs::Quat Q(quat[1], quat[2], quat[3], quat[0]);
-	return Q;
+	const double *q = dBodyGetQuaternion(_body[0]);
+	return rs::Quat(q[1], q[2], q[3], q[0]);
 }
 
 double Robot::getRotation(int body, int i) {

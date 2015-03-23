@@ -31,7 +31,7 @@ namespace rsRobots {
 
 		// for inherited classes
 		public:
-			virtual const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&) {};
+			const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&);
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&) {};
 
 		// data

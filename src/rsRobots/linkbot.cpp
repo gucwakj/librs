@@ -185,49 +185,34 @@ void Linkbot::getConnBodyOffset(int type, int orientation, const double *p, cons
 	this->multiplyQbyQ(q2, q4, q1);
 }
 
-const rs::Pos Linkbot::getRobotBodyPosition(int body, const rs::Pos &p, const rs::Quat &q) {
-	// new position
-	rs::Pos P(p);
-
-	// calculate offset position
-	P.add(q.multiply(_offset[body].x, _offset[body].y, _offset[body].z));
-
-	// return offset position
-	return P;
-}
-
 const rs::Quat Linkbot::getRobotBodyQuaternion(int body, double theta, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
 	// offset quaternion
 	if (body == FACE1)
-		Q.multiply(rs::Quat(0, 0, sin(1.570796), cos(1.570796)));
+		Q.multiply(0, 0, sin(1.570796), cos(1.570796));
 	else if (body == FACE2)
-		Q.multiply(rs::Quat(0, 0, sin(-0.785398), cos(-0.785398)));
+		Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
 
 	// face rotation
-	Q.multiply(rs::Quat(sin(0.5*theta), 0, 0, cos(0.5*theta)));
+	Q.multiply(sin(0.5*theta), 0, 0, cos(0.5*theta));
 
 	// return offset quaternion
 	return Q;
 }
 
-void Linkbot::getRobotFacePosition(int face, const double *p, const rs::Quat &q, double *p1) {
-	// get offset of face
-	//double o[3];
-	rs::Pos O;
-	if (face == FACE1)
-		O = q.multiply(_offset[face].x - _face_depth/2, _offset[face].y, _offset[face].z);
-	else if (face == FACE2)
-		O = q.multiply(_offset[face].x, _offset[face].y - _face_depth/2, _offset[face].z);
-	else if (face == FACE3)
-		O = q.multiply(_offset[face].x + _face_depth/2, _offset[face].y, _offset[face].z);
+const rs::Pos Linkbot::getRobotFacePosition(int face, const rs::Pos &p, const rs::Quat &q) {
+	// new position
+	rs::Pos P(p);
 
 	// calculate offset position
-	p1[0] = p[0] + O[0];
-	p1[1] = p[1] + O[1];
-	p1[2] = p[2] + O[2];
+	if (face == FACE1)
+		return P.add(q.multiply(_offset[face].x - _face_depth/2, _offset[face].y, _offset[face].z));
+	else if (face == FACE2)
+		return P.add(q.multiply(_offset[face].x, _offset[face].y - _face_depth/2, _offset[face].z));
+	else if (face == FACE3)
+		return P.add(q.multiply(_offset[face].x + _face_depth/2, _offset[face].y, _offset[face].z));
 }
 
 double Linkbot::getWheelRatio(int standard) {

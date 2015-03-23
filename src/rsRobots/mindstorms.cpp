@@ -19,17 +19,6 @@ Mindstorms::Mindstorms(void) : Robot(rs::MINDSTORMS) {
 /**********************************************************
 	public functions
  **********************************************************/
-const rs::Pos Mindstorms::getRobotBodyPosition(int body, const rs::Pos &p, const rs::Quat &q) {
-	// new position
-	rs::Pos P(p);
-
-	// calculate offset position
-	P.add(q.multiply(_offset[body].x, _offset[body].y, _offset[body].z));
-
-	// return offset position
-	return P;
-}
-
 const rs::Quat Mindstorms::getRobotBodyQuaternion(int body, double theta, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);

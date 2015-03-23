@@ -14,7 +14,6 @@ namespace rsRobots {
 
 		// inherited functions
 		public:
-			virtual const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&);
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
 	};
 

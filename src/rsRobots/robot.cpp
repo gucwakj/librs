@@ -35,6 +35,14 @@ double* Robot::getRGB(void) {
 	return _rgb;
 }
 
+const rs::Pos Robot::getRobotBodyPosition(int body, const rs::Pos &p, const rs::Quat &q) {
+	// new position
+	rs::Pos P(p);
+
+	// calculate offset position
+	return P.add(q.multiply(_offset[body].x, _offset[body].y, _offset[body].z));
+}
+
 void Robot::multiplyQbyV(const double *q, double v1, double v2, double v3, double *o) {
 	double uv[3] = {q[1]*v3 - q[2]*v2, q[2]*v1 - q[0]*v3, q[0]*v2 - q[1]*v1};
 	double uuv[3] = {2*(q[1]*uv[2] - q[2]*uv[1]), 2*(q[2]*uv[0] - q[0]*uv[2]), 2*(q[0]*uv[1] - q[1]*uv[0])};

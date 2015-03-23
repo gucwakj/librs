@@ -31,16 +31,20 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 	double p[3] = {pos[0], pos[1], pos[2]}, p1[3], p2[3];
 	double q1[4] = {quat[1], quat[2], quat[3], quat[0]}, q2[4];
 	rs::Pos P1 = this->getRobotFacePosition(face, this->getPosition(), this->getQuaternion());
+	rs::Quat Q1 = this->getRobotBodyQuaternion(face, 0, this->getQuaternion());
 	p1[0] = P1[0];
 	p1[1] = P1[1];
 	p1[2] = P1[2];
 	p1[3] = P1[3];
 
-	if (conn == -1)
-		this->getConnBodyOffset(type, orientation, p1, q1, p2, q2);
+	if (conn == -1) {
+		P1.add(this->getConnBodyPosition(type, P1, Q1));
+		Q1.multiply(this->getConnBodyQuaternion(type, orientation, Q1));
+	}
 	else {
 		this->getConnFaceOffset(type, side, orientation, p1, q1, p2, q2);
-		this->getConnBodyOffset(conn, orientation, p2, q2, p2, q2);
+		P1.add(this->getConnBodyPosition(type, P1, Q1));
+		Q1.multiply(this->getConnBodyQuaternion(type, orientation, Q1));
 	}
 
 	// create new connector
@@ -116,8 +120,8 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 	}
 
 	// set body parameters
-	dBodySetPosition(_conn.back().body, p2[0], p2[1], p2[2]);
-	dQuaternion Q = {q2[3], q2[0], q2[1], q2[2]};
+	dBodySetPosition(_conn.back().body, P1[0], P1[1], P1[2]);
+	dQuaternion Q = {Q1[3], Q1[0], Q1[1], Q1[2]};
 	dBodySetQuaternion(_conn.back().body, Q);
 
 	// fix connector to body

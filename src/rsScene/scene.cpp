@@ -1274,12 +1274,15 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 		_robot.back()->robot->addChild(pat);
 		return 0;*/
 	}
-	else if (conn == -1)
-		robot->getConnBodyOffset(type, orientation, p1, q1, p2, q2);
+	else if (conn == -1) {
+		P1.add(robot->getConnBodyPosition(type, P1, Q1));
+		Q1.multiply(robot->getConnBodyQuaternion(type, orientation, Q1));
+	}
 	else {
 		robot->getConnFaceOffset(type, side, orientation, p1, q1, p2, q2);
 		type = conn;
-		robot->getConnBodyOffset(type, orientation, p2, q2, p2, q2);
+		P1.add(robot->getConnBodyPosition(type, P1, Q1));
+		Q1.multiply(robot->getConnBodyQuaternion(type, orientation, Q1));
 	}
 
 	// PAT to transform mesh

@@ -35,6 +35,7 @@ const rs::Pos Linkbot::getConnFacePosition(int type, int side, int orientation, 
 	// new position
 	rs::Pos P(p);
 
+	// rotate for connector orientation
 	rs::Quat Q(this->getConnBodyQuaternion(type, orientation, q));
 
 	// get offset of face
@@ -106,35 +107,38 @@ const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientatio
 		return Q;
 }
 
-const rs::Pos Linkbot::getConnBodyPosition(int type, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 
+	// rotate for connector orientation
+	rs::Quat Q(this->getConnBodyQuaternion(type, orientation, q));
+
 	// get offset of body
 	if (type == rsLinkbot::BIGWHEEL)
-		return P.add(q.multiply(_wheel_depth/2, 0, 0));
+		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
 	else if (type == rsLinkbot::BRIDGE)
-		return P.add(q.multiply(_conn_depth/2, _bridge_length/2 - _face_radius, 0));
+		return P.add(Q.multiply(_conn_depth/2, _bridge_length/2 - _face_radius, 0));
 	else if (type == rsLinkbot::CASTER)
-		return P.add(q.multiply(_conn_depth/4, 0, 0));
+		return P.add(Q.multiply(_conn_depth/4, 0, 0));
 	else if (type == rsLinkbot::CUBE)
-		return P.add(q.multiply(_cubic_length/2, 0, 0));
+		return P.add(Q.multiply(_cubic_length/2, 0, 0));
 	else if (type == rsLinkbot::DOUBLEBRIDGE)
-		return P.add(q.multiply(_conn_depth, _bridge_length/2 - _face_radius, 0));
+		return P.add(Q.multiply(_conn_depth, _bridge_length/2 - _face_radius, 0));
 	else if (type == rsLinkbot::FACEPLATE)
-		return P.add(q.multiply(_conn_depth/2, 0, 0));
+		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::GRIPPER)
-		return P.add(q.multiply(_conn_depth/2, 0, 0));
+		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::OMNIPLATE)
-		return P.add(q.multiply(_conn_depth/2, _omni_length/2 - _face_radius, -_omni_length/2 + _face_radius));
+		return P.add(Q.multiply(_conn_depth/2, _omni_length/2 - _face_radius, -_omni_length/2 + _face_radius));
 	else if (type == rsLinkbot::SIMPLE)
-		return P.add(q.multiply(_conn_depth/2, 0, 0));
+		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::SMALLWHEEL)
-		return P.add(q.multiply(_wheel_depth/2, 0, 0));
+		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
 	else if (type == rsLinkbot::TINYWHEEL)
-		return P.add(q.multiply(_wheel_depth/2, 0, 0));
+		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
 	else if (type == rsLinkbot::WHEEL)
-		return P.add(q.multiply(_wheel_depth/2, 0, 0));
+		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
 }
 
 const rs::Quat Linkbot::getConnBodyQuaternion(int type, int orientation, const rs::Quat &q) {

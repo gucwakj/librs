@@ -27,15 +27,15 @@ std::cerr << "rsSim/~Linkbot end" << std::endl;
 int Linkbot::addConnector(int type, int face, int orientation, double size, int side, int conn) {
 	// get connector body position
 	rs::Pos P1 = this->getRobotFacePosition(face, this->getPosition(), this->getQuaternion());
-	rs::Quat Q1 = this->getRobotBodyQuaternion(face, 0, this->getQuaternion());
+	rs::Quat Q1 = this->getRobotBodyQuaternion(face, _motor[face-1].theta, this->getQuaternion());
 	if (conn == -1) {
-		P1 = this->getConnBodyPosition(type, P1, Q1);
+		P1 = this->getConnBodyPosition(type, orientation, P1, Q1);
 		Q1 = this->getConnBodyQuaternion(type, orientation, Q1);
 	}
 	else {
 		P1 = this->getConnFacePosition(type, side, orientation, P1, Q1);
 		Q1 = this->getConnFaceQuaternion(type, side, orientation, Q1);
-		P1 = this->getConnBodyPosition(type, P1, Q1);
+		P1 = this->getConnBodyPosition(type, orientation, P1, Q1);
 		Q1 = this->getConnBodyQuaternion(type, orientation, Q1);
 	}
 

@@ -1275,21 +1275,21 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 		return 0;*/
 	}
 	else if (conn == -1) {
-		P1.add(robot->getConnBodyPosition(type, P1, Q1));
-		Q1.multiply(robot->getConnBodyQuaternion(type, orientation, Q1));
+		P1 = robot->getConnBodyPosition(type, orientation, P1, Q1);
+		Q1 = robot->getConnBodyQuaternion(type, orientation, Q1);
 	}
 	else {
 		P1 = robot->getConnFacePosition(type, side, orientation, P1, Q1);
 		Q1 = robot->getConnFaceQuaternion(type, side, orientation, Q1);
 		type = conn;
-		P1 = robot->getConnBodyPosition(type, P1, Q1);
+		P1 = robot->getConnBodyPosition(type, orientation, P1, Q1);
 		Q1 = robot->getConnBodyQuaternion(type, orientation, Q1);
 	}
 
 	// PAT to transform mesh
 	osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
-	transform->setPosition(osg::Vec3d(p2[0], p2[1], p2[2]));
-	transform->setAttitude(osg::Quat(q2[0], q2[1], q2[2], q2[3]));
+	transform->setPosition(osg::Vec3d(P1[0], P1[1], P1[2]));
+	transform->setAttitude(osg::Quat(Q1[0], Q1[1], Q1[2], Q1[3]));
 
 	// create node to hold mesh
 	osg::ref_ptr<osg::Node> node;

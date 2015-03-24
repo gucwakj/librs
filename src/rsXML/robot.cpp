@@ -9,10 +9,10 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_connected = 0;
 	_ground = -1;
 	_id = -1;
-	_led[0] = 0;
-	_led[1] = 0;
-	_led[2] = 0;
-	_led[3] = 1;
+	_c.add(0);
+	_c.add(0);
+	_c.add(0);
+	_c.add(1);
 	_trace = trace;
 }
 
@@ -53,8 +53,8 @@ const rs::Vec Robot::getJoints(void) {
 	return _a;
 }
 
-double* Robot::getLED(void) {
-	return _led;
+const rs::Vec Robot::getLED(void) {
+	return _c;
 }
 
 std::string Robot::getName(void) {
@@ -123,10 +123,10 @@ void Robot::setJoints(double a, double b, double c) {
 }
 
 void Robot::setLED(double a, double b, double c, double d) {
-	_led[0] = a;
-	_led[1] = b;
-	_led[2] = c;
-	_led[3] = d;
+	_c[0] = a;
+	_c[1] = b;
+	_c[2] = c;
+	_c[3] = d;
 }
 
 void Robot::setName(std::string name) {

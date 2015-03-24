@@ -8,6 +8,7 @@
 #include <rs/Enum>
 #include <rs/Pos>
 #include <rs/Quat>
+#include <rs/Vec>
 
 namespace rsRobots {
 

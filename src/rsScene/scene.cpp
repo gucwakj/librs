@@ -261,25 +261,25 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 	return 0;
 }
 
-Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat &q, double *led, bool trace) {
+Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat &q, const rs::Vec &c, bool trace) {
 	// create new robot
 	osg::Group *group = new osg::Group();
 
 	switch (robot->getForm()) {
 		case rs::LINKBOTI:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, trace, led);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, c, trace);
 			break;
 		case rs::LINKBOTL:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, trace, led);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, c, trace);
 			break;
 		case rs::LINKBOTT:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, trace, led);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, c, trace);
 			break;
 		case rs::MINDSTORMS:
-			//this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms*>(robot), group, p, q, trace, led);
+			//this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms*>(robot), group, p, q, c, trace);
 			break;
 		case rs::MOBOT:
-			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, rgb);
+			//this->draw(dynamic_cast<rsRobots::CMobot*>(robot), p, q, trace, c);
 			break;
 	}
 
@@ -327,7 +327,7 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 	trackingLine->setDataVariance(osg::Object::DYNAMIC);
 	trackingLine->setUseDisplayList(false);
 	osg::Vec4Array *colors = new osg::Vec4Array;
-	colors->push_back(osg::Vec4(led[0], led[1], led[2], led[3]));
+	colors->push_back(osg::Vec4(c[0], c[1], c[2], c[3]));
 	trackingLine->setColorArray(colors);
 	trackingLine->setColorBinding(osg::Geometry::BIND_OVERALL);
 	osg::Point *point = new osg::Point();
@@ -1077,7 +1077,7 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 	_root->addChild(projection);
 }
 
-void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, bool trace, double *rgb) {
+void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &c, bool trace) {
 	// initialize variables
 	osg::ref_ptr<osg::Node> body[rsLinkbot::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsLinkbot::NUM_PARTS];
@@ -1736,7 +1736,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 	return 0;
 }*/
 
-void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, bool trace, double *rgb) {
+void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &c, bool trace) {
 	// initialize variables
 	//osg::ref_ptr<osg::Node> body[rsMindstorms::NUM_PARTS];	// TODO: add
 	osg::ref_ptr<osg::Geode> body[rsMindstorms::NUM_PARTS];		// TODO: remove

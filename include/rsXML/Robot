@@ -30,7 +30,7 @@ namespace rsXML {
 			int getGround(void);
 			int getID(void);
 			const rs::Vec getJoints(void);
-			double* getLED(void);
+			const rs::Vec getLED(void);
 			std::string getName(void);
 			int getOrientation(void);
 			const rs::Pos getPosition(void);
@@ -52,7 +52,6 @@ namespace rsXML {
 
 		// data
 		protected:
-			double _led[4];
 			int _connected;
 			int _ground;
 			int _id;
@@ -63,6 +62,7 @@ namespace rsXML {
 			rs::Pos _p;
 			rs::Quat _q;
 			rs::Vec _a;
+			rs::Vec _c;
 			std::string _name;
 	};
 

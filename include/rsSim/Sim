@@ -45,7 +45,6 @@ namespace rsSim {
 		protected:
 			struct RobotNode {
 				rsSim::Robot *robot;
-				int node;
 				THREAD_T thread;
 			};
 

@@ -224,18 +224,18 @@ int Mindstorms::buildIndividual(const double *p, const double *q, const double *
 	// joint for body to wheel 1
 	joint[JOINT1] = dJointCreateHinge(_world, 0);
 	dJointAttach(joint[JOINT1], _body[BODY], _body[WHEEL1]);
-	this->multiplyQbyV(q, -_body_width/2, 0, 0, o);
+	//this->multiplyQbyV(q, -_body_width/2, 0, 0, o);
 	dJointSetHingeAnchor(joint[JOINT1], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-	this->multiplyQbyV(q, 1, 0, 0, o);
+	//this->multiplyQbyV(q, 1, 0, 0, o);
 	dJointSetHingeAxis(joint[JOINT1], o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[WHEEL1], o[0], o[1], o[2]);
 
     // joint for body to wheel 2
 	joint[JOINT2] = dJointCreateHinge(_world, 0);
 	dJointAttach(joint[JOINT2], _body[BODY], _body[WHEEL2]);
-	this->multiplyQbyV(q, _body_width/2, 0, 0, o);
+	//this->multiplyQbyV(q, _body_width/2, 0, 0, o);
 	dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-	this->multiplyQbyV(q, -1, 0, 0, o);
+	//this->multiplyQbyV(q, -1, 0, 0, o);
 	dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[WHEEL2], o[0], o[1], o[2]);
 
@@ -251,9 +251,9 @@ int Mindstorms::buildIndividual(const double *p, const double *q, const double *
 		dJointSetAMotorParam(_motor[i].id, dParamFudgeFactor, 0.3);
 		dJointDisable(_motor[i].id);
 	}
-	this->multiplyQbyV(q, 1, 0, 0, o);
+	//this->multiplyQbyV(q, 1, 0, 0, o);
 	dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, o[0], o[1], o[2]);
-	this->multiplyQbyV(q, -1, 0, 0, o);
+	//this->multiplyQbyV(q, -1, 0, 0, o);
 	dJointSetAMotorAxis(_motor[JOINT2].id, 0, 1, o[0], o[1], o[2]);
 
 	// set damping on all bodies to 0.1

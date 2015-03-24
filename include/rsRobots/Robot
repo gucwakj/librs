@@ -24,8 +24,6 @@ namespace rsRobots {
 			std::string getName(void);
 			double* getRGB(void);
 			const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&);
-			void multiplyQbyV(const double*, double, double, double, double*);
-			void multiplyQbyQ(const double*, const double*, double*);
 			void setID(int);
 			void setName(std::string);
 			void setTrace(bool);

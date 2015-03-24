@@ -25,6 +25,7 @@ namespace rsRobots {
 			double* getRGB(void);
 			const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&);
 			void setID(int);
+			void setForm(int);
 			void setName(std::string);
 			void setTrace(bool);
 

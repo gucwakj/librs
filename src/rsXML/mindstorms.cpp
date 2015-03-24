@@ -3,7 +3,7 @@
 
 using namespace rsXML;
 
-Mindstorms::Mindstorms(bool trace) : rsRobots::Robot(rs::MINDSTORMS), rsXML::Robot(trace) {
+Mindstorms::Mindstorms(int form, bool trace) : rsRobots::Robot(form), rsXML::Robot(trace) {
 	_a.add(0);
 	_a.add(0);
 };

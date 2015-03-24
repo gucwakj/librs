@@ -78,8 +78,11 @@ void Writer::addRobot(int id, int form, double *p, double *q, double *r, double 
 		case rs::LINKBOTT:
 			robot = _doc.NewElement("linkbott");
 			break;
-		case rs::MINDSTORMS:
-			robot = _doc.NewElement("mindstorms");
+		case rs::EV3:
+			robot = _doc.NewElement("ev3");
+			break;
+		case rs::NXT:
+			robot = _doc.NewElement("nxt");
 			break;
 	}
 	sim->InsertFirstChild(robot);
@@ -112,7 +115,8 @@ void Writer::addRobot(int id, int form, double *p, double *q, double *r, double 
 			joint->SetAttribute("f2", r[1]);
 			joint->SetAttribute("f3", r[2]);
 			break;
-		case rs::MINDSTORMS:
+		case rs::EV3:
+		case rs::NXT:
 			joint->SetAttribute("w1", r[0]);
 			joint->SetAttribute("w2", r[1]);
 			break;

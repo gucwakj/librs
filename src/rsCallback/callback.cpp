@@ -16,7 +16,7 @@ void Callback::attachCallback(rsScene::Ground *scene, rsSim::Ground *sim) {
 void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::BodyList &bodies) {
 	switch (sim->getForm()) {
 #ifdef ENABLE_MINDSTORMS
-		case rs::MINDSTORMS:
+		case rs::EV3: case rs::NXT:
 			scene->setUpdateCallback(new MindstormsCallback(dynamic_cast<rsSim::Mindstorms *>(sim), bodies, _units));
 			break;
 #endif

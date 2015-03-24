@@ -2,7 +2,7 @@
 #define RSSIM_MINDSTORMS_
 
 #include <rsRobots/Mindstorms>
-#include <rsSim/ModularRobot>
+#include <rsSim/Robot>
 
 namespace rsSim {
 
@@ -10,7 +10,7 @@ namespace rsSim {
 	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
 		// public api
 		public:
-			Mindstorms(void);
+			Mindstorms(int = rs::EV3);
 			virtual ~Mindstorms(void);
 
 			/*int getJointAngles(double&, double&, int = 10);

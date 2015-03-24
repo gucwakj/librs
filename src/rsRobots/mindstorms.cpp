@@ -3,7 +3,7 @@
 using namespace rsRobots;
 using namespace rsMindstorms;
 
-Mindstorms::Mindstorms(void) : Robot(rs::MINDSTORMS) {
+Mindstorms::Mindstorms(int form) : Robot(form) {
 	_body_height = 0.07250;
 	_body_length = 0.03935;
 	_body_radius = 0.03625;

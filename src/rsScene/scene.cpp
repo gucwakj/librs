@@ -263,17 +263,11 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 	osg::Group *group = new osg::Group();
 
 	switch (robot->getForm()) {
-		case rs::LINKBOTI:
+		case rs::LINKBOTI: case rs::LINKBOTL: case rs::LINKBOTT:
 			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, c, trace);
 			break;
-		case rs::LINKBOTL:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, c, trace);
-			break;
-		case rs::LINKBOTT:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, c, trace);
-			break;
-		case rs::MINDSTORMS:
-			//this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms*>(robot), group, p, q, c, trace);
+		case rs::EV3: case rs::NXT:
+			this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms*>(robot), group, p, q, c, trace);
 			break;
 	}
 

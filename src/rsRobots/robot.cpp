@@ -46,6 +46,10 @@ void Robot::setID(int id) {
 	_id = id;
 }
 
+void Robot::setForm(int form) {
+	_form = form;
+}
+
 void Robot::setName(std::string name) {
 	_name = name;
 }

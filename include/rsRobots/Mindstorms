@@ -9,7 +9,7 @@ namespace rsRobots {
 	class Mindstorms : virtual public Robot {
 		// public functions
 		public:
-			Mindstorms(void);
+			Mindstorms(int = rs::EV3);
 			virtual ~Mindstorms(void) {};
 
 		// inherited functions

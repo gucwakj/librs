@@ -73,16 +73,16 @@ Robot* Reader::getNextRobot(int form) {
 	if (i == _robot.size() || _robot[i]->getForm() != form) {
 		switch (form) {
 			case rs::LINKBOTI:
-				fprintf(stderr, "Error: Could not find LinkbotI in RoboSim GUI.\n");
+				std::cerr << "Error: Could not find a Linkbot-I in the RoboSim GUI robot list." << std::endl;
 				break;
 			case rs::LINKBOTL:
-				fprintf(stderr, "Error: Could not find LinkbotL in RoboSim GUI.\n");
+				std::cerr << "Error: Could not find a Linkbot-L in the RoboSim GUI robot list." << std::endl;
 				break;
 			case rs::LINKBOTT:
-				fprintf(stderr, "Error: Could not find LinkbotT in RoboSim GUI.\n");
+				std::cerr << "Error: Could not find a Linkbot-T in the RoboSim GUI robot list." << std::endl;
 				break;
-			case rs::MINDSTORMS:
-				fprintf(stderr, "Error: Could not find Mindstorms in RoboSim GUI.\n");
+			case rs::EV3: case rs::NXT:
+				std::cerr << "Error: Could not find a Mindstorms EV3 or NXT in the RoboSim GUI robot list." << std::endl;
 				break;
 		}
 		if (_preconfig) {
@@ -457,7 +457,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 	// loop over all nodes
 	while (node) {
 		if (node->ToComment()) {}
-#ifdef ENABLE_LINKBOT
 		else if ( !strcmp(node->Value(), "linkboti") ) {
 			_robot.push_back(new Linkbot(rs::LINKBOTI, _trace));
 			node->QueryIntAttribute("id", &i);
@@ -597,10 +596,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
-#endif
-#ifdef ENABLE_MINDSTORMS
-		else if ( !strcmp(node->Value(), "mindstorms") ) {
-			_robot.push_back(new Mindstorms(_trace));
+		else if ( !strcmp(node->Value(), "ev3") ) {
+			_robot.push_back(new Mindstorms(rs::EV3, _trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
@@ -634,7 +631,41 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
-#endif
+		else if ( !strcmp(node->Value(), "nxt") ) {
+			_robot.push_back(new Mindstorms(rs::NXT, _trace));
+			node->QueryIntAttribute("id", &i);
+			_robot.back()->setID(i);
+			if ( (ele = node->FirstChildElement("joint")) ) {
+				ele->QueryDoubleAttribute("w1", &a);
+				ele->QueryDoubleAttribute("w2", &b);
+				_robot.back()->setJoints(a, b);
+			}
+			if ( (ele = node->FirstChildElement("led")) ) {
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_robot.back()->setLED(a, b, c, d);
+			}
+			if ( (ele = node->FirstChildElement("name")) ) {
+				std::string str(ele->GetText());
+				_robot.back()->setName(str);
+			}
+			if ( (ele = node->FirstChildElement("position")) ) {
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_robot.back()->setPosition(a, b, c);
+			}
+			if ( (ele = node->FirstChildElement("rotation")) ) {
+				ele->QueryDoubleAttribute("psi", &a);
+				ele->QueryDoubleAttribute("theta", &b);
+				ele->QueryDoubleAttribute("phi", &c);
+				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
+			}
+			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
+			_robot.back()->setGround(i);
+		}
 		else {
 			if ( !strcmp(node->Value(), "bigwheel") ) {
 				ctype = rsLinkbot::BIGWHEEL;

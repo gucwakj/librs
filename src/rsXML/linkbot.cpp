@@ -1,4 +1,3 @@
-#include <iostream>
 #include <rs/Macros>
 #include <rsXML/Linkbot>
 

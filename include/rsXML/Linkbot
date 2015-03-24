@@ -9,7 +9,7 @@ namespace rsXML {
 	// class
 	class Linkbot : virtual public rsRobots::Linkbot, virtual public Robot {
 		public:
-			Linkbot(int, bool = true);
+			Linkbot(int = rs::LINKBOTT, bool = true);
 			virtual ~Linkbot(void) {};
 
 			virtual void postProcess(void);

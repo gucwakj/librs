@@ -1,4 +1,3 @@
-#include <iostream>
 #include <rsRobots/Linkbot>
 
 using namespace rsRobots;

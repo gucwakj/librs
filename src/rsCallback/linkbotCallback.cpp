@@ -2,7 +2,6 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
 
-#include <iostream>
 #include <rsCallback/LinkbotCallback>
 
 using namespace rsCallback;

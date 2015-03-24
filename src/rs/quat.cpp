@@ -1,4 +1,3 @@
-#include <iostream>
 #include <rs/Pos>
 #include <rs/Quat>
 

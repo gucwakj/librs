@@ -385,7 +385,7 @@ void Scene::setDelete(int id) {
 	_deleting = id;
 }
 
-void Scene::setGrid(bool units, std::vector<double> grid) {
+void Scene::setGrid(bool units, std::vector<double> grid, bool draw) {
 	// save new values
 	_units = units;
 	_grid[0] = grid[0];
@@ -396,11 +396,13 @@ void Scene::setGrid(bool units, std::vector<double> grid) {
 	_grid[5] = grid[5];
 	_grid[6] = grid[6];
 
-	// remove old grid
-	_background->removeChildren(1, _background->getNumChildren());
+	if (draw) {
+		// remove old grid
+		_background->removeChildren(1, _background->getNumChildren());
 
-	// draw new grid
-	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
+		// draw new grid
+		this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
+	}
 }
 
 void Scene::setHighlight(bool highlight) {
@@ -1414,80 +1416,77 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 }
 
 void Scene::draw_scene_outdoors(void) {
-	// load terrain node
-	osg::ref_ptr<osg::Depth> t_depth = new osg::Depth;
-	t_depth->setFunction(osg::Depth::LEQUAL);
-	t_depth->setRange(1.0, 1.0);
-	osg::ref_ptr<osg::StateSet> t_stateset = new osg::StateSet();
-	t_stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	t_stateset->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-	t_stateset->setAttributeAndModes(t_depth, osg::StateAttribute::ON);
-	t_stateset->setRenderBinDetails(-1, "RenderBin");
-	t_stateset->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-	osg::ref_ptr<osg::Node> t_geode = osgDB::readNodeFile(_tex_path + "ground/terrain.3ds");
-	t_geode->setCullingActive(false);
-	t_geode->setStateSet(t_stateset);
-	osg::ref_ptr<osg::PositionAttitudeTransform> t_transform = new osg::PositionAttitudeTransform();
-	t_transform->setScale(osg::Vec3d(2, 2, 0.001));
-	t_transform->setCullingActive(false);
-	t_transform->addChild(t_geode);
-	osg::ref_ptr<osgUtil::LineSegmentIntersector> r_segment = new osgUtil::LineSegmentIntersector(osg::Vec3d(0, 0, 999), osg::Vec3d(0, 0, -999));
-	osgUtil::IntersectionVisitor r_visitor(r_segment);
-	t_transform->accept(r_visitor);
-	osgUtil::LineSegmentIntersector::Intersection r_hits = r_segment->getFirstIntersection();
-	osg::Vec3d r_pos = r_hits.getWorldIntersectPoint();
-	t_transform->setPosition(osg::Vec3d(r_pos[0], r_pos[1], -r_pos[2]));
-	//t_transform->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
-	t_transform->setNodeMask(~IS_PICKABLE_MASK);
-	_background->addChild(t_transform);
+	// square geometry
+	osg::Geode *geode = new osg::Geode;
+	osg::Geometry *geom = new osg::Geometry;
+	geode->addDrawable(geom);
+	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	// extents of geom
+	osg::Vec3Array *coords = new osg::Vec3Array;
+	coords->push_back(osg::Vec3(-10000, -10000, 0));
+	coords->push_back(osg::Vec3( 10000, -10000, 0));
+	coords->push_back(osg::Vec3( 10000,  10000, 0));
+	coords->push_back(osg::Vec3(-10000,  10000, 0));
+	geom->setVertexArray(coords);
+	// texture coordinates
+	osg::Vec2Array *tcoords = new osg::Vec2Array;
+	tcoords->push_back(osg::Vec2(0, 0));
+	tcoords->push_back(osg::Vec2(1, 0));
+	tcoords->push_back(osg::Vec2(1, 1));
+	tcoords->push_back(osg::Vec2(0, 1));
+	geom->setTexCoordArray(0, tcoords);
+	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+	// texture image
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "ground/terrain.png"));
+	tex->setDataVariance(osg::Object::DYNAMIC);
+	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
+	// clean
+	osgUtil::SmoothingVisitor::smooth(*geom);
+	// add
+	_background->addChild(geode);
 
 	// draw grid
 	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 }
 
 void Scene::draw_scene_board(void) {
-	// board
+	// square geometry
 	osg::Geode *geode = new osg::Geode;
 	osg::Geometry *geom = new osg::Geometry;
 	geode->addDrawable(geom);
 	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	// extents of geom
 	osg::Vec3Array *coords = new osg::Vec3Array;
-	coords->reserve(4);
 	coords->push_back(osg::Vec3(-0.610, -1.219, 0));
 	coords->push_back(osg::Vec3( 0.610, -1.219, 0));
-	coords->push_back(osg::Vec3(-0.610,  1.219, 0));
 	coords->push_back(osg::Vec3( 0.610,  1.219, 0));
+	coords->push_back(osg::Vec3(-0.610,  1.219, 0));
 	geom->setVertexArray(coords);
-	osg::DrawElementsUShort *quadstrip = new osg::DrawElementsUShort(osg::PrimitiveSet::QUAD_STRIP);
-	quadstrip->reserve(4);
-	quadstrip->push_back(2);
-	quadstrip->push_back(0);
-	quadstrip->push_back(3);
-	quadstrip->push_back(1);
-	geom->addPrimitiveSet(quadstrip);
+	// texture coordinates
+	osg::Vec2Array *tcoords = new osg::Vec2Array;
+	tcoords->push_back(osg::Vec2(0, 0));
+	tcoords->push_back(osg::Vec2(1, 0));
+	tcoords->push_back(osg::Vec2(1, 1));
+	tcoords->push_back(osg::Vec2(0, 1));
+	geom->setTexCoordArray(0, tcoords);
+	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+	// texture image
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "ground/terrain.png"));
+	tex->setDataVariance(osg::Object::DYNAMIC);
+	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
+	// clean
 	osgUtil::SmoothingVisitor::smooth(*geom);
+	// add
 	_background->addChild(geode);
 
 	// grid
 	this->draw_grid(_grid[0], _grid[1], -0.610, 0.610, -1.219, 1.219, _grid[6]);
-
-	/* surrounding walls
-	double p[3] = {0.610 - 0.01, 0, 0.015};
-	double c[4] = {1, 1, 1, 1};
-	double l[3] = {0.01, 2.438, 0};
-	double q[4] = {1, 0, 0, 1};
-	this->drawGround(rs::CYLINDER, p, c, l, q);
-	p[0] = -0.610 + 0.01;
-	this->drawGround(rs::CYLINDER, p, c, l, q);
-	p[0] = 0;
-	p[1] = -1.219 + 0.01;
-	q[0] = 0;
-	q[1] = 1;
-	l[1] = 1.22;
-	this->drawGround(rs::CYLINDER, p, c, l, q);
-	p[1] = 1.219 - 0.01;
-	this->drawGround(rs::CYLINDER, p, c, l, q);
-	*/
 }
 
 void Scene::draw_skybox(void) {

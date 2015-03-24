@@ -65,7 +65,7 @@ namespace rsScene {
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			void setDelete(int);
-			void setGrid(bool, std::vector<double>);
+			void setGrid(bool, std::vector<double>, bool = false);
 			void setHighlight(bool);
 			void setHUD(bool);
 			void setLabel(bool);

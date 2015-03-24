@@ -50,7 +50,7 @@ $ cd deps/osg/
 $ mkdir build/
 $ cd build/
 $ cmake -DCMAKE_BUILD_TYPE=Release ..
-$ make osg osgDB osgGA osgShadow osgText osgViewer osgdb_png osgdb_3ds osgdb_tga
+$ make osg osgDB osgGA osgShadow osgText osgViewer osgdb_png osgdb_3ds
 $ cd ../../../
 ```
 
@@ -93,7 +93,6 @@ open build/OpenSceneGraph.sln in visual studio
 build Release solution, unecessary plugins can be disabled
 	curently used plugins:
 		3ds
-		tga
 		png
 ```
 

@@ -8,7 +8,6 @@
 #include <rs/Enum>
 #include <rs/Pos>
 #include <rs/Quat>
-#include <rs/Types>
 
 namespace rsRobots {
 
@@ -46,7 +45,7 @@ namespace rsRobots {
 			int _form;
 			int _id;
 			std::string _name;
-			std::vector<rs::Vec3> _offset;
+			std::vector<rs::Pos> _offset;
 	};
 
 } // namespace rsRobots

@@ -39,7 +39,7 @@ const rs::Pos Robot::getRobotBodyPosition(int body, const rs::Pos &p, const rs::
 	rs::Pos P(p);
 
 	// calculate offset position
-	return P.add(q.multiply(_offset[body].x, _offset[body].y, _offset[body].z));
+	return P.add(q.multiply(_offset[body].x(), _offset[body].y(), _offset[body].z()));
 }
 
 void Robot::setID(int id) {

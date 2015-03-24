@@ -21,10 +21,10 @@ Linkbot::Linkbot(int disabled) : Robot(rs::LINKBOTT) {
 	_tinywheel_radius = 0.04128;
 	_wheel_depth = 0.00140;
 	_wheel_radius = 0.04445;
-	_offset.push_back(rs::Vec3(0, 0, 0));									// body
-	_offset.push_back(rs::Vec3(-_body_width/2 - _face_depth/2, 0, 0));		// face1
-	_offset.push_back(rs::Vec3(0, -_body_length - _face_depth/2, 0));		// face2
-	_offset.push_back(rs::Vec3(_body_width/2 + _face_depth/2, 0, 0));		// face3
+	_offset.push_back(rs::Pos(0, 0, 0));									// body
+	_offset.push_back(rs::Pos(-_body_width/2 - _face_depth/2, 0, 0));		// face1
+	_offset.push_back(rs::Pos(0, -_body_length - _face_depth/2, 0));		// face2
+	_offset.push_back(rs::Pos(_body_width/2 + _face_depth/2, 0, 0));		// face3
 }
 
 /**********************************************************
@@ -171,11 +171,11 @@ const rs::Pos Linkbot::getRobotFacePosition(int face, const rs::Pos &p, const rs
 
 	// calculate offset position
 	if (face == FACE1)
-		return P.add(q.multiply(_offset[face].x - _face_depth/2, _offset[face].y, _offset[face].z));
+		return P.add(q.multiply(_offset[face].x() - _face_depth/2, _offset[face].y(), _offset[face].z()));
 	else if (face == FACE2)
-		return P.add(q.multiply(_offset[face].x, _offset[face].y - _face_depth/2, _offset[face].z));
+		return P.add(q.multiply(_offset[face].x(), _offset[face].y() - _face_depth/2, _offset[face].z()));
 	else if (face == FACE3)
-		return P.add(q.multiply(_offset[face].x + _face_depth/2, _offset[face].y, _offset[face].z));
+		return P.add(q.multiply(_offset[face].x() + _face_depth/2, _offset[face].y(), _offset[face].z()));
 }
 
 double Linkbot::getWheelRatio(int standard) {

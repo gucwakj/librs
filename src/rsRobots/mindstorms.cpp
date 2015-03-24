@@ -9,9 +9,9 @@ Mindstorms::Mindstorms(void) : Robot(rs::MINDSTORMS) {
 	_body_radius = 0.03625;
 	_body_width = 0.07835;
 	_radius = _body_height/2;
-	_offset.push_back(rs::Vec3(0, 0, 0));									// body
-	_offset.push_back(rs::Vec3(-_body_width/2 - _wheel_depth/2, 0, 0));		// wheel1
-	_offset.push_back(rs::Vec3(_body_width/2 + _wheel_depth/2, 0, 0));		// wheel2
+	_offset.push_back(rs::Pos(0, 0, 0));									// body
+	_offset.push_back(rs::Pos(-_body_width/2 - _wheel_depth/2, 0, 0));		// wheel1
+	_offset.push_back(rs::Pos(_body_width/2 + _wheel_depth/2, 0, 0));		// wheel2
 	_wheel_depth = 0.00140;
 	_wheel_radius = 0.04445;
 }

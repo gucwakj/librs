@@ -128,7 +128,7 @@ void Linkbot::addForce(int body, double fx, double fy, double fz) {
 	dBodyAddForce(_body[body], fx, fy, fz);
 }
 
-int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const double *a, int ground) {
+int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int ground) {
 	// build
 	this->buildIndividual(p, q, a);
 
@@ -160,7 +160,7 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const double *a, int gro
 	return 0;
 }
 
-int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const double *a, dBodyID base, int face, int orientation, int ground) {
+int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyID base, int face, int orientation, int ground) {
 	// new position & quaternion classes
 	rs::Pos P(p);
 	rs::Quat Q(q);
@@ -201,7 +201,7 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const double *a, dBodyID
 	return 0;
 }
 
-int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const double *a) {
+int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
 	// init body parts
 	for (int i = 0; i < NUM_PARTS; i++) {
 		_body.push_back(dBodyCreate(_world));

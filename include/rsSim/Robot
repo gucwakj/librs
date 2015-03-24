@@ -6,6 +6,7 @@
 #include <rs/Macros>
 #include <rs/Pos>
 #include <rs/Quat>
+#include <rs/Vec>
 #include <rsRobots/Robot>
 
 namespace rsSim {
@@ -36,7 +37,7 @@ namespace rsSim {
 			int setJointSpeed(int, double);
 			int setJointSpeedRatio(int, double);
 			int addToSim(dWorldID&, dSpaceID&, int, int, rsSim::Sim*);
-			virtual int build(const rs::Pos&, const rs::Quat&, const double*, int) { return 0; };
+			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, int) { return 0; };
 			virtual double getAngle(int) { return 0; };
 			BodyList& getBodyList(void);
 			double getCenter(int);
@@ -55,7 +56,7 @@ namespace rsSim {
 			double getRotation(int, int);
 			double mod_angle(double, double, double);
 			int noisy(double*, int, double);
-			virtual int buildIndividual(const rs::Pos&, const rs::Quat&, const double*) { return 0; };
+			virtual int buildIndividual(const rs::Pos&, const rs::Quat&, const rs::Vec&) { return 0; };
 			virtual void init_params(void) { return; };
 			virtual void simPreCollisionThread(void) { return; };
 			virtual void simPostCollisionThread(void) { return; };

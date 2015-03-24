@@ -178,7 +178,7 @@ int Mindstorms::setJointSpeedRatios(double ratio1, double ratio2) {
 /**********************************************************
 	inherited functions
  **********************************************************/
-int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const double *a, int ground) {
+int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int ground) {
 	// build
 	this->buildIndividual(p, q, a);
 
@@ -192,7 +192,7 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const double *a, int 
 	return 0;
 }
 
-int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const double *a) {
+int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
 	// init body parts
 	for (int i = 0; i < NUM_PARTS; i++) {
 		_body.push_back(dBodyCreate(_world));

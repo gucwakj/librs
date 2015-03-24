@@ -5,12 +5,6 @@
 using namespace rsXML;
 
 Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
-	_a[0] = 0;
-	_a[1] = 0;
-	_a[2] = 0;
-	_a[3] = 0;
-	_a[4] = 0;
-	_a[5] = 0;
 	_base == NULL;
 	_connected = 0;
 	_ground = -1;
@@ -55,7 +49,7 @@ int Robot::getID(void) {
 	return _id;
 }
 
-double* Robot::getJoints(void) {
+const rs::Vec Robot::getJoints(void) {
 	return _a;
 }
 
@@ -117,13 +111,15 @@ void Robot::setID(int a) {
 	_id = a;
 }
 
-void Robot::setJoints(double a, double b, double c, double d, double e, double f) {
+void Robot::setJoints(double a, double b) {
+	_a[0] = a;
+	_a[1] = b;
+}
+
+void Robot::setJoints(double a, double b, double c) {
 	_a[0] = a;
 	_a[1] = b;
 	_a[2] = c;
-	_a[3] = d;
-	_a[4] = e;
-	_a[5] = f;
 }
 
 void Robot::setLED(double a, double b, double c, double d) {

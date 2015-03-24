@@ -6,6 +6,7 @@
 
 #include <rs/Pos>
 #include <rs/Quat>
+#include <rs/Vec>
 #include <rsRobots/Linkbot>
 #include <rsRobots/Mindstorms>
 #include <rsXML/Conn>
@@ -28,7 +29,7 @@ namespace rsXML {
 			int getConnect(void);
 			int getGround(void);
 			int getID(void);
-			double* getJoints(void);
+			const rs::Vec getJoints(void);
 			double* getLED(void);
 			std::string getName(void);
 			int getOrientation(void);
@@ -40,7 +41,8 @@ namespace rsXML {
 			void setConnect(int);
 			void setGround(int);
 			void setID(int);
-			void setJoints(double = 0, double = 0, double = 0, double = 0, double = 0, double = 0);
+			void setJoints(double, double);
+			void setJoints(double, double, double);
 			void setLED(double, double, double, double);
 			void setName(std::string);
 			void setOrientation(int);
@@ -50,7 +52,6 @@ namespace rsXML {
 
 		// data
 		protected:
-			double _a[6];
 			double _led[4];
 			int _connected;
 			int _ground;
@@ -61,13 +62,14 @@ namespace rsXML {
 			Conn *_base;
 			rs::Pos _p;
 			rs::Quat _q;
+			rs::Vec _a;
 			std::string _name;
 	};
 
 	// class
 	class Linkbot : virtual public rsRobots::Linkbot, virtual public Robot {
 		public:
-			Linkbot(void) :  rsRobots::Robot(rs::LINKBOTT), rsXML::Robot(1) {};
+			Linkbot(void) :  rsRobots::Robot(rs::LINKBOTT), rsXML::Robot(1) { _a.add(0); _a.add(0); _a.add(0); };
 			void postProcess(void);
 	};
 
@@ -92,7 +94,7 @@ namespace rsXML {
 	// class
 	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
 		public:
-			Mindstorms(bool trace) :  rsRobots::Robot(rs::MINDSTORMS), rsXML::Robot(trace) {};
+			Mindstorms(bool trace) :  rsRobots::Robot(rs::MINDSTORMS), rsXML::Robot(trace) { _a.add(0); _a.add(0); };
 			void postProcess(void);
 	};
 

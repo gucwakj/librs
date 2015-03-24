@@ -1,0 +1,32 @@
+#ifndef RS_VEC_
+#define RS_VEC_
+
+#include <vector>
+
+namespace rs {
+
+	// position class
+	class Vec {
+		public:
+			Vec(void);
+			Vec(double, double);
+			Vec(double, double, double);
+			Vec(double, double, double, double);
+			Vec(const Vec&);
+			~Vec(void);
+
+			void add(double);
+			int size(void) const;
+
+			// access operators
+			inline double& operator[](int i) { return _v[i]; }
+			inline double  operator[](int i) const { return _v[i]; }
+
+		private:
+			std::vector<double> _v;
+	};
+
+} // namespace rs
+
+#endif // RS_VEC_
+

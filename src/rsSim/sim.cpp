@@ -79,7 +79,7 @@ std::cerr << "rsSim/~Sim end" << std::endl;
 /**********************************************************
 	Public member functions
  **********************************************************/
-int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat &q, const double *a, int ground) {
+int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int ground) {
 	// lock robot data
 	MUTEX_LOCK(&_robot_mutex);
 
@@ -100,7 +100,7 @@ int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat 
 	return 0;
 }
 
-int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const double *a, int face1, int face2, int type, int side, int orientation, int ground) {
+int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const rs::Vec &a, int face1, int face2, int type, int side, int orientation, int ground) {
 	// lock robot data to insert a new one into simulation
 	MUTEX_LOCK(&_robot_mutex);
 

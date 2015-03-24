@@ -51,6 +51,10 @@ set (OUTPUT_LIBDIR "${LIBRS_BINARY_DIR}/lib")
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_LIBDIR})
 make_directory (${OUTPUT_LIBDIR})
 
+# options for individual robot compilation
+set (ENABLE_LINKBOT ON)
+set (ENABLE_MINDSTORMS ON)
+
 # add libraries
 add_subdirectory ("${LIBRS_SOURCE_DIR}/src")
 

@@ -33,10 +33,14 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
 set (SRCS ${SRCS}
 	robot.cpp
 	modularRobot.cpp
-	linkbot.cpp
-	mindstorms.cpp
 	sim.cpp
 )
+if (ENABLE_LINKBOT)
+	set (SRCS ${SRCS} linkbot.cpp)
+endif (ENABLE_LINKBOT)
+if (ENABLE_MINDSTORMS)
+	set (SRCS ${SRCS} mindstorms.cpp)
+endif (ENABLE_MINDSTORMS)
 
 # add the library
 add_library (rsSim SHARED ${SRCS})

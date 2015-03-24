@@ -1,0 +1,21 @@
+#ifndef RSXML_MINDSTORMS_
+#define RSXML_MINDSTORMS_
+
+#include <rsRobots/Mindstorms>
+#include <rsXML/Robot>
+
+namespace rsXML {
+
+	// class
+	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
+		public:
+			Mindstorms(bool = true);
+			virtual ~Mindstorms(void) {};
+
+			virtual void postProcess(void);
+	};
+
+} // namespace rsXML
+
+#endif // RSXML_MINDSTORMS_
+

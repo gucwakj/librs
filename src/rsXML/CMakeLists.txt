@@ -28,6 +28,12 @@ set (SRCS ${SRCS}
 	reader.cpp
 	writer.cpp
 )
+if (ENABLE_LINKBOT)
+	set (SRCS ${SRCS} linkbot.cpp)
+endif (ENABLE_LINKBOT)
+if (ENABLE_MINDSTORMS)
+	set (SRCS ${SRCS} mindstorms.cpp)
+endif (ENABLE_MINDSTORMS)
 
 # add the library
 add_library (rsXML SHARED ${SRCS})

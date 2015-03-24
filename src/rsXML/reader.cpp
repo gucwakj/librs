@@ -2,6 +2,8 @@
 #include <iostream>
 #include <rs/Macros>
 #include <rsXML/Reader>
+#include <rsXML/Linkbot>
+#include <rsXML/Mindstorms>
 
 using namespace rsXML;
 
@@ -455,6 +457,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 	// loop over all nodes
 	while (node) {
 		if (node->ToComment()) {}
+#ifdef ENABLE_LINKBOT
 		else if ( !strcmp(node->Value(), "linkboti") ) {
 			_robot.push_back(new Linkbot(rs::LINKBOTI, _trace));
 			node->QueryIntAttribute("id", &i);
@@ -594,6 +597,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
+#endif
+#ifdef ENABLE_MINDSTORMS
 		else if ( !strcmp(node->Value(), "mindstorms") ) {
 			_robot.push_back(new Mindstorms(_trace));
 			node->QueryIntAttribute("id", &i);
@@ -629,6 +634,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
+#endif
 		else {
 			if ( !strcmp(node->Value(), "bigwheel") ) {
 				ctype = rsLinkbot::BIGWHEEL;

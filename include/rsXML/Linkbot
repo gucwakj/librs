@@ -1,0 +1,21 @@
+#ifndef RSXML_LINKBOT_
+#define RSXML_LINKBOT_
+
+#include <rsRobots/Linkbot>
+#include <rsXML/Robot>
+
+namespace rsXML {
+
+	// class
+	class Linkbot : virtual public rsRobots::Linkbot, virtual public Robot {
+		public:
+			Linkbot(int, bool = true);
+			virtual ~Linkbot(void) {};
+
+			virtual void postProcess(void);
+	};
+
+} // namespace rsXML
+
+#endif // RSXML_LINKBOT_
+

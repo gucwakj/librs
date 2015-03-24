@@ -42,9 +42,13 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsScene debug rsScened)
 set (SRCS ${SRCS}
 	callback.cpp
 	groundCallback.cpp
-	linkbotCallback.cpp
-	mindstormsCallback.cpp
 )
+if (ENABLE_LINKBOT)
+	set (SRCS ${SRCS} linkbotCallback.cpp)
+endif (ENABLE_LINKBOT)
+if (ENABLE_MINDSTORMS)
+	set (SRCS ${SRCS} mindstormsCallback.cpp)
+endif (ENABLE_MINDSTORMS)
 
 # add the library
 add_library (rsCallback SHARED ${SRCS})

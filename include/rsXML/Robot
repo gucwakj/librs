@@ -7,8 +7,7 @@
 #include <rs/Pos>
 #include <rs/Quat>
 #include <rs/Vec>
-#include <rsRobots/Linkbot>
-#include <rsRobots/Mindstorms>
+#include <rsRobots/Robot>
 #include <rsXML/Conn>
 
 namespace rsXML {
@@ -64,20 +63,6 @@ namespace rsXML {
 			rs::Vec _a;
 			rs::Vec _c;
 			std::string _name;
-	};
-
-	// class
-	class Linkbot : virtual public rsRobots::Linkbot, virtual public Robot {
-		public:
-			Linkbot(int form, bool trace = true) : rsRobots::Robot(form), rsXML::Robot(trace) { _a.add(0); _a.add(0); _a.add(0); };
-			void postProcess(void);
-	};
-
-	// class
-	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
-		public:
-			Mindstorms(bool trace) :  rsRobots::Robot(rs::MINDSTORMS), rsXML::Robot(trace) { _a.add(0); _a.add(0); };
-			void postProcess(void);
 	};
 
 } // namespace rsXML

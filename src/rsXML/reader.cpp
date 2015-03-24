@@ -82,9 +82,6 @@ Robot* Reader::getNextRobot(int form) {
 			case rs::MINDSTORMS:
 				fprintf(stderr, "Error: Could not find Mindstorms in RoboSim GUI.\n");
 				break;
-			case rs::MOBOT:
-				fprintf(stderr, "Error: Could not find Mobot in RoboSim GUI.\n");
-				break;
 		}
 		if (_preconfig) {
 			fprintf(stderr, "       Preconfigured Robot Configuration selected.\n");
@@ -632,32 +629,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
-		/*else if ( !strcmp(node->Value(), "mobot") ) {
-			_robot.push_back(new Mobot(_trace));
-			node->QueryIntAttribute("id", &i);
-			_robot.back()->setID(i);
-			if ( (ele = node->FirstChildElement("position")) ) {
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
-				_robot.back()->setPosition(a, b, c);
-			}
-			if ( (ele = node->FirstChildElement("rotation")) ) {
-				ele->QueryDoubleAttribute("psi", &a);
-				ele->QueryDoubleAttribute("theta", &b);
-				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(a, b, c);
-			}
-			if ( (ele = node->FirstChildElement("joint")) ) {
-				ele->QueryDoubleAttribute("a1", &a);
-				ele->QueryDoubleAttribute("a2", &b);
-				ele->QueryDoubleAttribute("a3", &c);
-				ele->QueryDoubleAttribute("a4", &d);
-				_robot.back()->setJoints(a, b, c, d);
-			}
-			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
-			_robot.back()->setGround(i);
-		}*/
 		else {
 			if ( !strcmp(node->Value(), "bigwheel") ) {
 				ctype = rsLinkbot::BIGWHEEL;

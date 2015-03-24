@@ -9,7 +9,6 @@ namespace rs {
 		LINKBOTL,
 		LINKBOTT,
 		MINDSTORMS,
-		MOBOT,
 		ROBOT,
 		NUM_TYPES
 	};
@@ -116,38 +115,6 @@ namespace rsMindstorms {
 	};
 
 } // namespace rsMindstorms
-
-/*namespace rsMobot {
-
-	// connectors
-	enum Connector {
-		BIGWHEEL,
-		CASTER,
-		SIMPLE,
-		SMALLWHEEL,
-		SQUARE,
-		TANK,
-		WHEEL,
-		NUM_CONNECTORS
-	};
-
-	// joints
-	enum Joint {
-		JOINT1,
-		JOINT2,
-		JOINT3,
-		JOINT4,
-		NUM_JOINTS
-	};
-
-	// preconfigs
-	enum Preconfig {
-		EXPLORER,
-		LIFT,
-		NUM_PRECONFIG
-	};
-
-} // namespace rsMobot*/
 
 #endif // RS_ENUM_
 

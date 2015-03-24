@@ -91,7 +91,6 @@ namespace rsScene {
 			void draw_robot_linkbot(rsRobots::Linkbot*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, bool);
 			void draw_robot_linkbot_conn(rsRobots::Linkbot*, Robot*, int, int, int, double, int, int);
 			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, bool);
-			//int draw_mobot(rsRobots::Mobot*, osg::Group*, const double*, const double*, bool, double*);
 			void draw_scene_outdoors(void);
 			void draw_scene_board(void);
 			void draw_skybox(void);

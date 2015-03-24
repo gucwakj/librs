@@ -31,8 +31,8 @@ namespace rsSim {
 
 		// inherited functions from Robot class
 		private:
-			virtual int build(const double*, const double*, const double*, int);
-			virtual int buildIndividual(const double*, const double*, const double*);
+			virtual int build(const rs::Pos&, const rs::Quat&, const double*, int);
+			virtual int buildIndividual(const rs::Pos&, const rs::Quat&, const double*);
 			virtual double getAngle(int);
 			virtual void init_params(void);
 			virtual void simPreCollisionThread(void);
@@ -40,8 +40,8 @@ namespace rsSim {
 
 		// private functions
 		private:
-			void build_body(dGeomID*, const double*, const double*);
-			void build_wheel(int, dGeomID*, const double*, const double*);
+			void build_body(const rs::Pos&, const rs::Quat&);
+			void build_wheel(int, const rs::Pos&, const rs::Quat&);
 	};
 
 } // namespace rsSim

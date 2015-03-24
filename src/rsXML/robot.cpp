@@ -19,13 +19,6 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_led[1] = 0;
 	_led[2] = 0;
 	_led[3] = 1;
-	_p[0] = 0;
-	_p[1] = 0;
-	_p[2] = 0;
-	_q[0] = 0;
-	_q[1] = 0;
-	_q[2] = 0;
-	_q[3] = 1;
 	_trace = trace;
 }
 
@@ -78,11 +71,11 @@ int Robot::getOrientation(void) {
 	return _orientation;
 }
 
-double* Robot::getPosition(void) {
+const rs::Pos Robot::getPosition(void) {
 	return _p;
 }
 
-double* Robot::getQuaternion(void) {
+const rs::Quat Robot::getQuaternion(void) {
 	return _q;
 }
 
@@ -149,12 +142,7 @@ void Robot::setOrientation(int a) {
 }
 
 void Robot::setPsi(double c) {
-	// quaternions to multiply
-	double q1[4] = {_q[0], _q[1], _q[2], _q[3]};
-	double q2[4] = {0, 0, sin(0.5*c), cos(0.5*c)};
-
-	// calculate new quaternion
-	this->multiplyQbyQ(q2, q1, _q);
+	_q.multiply(0, 0, sin(0.5*c), cos(0.5*c));
 }
 
 void Robot::setPosition(double a, double b, double c) {
@@ -164,13 +152,9 @@ void Robot::setPosition(double a, double b, double c) {
 }
 
 void Robot::setRotation(double a, double b, double c) {
-	double q1[4] = {sin(0.5*a), 0, 0, cos(0.5*a)};
-	double q2[4] = {0, sin(0.5*b), 0, cos(0.5*b)};
-	double q3[4] = {0, 0, sin(0.5*c), cos(0.5*c)};
-	double o1[4];
-
-	this->multiplyQbyQ(q2, q1, o1);
-	this->multiplyQbyQ(q3, o1, _q);
+	_q.multiply(sin(0.5*a), 0, 0, cos(0.5*a));
+	_q.multiply(0, sin(0.5*b), 0, cos(0.5*b));
+	_q.multiply(0, 0, sin(0.5*c), cos(0.5*c));
 }
 
 void Linkbot::postProcess(void) {
@@ -217,12 +201,7 @@ void Linkbot::postProcess(void) {
 
 		// adjust height to be above zero
 		if (fabs(_p[2]) < (_body_radius - EPSILON)) {
-			double v[3] = {0, 0, _body_height/2};
-			double uv[3] = {_q[1]*v[2]-_q[2]*v[1], _q[2]*v[0]-_q[0]*v[2], _q[0]*v[1]-_q[1]*v[0]};
-			double uuv[3] = {2*(_q[1]*uv[2]-_q[2]*uv[1]), 2*(_q[2]*uv[0]-_q[0]*uv[2]), 2*(_q[0]*uv[1]-_q[1]*uv[0])};
-			_p[0] += v[0] + 2*_q[3]*uv[0] + uuv[0];
-			_p[1] += v[1] + 2*_q[3]*uv[1] + uuv[1];
-			_p[2] += v[2] + 2*_q[3]*uv[2] + uuv[2];
+			_p.add(_q.multiply(0, 0, _body_height/2));
 		}
 	}
 }
@@ -230,12 +209,7 @@ void Linkbot::postProcess(void) {
 void Mindstorms::postProcess(void) {
 	// adjust height to be above zero
 	if (fabs(_p[2]) < (_body_height/2 - EPSILON)) {
-		double v[3] = {0, 0, _body_height/2};
-		double uv[3] = {_q[1]*v[2]-_q[2]*v[1], _q[2]*v[0]-_q[0]*v[2], _q[0]*v[1]-_q[1]*v[0]};
-		double uuv[3] = {2*(_q[1]*uv[2]-_q[2]*uv[1]), 2*(_q[2]*uv[0]-_q[0]*uv[2]), 2*(_q[0]*uv[1]-_q[1]*uv[0])};
-		_p[0] += v[0] + 2*_q[3]*uv[0] + uuv[0];
-		_p[1] += v[1] + 2*_q[3]*uv[1] + uuv[1];
-		_p[2] += v[2] + 2*_q[3]*uv[2] + uuv[2];
+		_p.add(_q.multiply(0, 0, _body_height/2));
 	}
 }
 

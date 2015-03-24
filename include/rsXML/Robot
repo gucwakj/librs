@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <rs/Pos>
+#include <rs/Quat>
 #include <rsRobots/Linkbot>
 #include <rsRobots/Mindstorms>
 #include <rsXML/Conn>
@@ -30,8 +32,8 @@ namespace rsXML {
 			double* getLED(void);
 			std::string getName(void);
 			int getOrientation(void);
-			double* getPosition(void);
-			double* getQuaternion(void);
+			const rs::Pos getPosition(void);
+			const rs::Quat getQuaternion(void);
 			bool getTrace(void);
 			virtual void postProcess(void) {};
 			void printDebug(void);
@@ -49,8 +51,6 @@ namespace rsXML {
 		// data
 		protected:
 			double _a[6];
-			double _p[3];
-			double _q[4];
 			double _led[4];
 			int _connected;
 			int _ground;
@@ -59,6 +59,8 @@ namespace rsXML {
 			int _trace;
 			ConnectorList _conn;
 			Conn *_base;
+			rs::Pos _p;
+			rs::Quat _q;
 			std::string _name;
 	};
 

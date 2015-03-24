@@ -258,16 +258,16 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 	return 0;
 }
 
-Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat &q, const rs::Vec &c, bool trace) {
+Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
 	// create new robot
 	osg::Group *group = new osg::Group();
 
 	switch (robot->getForm()) {
 		case rs::LINKBOTI: case rs::LINKBOTL: case rs::LINKBOTT:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, c, trace);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, a, c, trace);
 			break;
 		case rs::EV3: case rs::NXT:
-			this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms*>(robot), group, p, q, c, trace);
+			this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms*>(robot), group, p, q, a, c, trace);
 			break;
 	}
 
@@ -1067,7 +1067,7 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 	_root->addChild(projection);
 }
 
-void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &c, bool trace) {
+void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
 	// initialize variables
 	osg::ref_ptr<osg::Node> body[rsLinkbot::NUM_PARTS];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsLinkbot::NUM_PARTS];
@@ -1153,7 +1153,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	*/
 
 	// draw face1
-	rs::Quat q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE1, 0, q);
+	rs::Quat q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE1, a[rsLinkbot::JOINT1], q);
 	rs::Pos p1 = robot->getRobotBodyPosition(rsLinkbot::FACE1, p, q);
 	body[rsLinkbot::FACE1] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
 	body[rsLinkbot::FACE1]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
@@ -1161,7 +1161,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	pat[rsLinkbot::FACE1]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 
 	// draw face 2
-	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE2, 0, q);
+	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE2, a[rsLinkbot::JOINT2], q);
 	p1 = robot->getRobotBodyPosition(rsLinkbot::FACE2, p, q);
 	if (robot->getForm() == rs::LINKBOTI) {
 		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_fixed.3ds");
@@ -1175,7 +1175,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	pat[rsLinkbot::FACE2]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 
 	// draw face 3
-	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE3, 0, q);
+	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE3, a[rsLinkbot::JOINT3], q);
 	p1 = robot->getRobotBodyPosition(rsLinkbot::FACE3, p, q);
 	if (robot->getForm() == rs::LINKBOTL) {
 		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_fixed.3ds");
@@ -1350,7 +1350,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 	group->addChild(transform);
 }
 
-void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &c, bool trace) {
+void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
 	// initialize variables
 	//osg::ref_ptr<osg::Node> body[rsMindstorms::NUM_PARTS];	// TODO: add
 	osg::ref_ptr<osg::Geode> body[rsMindstorms::NUM_PARTS];		// TODO: remove
@@ -1377,7 +1377,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	pat[rsMindstorms::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// wheel1
-	rs::Quat q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL1, 0, q);
+	rs::Quat q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL1, a[rsMindstorms::JOINT1], q);
 	rs::Pos p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL1, p, q);
 	//body[rsMindstorms::WHEEL1] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
 	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.04445, 0.00140);		// TODO: remove
@@ -1387,7 +1387,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	pat[rsMindstorms::WHEEL1]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// wheel2
-	q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL2, 0, q);
+	q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL2, a[rsMindstorms::JOINT2], q);
 	p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL2, p, q);
 	//body[rsMindstorms::WHEEL2] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
 	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.04445, 0.00140);		// TODO: remove

@@ -459,7 +459,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 	while (node) {
 		if (node->ToComment()) {}
 		else if ( !strcmp(node->Value(), "linkboti") ) {
-			_robot.push_back(new LinkbotI(_trace));
+			_robot.push_back(new Linkbot(rs::LINKBOTI, _trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
@@ -506,7 +506,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			_robot.back()->setGround(i);
 		}
 		else if ( !strcmp(node->Value(), "linkbotl") ) {
-			_robot.push_back(new LinkbotL(_trace));
+			_robot.push_back(new Linkbot(rs::LINKBOTL, _trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
@@ -552,7 +552,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 			_robot.back()->setGround(i);
 		}
 		else if ( !strcmp(node->Value(), "linkbott") ) {
-			_robot.push_back(new LinkbotT(_trace));
+			_robot.push_back(new Linkbot(rs::LINKBOTT, _trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {

@@ -69,26 +69,8 @@ namespace rsXML {
 	// class
 	class Linkbot : virtual public rsRobots::Linkbot, virtual public Robot {
 		public:
-			Linkbot(void) :  rsRobots::Robot(rs::LINKBOTT), rsXML::Robot(1) { _a.add(0); _a.add(0); _a.add(0); };
+			Linkbot(int form, bool trace = true) : rsRobots::Robot(form), rsXML::Robot(trace) { _a.add(0); _a.add(0); _a.add(0); };
 			void postProcess(void);
-	};
-
-	// class
-	class LinkbotI : public Linkbot {
-		public:
-			LinkbotI(bool trace) : rsRobots::Robot(rs::LINKBOTI), rsXML::Robot(trace) {};
-	};
-
-	// class
-	class LinkbotL : public Linkbot {
-		public:
-			LinkbotL(bool trace) : rsRobots::Robot(rs::LINKBOTL), rsXML::Robot(trace) {};
-	};
-
-	// class
-	class LinkbotT : public Linkbot {
-		public:
-			LinkbotT(bool trace) : rsRobots::Robot(rs::LINKBOTT), rsXML::Robot(trace) {};
 	};
 
 	// class

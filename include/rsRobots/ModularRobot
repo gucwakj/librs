@@ -1,5 +1,5 @@
-#ifndef RSROBOTS_MODULARROBOT_HPP_
-#define RSROBOTS_MODULARROBOT_HPP_
+#ifndef RSROBOTS_MODULARROBOT_
+#define RSROBOTS_MODULARROBOT_
 
 #include <rsRobots/Robot>
 
@@ -30,5 +30,5 @@ namespace rsRobots {
 
 } // namepsace rsRobots
 
-#endif // RSROBOTS_MODULARROBOT_HPP_
+#endif // RSROBOTS_MODULARROBOT_
 

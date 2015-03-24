@@ -1,5 +1,5 @@
-#ifndef RSXML_READER_HPP_
-#define RSXML_READER_HPP_
+#ifndef RSXML_READER_
+#define RSXML_READER_
 
 #include <string>
 #include <vector>
@@ -60,5 +60,5 @@ namespace rsXML {
 
 } // namespace rsXML
 
-#endif // RSXML_READER_HPP_
+#endif // RSXML_READER_
 

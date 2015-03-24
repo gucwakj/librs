@@ -1,5 +1,5 @@
-#ifndef RS_MACROS_HPP_
-#define RS_MACROS_HPP_
+#ifndef RS_MACROS_
+#define RS_MACROS_
 
 #include <cfloat>
 #ifdef _WIN32
@@ -87,5 +87,5 @@
 // recorded data
 typedef double* robotRecordData_t;
 
-#endif // RS_MACROS_HPP_
+#endif // RS_MACROS_
 

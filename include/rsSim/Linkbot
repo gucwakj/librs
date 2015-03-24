@@ -1,5 +1,5 @@
-#ifndef RSSIM_LINKBOT_HPP_
-#define RSSIM_LINKBOT_HPP_
+#ifndef RSSIM_LINKBOT_
+#define RSSIM_LINKBOT_
 
 #include <tuple>
 
@@ -53,5 +53,5 @@ namespace rsSim {
 
 } // namespace rsSim
 
-#endif // RSSIM_LINKBOT_HPP_
+#endif // RSSIM_LINKBOT_
 

@@ -1,5 +1,5 @@
-#ifndef MOBOT_HPP_
-#define MOBOT_HPP_
+#ifndef MOBOT_
+#define MOBOT_
 
 class DLLIMPORT CMobot : public ModularRobot {
 	// public api
@@ -132,5 +132,5 @@ struct MobotMove {
 	int i;
 };
 
-#endif  // MOBOT_HPP_
+#endif  // MOBOT_
 

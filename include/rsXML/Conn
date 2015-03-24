@@ -1,5 +1,5 @@
-#ifndef RSXML_CONN_HPP_
-#define RSXML_CONN_HPP_
+#ifndef RSXML_CONN_
+#define RSXML_CONN_
 
 namespace rsXML {
 
@@ -35,5 +35,5 @@ namespace rsXML {
 
 } // namespace rsXML
 
-#endif // RSXML_STORE_HPP_
+#endif // RSXML_STORE_
 

@@ -1,5 +1,5 @@
-#ifndef RSSIM_SIM_HPP_
-#define RSSIM_SIM_HPP_
+#ifndef RSSIM_SIM_
+#define RSSIM_SIM_
 
 #include <vector>
 
@@ -77,5 +77,5 @@ namespace rsSim {
 
 } // namespace rsSim
 
-#endif // RSSIM_SIM_HPP_
+#endif // RSSIM_SIM_
 

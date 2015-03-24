@@ -1,5 +1,5 @@
-#ifndef RS_ENUM_HPP_
-#define RS_ENUM_HPP_
+#ifndef RS_ENUM_
+#define RS_ENUM_
 
 namespace rs {
 
@@ -149,5 +149,5 @@ namespace rsMindstorms {
 
 } // namespace rsMobot*/
 
-#endif // RS_ENUM_HPP_
+#endif // RS_ENUM_
 

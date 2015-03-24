@@ -1,5 +1,5 @@
-#ifndef RSXML_MARKER_HPP_
-#define RSXML_MARKER_HPP_
+#ifndef RSXML_MARKER_
+#define RSXML_MARKER_
 
 #include <string>
 
@@ -36,5 +36,5 @@ namespace rsXML {
 
 } // namespace rsXML
 
-#endif // RSXML_MARKER_HPP_
+#endif // RSXML_MARKER_
 

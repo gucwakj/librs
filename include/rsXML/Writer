@@ -1,5 +1,5 @@
-#ifndef RSXML_WRITER_HPP_
-#define RSXML_WRITER_HPP_
+#ifndef RSXML_WRITER_
+#define RSXML_WRITER_
 
 #include <string>
 #include <vector>
@@ -33,5 +33,5 @@ namespace rsXML {
 
 } // namespace rsXML
 
-#endif // RSXML_WRITER_HPP_
+#endif // RSXML_WRITER_
 

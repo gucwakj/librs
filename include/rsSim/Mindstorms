@@ -1,5 +1,5 @@
-#ifndef RSSIM_MINDSTORMS_HPP_
-#define RSSIM_MINDSTORMS_HPP_
+#ifndef RSSIM_MINDSTORMS_
+#define RSSIM_MINDSTORMS_
 
 #include <rsRobots/Mindstorms>
 #include <rsSim/ModularRobot>
@@ -46,5 +46,5 @@ namespace rsSim {
 
 } // namespace rsSim
 
-#endif // RSSIM_MINDSTORMS_HPP
+#endif // RSSIM_MINDSTORMS_
 

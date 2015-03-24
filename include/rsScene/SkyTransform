@@ -1,5 +1,5 @@
-#ifndef RSSCENE_SKYTRANSFORM_HPP_
-#define RSSCENE_SKYTRANSFORM_HPP_
+#ifndef RSSCENE_SKYTRANSFORM_
+#define RSSCENE_SKYTRANSFORM_
 
 #include <osg/Matrix>
 #include <osg/NodeVisitor>
@@ -17,5 +17,5 @@ namespace rsScene {
 
 } // namespace rsScene
 
-#endif // RSSCENE_SKYTRANSFORM_HPP_
+#endif // RSSCENE_SKYTRANSFORM_
 

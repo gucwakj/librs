@@ -1,5 +1,5 @@
-#ifndef RSXML_GROUND_HPP_
-#define RSXML_GROUND_HPP_
+#ifndef RSXML_GROUND_
+#define RSXML_GROUND_
 
 namespace rsXML {
 
@@ -37,5 +37,5 @@ namespace rsXML {
 
 } // namespace rsXML
 
-#endif // RSXML_GROUND_HPP_
+#endif // RSXML_GROUND_
 

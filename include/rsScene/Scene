@@ -1,5 +1,5 @@
-#ifndef RSSCENE_SCENE_HPP_
-#define RSSCENE_SCENE_HPP_
+#ifndef RSSCENE_SCENE_
+#define RSSCENE_SCENE_
 
 #include <osg/Depth>
 #include <osg/LineWidth>
@@ -119,5 +119,5 @@ namespace rsScene {
 
 } // namespace rsScene
 
-#endif // RSSCENE_SCENE_HPP_
+#endif // RSSCENE_SCENE_
 

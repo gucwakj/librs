@@ -1,5 +1,5 @@
-#ifndef RSCALLBACK_CALLBACK_HPP_
-#define RSCALLBACK_CALLBACK_HPP_
+#ifndef RSCALLBACK_CALLBACK_
+#define RSCALLBACK_CALLBACK_
 
 #include <rsScene/Scene>
 #include <rsSim/Sim>
@@ -26,5 +26,5 @@ namespace rsCallback {
 
 } // namespace rsCallback
 
-#endif // RSCALLBACK_CALLBACK_HPP_
+#endif // RSCALLBACK_CALLBACK_
 

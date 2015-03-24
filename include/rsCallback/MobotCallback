@@ -1,5 +1,5 @@
-#ifndef RSCALLBACK_MOBOTCALLBACK_HPP_
-#define RSCALLBACK_MOBOTCALLBACK_HPP_
+#ifndef RSCALLBACK_MOBOTCALLBACK_
+#define RSCALLBACK_MOBOTCALLBACK_
 
 #include <osg/Geode>
 #include <osg/Node>
@@ -29,5 +29,5 @@ namespace rsCallback {
 
 } // namespace rsCallback
 
-#endif // RSCALLBACK_MOBOTCALLBACK_HPP_
+#endif // RSCALLBACK_MOBOTCALLBACK_
 

@@ -1,5 +1,5 @@
-#ifndef RS_TYPES_HPP_
-#define RS_TYPES_HPP_
+#ifndef RS_TYPES_
+#define RS_TYPES_
 
 namespace rs {
 
@@ -11,5 +11,5 @@ namespace rs {
 
 } // namespace rs
 
-#endif // RS_TYPES_HPP_
+#endif // RS_TYPES_
 

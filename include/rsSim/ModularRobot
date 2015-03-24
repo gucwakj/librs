@@ -1,5 +1,5 @@
-#ifndef RSSIM_MODULARROBOT_HPP_
-#define RSSIM_MODULARROBOT_HPP_
+#ifndef RSSIM_MODULARROBOT_
+#define RSSIM_MODULARROBOT_
 
 #include <rsRobots/ModularRobot>
 #include <rsSim/Robot>
@@ -55,5 +55,5 @@ namespace rsSim {
 
 } // namepsace rsSim
 
-#endif // RSSIM_MODULARROBOT_HPP_
+#endif // RSSIM_MODULARROBOT_
 

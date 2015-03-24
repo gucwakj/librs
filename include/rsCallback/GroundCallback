@@ -1,5 +1,5 @@
-#ifndef RSCALLBACK_GROUNDCALLBACK_HPP_
-#define RSCALLBACK_GROUNDCALLBACK_HPP_
+#ifndef RSCALLBACK_GROUNDCALLBACK_
+#define RSCALLBACK_GROUNDCALLBACK_
 
 #include <osg/Node>
 #include <osg/NodeVisitor>
@@ -24,5 +24,5 @@ namespace rsCallback {
 
 } // namespace rsCallback
 
-#endif // RSCALLBACK_GROUNDCALLBACK_HPP_
+#endif // RSCALLBACK_GROUNDCALLBACK_
 

@@ -1,5 +1,5 @@
-#ifndef RSROBOTS_MINDSTORMS_HPP_
-#define RSROBOTS_MINDSTORMS_HPP_
+#ifndef RSROBOTS_MINDSTORMS_
+#define RSROBOTS_MINDSTORMS_
 
 #include <rsRobots/Robot>
 
@@ -19,5 +19,5 @@ namespace rsRobots {
 
 } // namespace rsRobots
 
-#endif // RSROBOTS_MINDSTORMS_HPP_
+#endif // RSROBOTS_MINDSTORMS_
 

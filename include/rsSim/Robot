@@ -1,5 +1,5 @@
-#ifndef RSSIM_ROBOT_HPP_
-#define RSSIM_ROBOT_HPP_
+#ifndef RSSIM_ROBOT_
+#define RSSIM_ROBOT_
 
 #include <ode/ode.h>
 
@@ -143,5 +143,5 @@ namespace rsSim {
 
 } // namespace rsSim
 
-#endif // RSSIM_ROBOT_HPP_
+#endif // RSSIM_ROBOT_
 

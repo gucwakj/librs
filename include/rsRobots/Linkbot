@@ -1,5 +1,5 @@
-#ifndef RSROBOTS_LINKBOT_HPP_
-#define RSROBOTS_LINKBOT_HPP_
+#ifndef RSROBOTS_LINKBOT_
+#define RSROBOTS_LINKBOT_
 
 #include <rsRobots/ModularRobot>
 
@@ -57,5 +57,5 @@ namespace rsRobots {
 
 } // namespace rsRobots
 
-#endif // RSROBOTS_LINKBOT_HPP_
+#endif // RSROBOTS_LINKBOT_
 

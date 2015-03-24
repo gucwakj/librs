@@ -1,5 +1,5 @@
-#ifndef RSCALLBACK_MINDSTORMSCALLBACK_HPP_
-#define RSCALLBACK_MINDSTORMSCALLBACK_HPP_
+#ifndef RSCALLBACK_MINDSTORMSCALLBACK_
+#define RSCALLBACK_MINDSTORMSCALLBACK_
 
 #include <osg/Node>
 #include <osg/NodeVisitor>
@@ -27,5 +27,5 @@ namespace rsCallback {
 
 } // namespace rsCallback
 
-#endif // RSCALLBACK_MINDSTORMSCALLBACK_HPP_
+#endif // RSCALLBACK_MINDSTORMSCALLBACK_
 

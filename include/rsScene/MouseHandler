@@ -1,5 +1,5 @@
-#ifndef RSSCENE_MOUSEHANDLER_HPP_
-#define RSSCENE_MOUSEHANDLER_HPP_
+#ifndef RSSCENE_MOUSEHANDLER_
+#define RSSCENE_MOUSEHANDLER_
 
 #include <osg/Geode>
 #include <osgGA/GUIActionAdapter>
@@ -39,5 +39,5 @@ namespace rsScene {
 
 } // namespace rsScene
 
-#endif // RSSCENE_MOUSEHANDLER_HPP_
+#endif // RSSCENE_MOUSEHANDLER_
 

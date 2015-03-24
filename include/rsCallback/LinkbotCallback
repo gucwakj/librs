@@ -1,5 +1,5 @@
-#ifndef RSCALLBACK_LINKBOTCALLBACK_HPP_
-#define RSCALLBACK_LINKBOTCALLBACK_HPP_
+#ifndef RSCALLBACK_LINKBOTCALLBACK_
+#define RSCALLBACK_LINKBOTCALLBACK_
 
 #include <osg/Node>
 #include <osg/NodeVisitor>
@@ -28,5 +28,5 @@ namespace rsCallback {
 
 } // namespace rsCallback
 
-#endif // RSCALLBACK_LINKBOTCALLBACK_HPP_
+#endif // RSCALLBACK_LINKBOTCALLBACK_
 

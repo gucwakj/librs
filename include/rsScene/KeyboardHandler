@@ -1,5 +1,5 @@
-#ifndef RSSCENE_KEYBOARDHANDLER_HPP_
-#define RSSCENE_KEYBOARDHANDLER_HPP_
+#ifndef RSSCENE_KEYBOARDHANDLER_
+#define RSSCENE_KEYBOARDHANDLER_
 
 #include <osg/Billboard>
 #include <osg/PositionAttitudeTransform>
@@ -34,5 +34,5 @@ namespace rsScene {
 
 } // namespace rsScene
 
-#endif // RSSCENE_KEYBOARDHANDLER_HPP_
+#endif // RSSCENE_KEYBOARDHANDLER_
 

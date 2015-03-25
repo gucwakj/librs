@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <osg/Group>
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
@@ -53,8 +55,10 @@ void LinkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+			if (pat) {
+				pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
+				pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+			}
 		}
 		// child 2: bodies; drawable 2: led
 		//osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(0)->asGeode()->getDrawable(2));
@@ -62,11 +66,13 @@ void LinkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		//led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
 		// child 7->end: connectors
 		for (int i = 0; i < _conn.size(); i++) {
-			pos = dBodyGetPosition(_conn[i].body);
-			quat = dBodyGetQuaternion(_conn[i].body);
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::NUM_PARTS + i));
-			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
-			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+			if (_conn[i].body) {
+				pos = dBodyGetPosition(_conn[i].body);
+				quat = dBodyGetQuaternion(_conn[i].body);
+				pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::NUM_PARTS + i));
+				pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
+				pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+			}
 		}
 	}
 	traverse(node, nv);

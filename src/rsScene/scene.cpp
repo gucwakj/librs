@@ -258,7 +258,7 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 
 Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
 	// create new robot
-	osg::Group *group = new osg::Group();
+	osg::ref_ptr<osg::Group> group = new osg::Group();
 
 	switch (robot->getForm()) {
 		case rs::LINKBOTI: case rs::LINKBOTL: case rs::LINKBOTT:
@@ -329,10 +329,6 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 
 	// set user properties of node
 	group->setName(std::string("robot").append(std::to_string(robot->getID())));
-
-	// optimize robot
-	osgUtil::Optimizer optimizer;
-	optimizer.optimize(group);
 
 	// add to scenegraph
 	_staging->addChild(group);
@@ -1073,7 +1069,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	// create transforms
 	for (int i = 0; i < rsLinkbot::NUM_PARTS; i++) {
 		pat[i] = new osg::PositionAttitudeTransform;
-		group->addChild(pat[i].get());
+		group->addChild(pat[i]);
 	}
 
 	// set tracing
@@ -1194,7 +1190,6 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 		body[i]->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 		body[i]->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
 		body[i]->setCullingActive(false);
-		// add bodies to transforms
 		pat[i]->addChild(body[i]);
 	}
 }

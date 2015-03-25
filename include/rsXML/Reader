@@ -49,6 +49,7 @@ namespace rsXML {
 			bool _trace;						// flag: trace robot positions
 			bool _rt;							// flag: real time motion
 			bool _units;						// flag: SI (true) or customary (false)
+			int _version;						// version of xml file being read
 			std::string _path;					// path of xml file
 			std::vector<double> _friction;		// coefficient of friction [body/ground, body/body]
 			std::vector<double> _grid;			// grid [tics, major, minx, maxx, miny, maxy, enabled]

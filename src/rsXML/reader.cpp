@@ -14,6 +14,7 @@ Reader::Reader(char *name) {
 	_rt = true;
 	_trace = false;
 	_units = false;
+	_version = 0;
 	for (int i = 0; i < 2; i++) {
 		_friction.push_back(0);
 		_restitution.push_back(0);
@@ -174,6 +175,11 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 
+	// check if should start paused
+	if ( (node = doc->FirstChildElement("config")->FirstChildElement("version")) ) {
+		node->QueryIntText(&_version);
+	}
+
 	// check for custom mu params
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("mu")) ) {
 		node->QueryDoubleAttribute("ground", &(_friction[0]));
@@ -188,12 +194,12 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 
 	// check if should start paused
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("pause")) ) {
-		node->QueryIntAttribute("val", reinterpret_cast<int *>(&_pause));
+		node->QueryIntText(reinterpret_cast<int *>(&_pause));
 	}
 
 	// check if should run in real time
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("realtime")) ) {
-		node->QueryIntAttribute("val", reinterpret_cast<int *>(&_rt));
+		node->QueryIntText(reinterpret_cast<int *>(&_rt));
 	}
 }
 
@@ -279,10 +285,10 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 					_grid[i] /= 39.37;
 			}
 		}
-		else if ( !strcmp(node->Value(), "tracking") ) {
-			node->QueryIntAttribute("val", reinterpret_cast<int *>(&_trace));
+		else if ( !strcmp(node->Value(), "trace") ) {
+			node->QueryIntText(reinterpret_cast<int *>(&_trace));
 		}
-		else {
+		else if ( !strcmp(node->Value(), "text") ) {
 			// create object
 			_marker.push_back(new Marker(rs::TEXT));
 			// color
@@ -294,7 +300,9 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setColor(a, b, c, d);
 			}
 			// label
-			_marker.back()->setLabel(node->Value());
+			if ( (ele = node->FirstChildElement("label")) ) {
+				_marker.back()->setLabel(ele->GetText());
+			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);

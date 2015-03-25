@@ -352,7 +352,7 @@ void Linkbot::init_params(void) {
 		_motor[i].safety_angle = 10;
 		_motor[i].safety_timeout = 4;
 		_motor[i].starting = 0;
-		_motor[i].state = NEUTRAL;
+		_motor[i].state = HOLD;
 		_motor[i].stopping = 0;
 		_motor[i].success = true;
 		_motor[i].tau_max = 2;

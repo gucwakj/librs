@@ -35,11 +35,13 @@ namespace rsSim {
 			bool getPause(void);
 			Robot* getRobot(int);
 			double getStep(void);
-			int runSimulation(void);
+			void run(int, void (*output)(void) = NULL, int interval = 0);
 			int setCollisions(int);
 			int setCOR(double, double);
 			int setMu(double, double);
 			int setPause(int);
+			void start(void);
+			void stop(void);
 
 		// protected data
 		protected:

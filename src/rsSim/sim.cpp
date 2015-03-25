@@ -210,17 +210,6 @@ Ground* Sim::addGround(const double *p, const double *l, double mass) {
 	return body;
 }
 
-void Sim::beginSimulation(void) {
-	// lock pause
-	MUTEX_LOCK(&_pause_mutex);
-
-	// unpause
-	_pause = false;
-
-	// unlock pause
-	MUTEX_UNLOCK(&_pause_mutex);
-}
-
 int Sim::deleteRobot(int id) {
 	// lock robot data to delete
 	MUTEX_LOCK(&_robot_mutex);
@@ -302,15 +291,25 @@ double Sim::getStep(void) {
 	return step;
 }
 
-int Sim::runSimulation(void) {
-	MUTEX_LOCK(&_running_mutex);
-	while (_running) {
-		COND_WAIT(&_running_cond, &_running_mutex);
-	}
-	MUTEX_UNLOCK(&_running_mutex);
+void Sim::run(int milliseconds, void (*output)(void), int interval) {
+	// calculate sleep time
+	if (!interval) { interval = milliseconds; }
 
-	// success
-	return 0;
+	// start simulation
+	this->start();
+
+	// sleep and run output
+	for (int i = 0; i < milliseconds/interval; i++) {
+#ifdef _WIN32
+		Sleep(interval);
+#else
+		usleep(interval*1000);
+#endif
+		if (output) output();
+	}
+
+	// end simulation
+	this->stop();
 }
 
 int Sim::setCollisions(int mode) {
@@ -368,6 +367,27 @@ int Sim::setPause(int mode) {
 
 	// success
 	return 0;
+}
+
+void Sim::start(void) {
+	// unpause simulation
+	MUTEX_LOCK(&_pause_mutex);
+	_pause = false;
+	MUTEX_UNLOCK(&_pause_mutex);
+}
+
+void Sim::stop(void) {
+	// ask sim to stop running
+	MUTEX_LOCK(&_running_mutex);
+	_running = false;
+	MUTEX_UNLOCK(&_running_mutex);
+
+	// wait for last loop to finish
+	MUTEX_LOCK(&_running_mutex);
+	while (_running) {
+		COND_WAIT(&_running_cond, &_running_mutex);
+	}
+	MUTEX_UNLOCK(&_running_mutex);
 }
 
 /**********************************************************

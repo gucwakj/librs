@@ -36,23 +36,12 @@ namespace rsSim {
 
 		// utility functions
 		protected:
-			int add_neighbor(ModularRobot*, int, int);
-			int get_neighbor_count(int = -1, int = 0);
-			double get_neighbor_force(int, int = 0);
-			double get_neighbor_torque(int, int = 0);
 			int fix_body_to_connector(dBodyID, int, dJointFeedback* = NULL);
 			int fix_connector_to_body(int, dBodyID, dJointFeedback* = NULL, int = -1);
 
 		// data members
 		protected:
-			// neighbors
-			struct Neighbor {
-				ModularRobot *robot;
-				int face;
-			};
-
 			ConnectorList _conn;				// connectors
-			std::vector<Neighbor> _neighbor;	// connected robots
 			std::vector<dJointFeedback> _fb;	// feedback forces from joints
 	};
 

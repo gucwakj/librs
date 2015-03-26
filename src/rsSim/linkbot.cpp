@@ -344,7 +344,6 @@ void Linkbot::init_params(void) {
 
 	// create arrays for linkbots
 	_motor.resize(_dof);
-	_neighbor.resize(_dof);
 	_fb.resize(_dof + 1);
 
 	// fill with default data

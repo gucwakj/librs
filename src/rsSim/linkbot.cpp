@@ -282,7 +282,6 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 		dJointSetAMotorAngle(_motor[i].id, 0, 0);
 		dJointSetAMotorParam(_motor[i].id, dParamFMax, _motor[i].tau_max);
 		dJointSetAMotorParam(_motor[i].id, dParamFudgeFactor, 0.3);
-		dJointDisable(_motor[i].id);
 	}
 	o = q.multiply(1, 0, 0);
 	dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, o[0], o[1], o[2]);
@@ -352,7 +351,7 @@ void Linkbot::init_params(void) {
 		_motor[i].safety_angle = 10;
 		_motor[i].safety_timeout = 4;
 		_motor[i].starting = 0;
-		_motor[i].state = HOLD;
+		_motor[i].state = NEUTRAL;
 		_motor[i].stopping = 0;
 		_motor[i].success = true;
 		_motor[i].tau_max = 2;

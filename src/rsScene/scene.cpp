@@ -206,7 +206,7 @@ int Scene::drawMarker(int id, int type, const double *p1, const double *p2, cons
 	// draw specific marker
 	switch (type) {
 		case rs::DOT: {
-			osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(p1[0], p1[1], p1[2]), size/500.0);
+			osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(0, 0, 0), size/500.0);
 			osg::ShapeDrawable *pointDrawable = new osg::ShapeDrawable(sphere);
 			pointDrawable->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
 			geode->addDrawable(pointDrawable);
@@ -224,7 +224,7 @@ int Scene::drawMarker(int id, int type, const double *p1, const double *p2, cons
 			geom->setColorArray(colors);
 			geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 			osg::LineWidth *width = new osg::LineWidth();
-			width->setWidth(size*3.0f);
+			width->setWidth(3*size);
 			geode->addDrawable(geom);
 			geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
 			break;
@@ -235,10 +235,10 @@ int Scene::drawMarker(int id, int type, const double *p1, const double *p2, cons
 			label->setAxisAlignment(osgText::Text::SCREEN);
 			label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 			label->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-			label->setCharacterSize(25);
+			label->setCharacterSize(25*size);
 			label->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
 			label->setDrawMode(osgText::Text::TEXT);
-			label->setPosition(osg::Vec3(p1[0], p1[1], p1[2]));
+			label->setPosition(osg::Vec3(0, 0, 0));
 			label->setText(s);
 			geode->addDrawable(label);
 			break;

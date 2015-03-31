@@ -191,10 +191,6 @@ Ground* Scene::drawGround(int id, int type, const double *p, const double *c, co
 	// set user properties of node
 	ground->setName(std::string("ground").append(std::to_string(id)));
 
-	// optimize object
-	osgUtil::Optimizer optimizer;
-	optimizer.optimize(ground);
-
 	// add to scenegraph
 	_staging->addChild(ground);
 
@@ -202,9 +198,10 @@ Ground* Scene::drawGround(int id, int type, const double *p, const double *c, co
 	return ground;
 }
 
-int Scene::drawMarker(int type, const double *p1, const double *p2, const double *c, int size, std::string s) {
+int Scene::drawMarker(int id, int type, const double *p1, const double *p2, const double *c, int size, std::string s) {
 	// create geode
-	osg::Geode *geode = new osg::Geode();
+	osg::ref_ptr<osg::Group> marker = new osg::Group();
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 
 	// draw specific marker
 	switch (type) {
@@ -252,12 +249,18 @@ int Scene::drawMarker(int type, const double *p1, const double *p2, const double
 	geode->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
-	// optimize object
-	osgUtil::Optimizer optimizer;
-	optimizer.optimize(geode);
+	// add positioning capability
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
+	pat->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	pat->setAttitude(osg::Quat(0, 0, 0, 1));
+	pat->addChild(geode.get());
+	marker->addChild(pat.get());
+
+	// set user properties of node
+	marker->setName(std::string("ground").append(std::to_string(id)));
 
 	// add to scenegraph
-	_staging->addChild(geode);
+	_staging->addChild(marker);
 
 	return 0;
 }

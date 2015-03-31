@@ -60,7 +60,7 @@ namespace rsScene {
 			int deleteObstacle(int);
 			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, int, double, int, int);
 			Ground* drawGround(int, int, const double*, const double*, const double*, const double*);
-			int drawMarker(int, const double*, const double*, const double*, int, std::string);
+			int drawMarker(int, int, const double*, const double*, const double*, int, std::string);
 			Robot* drawRobot(rsRobots::Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);

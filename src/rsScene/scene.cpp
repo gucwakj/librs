@@ -82,7 +82,7 @@ int Scene::addChild(void) {
 	return -1;
 }
 
-void Scene::addHighlight(int id, bool exclusive) {
+void Scene::addHighlight(int id, bool robot, bool exclusive) {
 	// deselect everything
 	if (exclusive) {
 		// find nodes of intersection
@@ -107,8 +107,14 @@ void Scene::addHighlight(int id, bool exclusive) {
 	for (int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		// get robot node
-		if (test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
-			this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0));
+		if (robot) {
+			if (test && !test->getName().compare(std::string("robot").append(std::to_string(id))))
+				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0));
+		}
+		// get ground node
+		else if (!robot) {
+			if (test && !test->getName().compare(std::string("ground").append(std::to_string(id))))
+				this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0));
 		}
 	}
 }

@@ -55,7 +55,7 @@ namespace rsScene {
 			virtual ~Scene(void);
 
 			int addChild(void);
-			void addHighlight(int, bool = true);
+			void addHighlight(int, bool = true, bool = true);
 			int deleteChild(int);
 			int deleteObstacle(int);
 			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, int, double, int, int);

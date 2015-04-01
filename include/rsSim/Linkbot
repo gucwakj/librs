@@ -19,6 +19,8 @@ namespace rsSim {
 			void addForce(int, const rs::Pos&);
 			void addTorque(int, const rs::Pos&);
 			virtual void getCoM(double&, double&, double&);
+			const rs::Pos getFootForce(void);
+			const rs::Pos getFootTorque(void);
 			const rs::Vec getJoints(void);
 
 		// inherited functions from ModularRobot class

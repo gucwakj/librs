@@ -316,6 +316,14 @@ double Linkbot::getAngle(int id) {
     return _motor[id].theta;
 }
 
+const rs::Pos Linkbot::getFootForce(void) {
+	return rs::Pos(-_fb[JOINT2].f2[0], -_fb[JOINT2].f2[1], -_fb[JOINT2].f2[2]);
+}
+
+const rs::Pos Linkbot::getFootTorque(void) {
+	return rs::Pos(-_fb[JOINT2].t2[0], -_fb[JOINT2].t2[1], -_fb[JOINT2].t2[2]);
+}
+
 const rs::Vec Linkbot::getJoints(void) {
 	return rs::Vec(_motor[JOINT1].theta, _motor[JOINT2].theta, _motor[JOINT3].theta);
 }

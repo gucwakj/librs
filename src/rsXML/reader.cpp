@@ -66,12 +66,12 @@ Robot* Reader::getNextRobot(int form) {
 	// find next robot in xml list
 	int i = 0;
 	for (i = 0; i < _robot.size(); i++) {
-		if (_robot[i]->getForm() == form && !_robot[i]->getConnect())
+		if (!_robot[i]->getConnect() && (form == -1 || _robot[i]->getForm() == form))
 			break;
 	}
 
 	// no robot found
-	if (i == _robot.size() || _robot[i]->getForm() != form) {
+	if (form != -1 && (i == _robot.size() || _robot[i]->getForm() != form)) {
 		switch (form) {
 			case rs::LINKBOTI:
 				std::cerr << "Error: Could not find a Linkbot-I in the RoboSim GUI robot list." << std::endl;
@@ -92,6 +92,9 @@ Robot* Reader::getNextRobot(int form) {
 		}
 		exit(-1);
 	}
+
+	if (i == _robot.size())
+		return NULL;
 
 	// robot now connected
 	_robot[i]->setConnect(1);

@@ -57,7 +57,7 @@ Writer::~Writer(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Writer::setRobot(tinyxml2::XMLElement *robot, double *p, double *q, double *r, double *c) {
+void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, double *p, double *q, double *r, double *c) {
 	// set position
 	tinyxml2::XMLElement *pos = getOrCreateChild(robot, "position");
 	pos->SetAttribute("x", p[0]);
@@ -94,6 +94,10 @@ void Writer::setRobot(tinyxml2::XMLElement *robot, double *p, double *q, double 
 	led->SetAttribute("g", c[1]);
 	led->SetAttribute("b", c[2]);
 	led->SetAttribute("alpha", c[3]);
+
+	// set name
+	this->getOrCreateChild(robot, "name")->DeleteChildren();
+	this->getOrCreateChild(robot, "name")->InsertFirstChild(this->toText(name));
 
 	// write to disk
 	this->save();
@@ -243,7 +247,7 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 			node->SetAttribute("form", rs::NXT);
 			break;
 	}
-	node->SetAttribute("id", id);
+	node->SetAttribute("form", form);
 	if (id == 0)
 		sim->InsertFirstChild(node);
 	else
@@ -253,5 +257,9 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 
 tinyxml2::XMLText* Writer::toText(bool b) {
 	return _doc.NewText(std::to_string(b).c_str());
+}
+
+tinyxml2::XMLText* Writer::toText(std::string s) {
+	return _doc.NewText(s.c_str());
 }
 

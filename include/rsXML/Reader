@@ -32,6 +32,7 @@ namespace rsXML {
 			int getNumRobots(void);
 			bool getPause(void);
 			bool getRealTime(void);
+			bool getTrace(void);
 			bool getUnits(void);
 
 		// private functions

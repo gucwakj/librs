@@ -40,10 +40,11 @@ Writer::Writer(std::string name, const std::string &orig) {
 	}
 
 	// create declaration
-	if ( !(node = _doc.FirstChildElement("RoboSim XML Configuration")) ) {
+	/*if ( !(node = _doc.FirstChildElement("RoboSim XML Configuration")) ) {
+std::cerr << "Here" << std::endl;
 		tinyxml2::XMLDeclaration *dec = _doc.NewDeclaration("RoboSim XML Configuration");
 		_doc.InsertFirstChild(dec);
-	}
+	}*/
 
 	// write to disk
 	this->save();

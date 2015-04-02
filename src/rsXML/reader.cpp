@@ -136,6 +136,10 @@ bool Reader::getRealTime(void) {
 	return _rt;
 }
 
+bool Reader::getTrace(void) {
+	return _trace;
+}
+
 bool Reader::getUnits(void) {
 	return _units;
 }
@@ -460,7 +464,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 	}
 
 	// check if individual vs preconfig
-	node->QueryIntAttribute("type", reinterpret_cast<int *>(&_preconfig));
+	//node->QueryIntAttribute("type", reinterpret_cast<int *>(&_preconfig));
 
 	// loop over all nodes
 	while (node) {

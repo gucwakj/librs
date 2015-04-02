@@ -17,17 +17,16 @@ namespace rsXML {
 			Writer(std::string, const std::string&);
 			virtual ~Writer(void);
 
-			void addRobot(int, int, double*, double*, double*, double*);
+			void setRobot(tinyxml2::XMLElement*, double*, double*, double*, double*);
+			tinyxml2::XMLElement* getOrCreateChild(tinyxml2::XMLElement*, const char*);
 			tinyxml2::XMLElement* getOrCreateElement(const char*, const char*);
+			tinyxml2::XMLElement* getOrCreateRobot(int, int);
 			tinyxml2::XMLElement* getRobot(int);
+			void save(void);
 			void setGrid(std::vector<double>);
 			void setTrace(bool);
 			void setUnits(bool);
 			tinyxml2::XMLText* toText(bool);
-
-		// private functions
-		private:
-			void save(void);
 
 		// private data
 		private:

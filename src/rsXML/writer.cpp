@@ -57,52 +57,23 @@ Writer::~Writer(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Writer::addRobot(int id, int form, double *p, double *q, double *r, double *c) {
-	// get simulation element
-	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
-
-	// set robot type
-	tinyxml2::XMLElement *robot;
-	switch (form) {
-		case rs::LINKBOTI:
-			robot = _doc.NewElement("linkboti");
-			break;
-		case rs::LINKBOTL:
-			robot = _doc.NewElement("linkbotl");
-			break;
-		case rs::LINKBOTT:
-			robot = _doc.NewElement("linkbott");
-			break;
-		case rs::EV3:
-			robot = _doc.NewElement("ev3");
-			break;
-		case rs::NXT:
-			robot = _doc.NewElement("nxt");
-			break;
-	}
-	sim->InsertFirstChild(robot);
-
-	// set id
-	robot->SetAttribute("id", id);
-
+void Writer::setRobot(tinyxml2::XMLElement *robot, double *p, double *q, double *r, double *c) {
 	// set position
-	tinyxml2::XMLElement *pos = _doc.NewElement("position");
+	tinyxml2::XMLElement *pos = getOrCreateChild(robot, "position");
 	pos->SetAttribute("x", p[0]);
 	pos->SetAttribute("y", p[1]);
 	pos->SetAttribute("z", p[2]);
-	robot->InsertFirstChild(pos);
 
 	// set rotation
-	tinyxml2::XMLElement *rot = _doc.NewElement("rotation");
+	tinyxml2::XMLElement *rot = getOrCreateChild(robot, "rotation");
 	rot->SetAttribute("x", q[0]);
 	rot->SetAttribute("y", q[1]);
 	rot->SetAttribute("z", q[2]);
 	rot->SetAttribute("w", q[3]);
-	robot->InsertAfterChild(pos, rot);
 
 	// set joints
-	tinyxml2::XMLElement *joint = _doc.NewElement("joint");
-	switch (form) {
+	tinyxml2::XMLElement *joint = getOrCreateChild(robot, "joint");
+	switch (robot->IntAttribute("form")) {
 		case rs::LINKBOTI:
 		case rs::LINKBOTL:
 		case rs::LINKBOTT:
@@ -116,15 +87,13 @@ void Writer::addRobot(int id, int form, double *p, double *q, double *r, double 
 			joint->SetAttribute("w2", r[1]);
 			break;
 	}
-	robot->InsertAfterChild(rot, joint);
 
 	// set led
-	tinyxml2::XMLElement *led = _doc.NewElement("led");
+	tinyxml2::XMLElement *led = getOrCreateChild(robot, "led");
 	led->SetAttribute("r", c[0]);
 	led->SetAttribute("g", c[1]);
 	led->SetAttribute("b", c[2]);
 	led->SetAttribute("alpha", c[3]);
-	robot->InsertAfterChild(joint, led);
 
 	// write to disk
 	this->save();
@@ -224,6 +193,15 @@ void Writer::save(void) {
 	_doc.SaveFile(_path.c_str());
 }
 
+tinyxml2::XMLElement* Writer::getOrCreateChild(tinyxml2::XMLElement *p, const char *child) {
+	tinyxml2::XMLElement *e = p->FirstChildElement(child);
+	if (!e) {
+		e = _doc.NewElement(child);
+		p->InsertFirstChild(e);
+	}
+	return e;
+}
+
 tinyxml2::XMLElement* Writer::getOrCreateElement(const char *parent, const char *child) {
 	tinyxml2::XMLElement *e = _doc.FirstChildElement(parent)->FirstChildElement(child);
 	if (!e) {
@@ -231,6 +209,46 @@ tinyxml2::XMLElement* Writer::getOrCreateElement(const char *parent, const char 
 		_doc.FirstChildElement(parent)->InsertFirstChild(e);
 	}
 	return e;
+}
+
+tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
+	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
+	tinyxml2::XMLElement *node = sim->FirstChildElement();
+	int j;
+	while (node) {
+		node->QueryIntAttribute("id", &j);
+		if (j == id)
+			return node;
+		node = node->NextSiblingElement();
+	}
+	switch (form) {
+		case rs::LINKBOTI:
+			node = _doc.NewElement("linkboti");
+			node->SetAttribute("form", rs::LINKBOTI);
+			break;
+		case rs::LINKBOTL:
+			node = _doc.NewElement("linkbotl");
+			node->SetAttribute("form", rs::LINKBOTL);
+			break;
+		case rs::LINKBOTT:
+			node = _doc.NewElement("linkbott");
+			node->SetAttribute("form", rs::LINKBOTT);
+			break;
+		case rs::EV3:
+			node = _doc.NewElement("ev3");
+			node->SetAttribute("form", rs::EV3);
+			break;
+		case rs::NXT:
+			node = _doc.NewElement("nxt");
+			node->SetAttribute("form", rs::NXT);
+			break;
+	}
+	node->SetAttribute("id", id);
+	if (id == 0)
+		sim->InsertFirstChild(node);
+	else
+		sim->InsertAfterChild(getOrCreateRobot(form, id-1), node);
+	return node;
 }
 
 tinyxml2::XMLText* Writer::toText(bool b) {

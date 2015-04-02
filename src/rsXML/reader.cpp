@@ -492,7 +492,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
-				std::string str(ele->GetText());
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
@@ -539,7 +540,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
-				std::string str(ele->GetText());
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
@@ -585,7 +587,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
-				std::string str(ele->GetText());
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
@@ -630,7 +633,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
-				std::string str(ele->GetText());
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -665,7 +669,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
-				std::string str(ele->GetText());
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {

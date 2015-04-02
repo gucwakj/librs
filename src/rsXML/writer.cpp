@@ -221,8 +221,10 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 	int j;
 	while (node) {
 		node->QueryIntAttribute("id", &j);
-		if (j == id)
+		if (j == id) {
+			node->SetAttribute("form", form);
 			return node;
+		}
 		node = node->NextSiblingElement();
 	}
 	switch (form) {
@@ -247,6 +249,7 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 			node->SetAttribute("form", rs::NXT);
 			break;
 	}
+	node->SetAttribute("id", id);
 	node->SetAttribute("form", form);
 	if (id == 0)
 		sim->InsertFirstChild(node);

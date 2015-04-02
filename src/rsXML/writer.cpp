@@ -3,60 +3,54 @@
 
 using namespace rsXML;
 
-Writer::Writer(std::string name, std::string orig) {
+Writer::Writer(std::string name, const std::string &orig) {
 	// save filename
 	_path = name;
 
 	// load file
 	if (_doc.LoadFile(orig.c_str())) {
-		std::cerr << "Warning: Could open " << orig << " for reading." << std::endl;
+		// warn that the old file couldn't be read
+		std::cerr << "Warning: Could not open " << orig << " for reading." << std::endl;
 		std::cerr << "         Starting a new XML document at " << name << std::endl;
 	}
 
-	// set declaration
-	tinyxml2::XMLDeclaration *dec = _doc.NewDeclaration();
-	_doc.InsertFirstChild(dec);
-
-	// set configuration options
-	tinyxml2::XMLElement *config = _doc.NewElement("config");
-	_doc.InsertAfterChild(dec, config);
-
-	// set new version
-	//tinyxml2::XMLElement *version = _doc.NewElement("version");
-	//version->SetAttribute("val", XML_VERSION);
-	//config->InsertFirstChild(version);
-
-	// set graphics options
-	tinyxml2::XMLElement *graphics = _doc.NewElement("graphics");
-	_doc.InsertAfterChild(config, graphics);
-
-	// set grid values
-	tinyxml2::XMLElement *grid = _doc.NewElement("grid");
-	grid->SetAttribute("units", 1);
-	grid->SetAttribute("enabled", 1);
-	grid->SetAttribute("major", 12);
-	grid->SetAttribute("tics", 1);
-	grid->SetAttribute("minx", -48);
-	grid->SetAttribute("maxx", 48);
-	grid->SetAttribute("miny", -48);
-	grid->SetAttribute("maxy", 48);
-	graphics->InsertFirstChild(grid);
-
-	// set tracking of robots
-	tinyxml2::XMLElement *tracking = _doc.NewElement("trace");
-	tracking->SetAttribute("enabled", 1);
-	graphics->InsertAfterChild(grid, tracking);
-
 	// create simulation
-	tinyxml2::XMLElement *sim = _doc.NewElement("sim");
-	_doc.InsertAfterChild(config, sim);
-	sim->SetAttribute("type", 0);
+	tinyxml2::XMLElement *node;
+	if ( !(node = _doc.FirstChildElement("sim")) ) {
+		tinyxml2::XMLElement *sim = _doc.NewElement("sim");
+		_doc.InsertFirstChild(sim);
+	}
+
+	// create graphics
+	if ( !(node = _doc.FirstChildElement("graphics")) ) {
+		tinyxml2::XMLElement *graphics = _doc.NewElement("graphics");
+		_doc.InsertFirstChild(graphics);
+	}
+
+	// create ground
+	if ( !(node = _doc.FirstChildElement("ground")) ) {
+		tinyxml2::XMLElement *ground = _doc.NewElement("ground");
+		_doc.InsertFirstChild(ground);
+	}
+
+	// create config
+	if ( !(node = _doc.FirstChildElement("config")) ) {
+		tinyxml2::XMLElement *config = _doc.NewElement("config");
+		_doc.InsertFirstChild(config);
+	}
+
+	// create declaration
+	if ( !(node = _doc.FirstChildElement("RoboSim XML Configuration")) ) {
+		tinyxml2::XMLDeclaration *dec = _doc.NewDeclaration("RoboSim XML Configuration");
+		_doc.InsertFirstChild(dec);
+	}
 
 	// write to disk
 	this->save();
 }
 
 Writer::~Writer(void) {
+	this->save();
 }
 
 /**********************************************************
@@ -197,11 +191,10 @@ tinyxml2::XMLElement* Writer::getRobot(int id) {
 
 void Writer::setGrid(bool units, std::vector<double> grid) {
 	// clear old grid settings
-	tinyxml2::XMLElement *graphics = _doc.FirstChildElement("graphics");
-	graphics->DeleteChild(graphics->FirstChildElement("grid"));
+	tinyxml2::XMLElement *g = this->getOrCreateElement("graphics", "grid");
+	g->DeleteChildren();
 
 	// set new grid
-	tinyxml2::XMLElement *g = _doc.NewElement("grid");
 	g->SetAttribute("units", units);
 	g->SetAttribute("enabled", grid[6]);
 	g->SetAttribute("major", grid[0]);
@@ -211,13 +204,30 @@ void Writer::setGrid(bool units, std::vector<double> grid) {
 	g->SetAttribute("miny", grid[4]);
 	g->SetAttribute("maxy", grid[5]);
 
-	// add new grid
-	graphics->InsertFirstChild(g);
-
 	// write to disk
+	this->save();
+}
+
+void Writer::setTrace(bool trace) {
+	this->getOrCreateElement("graphics", "trace")->DeleteChildren();
+	this->getOrCreateElement("graphics", "trace")->InsertFirstChild(this->toText(trace));
 	this->save();
 }
 
 void Writer::save(void) {
 	_doc.SaveFile(_path.c_str());
 }
+
+tinyxml2::XMLElement* Writer::getOrCreateElement(const char *parent, const char *child) {
+	tinyxml2::XMLElement *e = _doc.FirstChildElement(parent)->FirstChildElement(child);
+	if (!e) {
+		e = _doc.NewElement(child);
+		_doc.FirstChildElement(parent)->InsertFirstChild(e);
+	}
+	return e;
+}
+
+tinyxml2::XMLText* Writer::toText(bool b) {
+	return _doc.NewText(std::to_string(b).c_str());
+}
+

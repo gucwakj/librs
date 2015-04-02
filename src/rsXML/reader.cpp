@@ -273,7 +273,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "grid") ) {
 			node->QueryDoubleAttribute("tics", &_grid[0]);
-			node->QueryDoubleAttribute("major", &_grid[1]);
+			node->QueryDoubleAttribute("hash", &_grid[1]);
 			node->QueryDoubleAttribute("minx", &_grid[2]);
 			node->QueryDoubleAttribute("maxx", &_grid[3]);
 			node->QueryDoubleAttribute("miny", &_grid[4]);

@@ -53,7 +53,7 @@ namespace rsXML {
 			int _version;						// version of xml file being read
 			std::string _path;					// path of xml file
 			std::vector<double> _friction;		// coefficient of friction [body/ground, body/body]
-			std::vector<double> _grid;			// grid [tics, major, minx, maxx, miny, maxy, enabled]
+			std::vector<double> _grid;			// grid [tics, hash, minx, maxx, miny, maxy, enabled]
 			std::vector<double> _restitution;	// coefficient of restitution [body/ground, body/body]
 			std::vector<Ground*> _ground;		// ground obstacles
 			std::vector<Marker*> _marker;		// graphical markers

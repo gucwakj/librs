@@ -196,13 +196,13 @@ void Writer::setGrid(std::vector<double> grid) {
 	g->DeleteChildren();
 
 	// set new grid
-	g->SetAttribute("enabled", grid[6]);
-	g->SetAttribute("major", grid[0]);
-	g->SetAttribute("tics", grid[1]);
+	g->SetAttribute("tics", grid[0]);
+	g->SetAttribute("hash", grid[1]);
 	g->SetAttribute("minx", grid[2]);
 	g->SetAttribute("maxx", grid[3]);
 	g->SetAttribute("miny", grid[4]);
 	g->SetAttribute("maxy", grid[5]);
+	g->SetAttribute("enabled", grid[6]);
 
 	// write to disk
 	this->save();

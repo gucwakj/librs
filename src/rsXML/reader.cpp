@@ -272,9 +272,6 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setSize(a);
 		}
 		else if ( !strcmp(node->Value(), "grid") ) {
-			node->QueryIntAttribute("units", reinterpret_cast<int *>(&_units));
-			// TODO: fix xml config file to default to 1 SI and 0 customary
-			_units = (_units) ? 0 : 1;
 			node->QueryDoubleAttribute("tics", &_grid[0]);
 			node->QueryDoubleAttribute("major", &_grid[1]);
 			node->QueryDoubleAttribute("minx", &_grid[2]);
@@ -283,10 +280,8 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			node->QueryDoubleAttribute("maxy", &_grid[5]);
 			node->QueryDoubleAttribute("enabled", &_grid[6]);
 			for (int i = 0; i < 6; i++) {
-				if (_units)
-					_grid[i] /= 100;
-				else
-					_grid[i] /= 39.37;
+				if (_units) _grid[i] /= 100;
+				else _grid[i] /= 39.37;
 			}
 		}
 		else if ( !strcmp(node->Value(), "trace") ) {
@@ -313,6 +308,13 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
+			}
+		}
+		else if ( !strcmp(node->Value(), "units") ) {
+			node->QueryIntText(reinterpret_cast<int *>(&_units));
+			for (int i = 0; i < 6; i++) {
+				if (_units) _grid[i] /= 100;
+				else _grid[i] /= 39.37;
 			}
 		}
 

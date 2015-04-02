@@ -65,13 +65,14 @@ namespace rsScene {
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			void setDelete(int);
-			void setGrid(bool, std::vector<double>, bool = false);
+			void setGrid(std::vector<double>, bool = false);
 			void setHighlight(bool);
 			void setHUD(bool);
 			void setLabel(bool);
 			void setLevel(int);
 			void setMouseHandler(rsScene::MouseHandler*);
 			void setPauseText(int);
+			void setUnits(bool);
 			int setupCamera(osg::GraphicsContext*, double, double);
 			int setupScene(double, double, bool);
 			int setupViewer(osgViewer::Viewer*);

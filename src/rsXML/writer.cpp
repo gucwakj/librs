@@ -190,13 +190,12 @@ tinyxml2::XMLElement* Writer::getRobot(int id) {
 	}
 }
 
-void Writer::setGrid(bool units, std::vector<double> grid) {
+void Writer::setGrid(std::vector<double> grid) {
 	// clear old grid settings
 	tinyxml2::XMLElement *g = this->getOrCreateElement("graphics", "grid");
 	g->DeleteChildren();
 
 	// set new grid
-	g->SetAttribute("units", units);
 	g->SetAttribute("enabled", grid[6]);
 	g->SetAttribute("major", grid[0]);
 	g->SetAttribute("tics", grid[1]);
@@ -212,6 +211,12 @@ void Writer::setGrid(bool units, std::vector<double> grid) {
 void Writer::setTrace(bool trace) {
 	this->getOrCreateElement("graphics", "trace")->DeleteChildren();
 	this->getOrCreateElement("graphics", "trace")->InsertFirstChild(this->toText(trace));
+	this->save();
+}
+
+void Writer::setUnits(bool units) {
+	this->getOrCreateElement("graphics", "units")->DeleteChildren();
+	this->getOrCreateElement("graphics", "units")->InsertFirstChild(this->toText(units));
 	this->save();
 }
 

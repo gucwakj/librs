@@ -382,9 +382,8 @@ void Scene::setDelete(int id) {
 	_deleting = id;
 }
 
-void Scene::setGrid(bool units, std::vector<double> grid, bool draw) {
+void Scene::setGrid(std::vector<double> grid, bool draw) {
 	// save new values
-	_units = units;
 	_grid[0] = grid[0];
 	_grid[1] = grid[1];
 	_grid[2] = grid[2];
@@ -458,6 +457,10 @@ void Scene::setPauseText(int pause) {
 		this->getHUDText()->setText("Paused: Press any key to restart");
 	else
 		this->getHUDText()->setText("");
+}
+
+void Scene::setUnits(bool units) {
+	_units = units;
 }
 
 int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {

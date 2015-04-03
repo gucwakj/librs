@@ -62,6 +62,25 @@ Marker* Reader::getMarker(int id) {
 	return _marker[id];
 }
 
+Marker* Reader::getNextMarker(int form) {
+	// find next marker in xml list
+	int i = 0;
+	for (i = 0; i < _marker.size(); i++) {
+		if (!_marker[i]->getConnect() && (form == -1 || _marker[i]->getForm() == form))
+			break;
+	}
+
+	// haven't found one
+	if (i == _marker.size())
+		return NULL;
+
+	// robot now connected
+	_marker[i]->setConnect(1);
+
+	// success
+	return _marker[i];
+}
+
 Ground* Reader::getNextObstacle(int form) {
 	// find next obstacle in xml list
 	int i = 0;
@@ -234,6 +253,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
+	int i;
 	double a, b, c, d;
 
 	// check for existence of node
@@ -246,6 +266,8 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 		if ( !strcmp(node->Value(), "line") ) {
 			// create object
 			_marker.push_back(new Marker(rs::LINE));
+			node->QueryIntAttribute("id", &i);
+			_marker.back()->setID(i);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				ele->QueryDoubleAttribute("r", &a);
@@ -262,7 +284,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setEnd(a, b, c);
 			}
 			// start position
-			if ( (ele = node->FirstChildElement("start")) ) {
+			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
@@ -272,9 +294,11 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			if (!node->QueryDoubleAttribute("width", &a))
 				_marker.back()->setSize(a);
 		}
-		else if ( !strcmp(node->Value(), "point") ) {
+		else if ( !strcmp(node->Value(), "dot") ) {
 			// create object
 			_marker.push_back(new Marker(rs::DOT));
+			node->QueryIntAttribute("id", &i);
+			_marker.back()->setID(i);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				ele->QueryDoubleAttribute("r", &a);
@@ -313,6 +337,8 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 		else if ( !strcmp(node->Value(), "text") ) {
 			// create object
 			_marker.push_back(new Marker(rs::TEXT));
+			node->QueryIntAttribute("id", &i);
+			_marker.back()->setID(i);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				ele->QueryDoubleAttribute("r", &a);

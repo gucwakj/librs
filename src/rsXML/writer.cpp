@@ -57,6 +57,44 @@ Writer::~Writer(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, double *p1, double *p2, double *c, int size) {
+	// set start position
+	tinyxml2::XMLElement *pos = getOrCreateChild(marker, "position");
+	pos->SetAttribute("x", p1[0]);
+	pos->SetAttribute("y", p1[1]);
+	pos->SetAttribute("z", p1[2]);
+
+	// set end position
+	tinyxml2::XMLElement *end = getOrCreateChild(marker, "end");
+	end->SetAttribute("x", p2[0]);
+	end->SetAttribute("y", p2[1]);
+	end->SetAttribute("z", p2[2]);
+
+	// set individual pieces
+	switch (marker->IntAttribute("form")) {
+		case rs::DOT:
+			marker->SetAttribute("radius", size);
+			break;
+		case rs::LINE:
+			marker->SetAttribute("width", size);
+			break;
+		case rs::TEXT:
+			this->getOrCreateChild(marker, "name")->DeleteChildren();
+			this->getOrCreateChild(marker, "name")->InsertFirstChild(this->toText(name));
+			break;
+	}
+
+	// set led
+	tinyxml2::XMLElement *led = getOrCreateChild(marker, "color");
+	led->SetAttribute("r", c[0]);
+	led->SetAttribute("g", c[1]);
+	led->SetAttribute("b", c[2]);
+	led->SetAttribute("alpha", c[3]);
+
+	// write to disk
+	this->save();
+}
+
 void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, double *p, double *q, double *l, double *c, int mass) {
 	// set attributes
 	obstacle->SetAttribute("mass", mass);
@@ -98,6 +136,9 @@ void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, doubl
 	led->SetAttribute("g", c[1]);
 	led->SetAttribute("b", c[2]);
 	led->SetAttribute("alpha", c[3]);
+
+	// write to disk
+	this->save();
 }
 
 void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, double *p, double *q, double *r, double *c) {
@@ -258,6 +299,38 @@ tinyxml2::XMLElement* Writer::getOrCreateElement(const char *parent, const char 
 	return e;
 }
 
+tinyxml2::XMLElement* Writer::getOrCreateMarker(int form, int id) {
+	tinyxml2::XMLElement *graphics = _doc.FirstChildElement("graphics");
+	tinyxml2::XMLElement *node = graphics->FirstChildElement();
+	int j;
+	while (node) {
+		node->QueryIntAttribute("id", &j);
+		if (j == id) {
+			node->SetAttribute("form", form);
+			return node;
+		}
+		node = node->NextSiblingElement();
+	}
+	switch (form) {
+		case rs::DOT:
+			node = _doc.NewElement("dot");
+			break;
+		case rs::LINE:
+			node = _doc.NewElement("line");
+			break;
+		case rs::TEXT:
+			node = _doc.NewElement("text");
+			break;
+	}
+	node->SetAttribute("id", id);
+	node->SetAttribute("form", form);
+	if (id == 0)
+		graphics->InsertFirstChild(node);
+	else
+		graphics->InsertAfterChild(getOrCreateMarker(form, id-1), node);
+	return node;
+}
+
 tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
 	tinyxml2::XMLElement *ground = _doc.FirstChildElement("ground");
 	tinyxml2::XMLElement *node = ground->FirstChildElement();
@@ -286,7 +359,7 @@ tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
 	if (id == 0)
 		ground->InsertFirstChild(node);
 	else
-		ground->InsertAfterChild(getOrCreateRobot(form, id-1), node);
+		ground->InsertAfterChild(getOrCreateObstacle(form, id-1), node);
 	return node;
 }
 

@@ -13,13 +13,17 @@ namespace rsXML {
 			virtual ~Marker(void) {};
 
 			double* getColor(void);
+			int getConnect(void);
 			double* getEnd(void);
+			int getID(void);
 			double* getStart(void);
 			int getSize(void);
-			int getType(void);
+			int getForm(void);
 			std::string getLabel(void);
 			void setColor(double, double, double, double);
+			void setConnect(int);
 			void setEnd(double, double, double);
+			void setID(int);
 			void setLabel(std::string);
 			void setSize(int);
 			void setStart(double, double, double);
@@ -29,6 +33,8 @@ namespace rsXML {
 			double _c[4];	// color
 			double _e[3];	// end position
 			double _s[3];	// start position
+			int _connected;	// connect to view
+			int _id;		// id
 			int _size;		// size of object
 			int _type;		// type
 			std::string _l;	// label

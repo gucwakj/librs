@@ -165,6 +165,42 @@ const rs::Quat Linkbot::getRobotBodyQuaternion(int body, double theta, const rs:
 	return Q;
 }
 
+const rs::Pos Linkbot::getRobotCenterPosition(int face, const rs::Pos &p, const rs::Quat &q) {
+	// new position
+	rs::Pos P(p);
+
+	// get position of robot
+	if (face == FACE1)
+		return P.add(q.multiply(_body_width/2 + _face_depth, 0, 0));
+	else if (face == FACE2)
+		return P.add(q.multiply(_face_depth + _body_length, 0, 0));
+	else if (face == FACE3)
+		return P.add(q.multiply(_body_width/2 + _face_depth, 0, 0));
+}
+
+const rs::Quat Linkbot::getRobotCenterQuaternion(int face, int orientation, double angle, const rs::Quat &q) {
+	// new quaternion
+	rs::Quat Q(q);
+
+	// rotate for orientation
+	Q.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
+
+	// get quaternion of robot
+	if (face == FACE1)
+		Q.multiply(sin(0.5*angle), 0, 0, cos(0.5*angle));
+	else if (face == FACE2) {
+		Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
+		Q.multiply(sin(0.5*angle), 0, 0, cos(0.5*angle));
+	}
+	else if (face == FACE3) {
+		Q.multiply(0, 0, sin(1.570796), cos(1.570796));
+		Q.multiply(sin(-0.5*angle), 0, 0, cos(-0.5*angle));
+	}
+
+	// return offset quaternion
+	return Q;
+}
+
 const rs::Pos Linkbot::getRobotFacePosition(int face, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);

@@ -166,32 +166,9 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int gr
 }
 
 int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyID base, int face, int orientation, int ground) {
-	// new position & quaternion classes
-	rs::Pos P(p);
-	rs::Quat Q(q);
-
-	// rotate for orientation
-	Q.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
-
-	// get position of robot
-	if (face == FACE1)
-		P.add(Q.multiply(_body_width/2 + _face_depth, 0, 0));
-	else if (face == FACE2)
-		P.add(Q.multiply(_face_depth + _body_length, 0, 0));
-	else if (face == FACE3)
-		P.add(Q.multiply(_body_width/2 + _face_depth, 0, 0));
-
-	// get quaternion of robot
-	if (face == FACE1)
-		Q.multiply(sin(DEG2RAD(0.5*a[JOINT1])), 0, 0, cos(DEG2RAD(0.5*a[JOINT1])));
-	else if (face == FACE2) {
-		Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
-		Q.multiply(sin(DEG2RAD(0.5*a[JOINT2])), 0, 0, cos(DEG2RAD(0.5*a[JOINT2])));
-	}
-	else if (face == FACE3) {
-		Q.multiply(0, 0, sin(1.570796), cos(1.570796));
-		Q.multiply(sin(DEG2RAD(-0.5*a[JOINT3])), 0, 0, cos(DEG2RAD(-0.5*a[JOINT3])));
-	}
+	// calculate center of robot location
+	rs::Pos P = this->getRobotCenterPosition(face, p, q);
+	rs::Quat Q = this->getRobotCenterQuaternion(face, orientation, DEG2RAD(a[face-1]), q);
 
 	// build new module
 	this->buildIndividual(P, Q, a);

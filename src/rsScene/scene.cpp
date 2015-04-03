@@ -391,9 +391,10 @@ void Scene::setGrid(std::vector<double> grid, bool draw) {
 	_grid[5] = grid[5];
 	_grid[6] = grid[6];
 
-	if (draw) {
+	// draw grid if there is a background on which to draw
+	if (_level && draw) {
 		// remove old grid
-		_background->removeChildren(1, _background->getNumChildren());
+		_background->removeChildren(2, _background->getNumChildren());
 
 		// draw new grid
 		this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
@@ -421,11 +422,20 @@ void Scene::setLabel(bool label) {
 }
 
 void Scene::setLevel(int level) {
+	// exit if level doesn't change
 	if (_level == level) return;
 
+	// set new level
 	_level = level;
-	_background->removeChildren(0, _background->getNumChildren());
 
+	// remove background pieces
+	if (_background && _background->getNumChildren())
+		_background->removeChildren(0, _background->getNumChildren());
+
+	// level==NONE, return
+	if (_level == NONE) return;
+
+	// draw new level
 	switch (level) {
 		case OUTDOORS:
 			this->draw_scene_outdoors();
@@ -507,10 +517,6 @@ int Scene::setupScene(double w, double h, bool pause) {
 	//sm->setTextureSize(osg::Vec2s(1024, 1024));
 	//_scene->setShadowTechnique(sm.get());
 
-	// set up level background objects group
-	_background = new osg::Group;
-	_scene->addChild(_background);
-
 	// add light source
 	/*osg::ref_ptr<osg::LightSource> ls = new osg::LightSource;
 	//ls->getLight()->setPosition(osg::Vec4(5, 5, 10, 1.0));
@@ -525,16 +531,21 @@ int Scene::setupScene(double w, double h, bool pause) {
 	// draw global HUD
 	this->draw_global_hud(w, h, pause);
 
-	// draw skybox
-	this->draw_skybox();
+	// draw background pieces for levels
+	if (_level) {
+		// scene background
+		_background = new osg::Group;
+		_scene->addChild(_background);
 
-	switch (_level) {
-		case OUTDOORS:
-			this->draw_scene_outdoors();
-			break;
-		case BOARD:
-			this->draw_scene_board();
-			break;
+		// draw scenes
+		switch (_level) {
+			case OUTDOORS:
+				this->draw_scene_outdoors();
+				break;
+			case BOARD:
+				this->draw_scene_board();
+				break;
+		}
 	}
 
 	// optimize the scene graph, remove redundant nodes and state etc.
@@ -1414,6 +1425,9 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 }
 
 void Scene::draw_scene_outdoors(void) {
+	// draw skybox
+	this->draw_skybox();
+
 	// square geometry
 	osg::Geode *geode = new osg::Geode;
 	osg::Geometry *geom = new osg::Geometry;
@@ -1451,6 +1465,9 @@ void Scene::draw_scene_outdoors(void) {
 }
 
 void Scene::draw_scene_board(void) {
+	// draw skybox
+	this->draw_skybox();
+
 	// square geometry
 	osg::Geode *geode = new osg::Geode;
 	osg::Geometry *geom = new osg::Geometry;
@@ -1539,7 +1556,7 @@ void Scene::draw_skybox(void) {
 	clearNode->setCullCallback(new TextureCallback(*tm));
 	clearNode->addChild(transform);
 	clearNode->setNodeMask(~IS_PICKABLE_MASK);
-	_root->addChild(clearNode);
+	_background->addChild(clearNode);
 }
 
 void* Scene::graphics_thread(void *arg) {

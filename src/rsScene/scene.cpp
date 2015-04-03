@@ -1208,7 +1208,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int type, int face, int orientation, double size, int side, int conn) {
 	// get robot p&q
 	osg::PositionAttitudeTransform *pat;
-	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::BODY + face));
+	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::BODY));
 	osg::Vec3d p = pat->getPosition();
 	osg::Quat q = pat->getAttitude();
 	double p1[3], p2[3], q1[4], q2[4];

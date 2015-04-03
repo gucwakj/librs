@@ -17,13 +17,15 @@ namespace rsXML {
 			Writer(std::string, const std::string&);
 			virtual ~Writer(void);
 
-			void setRobot(tinyxml2::XMLElement*, std::string, double*, double*, double*, double*);
 			tinyxml2::XMLElement* getOrCreateChild(tinyxml2::XMLElement*, const char*);
 			tinyxml2::XMLElement* getOrCreateElement(const char*, const char*);
+			tinyxml2::XMLElement* getOrCreateObstacle(int, int);
 			tinyxml2::XMLElement* getOrCreateRobot(int, int);
 			tinyxml2::XMLElement* getRobot(int);
 			void save(void);
 			void setGrid(std::vector<double>);
+			void setRobot(tinyxml2::XMLElement*, std::string, double*, double*, double*, double*);
+			void setObstacle(tinyxml2::XMLElement*, std::string, double*, double*, double*, double*, int);
 			void setTrace(bool);
 			void setUnits(bool);
 			tinyxml2::XMLText* toText(bool);

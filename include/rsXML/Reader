@@ -22,6 +22,7 @@ namespace rsXML {
 			int addNewRobot(Robot*);
 			Ground* getGround(int);
 			Marker* getMarker(int);
+			Ground* getNextObstacle(int = -1);
 			Robot* getNextRobot(int);
 			std::vector<double> getFriction(void);
 			std::vector<double> getGrid(void);

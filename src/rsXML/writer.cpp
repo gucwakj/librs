@@ -57,6 +57,49 @@ Writer::~Writer(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, double *p, double *q, double *l, double *c, int mass) {
+	// set attributes
+	obstacle->SetAttribute("mass", mass);
+
+	// set position
+	tinyxml2::XMLElement *pos = getOrCreateChild(obstacle, "position");
+	pos->SetAttribute("x", p[0]);
+	pos->SetAttribute("y", p[1]);
+	pos->SetAttribute("z", p[2]);
+
+	// set rotation
+	tinyxml2::XMLElement *rot = getOrCreateChild(obstacle, "rotation");
+	rot->SetAttribute("x", q[0]);
+	rot->SetAttribute("y", q[1]);
+	rot->SetAttribute("z", q[2]);
+	rot->SetAttribute("w", q[3]);
+
+	// set size
+	tinyxml2::XMLElement *size = getOrCreateChild(obstacle, "size");
+	switch (obstacle->IntAttribute("form")) {
+		case rs::BOX:
+			size->SetAttribute("x", l[0]);
+			size->SetAttribute("y", l[1]);
+			size->SetAttribute("z", l[2]);
+			break;
+		case rs::CYLINDER:
+			size->SetAttribute("length", l[0]);
+			size->SetAttribute("radius", l[1]);
+			obstacle->SetAttribute("axis", l[2]);
+			break;
+		case rs::SPHERE:
+			size->SetAttribute("radius", l[0]);
+			break;
+	}
+
+	// set led
+	tinyxml2::XMLElement *led = getOrCreateChild(obstacle, "color");
+	led->SetAttribute("r", c[0]);
+	led->SetAttribute("g", c[1]);
+	led->SetAttribute("b", c[2]);
+	led->SetAttribute("alpha", c[3]);
+}
+
 void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, double *p, double *q, double *r, double *c) {
 	// set position
 	tinyxml2::XMLElement *pos = getOrCreateChild(robot, "position");
@@ -213,6 +256,38 @@ tinyxml2::XMLElement* Writer::getOrCreateElement(const char *parent, const char 
 		_doc.FirstChildElement(parent)->InsertFirstChild(e);
 	}
 	return e;
+}
+
+tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
+	tinyxml2::XMLElement *ground = _doc.FirstChildElement("ground");
+	tinyxml2::XMLElement *node = ground->FirstChildElement();
+	int j;
+	while (node) {
+		node->QueryIntAttribute("id", &j);
+		if (j == id) {
+			node->SetAttribute("form", form);
+			return node;
+		}
+		node = node->NextSiblingElement();
+	}
+	switch (form) {
+		case rs::BOX:
+			node = _doc.NewElement("box");
+			break;
+		case rs::CYLINDER:
+			node = _doc.NewElement("cylinder");
+			break;
+		case rs::SPHERE:
+			node = _doc.NewElement("sphere");
+			break;
+	}
+	node->SetAttribute("id", id);
+	node->SetAttribute("form", form);
+	if (id == 0)
+		ground->InsertFirstChild(node);
+	else
+		ground->InsertAfterChild(getOrCreateRobot(form, id-1), node);
+	return node;
 }
 
 tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {

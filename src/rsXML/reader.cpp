@@ -62,6 +62,25 @@ Marker* Reader::getMarker(int id) {
 	return _marker[id];
 }
 
+Ground* Reader::getNextObstacle(int form) {
+	// find next obstacle in xml list
+	int i = 0;
+	for (i = 0; i < _ground.size(); i++) {
+		if (!_ground[i]->getConnect() && (form == -1 || _ground[i]->getForm() == form))
+			break;
+	}
+
+	// haven't found one
+	if (i == _ground.size())
+		return NULL;
+
+	// robot now connected
+	_ground[i]->setConnect(1);
+
+	// success
+	return _ground[i];
+}
+
 Robot* Reader::getNextRobot(int form) {
 	// find next robot in xml list
 	int i = 0;
@@ -93,6 +112,7 @@ Robot* Reader::getNextRobot(int form) {
 		exit(-1);
 	}
 
+	// haven't found one
 	if (i == _robot.size())
 		return NULL;
 
@@ -330,6 +350,7 @@ void Reader::read_ground(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
+	int i;
 	double a, b, c, d;
 
 	// check for existence of node
@@ -342,6 +363,8 @@ void Reader::read_ground(tinyxml2::XMLDocument *doc) {
 		if ( !strcmp(node->Value(), "box") ) {
 			// create object
 			_ground.push_back(new Ground(rs::BOX));
+			node->QueryIntAttribute("id", &i);
+			_ground.back()->setID(i);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				ele->QueryDoubleAttribute("r", &a);
@@ -380,6 +403,8 @@ void Reader::read_ground(tinyxml2::XMLDocument *doc) {
 		else if ( !strcmp(node->Value(), "cylinder") ) {
 			// create object
 			_ground.push_back(new Ground(rs::CYLINDER));
+			node->QueryIntAttribute("id", &i);
+			_ground.back()->setID(i);
 			// mass
 			if (node->QueryDoubleAttribute("mass", &a))
 				_ground.back()->setMass(0.1);
@@ -422,6 +447,8 @@ void Reader::read_ground(tinyxml2::XMLDocument *doc) {
 		else if ( !strcmp(node->Value(), "sphere") ) {
 			// create object
 			_ground.push_back(new Ground(rs::SPHERE));
+			node->QueryIntAttribute("id", &i);
+			_ground.back()->setID(i);
 			// mass
 			if (node->QueryDoubleAttribute("mass", &a))
 				_ground.back()->setMass(0.1);

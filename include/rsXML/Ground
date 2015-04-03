@@ -12,14 +12,18 @@ namespace rsXML {
 
 			double getAxis(void);
 			double* getColor(void);
+			int getConnect(void);
 			double* getDimensions(void);
+			int getForm(void);
+			int getID(void);
 			double getMass(void);
 			double* getPosition(void);
 			double* getQuaternion(void);
-			int getType(void);
 			void setAxis(double);
 			void setColor(double, double, double, double);
+			void setConnect(int);
 			void setDimensions(double, double, double);
+			void setID(int);
 			void setMass(double);
 			void setPosition(double, double, double);
 			void setRotation(double, double, double);
@@ -32,6 +36,8 @@ namespace rsXML {
 			double _mass;	// mass
 			double _p[3];	// position
 			double _q[4];	// quaternion
+			int _connected;	// connected to sim/gui
+			int _id;		// id
 			int _type;		// type
 	};
 

@@ -9,6 +9,7 @@ Ground::Ground(int type) {
 	_c[1] = 0;
 	_c[2] = 0;
 	_c[3] = 0;
+	_connected = 0;
 	_l[0] = 0;
 	_l[1] = 0;
 	_l[2] = 0;
@@ -31,8 +32,20 @@ double* Ground::getColor(void) {
 	return _c;
 }
 
+int Ground::getConnect(void) {
+	return _connected;
+}
+
 double* Ground::getDimensions(void) {
 	return _l;
+}
+
+int Ground::getForm(void) {
+	return _type;
+}
+
+int Ground::getID(void) {
+	return _id;
 }
 
 double Ground::getMass(void) {
@@ -47,10 +60,6 @@ double* Ground::getQuaternion(void) {
 	return _q;
 }
 
-int Ground::getType(void) {
-	return _type;
-}
-
 void Ground::setAxis(double a) {
 	_axis = a;
 }
@@ -62,10 +71,18 @@ void Ground::setColor(double a, double b, double c, double d) {
 	_c[3] = d;
 }
 
+void Ground::setConnect(int a) {
+	_connected = a;
+}
+
 void Ground::setDimensions(double a, double b, double c) {
 	_l[0] = a;
 	_l[1] = b;
 	_l[2] = c;
+}
+
+void Ground::setID(int a) {
+	_id = a;
 }
 
 void Ground::setMass(double a) {

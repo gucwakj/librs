@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <rs/Pos>
 #include <rs/Quat>
 
@@ -61,5 +63,9 @@ const Quat Quat::multiply(double x, double y, double z, double w){
 	_v[0] = x1;
 
 	return (*this);
+}
+
+void Quat::print(void) {
+	std::cerr << "Q: " << _v[0] << " " << _v[1] << " " << _v[2] << " " << _v[3] << std::endl;
 }
 

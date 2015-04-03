@@ -54,7 +54,7 @@ namespace rsScene {
 			Scene(void);
 			virtual ~Scene(void);
 
-			int addChild(void);
+			int addChildren(void);
 			void addHighlight(int, bool = true, bool = true);
 			int deleteChild(int);
 			int deleteObstacle(int);

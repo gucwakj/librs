@@ -12,6 +12,7 @@ namespace rs {
 
 			const Pos add(double, double, double);
 			const Pos add(const Pos&);
+			void print(void);
 
 			// access operators
 			inline double& operator[](int i) { return _v[i]; }

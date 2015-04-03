@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <rs/Pos>
 
 using namespace rs;
@@ -37,5 +39,9 @@ const Pos Pos::add(double x, double y, double z) {
 	_v[2] += z;
 
 	return (*this);
+}
+
+void Pos::print(void) {
+	std::cerr << "P: " << _v[0] << " " << _v[1] << " " << _v[2] << std::endl;
 }
 

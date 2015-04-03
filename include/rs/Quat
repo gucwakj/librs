@@ -21,6 +21,8 @@ namespace rs {
 			const Quat multiply(const rs::Quat&);
 			const Quat multiply(double, double, double, double);
 
+			void print(void);
+
 			// access operators
 			inline double& operator[](int i) { return _v[i]; }
 			inline double  operator[](int i) const { return _v[i]; }

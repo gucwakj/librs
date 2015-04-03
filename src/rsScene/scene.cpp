@@ -73,13 +73,12 @@ std::cerr << "rsScene/~Scene end" << std::endl;
 /**********************************************************
 	public functions
  **********************************************************/
-int Scene::addChild(void) {
-	if (_staging->getNumChildren()) {
+int Scene::addChildren(void) {
+	while (_staging->getNumChildren()) {
 		_scene->addChild(_staging->getChild(0));
 		_staging->removeChild(0, 1);
-		return 0;
 	}
-	return -1;
+	return 0;
 }
 
 void Scene::addHighlight(int id, bool robot, bool exclusive) {
@@ -1556,7 +1555,7 @@ void* Scene::graphics_thread(void *arg) {
 		MUTEX_UNLOCK(&(p->_thread_mutex));
 
 		p->_viewer->frame();
-		p->addChild();
+		p->addChildren();
 		if (p->_deleting) {
 			p->_scene->removeChild(p->_scene->getChild(p->_deleting));
 			p->_deleting = 0;

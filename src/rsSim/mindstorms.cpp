@@ -370,10 +370,18 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dBodySetQuaternion(_body[BODY], Q);
 	dBodySetFiniteRotationMode(_body[BODY], 1);
 
+	// build geometries
+	dGeomID geom[2];
+
 	// set geometry 0 - box
-	dGeomID geom = dCreateBox(_space, _body_width, _body_length, _body_height);
-	dGeomSetBody(geom, _body[BODY]);
-	dGeomSetOffsetPosition(geom, 0, 0, 0);
+	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
+	dGeomSetBody(geom[0], _body[BODY]);
+	dGeomSetOffsetPosition(geom[0], 0, 0, 0);
+
+	// set geometry 1 - sphere
+	geom[1] = dCreateSphere(_space, 0.01573);
+	dGeomSetBody(geom[1], _body[BODY]);
+	dGeomSetOffsetPosition(geom[1], 0, -_body_length/2 + 0.01573/2, -_body_height/2 - 0.01573/2);
 }
 
 void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {

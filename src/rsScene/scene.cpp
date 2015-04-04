@@ -1,3 +1,5 @@
+#include <osg/BoundingBox>
+#include <osg/ComputeBoundsVisitor>
 #include <osgFX/Scribe>
 #include <osgDB/FileUtils>
 
@@ -340,6 +342,12 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 
 	// add to scenegraph
 	_staging->addChild(group);
+
+	// compute bounding box of robot
+	osg::ComputeBoundsVisitor cbbv;
+	group->accept(cbbv);
+	osg::BoundingBox bb = cbbv.getBoundingBox();
+	osg::Vec3 size = bb._max - bb._min;
 
 	// return robot
 	return group;

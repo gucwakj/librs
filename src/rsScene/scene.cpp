@@ -1393,7 +1393,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 
 	// body
 	//body[rsMindstorms::BODY] = osgDB::readNodeFile(_tex_path + "mindstorms/models/body.3ds");	// TODO: add
-	box = new osg::Box(osg::Vec3d(0, 0, 0), 0.07835, 0.03935, 0.0725);		// TODO: remove
+	box = new osg::Box(osg::Vec3d(0, 0, 0), 0.09175, 0.17300, 0.13400);		// TODO: remove
 	body[rsMindstorms::BODY]->addDrawable(new osg::ShapeDrawable(box));		// TODO: remove
 	body[rsMindstorms::BODY]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	pat[rsMindstorms::BODY]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
@@ -1403,7 +1403,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	rs::Quat q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL1, a[rsMindstorms::JOINT1], q);
 	rs::Pos p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL1, p, q);
 	//body[rsMindstorms::WHEEL1] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
-	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.04445, 0.00140);		// TODO: remove
+	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02843, 0.02660);				// TODO: remove
 	body[rsMindstorms::WHEEL1]->addDrawable(new osg::ShapeDrawable(cyl));		// TODO: remove
 	body[rsMindstorms::WHEEL1]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	pat[rsMindstorms::WHEEL1]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
@@ -1413,7 +1413,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL2, a[rsMindstorms::JOINT2], q);
 	p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL2, p, q);
 	//body[rsMindstorms::WHEEL2] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
-	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.04445, 0.00140);		// TODO: remove
+	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02843, 0.02660);				// TODO: remove
 	body[rsMindstorms::WHEEL2]->addDrawable(new osg::ShapeDrawable(cyl));		// TODO: remove
 	body[rsMindstorms::WHEEL2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	pat[rsMindstorms::WHEEL2]->setPosition(osg::Vec3d(p[0], p[1], p[2]));

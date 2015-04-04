@@ -48,7 +48,7 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	}
 
 	// build robot bodies
-	this->build_body(p, q);
+	this->build_body(this->getRobotBodyPosition(BODY, p, q), this->getRobotBodyQuaternion(BODY, 0, q));
 	this->build_wheel(WHEEL1, this->getRobotBodyPosition(WHEEL1, p, q), this->getRobotBodyQuaternion(WHEEL1, 0, q));
 	this->build_wheel(WHEEL2, this->getRobotBodyPosition(WHEEL2, p, q), this->getRobotBodyQuaternion(WHEEL2, 0, q));
 

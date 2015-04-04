@@ -30,6 +30,7 @@ namespace rsRobots {
 		protected:
 			double _bigwheel_radius;
 			double _bridge_length;
+			double _body_radius;
 			double _cubic_length;
 			double _face_depth;
 			double _face_radius;

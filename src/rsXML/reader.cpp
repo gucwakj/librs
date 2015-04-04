@@ -104,8 +104,20 @@ Robot* Reader::getNextRobot(int form) {
 	// find next robot in xml list
 	int i = 0;
 	for (i = 0; i < _robot.size(); i++) {
-		if (!_robot[i]->getConnect() && (form == -1 || _robot[i]->getForm() == form))
-			break;
+		if (!_robot[i]->getConnect()) {
+			if (_robot[i]->getForm() == rs::EV3 && form == rs::NXT) {
+				_robot[i]->setForm(form);
+				break;
+			}
+			else if (_robot[i]->getForm() == rs::NXT && form == rs::EV3) {
+				_robot[i]->setForm(form);
+				break;
+			}
+			else if (_robot[i]->getForm() == form)
+				break;
+			else
+				break;
+		}
 	}
 
 	// no robot found

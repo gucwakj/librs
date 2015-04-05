@@ -1,4 +1,3 @@
-#include <osg/BoundingBox>
 #include <osg/ComputeBoundsVisitor>
 #include <osgFX/Scribe>
 #include <osgDB/FileUtils>
@@ -83,7 +82,7 @@ int Scene::addChildren(void) {
 	return 0;
 }
 
-void Scene::addHighlight(int id, bool robot, bool exclusive) {
+void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 	// deselect everything
 	if (exclusive) {
 		// find nodes of intersection
@@ -93,12 +92,12 @@ void Scene::addHighlight(int id, bool robot, bool exclusive) {
 			// get robot node
 			if (test && (!test->getName().compare(0, 5, "robot"))) {
 				if (dynamic_cast<osgFX::Scribe *>(test->getChild(2)->asTransform()->getChild(0)))
-					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)));
+					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)), c);
 			}
 			// get ground node
 			if (test && !test->getName().compare(0, 6, "ground")) {
 				if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0)))
-					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)));
+					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
 			}
 		}
 	}
@@ -109,13 +108,25 @@ void Scene::addHighlight(int id, bool robot, bool exclusive) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		// get robot node
 		if (robot) {
-			if (test && !test->getName().compare(std::string("robot").append(std::to_string(id))))
-				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0));
+			if (test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
+				osg::ComputeBoundsVisitor cbbv;
+				test->accept(cbbv);
+				if (this->intersect_new_item(id, cbbv.getBoundingBox()))
+					this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
+				else
+					this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), c);
+			}
 		}
 		// get ground node
 		else if (!robot) {
-			if (test && !test->getName().compare(std::string("ground").append(std::to_string(id))))
-				this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0));
+			if (test && !test->getName().compare(std::string("ground").append(std::to_string(id)))) {
+				osg::ComputeBoundsVisitor cbbv;
+				test->accept(cbbv);
+				if (this->intersect_new_item(id, cbbv.getBoundingBox()))
+					this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
+				else
+					this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), c);
+			}
 		}
 	}
 }
@@ -342,12 +353,6 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 
 	// add to scenegraph
 	_staging->addChild(group);
-
-	// compute bounding box of robot
-	osg::ComputeBoundsVisitor cbbv;
-	group->accept(cbbv);
-	osg::BoundingBox bb = cbbv.getBoundingBox();
-	osg::Vec3 size = bb._max - bb._min;
 
 	// return robot
 	return group;
@@ -643,7 +648,7 @@ void Scene::start(int pause) {
 	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
 }
 
-void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
+void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec &c, bool on) {
 	if (!_highlight) return;
 
 	if (!parent->getName().compare(0, 5, "robot")) {
@@ -651,7 +656,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
 		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
 			for (int i = 2; i < parent->getNumChildren(); i++) {
 				osgFX::Scribe *scribe = new osgFX::Scribe();
-				scribe->setWireframeColor(osg::Vec4(1, 1, 0, 0.1));
+				scribe->setWireframeColor(osg::Vec4(c[0], c[1], c[2], 0.1));
 				scribe->setWireframeLineWidth(1);
 				scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 				scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
@@ -660,7 +665,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
 			}
 		}
 		// already highlighted, take it away
-		else {
+		else if (!on) {
 			for (int i = 2; i < parent->getNumChildren(); i++) {
 				osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(i)->asTransform()->getChild(0));
 				parent->getChild(i)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
@@ -671,7 +676,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
 			osgFX::Scribe *scribe = new osgFX::Scribe();
-			scribe->setWireframeColor(osg::Vec4(1, 1, 0, 0.1));
+			scribe->setWireframeColor(osg::Vec4(c[0], c[1], c[2], 0.1));
 			scribe->setWireframeLineWidth(1);
 			scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 			scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
@@ -679,7 +684,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child) {
 			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), scribe);
 		}
 		// already highlighted, take it away
-		else {
+		else if (!on) {
 			osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(0)->asTransform()->getChild(0));
 			parent->getChild(0)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
 		}
@@ -1601,5 +1606,32 @@ void* Scene::graphics_thread(void *arg) {
 
 	// return
 	return arg;
+}
+
+bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
+	// find nodes of intersection
+	osg::Group *test = NULL;
+	osg::ComputeBoundsVisitor cbbv;
+	bool retval = false;
+	for (int i = 0; i < _scene->getNumChildren(); i++) {
+		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		// get robot node
+		if (test && (!test->getName().compare(0, 5, "robot")) && (test->getName().compare(5, 1, std::to_string(id)))) {
+			test->accept(cbbv);
+			if (bb.intersects(cbbv.getBoundingBox())) {
+				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
+				retval = true;
+			}
+		}
+		// get ground node
+		if (test && !test->getName().compare(0, 6, "ground") && (test->getName().compare(6, 1, std::to_string(id)))) {
+			test->accept(cbbv);
+			if (bb.intersects(cbbv.getBoundingBox())) {
+				this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
+				retval = true;
+			}
+		}
+	}
+	return retval;
 }
 

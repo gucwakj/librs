@@ -226,3 +226,15 @@ double Linkbot::getWheelRatio(int standard) {
 	return 0;
 }
 
+double Linkbot::riseByWheels(int wheel_type, double radius) {
+	if (wheel_type == TINYWHEEL)
+		return _tinywheel_radius - _body_height/2;
+	else if (wheel_type == SMALLWHEEL)
+		return _smallwheel_radius - _body_height/2;
+	else if (wheel_type == BIGWHEEL)
+		return _bigwheel_radius - _body_height/2;
+	else if (wheel_type == WHEEL)
+		return radius - _body_height/2;
+	return -1;
+}
+

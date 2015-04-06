@@ -13,6 +13,7 @@ namespace rsRobots {
 			virtual ~Linkbot(void) {};
 
 			double getWheelRatio(int);
+			double riseByWheels(int, double = 0);
 
 		// inherited functions
 		public:

@@ -1357,7 +1357,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 			break;
 		case rsLinkbot::WHEEL:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
-			transform->setScale(osg::Vec3d(1, robot->getWheelRatio(rsLinkbot::TINYWHEEL), robot->getWheelRatio(rsLinkbot::TINYWHEEL)));
+			transform->setScale(osg::Vec3d(1, size/robot->getWheelRatio(rsLinkbot::TINYWHEEL), size/robot->getWheelRatio(rsLinkbot::TINYWHEEL)));
 			break;
 	}
 	node->setCullingActive(false);

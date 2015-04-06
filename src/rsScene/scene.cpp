@@ -107,26 +107,36 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 	for (int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		// get robot node
-		if (robot) {
-			if (test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
-				osg::ComputeBoundsVisitor cbbv;
-				test->accept(cbbv);
-				if (this->intersect_new_item(id, cbbv.getBoundingBox()))
-					this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
-				else
-					this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), c);
+		if (robot && test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
+			osg::ComputeBoundsVisitor cbbv;
+			test->accept(cbbv);
+			if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+				this->setHUD(true);
+				this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
+				this->getHUDText()->setText("Robots are Colliding!");
+				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
 			}
+			else {
+				this->setHUD(false);
+				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), c);
+			}
+			break;
 		}
 		// get ground node
-		else if (!robot) {
-			if (test && !test->getName().compare(std::string("ground").append(std::to_string(id)))) {
-				osg::ComputeBoundsVisitor cbbv;
-				test->accept(cbbv);
-				if (this->intersect_new_item(id, cbbv.getBoundingBox()))
-					this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
-				else
-					this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), c);
+		else if (!robot && test && !test->getName().compare(std::string("ground").append(std::to_string(id)))) {
+			osg::ComputeBoundsVisitor cbbv;
+			test->accept(cbbv);
+			if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+				this->setHUD(true);
+				this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
+				this->getHUDText()->setText("Objects are Colliding!");
+				this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
 			}
+			else {
+				this->setHUD(false);
+				this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), c);
+			}
+			break;
 		}
 	}
 }

@@ -281,6 +281,10 @@ void Writer::save(void) {
 	_doc.SaveFile(_path.c_str());
 }
 
+void Writer::saveFile(std::string name) {
+	_doc.SaveFile(name.c_str());
+}
+
 tinyxml2::XMLElement* Writer::getOrCreateChild(tinyxml2::XMLElement *p, const char *child) {
 	tinyxml2::XMLElement *e = p->FirstChildElement(child);
 	if (!e) {

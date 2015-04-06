@@ -7,7 +7,7 @@
 
 using namespace rsXML;
 
-Reader::Reader(char *name) {
+Reader::Reader(const char *name) {
 	// set default values
 	_pause = true;
 	_preconfig = false;
@@ -201,7 +201,7 @@ bool Reader::getUnits(void) {
 /**********************************************************
 	private functions
  **********************************************************/
-void Reader::load_file(char *name, tinyxml2::XMLDocument *doc) {
+void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 #ifdef _WIN32
 	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path))) {
 		_path.append("\\robosimrc");

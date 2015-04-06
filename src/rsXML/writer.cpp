@@ -187,6 +187,21 @@ void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, double *p, 
 	this->save();
 }
 
+void Writer::setConnectorSide(tinyxml2::XMLElement *conn, int id, int robotid, int face, int item1, double item2) {
+	tinyxml2::XMLElement *side = getOrCreateSide(conn, "side", id);
+	side->SetAttribute("id", id);
+	side->SetAttribute("robot", robotid);
+	if (face)
+		side->SetAttribute("face", item1);
+	else
+		side->SetAttribute("conn", item1);
+
+	if (item2)
+		side->SetAttribute("radius", item2);
+
+	// write to disk
+	this->save();
+}
 /*
 void Writer::addConnector(int id) {
 	// add wheels
@@ -292,6 +307,19 @@ tinyxml2::XMLElement* Writer::getOrCreateChild(tinyxml2::XMLElement *p, const ch
 		p->InsertFirstChild(e);
 	}
 	return e;
+}
+
+tinyxml2::XMLElement* Writer::getOrCreateConnector(int form, int orientation) {
+	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
+	tinyxml2::XMLElement *node = sim->FirstChildElement();
+	switch (form) {
+		case rsLinkbot::SIMPLE:
+			node = _doc.NewElement("simple");
+			break;
+	}
+	node->SetAttribute("orientation", orientation);
+	sim->InsertEndChild(node);
+	return node;
 }
 
 tinyxml2::XMLElement* Writer::getOrCreateElement(const char *parent, const char *child) {
@@ -408,6 +436,28 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 	else
 		sim->InsertAfterChild(getOrCreateRobot(form, id-1), node);
 	return node;
+}
+
+tinyxml2::XMLElement* Writer::getOrCreateSide(tinyxml2::XMLElement *p, const char *child, int id) {
+	tinyxml2::XMLElement *e = p->FirstChildElement(child);
+	int i;
+	if (!e) {
+		e = _doc.NewElement(child);
+		p->InsertEndChild(e);
+	}
+	else {
+		while (e) {
+			e->QueryIntAttribute("id", &i);
+			if (i == id)
+				return e;
+			e = e->NextSiblingElement();
+		}
+		if (!e) {
+			e = _doc.NewElement(child);
+			p->InsertEndChild(e);
+		}
+	}
+	return e;
 }
 
 tinyxml2::XMLText* Writer::toText(bool b) {

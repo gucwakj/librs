@@ -728,6 +728,13 @@ void Linkbot::build_face(int id, const rs::Pos &p, const rs::Quat &q) {
 	dBodySetQuaternion(_body[id], Q);
 	dBodySetFiniteRotationMode(_body[id], 1);
 
+	// destroy old geom when rotating joint on rebuild
+	dGeomID geom1 = dBodyGetFirstGeom(_body[id]);
+	while (geom1) {
+		dGeomDestroy(geom1);
+		geom1 = dBodyGetNextGeom(geom1);
+	}
+
 	// set geometry
 	dGeomID geom = dCreateCylinder(_space, _face_radius, _face_depth);
 	dGeomSetBody(geom, _body[id]);

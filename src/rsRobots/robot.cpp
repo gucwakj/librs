@@ -18,6 +18,10 @@ Robot::~Robot(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+double Robot::getBodyHeight(void) {
+	return _body_height;
+}
+
 int Robot::getForm(void) {
 	return _form;
 }

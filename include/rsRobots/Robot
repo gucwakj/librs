@@ -19,6 +19,7 @@ namespace rsRobots {
 			Robot(int);
 			virtual ~Robot(void);
 
+			double getBodyHeight(void);
 			int getForm(void);
 			int getID(void);
 			std::string getName(void);

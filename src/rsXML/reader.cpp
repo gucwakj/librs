@@ -7,7 +7,7 @@
 
 using namespace rsXML;
 
-Reader::Reader(const char *name) {
+Reader::Reader(const char *name, bool process) {
 	// set default values
 	_pause = true;
 	_preconfig = false;
@@ -29,7 +29,7 @@ Reader::Reader(const char *name) {
 	this->read_config(&doc);
 	this->read_ground(&doc);
 	this->read_graphics(&doc);
-	this->read_sim(&doc);
+	this->read_sim(&doc, process);
 }
 
 Reader::~Reader(void) {
@@ -519,7 +519,7 @@ void Reader::read_ground(tinyxml2::XMLDocument *doc) {
 	}
 }
 
-void Reader::read_sim(tinyxml2::XMLDocument *doc) {
+void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
@@ -892,8 +892,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc) {
 	}*/
 
 	// post process each robot data
-	for (int i = 0; i < _robot.size(); i++) {
-		_robot[i]->postProcess();
+	if (process) {
+		for (int i = 0; i < _robot.size(); i++) {
+			_robot[i]->postProcess();
+		}
 	}
 }
 

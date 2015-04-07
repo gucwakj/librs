@@ -16,7 +16,7 @@ namespace rsXML {
 	class Reader {
 		// public functions
 		public:
-			Reader(const char*);
+			Reader(const char*, bool process = true);
 			virtual ~Reader(void);
 
 			int addNewRobot(Robot*);
@@ -43,7 +43,7 @@ namespace rsXML {
 			void read_config(tinyxml2::XMLDocument*);
 			void read_graphics(tinyxml2::XMLDocument*);
 			void read_ground(tinyxml2::XMLDocument*);
-			void read_sim(tinyxml2::XMLDocument*);
+			void read_sim(tinyxml2::XMLDocument*, bool process);
 
 		// private data
 		private:

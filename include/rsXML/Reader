@@ -62,6 +62,8 @@ namespace rsXML {
 			std::vector<Robot*> _robot;			// simulation robots
 	};
 
+	std::string getDefaultPath(void);
+
 } // namespace rsXML
 
 #endif // RSXML_READER_

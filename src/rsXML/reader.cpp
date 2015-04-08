@@ -202,13 +202,15 @@ bool Reader::getUnits(void) {
 	private functions
  **********************************************************/
 void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
-#ifdef _WIN32
-	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path))) {
-		_path.append("\\robosimrc");
-	}
-#else
-	_path = getenv("HOME");
+	// get file
 	if (name) {
+#ifdef _WIN32
+		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, _path))) {
+			_path.append("\\");
+			_path.append(name);
+		}
+#else
+		_path = getenv("HOME");
 		FILE *fp = fopen(name, "r");
 		if (fp) {
 			_path = name;
@@ -219,12 +221,15 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 		}
 	}
 	else {
-		_path.append("/.robosimrc");
+		_path = rsXML::getDefaultPath();
 	}
 #endif
+
+	// load file
 	int output = doc->LoadFile(_path.c_str());
 	if (output) {
-		fprintf(stderr, "Error: Could not find RoboSim config file.\nPlease run RoboSim GUI.\n");
+		std::cerr << "Error: Could not find RoboSim config file." << std::endl;
+		std::cerr << "Please run RoboSim GUI." << std::endl;
 		exit(-1);
 	}
 }
@@ -897,5 +902,20 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[i]->postProcess();
 		}
 	}
+}
+
+std::string rsXML::getDefaultPath(void) {
+	std::string path;
+
+#ifdef _WIN32
+	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path))) {
+		path.append("\\robosimrc");
+	}
+#else
+	path = getenv("HOME");
+	path.append("/.robosimrc");
+#endif
+
+	return path;
 }
 

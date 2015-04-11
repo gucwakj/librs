@@ -8,15 +8,15 @@ include_directories (
 )
 
 # add ODE library
-if (MSVC)
+if (WIN32)
 	include_directories ("${LIBRS_SOURCE_DIR}/deps/ode/include")
 	link_directories ("${LIBRS_SOURCE_DIR}/deps/ode/lib/Release")
 	link_directories ("${LIBRS_SOURCE_DIR}/deps/ode/lib/Debug")
-else (MSVC)
+else ()
 	include_directories ("${LIBRS_SOURCE_DIR}/deps/ode/sys/include")
 	link_directories ("${LIBRS_SOURCE_DIR}/deps/ode/sys/lib")
-endif (MSVC)
-set (EXTRA_LIBS ${EXTRA_LIBS} optimized ode debug oded)
+endif ()
+set (EXTRA_LIBS ${EXTRA_LIBS} ode)
 
 # ODE options
 add_definitions (-DdDOUBLE)
@@ -37,10 +37,10 @@ set (SRCS ${SRCS}
 )
 if (ENABLE_LINKBOT)
 	set (SRCS ${SRCS} linkbot.cpp)
-endif (ENABLE_LINKBOT)
+endif ()
 if (ENABLE_MINDSTORMS)
 	set (SRCS ${SRCS} mindstorms.cpp)
-endif (ENABLE_MINDSTORMS)
+endif ()
 
 # add the library
 add_library (rsSim SHARED ${SRCS})

@@ -14,10 +14,10 @@ set (SRCS ${SRCS}
 )
 if (ENABLE_LINKBOT)
 	set (SRCS ${SRCS} linkbot.cpp)
-endif (ENABLE_LINKBOT)
+endif ()
 if (ENABLE_MINDSTORMS)
 	set (SRCS ${SRCS} mindstorms.cpp)
-endif (ENABLE_MINDSTORMS)
+endif ()
 
 # add the library
 add_library (rsRobots SHARED ${SRCS})

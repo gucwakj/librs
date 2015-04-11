@@ -10,7 +10,7 @@ namespace rsRobots {
 		// public functions
 		public:
 			Linkbot(int = -1);
-			virtual ~Linkbot(void) {};
+			virtual ~Linkbot(void) { };
 
 			double getWheelRatio(int);
 			double riseByWheels(int, double = 0);

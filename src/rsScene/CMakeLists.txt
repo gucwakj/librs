@@ -26,7 +26,7 @@ find_package (OpenGL REQUIRED)
 if (OPENGL_FOUND)
 	include_directories (${OPENGL_INCLUDE_DIR})
 	set (EXTRA_LIBS ${EXTRA_LIBS} ${OPENGL_LIBRARIES})
-endif (OPENGL_FOUND)
+endif ()
 
 # add threading
 find_package (Threads)

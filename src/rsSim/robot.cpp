@@ -4,7 +4,7 @@
 #include <windows.h>
 #else
 #include <unistd.h>
-#endif // _WIN32
+#endif
 
 #include <rsRobots/rgbhashtable.h>
 #include <rsSim/Sim>

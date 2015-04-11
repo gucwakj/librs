@@ -9,11 +9,11 @@ include_directories (
 
 # add tinyxml2 library
 include_directories ("${LIBRS_SOURCE_DIR}/deps/tinyxml2")
-if (MSVC)
+if (WIN32)
 	link_directories ("${LIBRS_SOURCE_DIR}/deps/tinyxml2/build/Release")
-else (MSVC)
+else ()
 	link_directories ("${LIBRS_SOURCE_DIR}/deps/tinyxml2/build")
-endif (MSVC)
+endif ()
 set (EXTRA_LIBS ${EXTRA_LIBS} tinyxml2)
 
 # add rsRobots
@@ -30,10 +30,10 @@ set (SRCS ${SRCS}
 )
 if (ENABLE_LINKBOT)
 	set (SRCS ${SRCS} linkbot.cpp)
-endif (ENABLE_LINKBOT)
+endif ()
 if (ENABLE_MINDSTORMS)
 	set (SRCS ${SRCS} mindstorms.cpp)
-endif (ENABLE_MINDSTORMS)
+endif ()
 
 # add the library
 add_library (rsXML SHARED ${SRCS})

@@ -9,7 +9,7 @@ namespace rsXML {
 		public:
 			Conn(void);
 			Conn(double, int, int, int, int, int, int, int);
-			virtual ~Conn(void) {};
+			virtual ~Conn(void) { };
 
 			double getSize(void);
 			int getConn(void);

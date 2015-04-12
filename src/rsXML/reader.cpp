@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+
 #include <rs/Macros>
 #include <rsXML/Reader>
 #include <rsXML/Linkbot>
@@ -33,17 +34,15 @@ Reader::Reader(const char *name, bool process) {
 }
 
 Reader::~Reader(void) {
-std::cerr << "~Reader start" << std::endl;
-	for (int i = 0; i < _robot.size(); i++) {
+	for (unsigned int i = 0; i < _robot.size(); i++) {
 		delete _robot[i];
 	}
-	for (int i = 0; i < _ground.size(); i++) {
+	for (unsigned int i = 0; i < _ground.size(); i++) {
 		delete _ground[i];
 	}
-	for (int i = 0; i < _marker.size(); i++) {
+	for (unsigned int i = 0; i < _marker.size(); i++) {
 		delete _marker[i];
 	}
-std::cerr << "~Reader end" << std::endl;
 }
 
 /**********************************************************
@@ -64,7 +63,7 @@ Marker* Reader::getMarker(int id) {
 
 Marker* Reader::getNextMarker(int form) {
 	// find next marker in xml list
-	int i = 0;
+	unsigned int i = 0;
 	for (i = 0; i < _marker.size(); i++) {
 		if (!_marker[i]->getConnect() && (form == -1 || _marker[i]->getForm() == form))
 			break;
@@ -83,7 +82,7 @@ Marker* Reader::getNextMarker(int form) {
 
 Ground* Reader::getNextObstacle(int form) {
 	// find next obstacle in xml list
-	int i = 0;
+	unsigned int i = 0;
 	for (i = 0; i < _ground.size(); i++) {
 		if (!_ground[i]->getConnect() && (form == -1 || _ground[i]->getForm() == form))
 			break;
@@ -102,7 +101,7 @@ Ground* Reader::getNextObstacle(int form) {
 
 Robot* Reader::getNextRobot(int form) {
 	// find next robot in xml list
-	int i = 0;
+	unsigned int i = 0;
 	for (i = 0; i < _robot.size(); i++) {
 		if (!_robot[i]->getConnect()) {
 			if (_robot[i]->getForm() == rs::EV3 && form == rs::NXT) {
@@ -531,7 +530,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 	tinyxml2::XMLElement *side = NULL;
 	int *rtmp, *ftmp, *ntmp, *atmp, ctype = 0, cnum = 0;
 	int custom = 0, i = 0, orientation = 0;
-	double size = 0, a, b, c, d, e, f;
+	double size = 0, a, b, c, d;
 
 	// check for existence of node
 	if ( (node = doc->FirstChildElement("sim")) ) {
@@ -865,7 +864,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 
 			// store connectors to each robot
 			for (int j = 0; j < i; j++) {
-				for (int k = 0; k < _robot.size(); k++) {
+				for (unsigned int k = 0; k < _robot.size(); k++) {
 					if (_robot[k]->getID() == rtmp[j]) {
 						_robot[k]->addConnector(new Conn(size, orientation, atmp[j], ftmp[0], ftmp[j], rtmp[0], ntmp[j], ctype));
 						break;
@@ -898,7 +897,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 
 	// post process each robot data
 	if (process) {
-		for (int i = 0; i < _robot.size(); i++) {
+		for (unsigned int i = 0; i < _robot.size(); i++) {
 			_robot[i]->postProcess();
 		}
 	}

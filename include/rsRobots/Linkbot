@@ -5,7 +5,7 @@
 
 namespace rsRobots {
 
-	// base class
+	// class
 	class Linkbot : virtual public ModularRobot {
 		// public functions
 		public:

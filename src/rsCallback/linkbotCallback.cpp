@@ -65,7 +65,7 @@ void LinkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		//double *rgb = _robot->getRGB();
 		//led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
 		// child 7->end: connectors
-		for (int i = 0; i < _conn.size(); i++) {
+		for (unsigned int i = 0; i < _conn.size(); i++) {
 			if (_conn[i].body) {
 				pos = dBodyGetPosition(_conn[i].body);
 				quat = dBodyGetQuaternion(_conn[i].body);

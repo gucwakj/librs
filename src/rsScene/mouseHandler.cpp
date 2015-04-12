@@ -52,7 +52,7 @@ int MouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *view
 
 		// find nodes of intersection
 		osg::Group *test = NULL;
-		for (int i = 0; i < nodePath.size() - 2; i++) {
+		for (unsigned int i = 0; i < nodePath.size() - 2; i++) {
 			test = dynamic_cast<osg::Group *>(nodePath[i]);
 			// get robot node
 			if (test && !test->getName().compare(0, 5, "robot")) {

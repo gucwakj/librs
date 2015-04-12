@@ -68,6 +68,9 @@ const rs::Pos Linkbot::getConnFacePosition(int type, int side, int orientation, 
 	}
 	else if (type == rsLinkbot::SIMPLE)
 		return P.add(Q.multiply(_conn_depth, 0, 0));
+
+	// default return
+	return P;
 }
 
 const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientation, const rs::Quat &q) {
@@ -104,6 +107,9 @@ const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientatio
 		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
 	else if (type == rsLinkbot::SIMPLE)
 		return Q;
+
+	// default return
+	return Q;
 }
 
 const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::Pos &p, const rs::Quat &q) {
@@ -138,6 +144,9 @@ const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::
 		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
 	else if (type == rsLinkbot::WHEEL)
 		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
+
+	// default return
+	return P;
 }
 
 const rs::Quat Linkbot::getConnBodyQuaternion(int type, int orientation, const rs::Quat &q) {
@@ -176,6 +185,9 @@ const rs::Pos Linkbot::getRobotCenterPosition(int face, const rs::Pos &p, const 
 		return P.add(q.multiply(_face_depth + _body_length, 0, 0));
 	else if (face == FACE3)
 		return P.add(q.multiply(_body_width/2 + _face_depth, 0, 0));
+
+	// default return
+	return P;
 }
 
 const rs::Quat Linkbot::getRobotCenterQuaternion(int face, int orientation, double angle, const rs::Quat &q) {
@@ -212,6 +224,9 @@ const rs::Pos Linkbot::getRobotFacePosition(int face, const rs::Pos &p, const rs
 		return P.add(q.multiply(_offset[face].x(), _offset[face].y() - _face_depth/2, _offset[face].z()));
 	else if (face == FACE3)
 		return P.add(q.multiply(_offset[face].x() + _face_depth/2, _offset[face].y(), _offset[face].z()));
+
+	// default return
+	return P;
 }
 
 double Linkbot::getWheelRatio(int standard) {

@@ -260,6 +260,9 @@ tinyxml2::XMLElement* Writer::getRobot(int id) {
 			return node;
 		node = node->NextSiblingElement();
 	}
+
+	// empty return
+	return NULL;
 }
 
 void Writer::setGrid(std::vector<double> grid) {
@@ -292,12 +295,12 @@ void Writer::setUnits(bool units) {
 	this->save();
 }
 
-void Writer::save(void) {
-	_doc.SaveFile(_path.c_str());
+int Writer::save(void) {
+	return _doc.SaveFile(_path.c_str());
 }
 
-void Writer::saveFile(std::string name) {
-	_doc.SaveFile(name.c_str());
+int Writer::saveFile(std::string name) {
+	return _doc.SaveFile(name.c_str());
 }
 
 tinyxml2::XMLElement* Writer::getOrCreateChild(tinyxml2::XMLElement *p, const char *child) {

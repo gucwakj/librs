@@ -26,14 +26,14 @@ ConnectorList& ModularRobot::getConnectorList(void) {
 }
 
 dBodyID ModularRobot::getConnectorBodyID(int face) {
-	for (int i = 0; i < _conn.size(); i++) {
+	for (unsigned int i = 0; i < _conn.size(); i++) {
 		if (_conn[i].face == face) return _conn[i].body;
 	}
 	return NULL;
 }
 
 int ModularRobot::getConnectorOrientation(int face) {
-	for (int i = 0; i < _conn.size(); i++) {
+	for (unsigned int i = 0; i < _conn.size(); i++) {
 		if (_conn[i].face == face) return _conn[i].orientation;
 	}
 	return -1;

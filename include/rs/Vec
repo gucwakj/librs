@@ -5,10 +5,11 @@
 
 namespace rs {
 
-	// position class
+	// vector class
 	class Vec {
 		public:
 			Vec(void);
+			Vec(int);
 			Vec(double, double);
 			Vec(double, double, double);
 			Vec(double, double, double, double);
@@ -16,6 +17,8 @@ namespace rs {
 			~Vec(void);
 
 			void add(double);
+			void allocate(int);
+			void print(void);
 			int size(void) const;
 
 			// access operators

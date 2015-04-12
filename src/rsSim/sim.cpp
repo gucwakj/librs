@@ -70,7 +70,7 @@ std::cerr << "rsSim/~Sim start" << std::endl;
 	dCloseODE();
 
 	// remove robots
-	for (int i = 0; i < _robot.size(); i++) {
+	for (unsigned int i = 0; i < _robot.size(); i++) {
 		_robot.erase(_robot.begin() + i);
 	}
 std::cerr << "rsSim/~Sim end" << std::endl;
@@ -215,7 +215,7 @@ int Sim::deleteRobot(int id) {
 	MUTEX_LOCK(&_robot_mutex);
 
 	// find robot by id and remove
-	for (int i = 0; i < _robot.size(); i++) {
+	for (unsigned int i = 0; i < _robot.size(); i++) {
 		if (_robot[i].robot->getID() == id) {
 			_robot.erase(_robot.begin() + i);
 			break;
@@ -250,7 +250,7 @@ int Sim::getCOR(double &robot, double &ground) {
 
 void Sim::getCoM(double &x, double &y, double &z) {
 	double com[3] = {0}, a, b, c;
-	for (int i = 0; i < _robot.size(); i++) {
+	for (unsigned int i = 0; i < _robot.size(); i++) {
 		_robot[i].robot->getCoM(a, b, c);
 		com[0] += a;
 		com[1] += b;
@@ -277,7 +277,7 @@ bool Sim::getPause(void) {
 }
 
 Robot* Sim::getRobot(int id) {
-	for (int i = 0; i < _robot.size(); i++) {
+	for (unsigned int i = 0; i < _robot.size(); i++) {
 		if (_robot[i].robot->getID() == id)
 			return _robot[i].robot;
 	}
@@ -441,10 +441,10 @@ void* Sim::simulation_thread(void *arg) {
 
 			// perform pre-collision updates
 			MUTEX_LOCK(&(sim->_robot_mutex));
-			for (int j = 0; j < sim->_robot.size(); j++) {
+			for (unsigned int j = 0; j < sim->_robot.size(); j++) {
 				THREAD_CREATE(&(sim->_robot[j].thread), (void* (*)(void *))&rsSim::Robot::simPreCollisionThreadEntry, (void *)sim->_robot[j].robot);
 			}
-			for (int j = 0; j < sim->_robot.size(); j++) {
+			for (unsigned int j = 0; j < sim->_robot.size(); j++) {
 				THREAD_JOIN(sim->_robot[j].thread);
 			}
 
@@ -457,10 +457,10 @@ void* Sim::simulation_thread(void *arg) {
 			dJointGroupEmpty(sim->_group);
 
 			// perform post-collision updates
-			for (int j = 0; j < sim->_robot.size(); j++) {
+			for (unsigned int j = 0; j < sim->_robot.size(); j++) {
 				THREAD_CREATE(&(sim->_robot[j].thread), (void* (*)(void *))&rsSim::Robot::simPostCollisionThreadEntry, (void *)sim->_robot[j].robot);
 			}
-			for (int j = 0; j < sim->_robot.size(); j++) {
+			for (unsigned int j = 0; j < sim->_robot.size(); j++) {
 				THREAD_JOIN(sim->_robot[j].thread);
 			}
 			MUTEX_UNLOCK(&(sim->_robot_mutex));

@@ -377,10 +377,10 @@ void Linkbot::simPreCollisionThread(void) {
 	MUTEX_LOCK(&_theta_mutex);
 
 	// apply forces
-	for (int i = 0; i < _f.size(); i++) {
+	for (unsigned int i = 0; i < _f.size(); i++) {
 		dBodyAddForce(std::get<0>(_f[i]), std::get<1>(_f[i]), std::get<2>(_f[i]), std::get<3>(_f[i]));
 	}
-	for (int i = 0; i < _t.size(); i++) {
+	for (unsigned int i = 0; i < _t.size(); i++) {
 		dBodyAddTorque(std::get<0>(_t[i]), std::get<1>(_t[i]), std::get<2>(_t[i]), std::get<3>(_t[i]));
 	}
 
@@ -402,7 +402,7 @@ void Linkbot::simPreCollisionThread(void) {
 		dVector3 axis;
 		dJointGetHingeAxis(_motor[i].joint, axis);
 		dBodySetFiniteRotationAxis(_body[i+1], axis[0], axis[1], axis[2]);
-		for (int k = 0; k < _conn.size(); k++) {
+		for (unsigned int k = 0; k < _conn.size(); k++) {
 			if (_conn[k].face == i+1)
 				dBodySetFiniteRotationAxis(_conn[k].body, axis[0], axis[1], axis[2]);
 		}

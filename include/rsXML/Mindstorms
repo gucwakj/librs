@@ -10,7 +10,7 @@ namespace rsXML {
 	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
 		public:
 			Mindstorms(int = rs::EV3, bool = true);
-			virtual ~Mindstorms(void) {};
+			virtual ~Mindstorms(void) { };
 
 			virtual void postProcess(void);
 	};

@@ -1,8 +1,14 @@
+#include <iostream>
+
 #include <rs/Vec>
 
 using namespace rs;
 
 Vec::Vec(void) {
+}
+
+Vec::Vec(int size) {
+	_v.resize(size);
 }
 
 Vec::Vec(double a, double b) {
@@ -38,6 +44,18 @@ Vec::~Vec(void) {
  **********************************************************/
 void Vec::add(double a) {
 	_v.push_back(a);
+}
+
+void Vec::allocate(int size) {
+	_v.resize(size);
+}
+
+void Vec::print(void) {
+	std::cerr << "V: ";
+	for (unsigned int i = 0; i < _v.size(); i++) {
+		std::cerr << _v[i] << " ";
+	}
+	std::cerr << std::endl;
 }
 
 int Vec::size(void) const {

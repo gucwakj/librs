@@ -25,8 +25,8 @@ namespace rsXML {
 			tinyxml2::XMLElement* getOrCreateRobot(int, int);
 			tinyxml2::XMLElement* getOrCreateSide(tinyxml2::XMLElement*, const char*, int);
 			tinyxml2::XMLElement* getRobot(int);
-			void save(void);
-			void saveFile(std::string);
+			int save(void);
+			int saveFile(std::string);
 			void setConnectorSide(tinyxml2::XMLElement*, int, int, int, int, double = 0);
 			void setGrid(std::vector<double>);
 			void setMarker(tinyxml2::XMLElement*, std::string, double*, double*, double*, int);

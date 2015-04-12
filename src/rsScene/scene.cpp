@@ -87,7 +87,7 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 	if (exclusive) {
 		// find nodes of intersection
 		osg::Group *test = NULL;
-		for (int i = 0; i < _scene->getNumChildren(); i++) {
+		for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 			test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 			// get robot node
 			if (test && (!test->getName().compare(0, 5, "robot"))) {
@@ -104,7 +104,7 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 
 	// set highlight of item
 	osg::Group *test = NULL;
-	for (int i = 0; i < _scene->getNumChildren(); i++) {
+	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		// get robot node
 		if (robot && test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
@@ -142,7 +142,7 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 }
 
 int Scene::deleteChild(int id) {
-	for (int i = 0; i < _scene->getNumChildren(); i++) {
+	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		if (test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
 			if (test->getUpdateCallback() != NULL)
@@ -155,7 +155,7 @@ int Scene::deleteChild(int id) {
 }
 
 int Scene::deleteObstacle(int id) {
-	for (int i = 0; i < _scene->getNumChildren(); i++) {
+	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		if (test && !test->getName().compare(std::string("ground").append(std::to_string(id)))) {
 			if (test->getUpdateCallback() != NULL)
@@ -429,7 +429,7 @@ void Scene::setHighlight(bool highlight) {
 }
 
 void Scene::setHUD(bool enable) {
-	for (int i = 0; i < _root->getNumChildren(); i++) {
+	for (unsigned int i = 0; i < _root->getNumChildren(); i++) {
 		if (!_root->getChild(i)->getName().compare("HUDProjection")) {
 			if (enable)
 				_root->getChild(i)->setNodeMask(VISIBLE_MASK);
@@ -664,7 +664,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 	if (!parent->getName().compare(0, 5, "robot")) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
-			for (int i = 2; i < parent->getNumChildren(); i++) {
+			for (unsigned int i = 2; i < parent->getNumChildren(); i++) {
 				osgFX::Scribe *scribe = new osgFX::Scribe();
 				scribe->setWireframeColor(osg::Vec4(c[0], c[1], c[2], 0.1));
 				scribe->setWireframeLineWidth(1);
@@ -676,7 +676,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 		}
 		// already highlighted, take it away
 		else if (!on) {
-			for (int i = 2; i < parent->getNumChildren(); i++) {
+			for (unsigned int i = 2; i < parent->getNumChildren(); i++) {
 				osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(i)->asTransform()->getChild(0));
 				parent->getChild(i)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
 			}
@@ -1245,7 +1245,6 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::BODY));
 	osg::Vec3d p = pat->getPosition();
 	osg::Quat q = pat->getAttitude();
-	double p1[3], p2[3], q1[4], q2[4];
 
 	// get face p&q
 	rs::Quat Q1 = robot->getRobotBodyQuaternion(face, 0, rs::Quat(q[0], q[1], q[2], q[3]));
@@ -1623,7 +1622,7 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 	osg::Group *test = NULL;
 	osg::ComputeBoundsVisitor cbbv;
 	bool retval = false;
-	for (int i = 0; i < _scene->getNumChildren(); i++) {
+	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		// get robot node
 		if (test && (!test->getName().compare(0, 5, "robot")) && (test->getName().compare(5, 1, std::to_string(id)))) {

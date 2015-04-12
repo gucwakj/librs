@@ -3,15 +3,11 @@
 
 using namespace rsXML;
 
-Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsXML::Robot(trace) {
-	_a.add(0);
-	_a.add(0);
-	_a.add(0);
-};
+Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsXML::Robot(trace) { };
 
 void Linkbot::postProcess(void) {
 	// find if i am connected to another robot
-	for (int i = 0; i < _conn.size(); i++) {
+	for (unsigned int i = 0; i < _conn.size(); i++) {
 		if (_conn[i]->getRobot() != _id) {
 			_base = _conn[i];
 			_conn.erase(_conn.begin() + i);
@@ -22,7 +18,7 @@ void Linkbot::postProcess(void) {
 	// reposition robot in space
 	if (_base == NULL) {
 		// check for wheels
-		for (int i = 0; i < _conn.size(); i++) {
+		for (unsigned int i = 0; i < _conn.size(); i++) {
 			if (_conn[i]->getConn() == rsLinkbot::BIGWHEEL) {
 				_p[2] += (_bigwheel_radius - _body_height/2);
 				_radius = _bigwheel_radius;
@@ -46,7 +42,7 @@ void Linkbot::postProcess(void) {
 		}
 
 		// tilt for casters
-		for (int i = 0; i < _conn.size(); i++) {
+		for (unsigned int i = 0; i < _conn.size(); i++) {
 			if (_conn[i]->getType() == rsLinkbot::CASTER && !static_cast<int>(_conn[i]->getSize()))
 				this->setPsi(atan2(_radius - _smallwheel_radius, 0.08575));
 		}

@@ -46,6 +46,10 @@ const rs::Pos Robot::getRobotBodyPosition(int body, const rs::Pos &p, const rs::
 	return P.add(q.multiply(_offset[body].x(), _offset[body].y(), _offset[body].z()));
 }
 
+bool Robot::getTrace(void) {
+	return _trace;
+}
+
 void Robot::setID(int id) {
 	_id = id;
 }

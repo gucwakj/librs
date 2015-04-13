@@ -4,6 +4,7 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
 
+#include <rsScene/Scene>
 #include <rsCallback/LinkbotCallback>
 
 using namespace rsCallback;
@@ -36,18 +37,19 @@ void LinkbotCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		label->setText(text);
 		label->setPosition(osg::Vec3(x, y, z));
 		// child 1: tracking line
-		/*if (_robot->_trace) {
+		if (_robot->getTrace()) {
 			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));
 			geode2->setNodeMask(VISIBLE_MASK);
 			osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode2->getDrawable(0)->asGeometry());
 			osg::Vec4Array *colors = dynamic_cast<osg::Vec4Array *>(draw->getColorArray());
 			colors->pop_back();
-			colors->push_back(osg::Vec4(_robot->_rgb[0], _robot->_rgb[1], _robot->_rgb[2], 1.0f) );
+			double *c = _robot->getRGB();
+			colors->push_back(osg::Vec4(c[0], c[1], c[2], 1));
 			osg::Vec3Array *vertices = dynamic_cast<osg::Vec3Array *>(draw->getVertexArray());
 			vertices->push_back(osg::Vec3(x, y, 0));
 			osg::DrawArrays *array = dynamic_cast<osg::DrawArrays *>(draw->getPrimitiveSet(0));
 			array->setCount(_count++);
-		}*/
+		}
 		// child 2->2+NUM_PARTS: bodies
 		const double *pos, *quat;
 		osg::PositionAttitudeTransform *pat;

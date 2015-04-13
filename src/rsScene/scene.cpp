@@ -344,7 +344,8 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 	osg::Geode *trackingGeode = new osg::Geode();
 	osg::Geometry *trackingLine = new osg::Geometry();
 	osg::Vec3Array *trackingVertices = new osg::Vec3Array();
-	trackingGeode->setNodeMask((trace) ? VISIBLE_MASK : NOT_VISIBLE_MASK);
+	trackingVertices->push_back(osg::Vec3(p[0], p[1], 0));
+	trackingGeode->setNodeMask(((trace) ? VISIBLE_MASK : NOT_VISIBLE_MASK));
 	trackingLine->setVertexArray(trackingVertices);
 	trackingLine->insertPrimitiveSet(0, new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, 1, 1));
 	trackingLine->setDataVariance(osg::Object::DYNAMIC);
@@ -357,14 +358,14 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 	point->setSize(4.0f);
 	trackingGeode->getOrCreateStateSet()->setAttributeAndModes(point, osg::StateAttribute::ON);
 	trackingGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-	trackingGeode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 	trackingGeode->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	trackingGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 	trackingGeode->addDrawable(trackingLine);
-	//group->insertChild(1, trackingGeode);
-	group->insertChild(1, label_geode);
+	group->insertChild(1, trackingGeode);
 
 	// set user properties of node
+	label_geode->setName("robotHUD");
+	trackingGeode->setName("trace");
 	group->setName(std::string("robot").append(std::to_string(robot->getID())));
 
 	// add to scenegraph
@@ -525,9 +526,6 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	cameraManipulator->setElevation(0.5);
 	_viewer->setCameraManipulator(cameraManipulator);
 	_viewer->getCameraManipulator()->setHomePosition(osg::Vec3f(0.6, -0.8, 0.5), osg::Vec3f(0.1, 0.3, 0), osg::Vec3f(0, 0, 1));
-
-	// event handler
-	_viewer->addEventHandler(new osgGA::StateSetManipulator(_camera->getOrCreateStateSet()));
 
 	// success
 	return 0;
@@ -994,6 +992,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xnum_billboard->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 		xnum_billboard->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		xnum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		xnum_billboard->setName("xnumbering");
 		_background->addChild(xnum_billboard);
 
 		// y grid numbering
@@ -1036,6 +1035,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ynum_billboard->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 		ynum_billboard->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		ynum_billboard->setName("ynumbering");
 		_background->addChild(ynum_billboard);
 	}
 }

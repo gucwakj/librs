@@ -26,7 +26,7 @@ Scene::Scene(void) : KeyboardHandler() {
 	_deleting = 0;
 
 	// set default level to load
-	_level = OUTDOORS;
+	_level = -1;
 
 	// set default grid options
 	_units = false;			// customary
@@ -537,7 +537,7 @@ int Scene::setupScene(double w, double h, bool pause) {
 	// create the root node
 	_root = new osg::Group;
 
-	// add shadows
+	// add shadow layer
 	_scene = new osgShadow::ShadowedScene;
 	_root->addChild(_scene);
 	_scene->setReceivesShadowTraversalMask(RECEIVES_SHADOW_MASK);
@@ -561,23 +561,11 @@ int Scene::setupScene(double w, double h, bool pause) {
 	this->draw_global_hud(w, h, pause);
 
 	// draw background pieces for levels
-	if (_level) {
-		// scene background
-		_background = new osg::Group;
-		_scene->addChild(_background);
+	_background = new osg::Group();
+	_scene->addChild(_background);
+	this->setLevel(OUTDOORS);
 
-		// draw scenes
-		switch (_level) {
-			case OUTDOORS:
-				this->draw_scene_outdoors();
-				break;
-			case BOARD:
-				this->draw_scene_board();
-				break;
-		}
-	}
-
-	// optimize the scene graph, remove redundant nodes and state etc.
+	// optimize the scene graph, remove redundancies
 	osgUtil::Optimizer optimizer;
 	optimizer.optimize(_root);
 
@@ -1483,8 +1471,6 @@ void Scene::draw_scene_outdoors(void) {
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
-	// clean
-	osgUtil::SmoothingVisitor::smooth(*geom);
 	// add
 	_background->addChild(geode);
 
@@ -1523,8 +1509,6 @@ void Scene::draw_scene_board(void) {
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
-	// clean
-	osgUtil::SmoothingVisitor::smooth(*geom);
 	// add
 	_background->addChild(geode);
 

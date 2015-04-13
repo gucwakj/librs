@@ -58,8 +58,8 @@ namespace rsScene {
 
 			int addChildren(void);
 			void addHighlight(int, bool = true, bool = true, const rs::Vec& = rs::Vec(1, 1, 0));
-			int deleteChild(int);
 			int deleteObstacle(int);
+			int deleteRobot(int);
 			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, int, double, int, int);
 			Ground* drawGround(int, int, const double*, const double*, const double*, const double*);
 			int drawMarker(int, int, const double*, const double*, const double*, int, std::string);

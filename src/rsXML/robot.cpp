@@ -70,7 +70,7 @@ const rs::Quat Robot::getQuaternion(void) {
 }
 
 double Robot::getRadius(void) {
-	return _radius;
+	return _wheel_radius;
 }
 
 bool Robot::getTrace(void) {

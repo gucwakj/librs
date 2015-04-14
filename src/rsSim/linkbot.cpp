@@ -680,7 +680,7 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 		// set geometry 3 - sphere
 		geom[3] = dCreateSphere(_space, 0.006);
 		dGeomSetBody(geom[3], conn.body);
-		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.02 - m.c[0], -m.c[1], -_body_height/2 + _face_radius - _radius + 0.006 - m.c[2]);
+		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.02 - m.c[0], -m.c[1], -_body_height/2 + _face_radius - _wheel_radius + 0.006 - m.c[2]);
 	}
 
 	// center body mass on geoms

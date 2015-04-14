@@ -42,7 +42,6 @@ namespace rsRobots {
 			double _body_length;
 			double _body_height;
 			double _body_width;
-			double _radius;			// TODO: wtf this causes a segfault
 			double _wheel_depth;
 			double _wheel_radius;
 			double _rgb[3];

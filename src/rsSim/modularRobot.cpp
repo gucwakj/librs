@@ -74,7 +74,7 @@ int ModularRobot::fix_connector_to_body(int face, dBodyID cBody, dJointFeedback 
 	dJointAttach(joint, body, cBody);
 
 	// attach feedback
-	dJointSetFeedback(joint, fb);
+	//dJointSetFeedback(joint, fb);		// TODO: causes ode 'CHECK_NOT_LOCKED(geom->parent_space)' segfault
 
 	// set joint params
 	dJointSetFixed(joint);

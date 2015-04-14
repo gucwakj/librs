@@ -291,6 +291,14 @@ double Sim::getStep(void) {
 	return step;
 }
 
+void Sim::mutexLock(int type) {
+	MUTEX_LOCK(&_robot_mutex);
+}
+
+void Sim::mutexUnlock(int type) {
+	MUTEX_UNLOCK(&_robot_mutex);
+}
+
 void Sim::run(int milliseconds, void (*output)(void), int interval) {
 	// calculate sleep time
 	if (!interval) { interval = milliseconds; }

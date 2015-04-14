@@ -35,6 +35,8 @@ namespace rsSim {
 			bool getPause(void);
 			Robot* getRobot(int);
 			double getStep(void);
+			void mutexLock(int);
+			void mutexUnlock(int);
 			void run(int, void (*output)(void) = NULL, int interval = 0);
 			int setCollisions(int);
 			int setCOR(double, double);

@@ -66,7 +66,6 @@ namespace rsScene {
 			Robot* drawRobot(rsRobots::Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
-			void setDelete(int);
 			void setGrid(std::vector<double>, bool = false);
 			void setHighlight(bool);
 			void setHUD(bool);
@@ -106,7 +105,6 @@ namespace rsScene {
 			bool _label;						// flag: enable object hud on click
 			bool _thread;						// flag: thread is running
 			bool _units;						// flag: SI (true) or customary (false)
-			int _deleting;						// temp variable for deleting robots
 			int _level;							// level to load
 			osg::Camera *_camera;				// camera to view scene
 			osg::Group *_background;			// pieces of each level which are interchangeable

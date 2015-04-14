@@ -22,9 +22,6 @@ Scene::Scene(void) : KeyboardHandler() {
 	// staging area for new insertions
 	_staging = new osg::Group;
 
-	// id of robot for deleting
-	_deleting = 0;
-
 	// set default level to load
 	_level = -1;
 
@@ -405,10 +402,6 @@ std::string Scene::getTexturePath(void) {
 	path = "/home/kgucwa/projects/librs/resources/";
 #endif
 	return path;
-}
-
-void Scene::setDelete(int id) {
-	_deleting = id;
 }
 
 void Scene::setGrid(std::vector<double> grid, bool draw) {
@@ -1481,10 +1474,6 @@ void* Scene::graphics_thread(void *arg) {
 
 		p->_viewer->frame();
 		p->addChildren();
-		if (p->_deleting) {
-			p->_scene->removeChild(p->_scene->getChild(p->_deleting));
-			p->_deleting = 0;
-		}
 
 		MUTEX_LOCK(&(p->_thread_mutex));
 	}

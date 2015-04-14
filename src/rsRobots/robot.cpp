@@ -50,6 +50,10 @@ bool Robot::getTrace(void) {
 	return _trace;
 }
 
+double Robot::getWheelRadius(void) {
+	return _wheel_radius;
+}
+
 void Robot::setID(int id) {
 	_id = id;
 }

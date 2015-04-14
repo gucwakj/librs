@@ -3,12 +3,14 @@
 using namespace rsRobots;
 using namespace rsLinkbot;
 
-Linkbot::Linkbot(int disabled) : Robot(rs::LINKBOTT) {
+Linkbot::Linkbot(int form) : Robot(form) {
 	_body_length = 0.03935;
 	_body_width = 0.07835;
 	_body_height = 0.07250;
 	_body_radius = 0.03625;
-	_disabled = disabled;
+	_disabled = -1;
+	if (form == rs::LINKBOTI) _disabled = JOINT2;
+	else if (form == rs::LINKBOTL) _disabled = JOINT3;
 	_face_depth = 0.00200;
 	_face_radius = 0.03060;
 	_conn_depth = 0.00570;

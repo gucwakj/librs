@@ -1126,65 +1126,6 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1));
 	body[rsLinkbot::BODY]->addDrawable(led);*/
 
-	/*
-	osg::ref_ptr<osg::LightSource> lightSource(new osg::LightSource());
-	osg::ref_ptr<osg::PositionAttitudeTransform> lightPAT(new osg::PositionAttitudeTransform());
-	//lightPAT->setPosition(osg::Vec3(0.0, 0.0, 0.1));
-	lightPAT->setPosition(osg::Vec3(p[0], p[1] + 0.02, p[2] + 0.035));
-	_scene->addChild(lightPAT);
-	osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(0, 0, 0), 0.006);
-	osg::Geode *geode = new osg::Geode();
-	osg::Material *material2 = new osg::Material();
-	material2->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.0, 0.0, 0.0, 1.0));
-	material2->setEmission(osg::Material::FRONT, osg::Vec4(0.0, 0.0, 1.0, 1.0));
-	geode->getOrCreateStateSet()->setAttribute(material2);
-	geode->addDrawable(new osg::ShapeDrawable(sphere));
-	lightSource->addChild(geode);
-	lightSource->getLight()->setLightNum(0);
-	lightSource->getLight()->setPosition(osg::Vec4(0, 0, 0, 1.0));
-	lightSource->getLight()->setDiffuse(osg::Vec4(1.0, 0.0, 1.0, 1.0));		// set color
-	lightSource->getLight()->setSpecular(osg::Vec4(1, 1, 1, 1));
-	lightSource->getLight()->setAmbient(osg::Vec4(0, 0, 1, 1));
-	lightPAT->addChild(lightSource);
-	_scene->addChild(lightSource.get());
-	_scene->getOrCreateStateSet()->setMode(GL_LIGHT0, osg::StateAttribute::ON);
-	*/
-
-	/*
-	osg::Light* myLight1 = new osg::Light;
-	myLight1->setLightNum(1);
-	myLight1->setPosition(	osg::Vec4(p[0], p[1] + 0.02, p[2] + 0.035, 1.0));
-	myLight1->setAmbient(	osg::Vec4(0.0, 0.0, 1.0, 1.0));
-	myLight1->setDiffuse(	osg::Vec4(0.0, 0.0, 1.0, 1.0));
-	//myLight1->setSpotCutoff(20.0f);
-	//myLight1->setSpotExponent(50.0f);
-	//myLight1->setDirection(osg::Vec3(1.0f,1.0f,-1.0f));
-	osg::LightSource* lightS1 = new osg::LightSource;
-	lightS1->setLight(myLight1);
-	lightS1->setLocalStateSetModes(osg::StateAttribute::ON);
-	lightS1->setStateSetModes(*_scene->getOrCreateStateSet(), osg::StateAttribute::ON);
-	_scene->addChild(lightS1);
-	_scene->getOrCreateStateSet()->setMode(GL_LIGHT1, osg::StateAttribute::ON);
-	*/
-
-	/*
-	// create a local light.
-	osg::Light* myLight2 = new osg::Light;
-	myLight2->setLightNum(1);
-	myLight2->setPosition(osg::Vec4(p[0], p[1] + 0.02, p[2] + 0.035, 1.0));
-	myLight2->setAmbient(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
-	myLight2->setDiffuse(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
-	myLight2->setConstantAttenuation(1.0f);
-	myLight2->setLinearAttenuation(2.0f);
-	myLight2->setQuadraticAttenuation(1.0f);
-	osg::LightSource* lightS2 = new osg::LightSource;
-	lightS2->setLight(myLight2);
-	lightS2->setLocalStateSetModes(osg::StateAttribute::ON);
-	//lightS2->setStateSetModes(*_scene->getOrCreateStateSet(),osg::StateAttribute::ON);
-	_scene->addChild(lightS2);
-	_scene->getOrCreateStateSet()->setMode(GL_LIGHT1, osg::StateAttribute::ON);
-	*/
-
 	// draw face1
 	rs::Quat q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE1, DEG2RAD(a[rsLinkbot::JOINT1]), q);
 	rs::Pos p1 = robot->getRobotBodyPosition(rsLinkbot::FACE1, p, q);
@@ -1243,59 +1184,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 	// get face p&q
 	rs::Quat Q1 = robot->getRobotBodyQuaternion(face, 0, rs::Quat(q[0], q[1], q[2], q[3]));
 	rs::Pos P1 = robot->getRobotFacePosition(face, rs::Pos(p[0], p[1], p[2]), rs::Quat(q[0], q[1], q[2], q[3]));
-	if (side <= -10) {
-		/* // initialize variables
-		osg::ref_ptr<osg::Geode> body = new osg::Geode;
-		osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
-		dQuaternion quat;
-		osg::Box *box;
-		osg::Cylinder *cyl;
-		osg::Sphere *sph;
-		double	depth = robot->_conn_depth,
-				width = 1.5*robot->_face_radius,
-				height = robot->_body_height;
-
-		pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[0]);
-		dGeomGetOffsetQuaternion(robot->_conn[i]->geom[0], quat);
-		box = new osg::Box(osg::Vec3d(pos[0], pos[1], pos[2]), depth, width, height);
-		box->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		body->addDrawable(new osg::ShapeDrawable(box));
-		pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[1]);
-		dGeomGetOffsetQuaternion(robot->_conn[i]->geom[1], quat);
-		box = new osg::Box(osg::Vec3d(pos[0], pos[1], pos[2]), 0.02, 0.022, 0.0032);
-		box->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		body->addDrawable(new osg::ShapeDrawable(box));
-		pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[2]);
-		dGeomGetOffsetQuaternion(robot->_conn[i]->geom[2], quat);
-		cyl = new osg::Cylinder(osg::Vec3d(pos[0], pos[1], pos[2]), 0.011, robot->_radius - robot->_face_radius - 0.006 + 0.0032);
-		cyl->setRotation(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		body->addDrawable(new osg::ShapeDrawable(cyl));
-		pos = dGeomGetOffsetPosition(robot->_conn[i]->geom[3]);
-		dGeomGetOffsetQuaternion(robot->_conn[i]->geom[3], quat);
-		sph = new osg::Sphere(osg::Vec3d(pos[0], pos[1], pos[2]), 0.006);
-		body->addDrawable(new osg::ShapeDrawable(sph));
-
-		// apply texture
-		osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "linkbot/conn.png"));
-		tex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-		tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
-		tex->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-		tex->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
-		pat->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
-
-		// set rendering
-		body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-		body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-
-		// add body to pat
-		pat->addChild(body.get());
-		// set user properties of node
-		body->setName("connector");
-		// add to scenegraph
-		_robot.back()->robot->addChild(pat);
-		return 0;*/
-	}
-	else if (conn == -1) {
+	if (conn == -1) {
 		P1 = robot->getConnBodyPosition(type, orientation, P1, Q1);
 		Q1 = robot->getConnBodyQuaternion(type, orientation, Q1);
 	}
@@ -1323,6 +1212,13 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 			break;
 		case rsLinkbot::CASTER:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/caster.3ds");
+			/*if (size) {
+				transform->setScale(osg::Vec3d(1, 1, robot->getCasterScale()));
+				osg::ref_ptr<osg::PositionAttitudeTransform> transform2 = new osg::PositionAttitudeTransform();
+				transform2->setPosition(osg::Vec3d(0, 0, -0.2));
+				transform2->addChild(node);
+				transform->addChild(transform2);
+			}*/
 			break;
 		case rsLinkbot::CUBE:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/cube.3ds");
@@ -1350,7 +1246,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 			break;
 		case rsLinkbot::WHEEL:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
-			transform->setScale(osg::Vec3d(1, size/robot->getWheelRatio(rsLinkbot::TINYWHEEL), size/robot->getWheelRatio(rsLinkbot::TINYWHEEL)));
+			transform->setScale(osg::Vec3d(1, robot->getWheelRatio(rsLinkbot::TINYWHEEL), robot->getWheelRatio(rsLinkbot::TINYWHEEL)));
 			break;
 	}
 	node->setCullingActive(false);

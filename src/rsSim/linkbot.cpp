@@ -668,14 +668,14 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 	// custom drawn one for mathematics
 	else {
 		// set geometry 1 - horizontal support
-		geom[1] = dCreateBox(_space, 0.02, 0.022, 0.0032);
+		geom[1] = dCreateBox(_space, 0.0368, 0.022, 0.0032);
 		dGeomSetBody(geom[1], conn.body);
 		dGeomSetOffsetPosition(geom[1], _conn_depth/2 + 0.01 - m.c[0], -m.c[1], -_body_height/2 + 0.0016 - m.c[2]);
 
 		// set geometry 2 - ball support
-		geom[2] = dCreateCylinder(_space, 0.011, _radius -_face_radius - 0.006 + 0.0032);
+		geom[2] = dCreateCylinder(_space, 0.011, _wheel_radius -_face_radius - 0.006 + 0.0032);
 		dGeomSetBody(geom[2], conn.body);
-		dGeomSetOffsetPosition(geom[2], _conn_depth/2 + 0.02 - m.c[0], -m.c[1], -_body_height/2 - (_radius -_face_radius - 0.006)/2 + 0.0016 - m.c[2]);
+		dGeomSetOffsetPosition(geom[2], _conn_depth/2 + 0.02 - m.c[0], -m.c[1], -_body_height/2 - (_wheel_radius -_face_radius - 0.006)/2 + 0.0016 - m.c[2]);
 
 		// set geometry 3 - sphere
 		geom[3] = dCreateSphere(_space, 0.006);

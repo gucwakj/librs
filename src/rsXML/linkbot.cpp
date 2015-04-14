@@ -17,6 +17,11 @@ void Linkbot::postProcess(void) {
 
 	// reposition robot in space
 	if (_base == NULL) {
+		// adjust height to be above zero
+		if (fabs(_p[2]) < (_body_radius - EPSILON)) {
+			_p.add(_q.multiply(0, 0, _body_height/2));
+		}
+
 		// check for wheels
 		for (unsigned int i = 0; i < _conn.size(); i++) {
 			if (_conn[i]->getConn() == rsLinkbot::BIGWHEEL) {
@@ -45,11 +50,6 @@ void Linkbot::postProcess(void) {
 		for (unsigned int i = 0; i < _conn.size(); i++) {
 			if (_conn[i]->getType() == rsLinkbot::CASTER && !static_cast<int>(_conn[i]->getSize()))
 				this->setPsi(atan2(_radius - _smallwheel_radius, 0.08575));
-		}
-
-		// adjust height to be above zero
-		if (fabs(_p[2]) < (_body_radius - EPSILON)) {
-			_p.add(_q.multiply(0, 0, _body_height/2));
 		}
 	}
 }

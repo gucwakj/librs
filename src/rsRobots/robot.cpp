@@ -66,3 +66,7 @@ void Robot::setTrace(bool trace) {
 	_trace = trace;
 }
 
+void Robot::setWheelRadius(double radius) {
+	_wheel_radius = radius;
+}
+

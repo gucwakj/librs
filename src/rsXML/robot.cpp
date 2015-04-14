@@ -69,6 +69,10 @@ const rs::Quat Robot::getQuaternion(void) {
 	return _q;
 }
 
+double Robot::getRadius(void) {
+	return _radius;
+}
+
 bool Robot::getTrace(void) {
 	return _trace;
 }

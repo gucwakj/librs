@@ -34,6 +34,7 @@ namespace rsXML {
 			int getOrientation(void);
 			const rs::Pos getPosition(void);
 			const rs::Quat getQuaternion(void);
+			double getRadius(void);
 			bool getTrace(void);
 			virtual void postProcess(void) {};
 			void printDebug(void);

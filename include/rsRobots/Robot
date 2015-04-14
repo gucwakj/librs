@@ -30,6 +30,7 @@ namespace rsRobots {
 			void setForm(int);
 			void setName(std::string);
 			void setTrace(bool);
+			void setWheelRadius(double);
 
 		// for inherited classes
 		public:

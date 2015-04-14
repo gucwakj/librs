@@ -202,67 +202,59 @@ void Writer::setConnectorSide(tinyxml2::XMLElement *conn, int id, int robotid, i
 	// write to disk
 	this->save();
 }
-/*
-void Writer::addConnector(int id) {
-	// add wheels
-	tinyxml2::XMLElement *simple1 = _doc.NewElement("simple");
-	tinyxml2::XMLElement *s1side1 = _doc.NewElement("side");
-	s1side1->SetAttribute("id", 1);
-	s1side1->SetAttribute("robot", 0);
-	s1side1->SetAttribute("face", 1);
-	simple1->InsertFirstChild(s1side1);
-	tinyxml2::XMLElement *s1side2 = _doc.NewElement("side");
-	s1side2->SetAttribute("id", 2);
-	s1side2->SetAttribute("robot", 0);
-	s1side2->SetAttribute("conn", SMALLWHEEL);
-	simple1->InsertAfterChild(s1side1, s1side2);
 
-	tinyxml2::XMLElement *simple2 = _doc.NewElement("simple");
-	tinyxml2::XMLElement *s2side1 = _doc.NewElement("side");
-	s2side1->SetAttribute("id", 1);
-	s2side1->SetAttribute("robot", 0);
-	s2side1->SetAttribute("face", 3);
-	simple2->InsertFirstChild(s2side1);
-	tinyxml2::XMLElement *s2side2 = _doc.NewElement("side");
-	s2side2->SetAttribute("id", 2);
-	s2side2->SetAttribute("robot", 0);
-	s2side2->SetAttribute("conn", SMALLWHEEL);
-	simple2->InsertAfterChild(s2side1, s2side2);
-
-	// add caster
-	tinyxml2::XMLElement *simple3 = _doc.NewElement("simple");
-	sim->InsertAfterChild(simple2, simple3);
-	tinyxml2::XMLElement *s3side1 = _doc.NewElement("side");
-	s3side1->SetAttribute("id", 1);
-	s3side1->SetAttribute("robot", 0);
-	s3side1->SetAttribute("face", 2);
-	simple3->InsertFirstChild(s3side1);
-	tinyxml2::XMLElement *s3side2 = _doc.NewElement("side");
-	s3side2->SetAttribute("id", 2);
-	s3side2->SetAttribute("robot", 0);
-	s3side2->SetAttribute("conn", CASTER);
-	simple3->InsertAfterChild(s3side1, s3side2);
-
-	// add accessories to robot
-	sim->InsertAfterChild(robot, simple1);
-	sim->InsertAfterChild(simple1, simple2);
-	sim->InsertAfterChild(simple2, simple3);
+bool Writer::deleteMarker(int id) {
+	tinyxml2::XMLElement *sim = _doc.FirstChildElement("graphics");
+	tinyxml2::XMLElement *node = sim->FirstChildElement();
+	int j;
+	while (node) {
+		node->QueryIntAttribute("id", &j);
+		if (j == id) {
+			// delete child
+			sim->DeleteChild(node);
+			// write to disk
+			this->save();
+			return true;
+		}
+		node = node->NextSiblingElement();
+	}
+	return false;
 }
-*/
 
-tinyxml2::XMLElement* Writer::getRobot(int id) {
+bool Writer::deleteObstacle(int id) {
+	tinyxml2::XMLElement *sim = _doc.FirstChildElement("ground");
+	tinyxml2::XMLElement *node = sim->FirstChildElement();
+	int j;
+	while (node) {
+		node->QueryIntAttribute("id", &j);
+		if (j == id) {
+			// delete child
+			sim->DeleteChild(node);
+			// write to disk
+			this->save();
+			return true;
+		}
+		node = node->NextSiblingElement();
+	}
+	return false;
+}
+
+bool Writer::deleteRobot(int id) {
 	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
 	tinyxml2::XMLElement *node = sim->FirstChildElement();
 	int j;
 	while (node) {
 		node->QueryIntAttribute("id", &j);
-		if (j == id)
-			return node;
+		if (j == id) {
+			// delete child
+			sim->DeleteChild(node);
+			// write to disk
+			this->save();
+			return true;
+		}
 		node = node->NextSiblingElement();
 	}
-
-	// empty return
-	return NULL;
+	return false;
 }
 
 void Writer::setGrid(std::vector<double> grid) {

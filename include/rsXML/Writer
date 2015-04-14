@@ -17,6 +17,9 @@ namespace rsXML {
 			Writer(std::string, const std::string&);
 			virtual ~Writer(void);
 
+			bool deleteMarker(int id);
+			bool deleteObstacle(int id);
+			bool deleteRobot(int id);
 			tinyxml2::XMLElement* getOrCreateChild(tinyxml2::XMLElement*, const char*);
 			tinyxml2::XMLElement* getOrCreateConnector(int, int);
 			tinyxml2::XMLElement* getOrCreateElement(const char*, const char*);
@@ -24,7 +27,6 @@ namespace rsXML {
 			tinyxml2::XMLElement* getOrCreateObstacle(int, int);
 			tinyxml2::XMLElement* getOrCreateRobot(int, int);
 			tinyxml2::XMLElement* getOrCreateSide(tinyxml2::XMLElement*, const char*, int);
-			tinyxml2::XMLElement* getRobot(int);
 			int save(void);
 			int saveFile(std::string);
 			void setConnectorSide(tinyxml2::XMLElement*, int, int, int, int, double = 0);

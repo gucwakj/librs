@@ -9,7 +9,7 @@ namespace rsRobots {
 	class Linkbot : virtual public ModularRobot {
 		// public functions
 		public:
-			Linkbot(int = -1);
+			Linkbot(int = rs::LINKBOTT);
 			virtual ~Linkbot(void) { };
 
 			double getWheelRatio(int);

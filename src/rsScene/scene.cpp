@@ -537,16 +537,19 @@ int Scene::setupScene(double w, double h, bool pause) {
 	//sm->setTextureSize(osg::Vec2s(1024, 1024));
 	//_scene->setShadowTechnique(sm.get());
 
-	// add light source
-	/*osg::ref_ptr<osg::LightSource> ls = new osg::LightSource;
-	//ls->getLight()->setPosition(osg::Vec4(5, 5, 10, 1.0));
-	ls->getLight()->setPosition(osg::Vec4(1, 1, 1, 1.0));
-	ls->getLight()->setAmbient(	osg::Vec4(1.0, 1.0, 1.0, 1.0));
-	ls->getLight()->setDiffuse(	osg::Vec4(1.0, 1.0, 1.0, 1.0));
-	ls->getLight()->setSpecular(osg::Vec4(1.0, 1.0, 1.0, 1.0));
-	ls->getLight()->setConstantAttenuation(0.05);
-	ls->getLight()->setQuadraticAttenuation(0.05);
-	_scene->addChild(ls.get());*/
+	// add 'sun' light source
+	osg::ref_ptr<osg::LightSource> ls = new osg::LightSource;
+	osg::ref_ptr<osg::Light> myLight = new osg::Light;
+	myLight->setLightNum(0);
+	myLight->setAmbient(osg::Vec4(0.1, 0.1, 0.1, 1));
+	myLight->setDiffuse(osg::Vec4(1, 1, 1, 0.1));		// sun color: bright white
+	myLight->setDirection(osg::Vec3(1, 0, -1));
+	myLight->setPosition(osg::Vec4(0, 0, 1000, 0));
+	myLight->setSpecular(osg::Vec4(0.1, 0.1, 0.1, 1));
+	ls->setLight(myLight.get());
+	ls->setLocalStateSetModes(osg::StateAttribute::ON);
+	ls->setStateSetModes(*_root->getOrCreateStateSet(), osg::StateAttribute::ON);
+	_root->addChild(ls.get());
 
 	// draw global HUD
 	this->draw_global_hud(w, h, pause);
@@ -704,29 +707,11 @@ void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
  **********************************************************/
 osg::Material* Scene::create_material(osg::Vec4 color) {
 	osg::Material *material = new osg::Material();
-	/*
-	material->setAmbient(osg::Material::FRONT,  osg::Vec4(1.0, 1.0, 1.0, 1.0));
-	material->setDiffuse(osg::Material::FRONT,  osg::Vec4(1.0, 1.0, 1.0, 1.0));
-	material->setEmission(osg::Material::FRONT, color);
-	material->setSpecular(osg::Material::FRONT, osg::Vec4(1.0, 1.0, 1.0, 1.0));
-	material->setShininess(osg::Material::FRONT, 25.0);
-	*/
-	/*
 	material->setAmbient(osg::Material::FRONT, osg::Vec4(0.0,0.0f,0.0f,1.0f));
 	material->setDiffuse(osg::Material::FRONT, osg::Vec4(0.0,0.0f,0.0f,1.0f));
 	material->setEmission(osg::Material::FRONT, color);
+	material->setShininess(osg::Material::FRONT, 2);
 	material->setSpecular(osg::Material::FRONT, osg::Vec4(1.0,1.0f,1.0f,1.0f));
-	*/
-	/*
-	material->setColorMode(osg::Material::DIFFUSE);
-	material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1));
-	material->setEmission(osg::Material::FRONT, color);
-	material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(1, 1, 1, 1));
-	material->setShininess(osg::Material::FRONT_AND_BACK, 64.0f);
-	*/
-	material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.0, 0.0, 0.0, 1.0));
-	material->setEmission(osg::Material::FRONT, color);
-	material->setShininess(osg::Material::FRONT_AND_BACK, 0);
 	return material;
 }
 

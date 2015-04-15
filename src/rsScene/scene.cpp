@@ -711,11 +711,11 @@ void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
  **********************************************************/
 osg::Material* Scene::create_material(osg::Vec4 color) {
 	osg::Material *material = new osg::Material();
-	material->setAmbient(osg::Material::FRONT, osg::Vec4(0.0,0.0f,0.0f,1.0f));
-	material->setDiffuse(osg::Material::FRONT, osg::Vec4(0.0,0.0f,0.0f,1.0f));
+	material->setAmbient(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
+	material->setDiffuse(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	material->setEmission(osg::Material::FRONT, color);
 	material->setShininess(osg::Material::FRONT, 2);
-	material->setSpecular(osg::Material::FRONT, osg::Vec4(1.0,1.0f,1.0f,1.0f));
+	material->setSpecular(osg::Material::FRONT, osg::Vec4(1, 1, 1, 1));
 	return material;
 }
 
@@ -1103,10 +1103,16 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	pat[rsLinkbot::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// draw 'led'
-	/*osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0 + 0.0001), 0.01, 0.07250);
+	osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, -0.02, 0.0308), 0.01, 0.01);
 	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
-	led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1));
-	body[rsLinkbot::BODY]->addDrawable(led);*/
+	led->setColor(osg::Vec4(c[0], c[1], c[2], 1));
+	osg::Geode *bodyled = new osg::Geode();
+	bodyled->addDrawable(led);
+	bodyled->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	bodyled->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	bodyled->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	bodyled->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	bodyled->setCullingActive(false);
 
 	// draw face1
 	rs::Quat q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE1, DEG2RAD(a[rsLinkbot::JOINT1]), q);
@@ -1154,6 +1160,8 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 		body[i]->setCullingActive(false);
 		pat[i]->addChild(body[i]);
 	}
+	// add 'led' as second child of body
+	pat[rsLinkbot::BODY]->addChild(bodyled);
 }
 
 void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int type, int face, int orientation, double size, int side, int conn) {

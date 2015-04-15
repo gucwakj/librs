@@ -1,3 +1,5 @@
+#include <osgFX/Scribe>
+
 #include <rsScene/KeyboardHandler>
 
 using namespace rsScene;
@@ -29,6 +31,35 @@ bool KeyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionA
 				case '2': {
 					osg::Vec3f eye = osg::Vec3f(0, 0, 5);
 					osg::Vec3f center = osg::Vec3f(0, 0, 0);
+					osg::Vec3f up = osg::Vec3f(0, 0, 1);
+					viewer->getCameraManipulator()->setHomePosition(eye, center, up);
+					viewer->getCameraManipulator()->home(ea, aa);
+					return true;
+				}
+				case 'c': {
+					// find highlighted item
+					osg::Group *test = NULL;
+					osg::BoundingSphere bs;
+					for (unsigned int i = 0; i < shadow->getNumChildren(); i++) {
+						test = dynamic_cast<osg::Group *>(shadow->getChild(i));
+						// get robot node
+						if (test && (!test->getName().compare(0, 5, "robot"))) {
+							if (dynamic_cast<osgFX::Scribe *>(test->getChild(2)->asTransform()->getChild(0))) {
+								bs = test->getBound();
+								break;
+							}
+						}
+						// get obstacle node
+						if (test && (!test->getName().compare(0, 6, "ground"))) {
+							if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0))) {
+								bs = test->getBound();
+								break;
+							}
+						}
+					}
+					// reposition camera
+					osg::Vec3f eye = osg::Vec3f(0.6, -0.8, 0.5);
+					osg::Vec3f center = osg::Vec3f(bs.center()[0], bs.center()[1], bs.center()[2]);
 					osg::Vec3f up = osg::Vec3f(0, 0, 1);
 					viewer->getCameraManipulator()->setHomePosition(eye, center, up);
 					viewer->getCameraManipulator()->home(ea, aa);

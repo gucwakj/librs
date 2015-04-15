@@ -1093,7 +1093,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	robot->setTrace(trace);
 
 	// draw body
-	body[rsLinkbot::BODY] = osgDB::readNodeFile(_tex_path + "linkbot/models/body.3ds");
+	body[rsLinkbot::BODY] = osgDB::readNodeFile(_tex_path + "linkbot/body.3ds");
 	body[rsLinkbot::BODY]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	pat[rsLinkbot::BODY]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 	pat[rsLinkbot::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
@@ -1107,7 +1107,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	// draw face1
 	rs::Quat q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE1, DEG2RAD(a[rsLinkbot::JOINT1]), q);
 	rs::Pos p1 = robot->getRobotBodyPosition(rsLinkbot::FACE1, p, q);
-	body[rsLinkbot::FACE1] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
+	body[rsLinkbot::FACE1] = osgDB::readNodeFile(_tex_path + "linkbot/face_rotate.3ds");
 	body[rsLinkbot::FACE1]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	pat[rsLinkbot::FACE1]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
 	pat[rsLinkbot::FACE1]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
@@ -1116,11 +1116,11 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE2, DEG2RAD(a[rsLinkbot::JOINT2]), q);
 	p1 = robot->getRobotBodyPosition(rsLinkbot::FACE2, p, q);
 	if (robot->getForm() == rs::LINKBOTI) {
-		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_fixed.3ds");
+		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/face_fixed.3ds");
 		body[rsLinkbot::FACE2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	}
 	else {
-		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
+		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/face_rotate.3ds");
 		body[rsLinkbot::FACE2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	}
 	pat[rsLinkbot::FACE2]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
@@ -1130,11 +1130,11 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE3, DEG2RAD(a[rsLinkbot::JOINT3]), q);
 	p1 = robot->getRobotBodyPosition(rsLinkbot::FACE3, p, q);
 	if (robot->getForm() == rs::LINKBOTL) {
-		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_fixed.3ds");
+		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/face_fixed.3ds");
 		body[rsLinkbot::FACE3]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	}
 	else {
-		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/models/face_rotate.3ds");
+		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/face_rotate.3ds");
 		body[rsLinkbot::FACE3]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	}
 	pat[rsLinkbot::FACE3]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
@@ -1183,13 +1183,13 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 	osg::ref_ptr<osg::Node> node;
 	switch (type) {
 		case rsLinkbot::BIGWHEEL:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/bigwheel.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/bigwheel.3ds");
 			break;
 		case rsLinkbot::BRIDGE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/bridge.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/bridge.3ds");
 			break;
 		case rsLinkbot::CASTER:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/caster.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/caster.3ds");
 			/*if (size) {
 				transform->setScale(osg::Vec3d(1, 1, robot->getCasterScale()));
 				osg::ref_ptr<osg::PositionAttitudeTransform> transform2 = new osg::PositionAttitudeTransform();
@@ -1199,31 +1199,31 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 			}*/
 			break;
 		case rsLinkbot::CUBE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/cube.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/cube.3ds");
 			break;
 		case rsLinkbot::DOUBLEBRIDGE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/doublebridge.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/doublebridge.3ds");
 			break;
 		case rsLinkbot::FACEPLATE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/faceplate.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/faceplate.3ds");
 			break;
 		case rsLinkbot::GRIPPER:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/gripper.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/gripper.3ds");
 			break;
 		case rsLinkbot::OMNIPLATE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/omnidrive.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/omnidrive.3ds");
 			break;
 		case rsLinkbot::SIMPLE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/simple.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/simple.3ds");
 			break;
 		case rsLinkbot::SMALLWHEEL:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/smallwheel.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/smallwheel.3ds");
 			break;
 		case rsLinkbot::TINYWHEEL:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/tinywheel.3ds");
 			break;
 		case rsLinkbot::WHEEL:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/models/tinywheel.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/tinywheel.3ds");
 			transform->setScale(osg::Vec3d(1, robot->getWheelRatio(rsLinkbot::TINYWHEEL), robot->getWheelRatio(rsLinkbot::TINYWHEEL)));
 			break;
 	}
@@ -1265,7 +1265,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	robot->setTrace(trace);
 
 	// body
-	//body[rsMindstorms::BODY] = osgDB::readNodeFile(_tex_path + "mindstorms/models/body.3ds");	// TODO: add
+	//body[rsMindstorms::BODY] = osgDB::readNodeFile(_tex_path + "mindstorms/body.3ds");	// TODO: add
 	box = new osg::Box(osg::Vec3d(0, 0, 0), 0.09175, 0.17300, 0.13400);		// TODO: remove
 	body[rsMindstorms::BODY]->addDrawable(new osg::ShapeDrawable(box));		// TODO: remove
 	body[rsMindstorms::BODY]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
@@ -1275,7 +1275,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	// wheel1
 	rs::Quat q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL1, a[rsMindstorms::JOINT1], q);
 	rs::Pos p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL1, p, q);
-	//body[rsMindstorms::WHEEL1] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
+	//body[rsMindstorms::WHEEL1] = osgDB::readNodeFile(_tex_path + "mindstorms/wheel.3ds");	// TODO: add
 	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02843, 0.02660);				// TODO: remove
 	body[rsMindstorms::WHEEL1]->addDrawable(new osg::ShapeDrawable(cyl));		// TODO: remove
 	body[rsMindstorms::WHEEL1]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
@@ -1285,7 +1285,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	// wheel2
 	q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL2, a[rsMindstorms::JOINT2], q);
 	p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL2, p, q);
-	//body[rsMindstorms::WHEEL2] = osgDB::readNodeFile(_tex_path + "mindstorms/models/wheel.3ds");	// TODO: add
+	//body[rsMindstorms::WHEEL2] = osgDB::readNodeFile(_tex_path + "mindstorms/wheel.3ds");	// TODO: add
 	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02843, 0.02660);				// TODO: remove
 	body[rsMindstorms::WHEEL2]->addDrawable(new osg::ShapeDrawable(cyl));		// TODO: remove
 	body[rsMindstorms::WHEEL2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));

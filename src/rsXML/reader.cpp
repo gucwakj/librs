@@ -588,6 +588,15 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
 			}
+			if ( (ele = node->FirstChildElement("wheels")) ) {
+				ele->QueryIntAttribute("size", &i);
+				_robot.back()->addConnector(new Conn(0, 0, -1, 1, 1, 0, 1, 8));
+				_robot.back()->addConnector(new Conn(0, 0,  a, 1, 1, 0, 2, 8));
+				_robot.back()->addConnector(new Conn(0, 0, -1, 2, 2, 0, 1, 8));
+				_robot.back()->addConnector(new Conn(0, 0,  2, 2, 2, 0, 2, 8));
+				_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, 0, 1, 8));
+				_robot.back()->addConnector(new Conn(0, 0,  a, 3, 3, 0, 2, 8));
+			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
@@ -891,7 +900,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 
 	// debug printing
 	/*std::cerr << "XML Reading Debug List" << std::endl;
-	for (int i = 0; i < _robot.size(); i++) {
+	for (unsigned int i = 0; i < _robot.size(); i++) {
 		_robot[i]->printDebug();
 	}*/
 

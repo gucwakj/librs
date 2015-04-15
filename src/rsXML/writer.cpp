@@ -187,6 +187,18 @@ void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, double *p, 
 	this->save();
 }
 
+void Writer::setRobotWheels(tinyxml2::XMLElement *robot, int type, double size) {
+	// set wheel type
+	tinyxml2::XMLElement *wheel = getOrCreateChild(robot, "wheels");
+	wheel->SetAttribute("size", type);
+
+	// save custom size if applicable
+	if (size) wheel->SetAttribute("radius", size);
+
+	// write to disk
+	this->save();
+}
+
 void Writer::setConnectorSide(tinyxml2::XMLElement *conn, int id, int robotid, int face, int item1, double item2) {
 	tinyxml2::XMLElement *side = getOrCreateSide(conn, "side", id);
 	side->SetAttribute("id", id);

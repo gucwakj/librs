@@ -374,7 +374,11 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 
 osgText::Text* Scene::getHUDText(void) {
 	// get text geode
-	osg::Geode *geode = _scene->getParent(0)->getChild(1)->asGroup()->getChild(0)->asTransform()->getChild(0)->asGeode();
+	osg::Geode *geode;
+	for (unsigned int i = 0; i < _root->getNumChildren(); i++) {
+		if (!_root->getChild(i)->getName().compare("HUDProjection"))
+			geode = _root->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0)->asGeode();
+	}
 	// return text
 	return dynamic_cast<osgText::Text *>(geode->getDrawable(0));
 }

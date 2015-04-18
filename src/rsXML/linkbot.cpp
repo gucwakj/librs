@@ -3,7 +3,9 @@
 
 using namespace rsXML;
 
-Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsXML::Robot(trace) { };
+Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsXML::Robot(trace) {
+	_a.allocate(2);
+};
 
 void Linkbot::postProcess(void) {
 	// find if i am connected to another robot

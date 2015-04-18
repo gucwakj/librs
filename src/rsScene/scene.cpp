@@ -18,6 +18,7 @@ osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
 Scene::Scene(void) : KeyboardHandler() {
 	// set notification level to no output
 	osg::setNotifyLevel(osg::ALWAYS);
+	//osg::setNotifyLevel(osg::DEBUG_FP);
 
 	// staging area for new insertions
 	_staging = new osg::Group;
@@ -107,16 +108,16 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 		if (robot && test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
-			if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+			/*if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
 				this->setHUD(true);
 				this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
 				this->getHUDText()->setText("Robots are Colliding!");
 				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
-			}
-			else {
+			}*/
+			//else {
 				this->setHUD(false);
 				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), c);
-			}
+		//	}
 			break;
 		}
 		// get ground node
@@ -1260,15 +1261,16 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 
 void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
 	// initialize variables
-	//osg::ref_ptr<osg::Node> body[rsMindstorms::NUM_PARTS];	// TODO: add
-	osg::ref_ptr<osg::Geode> body[rsMindstorms::NUM_PARTS];		// TODO: remove
+	osg::ref_ptr<osg::Node> body[rsMindstorms::NUM_PARTS];	// TODO: add
+	//osg::ref_ptr<osg::Geode> body[rsMindstorms::NUM_PARTS];		// TODO: remove
 	osg::Box *box;
 	osg::Cylinder *cyl;
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsMindstorms::NUM_PARTS];
 
 	// create transforms
-	for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
-		body[i] = new osg::Geode;		// TODO: remove
+	//for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
+	for (int i = 0; i < 1; i++) {
+		//body[i] = new osg::Geode;		// TODO: remove
 		pat[i] = new osg::PositionAttitudeTransform;
 		group->addChild(pat[i].get());
 	}
@@ -1277,15 +1279,15 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	robot->setTrace(trace);
 
 	// body
-	//body[rsMindstorms::BODY] = osgDB::readNodeFile(_tex_path + "mindstorms/body.3ds");	// TODO: add
-	box = new osg::Box(osg::Vec3d(0, 0, 0), 0.09175, 0.17300, 0.13400);		// TODO: remove
-	body[rsMindstorms::BODY]->addDrawable(new osg::ShapeDrawable(box));		// TODO: remove
+	body[rsMindstorms::BODY] = osgDB::readNodeFile(_tex_path + "mindstorms/nxt_body.stl");	// TODO: add
+	//box = new osg::Box(osg::Vec3d(0, 0, 0), 0.09175, 0.17300, 0.13400);		// TODO: remove
+	//body[rsMindstorms::BODY]->addDrawable(new osg::ShapeDrawable(box));		// TODO: remove
 	body[rsMindstorms::BODY]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	pat[rsMindstorms::BODY]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 	pat[rsMindstorms::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// wheel1
-	rs::Quat q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL1, a[rsMindstorms::JOINT1], q);
+	/*rs::Quat q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL1, a[rsMindstorms::JOINT1], q);
 	rs::Pos p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL1, p, q);
 	//body[rsMindstorms::WHEEL1] = osgDB::readNodeFile(_tex_path + "mindstorms/wheel.3ds");	// TODO: add
 	cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02843, 0.02660);				// TODO: remove
@@ -1303,9 +1305,10 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	body[rsMindstorms::WHEEL2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	pat[rsMindstorms::WHEEL2]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 	pat[rsMindstorms::WHEEL2]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
-
+*/
 	// set rendering
-	for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
+	//for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
+	for (int i = 0; i < 1; i++) {
 		// set rendering properties
 		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);

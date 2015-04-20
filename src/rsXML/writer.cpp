@@ -57,7 +57,7 @@ Writer::~Writer(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, double *p1, double *p2, double *c, int size) {
+void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, int size) {
 	// set start position
 	tinyxml2::XMLElement *pos = getOrCreateChild(marker, "position");
 	pos->SetAttribute("x", p1[0]);
@@ -95,7 +95,7 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, double *p
 	this->save();
 }
 
-void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, double *p, double *q, double *l, double *c, int mass) {
+void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, const rs::Vec &c, int mass) {
 	// set attributes
 	obstacle->SetAttribute("mass", mass);
 
@@ -141,7 +141,7 @@ void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, doubl
 	this->save();
 }
 
-void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, double *p, double *q, double *r, double *c) {
+void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, const rs::Pos &p, const rs::Quat &q, const rs::Vec &r, const rs::Vec &c) {
 	// set position
 	tinyxml2::XMLElement *pos = getOrCreateChild(robot, "position");
 	pos->SetAttribute("x", p[0]);

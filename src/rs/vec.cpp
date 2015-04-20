@@ -48,6 +48,9 @@ void Vec::add(double a) {
 
 void Vec::allocate(int size) {
 	_v.resize(size);
+	for (unsigned int i = 0; i < _v.size(); i++) {
+		_v[i] = 0;
+	}
 }
 
 void Vec::print(void) {

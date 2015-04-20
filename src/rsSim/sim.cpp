@@ -126,7 +126,7 @@ int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const 
 	return 0;
 }
 
-Ground* Sim::addGround(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, double mass) {
+Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, double mass) {
 	// create body
 	dMass m;
 	dBodyID *body = new dBodyID();
@@ -153,7 +153,7 @@ Ground* Sim::addGround(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, do
 	return body;
 }
 
-Ground* Sim::addGround(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, double mass, int axis) {
+Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, double mass, int axis) {
 	// create body
 	dMass m;
 	dBodyID *body = new dBodyID();
@@ -185,7 +185,7 @@ Ground* Sim::addGround(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, do
 	return body;
 }
 
-Ground* Sim::addGround(const rs::Pos &p, const rs::Vec&l, double mass) {
+Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Vec&l, double mass) {
 	// create body
 	dMass m;
 	dBodyID *body = new dBodyID();

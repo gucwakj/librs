@@ -11,7 +11,7 @@
 namespace rsSim {
 
 	// typedefs
-	typedef dBodyID Ground;
+	typedef dBodyID Obstacle;
 
 	// class
 	class Sim {
@@ -22,9 +22,9 @@ namespace rsSim {
 
 			int addRobot(Robot*, int, const rs::Pos&, const rs::Quat&, const rs::Vec&, int = -1);
 			int addRobot(ModularRobot*, int, Robot*, const rs::Vec&, int, int, int, int, int = rs::RIGHT, int = -1);
-			Ground* addGround(const rs::Pos&, const rs::Quat&, const rs::Vec&, double);
-			Ground* addGround(const rs::Pos&, const rs::Quat&, const rs::Vec&, double, int);
-			Ground* addGround(const rs::Pos&, const rs::Vec&, double);
+			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double);
+			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double, int);
+			Obstacle* addObstacle(const rs::Pos&, const rs::Vec&, double);
 			void beginSimulation(void);
 			virtual int deleteRobot(int);
 			void done(void);

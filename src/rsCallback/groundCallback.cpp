@@ -5,7 +5,7 @@
 
 using namespace rsCallback;
 
-GroundCallback::GroundCallback(rsSim::Ground *ground) {
+GroundCallback::GroundCallback(rsSim::Obstacle *ground) {
 	_ground = ground;
 }
 

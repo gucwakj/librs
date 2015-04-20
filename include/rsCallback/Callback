@@ -13,7 +13,7 @@ namespace rsCallback {
 			Callback(void);
 			virtual ~Callback(void) {};
 
-			void attachCallback(rsScene::Obstacle*, rsSim::Ground*);
+			void attachCallback(rsScene::Obstacle*, rsSim::Obstacle*);
 			void attachCallback(rsScene::Robot*, rsSim::Robot*, rsSim::BodyList&);
 			void attachCallback(rsScene::Robot*, rsSim::Robot*, rsSim::BodyList&, rsSim::ConnectorList&);
 

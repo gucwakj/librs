@@ -1,5 +1,5 @@
-#ifndef RSXML_GROUND_
-#define RSXML_GROUND_
+#ifndef RSXML_OBSTACLE_
+#define RSXML_OBSTACLE_
 
 #include <rs/Pos>
 #include <rs/Quat>
@@ -8,11 +8,11 @@
 namespace rsXML {
 
 	// class
-	class Ground {
+	class Obstacle {
 		// public functions
 		public:
-			Ground(int);
-			virtual ~Ground(void) {};
+			Obstacle(int);
+			virtual ~Obstacle(void) {};
 
 			double getAxis(void);
 			const rs::Vec getColor(void);
@@ -47,5 +47,5 @@ namespace rsXML {
 
 } // namespace rsXML
 
-#endif // RSXML_GROUND_
+#endif // RSXML_OBSTACLE_
 

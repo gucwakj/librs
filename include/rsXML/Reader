@@ -6,8 +6,8 @@
 
 #include <tinyxml2.h>
 
-#include <rsXML/Ground>
 #include <rsXML/Marker>
+#include <rsXML/Obstacle>
 #include <rsXML/Robot>
 
 namespace rsXML {
@@ -20,16 +20,16 @@ namespace rsXML {
 			virtual ~Reader(void);
 
 			int addNewRobot(Robot*);
-			Ground* getGround(int);
+			Obstacle* getObstacle(int);
 			Marker* getMarker(int);
 			Marker* getNextMarker(int = -1);
-			Ground* getNextObstacle(int = -1);
+			Obstacle* getNextObstacle(int = -1);
 			Robot* getNextRobot(int);
 			std::vector<double> getFriction(void);
 			std::vector<double> getGrid(void);
 			std::vector<double> getRestitution(void);
 			std::string getDoc(void);
-			int getNumGrounds(void);
+			int getNumObstacles(void);
 			int getNumMarkers(void);
 			int getNumRobots(void);
 			bool getPause(void);
@@ -42,7 +42,7 @@ namespace rsXML {
 			void load_file(const char*, tinyxml2::XMLDocument*);
 			void read_config(tinyxml2::XMLDocument*);
 			void read_graphics(tinyxml2::XMLDocument*);
-			void read_ground(tinyxml2::XMLDocument*);
+			void read_obstacles(tinyxml2::XMLDocument*);
 			void read_sim(tinyxml2::XMLDocument*, bool process);
 
 		// private data
@@ -57,7 +57,7 @@ namespace rsXML {
 			std::vector<double> _friction;		// coefficient of friction [body/ground, body/body]
 			std::vector<double> _grid;			// grid [tics, hash, minx, maxx, miny, maxy, enabled]
 			std::vector<double> _restitution;	// coefficient of restitution [body/ground, body/body]
-			std::vector<Ground*> _ground;		// ground obstacles
+			std::vector<Obstacle*> _obstacle;	// ground obstacles
 			std::vector<Marker*> _marker;		// graphical markers
 			std::vector<Robot*> _robot;			// simulation robots
 	};

@@ -28,20 +28,20 @@ Reader::Reader(const char *name, bool process) {
 	tinyxml2::XMLDocument doc;
 	this->load_file(name, &doc);
 	this->read_config(&doc);
-	this->read_ground(&doc);
+	this->read_obstacles(&doc);
 	this->read_graphics(&doc);
 	this->read_sim(&doc, process);
 }
 
 Reader::~Reader(void) {
-	for (unsigned int i = 0; i < _robot.size(); i++) {
-		delete _robot[i];
-	}
-	for (unsigned int i = 0; i < _ground.size(); i++) {
-		delete _ground[i];
-	}
 	for (unsigned int i = 0; i < _marker.size(); i++) {
 		delete _marker[i];
+	}
+	for (unsigned int i = 0; i < _obstacle.size(); i++) {
+		delete _obstacle[i];
+	}
+	for (unsigned int i = 0; i < _robot.size(); i++) {
+		delete _robot[i];
 	}
 }
 
@@ -53,8 +53,8 @@ int Reader::addNewRobot(Robot *bot) {
 	return 0;
 }
 
-Ground* Reader::getGround(int id) {
-	return _ground[id];
+Obstacle* Reader::getObstacle(int id) {
+	return _obstacle[id];
 }
 
 Marker* Reader::getMarker(int id) {
@@ -80,23 +80,23 @@ Marker* Reader::getNextMarker(int form) {
 	return _marker[i];
 }
 
-Ground* Reader::getNextObstacle(int form) {
+Obstacle* Reader::getNextObstacle(int form) {
 	// find next obstacle in xml list
 	unsigned int i = 0;
-	for (i = 0; i < _ground.size(); i++) {
-		if (!_ground[i]->getConnect() && (form == -1 || _ground[i]->getForm() == form))
+	for (i = 0; i < _obstacle.size(); i++) {
+		if (!_obstacle[i]->getConnect() && (form == -1 || _obstacle[i]->getForm() == form))
 			break;
 	}
 
 	// haven't found one
-	if (i == _ground.size())
+	if (i == _obstacle.size())
 		return NULL;
 
 	// robot now connected
-	_ground[i]->setConnect(1);
+	_obstacle[i]->setConnect(1);
 
 	// success
-	return _ground[i];
+	return _obstacle[i];
 }
 
 Robot* Reader::getNextRobot(int form) {
@@ -169,8 +169,8 @@ std::vector<double> Reader::getRestitution(void) {
 	return _restitution;
 }
 
-int Reader::getNumGrounds(void) {
-	return _ground.size();
+int Reader::getNumObstacles(void) {
+	return _obstacle.size();
 }
 
 int Reader::getNumMarkers(void) {
@@ -388,7 +388,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 	}
 }
 
-void Reader::read_ground(tinyxml2::XMLDocument *doc) {
+void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
@@ -404,117 +404,117 @@ void Reader::read_ground(tinyxml2::XMLDocument *doc) {
 	while (node) {
 		if ( !strcmp(node->Value(), "box") ) {
 			// create object
-			_ground.push_back(new Ground(rs::BOX));
+			_obstacle.push_back(new Obstacle(rs::BOX));
 			node->QueryIntAttribute("id", &i);
-			_ground.back()->setID(i);
+			_obstacle.back()->setID(i);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
 				ele->QueryDoubleAttribute("alpha", &d);
-				_ground.back()->setColor(a, b, c, d);
+				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
-				_ground.back()->setDimensions(a, b, c);
+				_obstacle.back()->setDimensions(a, b, c);
 			}
 			// mass
 			if (node->QueryDoubleAttribute("mass", &a))
-				_ground.back()->setMass(0.1);
+				_obstacle.back()->setMass(0.1);
 			else
-				_ground.back()->setMass(a);
+				_obstacle.back()->setMass(a);
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
-				_ground.back()->setPosition(a, b, c);
+				_obstacle.back()->setPosition(a, b, c);
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_ground.back()->setRotation(a, b, c);
+				_obstacle.back()->setRotation(a, b, c);
 			}
 		}
 		else if ( !strcmp(node->Value(), "cylinder") ) {
 			// create object
-			_ground.push_back(new Ground(rs::CYLINDER));
+			_obstacle.push_back(new Obstacle(rs::CYLINDER));
 			node->QueryIntAttribute("id", &i);
-			_ground.back()->setID(i);
+			_obstacle.back()->setID(i);
 			// mass
 			if (node->QueryDoubleAttribute("mass", &a))
-				_ground.back()->setMass(0.1);
+				_obstacle.back()->setMass(0.1);
 			else
-				_ground.back()->setMass(a);
+				_obstacle.back()->setMass(a);
 			// axis
 			if (node->QueryDoubleAttribute("axis", &a))
-				_ground.back()->setAxis(1);
+				_obstacle.back()->setAxis(1);
 			else
-				_ground.back()->setAxis(a);
+				_obstacle.back()->setAxis(a);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
 				ele->QueryDoubleAttribute("alpha", &d);
-				_ground.back()->setColor(a, b, c, d);
+				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				ele->QueryDoubleAttribute("radius", &a);
 				ele->QueryDoubleAttribute("length", &b);
-				_ground.back()->setDimensions(a, b, 0);
+				_obstacle.back()->setDimensions(a, b, 0);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
-				_ground.back()->setPosition(a, b, c);
+				_obstacle.back()->setPosition(a, b, c);
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_ground.back()->setRotation(a, b, c);
+				_obstacle.back()->setRotation(a, b, c);
 			}
 		}
 		else if ( !strcmp(node->Value(), "sphere") ) {
 			// create object
-			_ground.push_back(new Ground(rs::SPHERE));
+			_obstacle.push_back(new Obstacle(rs::SPHERE));
 			node->QueryIntAttribute("id", &i);
-			_ground.back()->setID(i);
+			_obstacle.back()->setID(i);
 			// mass
 			if (node->QueryDoubleAttribute("mass", &a))
-				_ground.back()->setMass(0.1);
+				_obstacle.back()->setMass(0.1);
 			else
-				_ground.back()->setMass(a);
+				_obstacle.back()->setMass(a);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
 				ele->QueryDoubleAttribute("alpha", &d);
-				_ground.back()->setColor(a, b, c, d);
+				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				ele->QueryDoubleAttribute("radius", &a);
-				_ground.back()->setDimensions(a, 0, 0);
+				_obstacle.back()->setDimensions(a, 0, 0);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
-				_ground.back()->setPosition(a, b, c);
+				_obstacle.back()->setPosition(a, b, c);
 			}
 		}
 

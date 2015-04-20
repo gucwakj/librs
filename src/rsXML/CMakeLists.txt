@@ -22,8 +22,8 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
 # add source files to library
 set (SRCS ${SRCS}
 	conn.cpp
-	ground.cpp
 	marker.cpp
+	obstacle.cpp
 	robot.cpp
 	reader.cpp
 	writer.cpp

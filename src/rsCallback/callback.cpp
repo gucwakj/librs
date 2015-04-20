@@ -9,7 +9,7 @@ Callback::Callback(void) {
 	_units = false;
 }
 
-void Callback::attachCallback(rsScene::Ground *scene, rsSim::Ground *sim) {
+void Callback::attachCallback(rsScene::Obstacle *scene, rsSim::Ground *sim) {
 	scene->setUpdateCallback(new GroundCallback(sim));
 }
 

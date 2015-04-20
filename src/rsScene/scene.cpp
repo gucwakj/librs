@@ -178,51 +178,6 @@ void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type,
 	}
 }
 
-Ground* Scene::drawGround(int id, int type, const rs::Pos &p, const rs::Vec &c, const rs::Vec &l, const rs::Quat &q) {
-	// create ground objects
-	osg::ref_ptr<osg::Group> ground = new osg::Group();
-	osg::ref_ptr<osg::Geode> body = new osg::Geode;
-	osg::ref_ptr<osg::ShapeDrawable> shape;
-
-	switch (type) {
-		case rs::BOX:
-			shape = new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2]));
-			break;
-		case rs::CYLINDER:
-			shape = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[0], l[1]));
-			break;
-		case rs::SPHERE:
-			shape = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0]));
-			break;
-	}
-	shape->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
-	body->addDrawable(shape);
-
-	// set rendering properties
-	body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-	body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	body->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-	body->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-	body->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
-	body->setCullingActive(false);
-
-	// add positioning capability
-	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
-	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
-	pat->addChild(body.get());
-	ground->addChild(pat.get());
-
-	// set user properties of node
-	ground->setName(std::string("ground").append(std::to_string(id)));
-
-	// add to scenegraph
-	_staging->addChild(ground);
-
-	// success
-	return ground;
-}
-
 int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, int size, std::string s) {
 	// create geode
 	osg::ref_ptr<osg::Group> marker = new osg::Group();
@@ -288,6 +243,51 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	_staging->addChild(marker);
 
 	return 0;
+}
+
+Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec &c, const rs::Vec &l, const rs::Quat &q) {
+	// create ground objects
+	osg::ref_ptr<osg::Group> obstacle = new osg::Group();
+	osg::ref_ptr<osg::Geode> body = new osg::Geode;
+	osg::ref_ptr<osg::ShapeDrawable> shape;
+
+	switch (type) {
+		case rs::BOX:
+			shape = new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2]));
+			break;
+		case rs::CYLINDER:
+			shape = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[0], l[1]));
+			break;
+		case rs::SPHERE:
+			shape = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0]));
+			break;
+	}
+	shape->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
+	body->addDrawable(shape);
+
+	// set rendering properties
+	body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	body->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	body->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+	body->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	body->setCullingActive(false);
+
+	// add positioning capability
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
+	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+	pat->addChild(body.get());
+	obstacle->addChild(pat.get());
+
+	// set user properties of node
+	obstacle->setName(std::string("ground").append(std::to_string(id)));
+
+	// add to scenegraph
+	_staging->addChild(obstacle);
+
+	// success
+	return obstacle;
 }
 
 Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {

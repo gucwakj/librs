@@ -36,7 +36,7 @@ extern osg::Node::NodeMask VISIBLE_MASK;
 namespace rsScene {
 
 	// typedefs
-	typedef osg::Group Ground;
+	typedef osg::Group Obstacle;
 	typedef osg::Group Robot;
 
 	// enum
@@ -61,8 +61,8 @@ namespace rsScene {
 			int deleteObstacle(int);
 			int deleteRobot(int);
 			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, int, double, int, int);
-			Ground* drawGround(int, int, const rs::Pos&, const rs::Vec&, const rs::Vec&, const rs::Quat&);
 			int drawMarker(int, int, const rs::Pos&, const rs::Pos&, const rs::Vec&, int, std::string);
+			Obstacle* drawObstacle(int, int, const rs::Pos&, const rs::Vec&, const rs::Vec&, const rs::Quat&);
 			Robot* drawRobot(rsRobots::Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);

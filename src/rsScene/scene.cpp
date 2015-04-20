@@ -178,7 +178,7 @@ void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type,
 	}
 }
 
-Ground* Scene::drawGround(int id, int type, const double *p, const double *c, const double *l, const double *q) {
+Ground* Scene::drawGround(int id, int type, const rs::Pos &p, const rs::Vec &c, const rs::Vec &l, const rs::Quat &q) {
 	// create ground objects
 	osg::ref_ptr<osg::Group> ground = new osg::Group();
 	osg::ref_ptr<osg::Geode> body = new osg::Geode;
@@ -223,7 +223,7 @@ Ground* Scene::drawGround(int id, int type, const double *p, const double *c, co
 	return ground;
 }
 
-int Scene::drawMarker(int id, int type, const double *p1, const double *p2, const double *c, int size, std::string s) {
+int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, int size, std::string s) {
 	// create geode
 	osg::ref_ptr<osg::Group> marker = new osg::Group();
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;

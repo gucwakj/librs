@@ -1,6 +1,10 @@
 #ifndef RSXML_GROUND_
 #define RSXML_GROUND_
 
+#include <rs/Pos>
+#include <rs/Quat>
+#include <rs/Vec>
+
 namespace rsXML {
 
 	// class
@@ -11,14 +15,14 @@ namespace rsXML {
 			virtual ~Ground(void) {};
 
 			double getAxis(void);
-			double* getColor(void);
+			const rs::Vec getColor(void);
 			int getConnect(void);
-			double* getDimensions(void);
+			const rs::Vec getDimensions(void);
 			int getForm(void);
 			int getID(void);
 			double getMass(void);
-			double* getPosition(void);
-			double* getQuaternion(void);
+			const rs::Pos getPosition(void);
+			const rs::Quat getQuaternion(void);
 			void setAxis(double);
 			void setColor(double, double, double, double);
 			void setConnect(int);
@@ -31,14 +35,14 @@ namespace rsXML {
 		// private data
 		private:
 			double _axis;	// longitudinal axis
-			double _c[4];	// color
-			double _l[3];	// lengths
 			double _mass;	// mass
-			double _p[3];	// position
-			double _q[4];	// quaternion
 			int _connected;	// connected to sim/gui
 			int _id;		// id
 			int _type;		// type
+			rs::Pos _p;		// position
+			rs::Quat _q;	// quaternion
+			rs::Vec _c;		// color
+			rs::Vec _l;		// lengths
 	};
 
 } // namespace rsXML

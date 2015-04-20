@@ -1,34 +1,23 @@
 #include <cmath>
+
 #include <rsXML/Ground>
 
 using namespace rsXML;
 
 Ground::Ground(int type) {
 	_axis = 0;
-	_c[0] = 0;
-	_c[1] = 0;
-	_c[2] = 0;
-	_c[3] = 0;
 	_connected = 0;
-	_l[0] = 0;
-	_l[1] = 0;
-	_l[2] = 0;
 	_mass = 0;
-	_p[0] = 0;
-	_p[1] = 0;
-	_p[2] = 0;
-	_q[0] = 0;
-	_q[1] = 0;
-	_q[2] = 0;
-	_q[3] = 1;
 	_type = type;
+	_l.allocate(3);
+	_c.allocate(4);
 }
 
 double Ground::getAxis(void) {
 	return _axis;
 }
 
-double* Ground::getColor(void) {
+const rs::Vec Ground::getColor(void) {
 	return _c;
 }
 
@@ -36,7 +25,7 @@ int Ground::getConnect(void) {
 	return _connected;
 }
 
-double* Ground::getDimensions(void) {
+const rs::Vec Ground::getDimensions(void) {
 	return _l;
 }
 
@@ -52,11 +41,11 @@ double Ground::getMass(void) {
 	return _mass;
 }
 
-double* Ground::getPosition(void) {
+const rs::Pos Ground::getPosition(void) {
 	return _p;
 }
 
-double* Ground::getQuaternion(void) {
+const rs::Quat Ground::getQuaternion(void) {
 	return _q;
 }
 

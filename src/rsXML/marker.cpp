@@ -3,22 +3,13 @@
 using namespace rsXML;
 
 Marker::Marker(int type) {
-	_c[0] = 0;
-	_c[1] = 0;
-	_c[2] = 0;
-	_c[3] = 0;
 	_connected = 0;
-	_e[0] = 0;
-	_e[1] = 0;
-	_e[2] = 0;
-	_s[0] = 0;
-	_s[1] = 0;
-	_s[2] = 0;
 	_size = 1;
 	_type = type;
+	_c.allocate(4);
 }
 
-double* Marker::getColor(void) {
+const rs::Vec Marker::getColor(void) {
 	return _c;
 }
 
@@ -26,7 +17,7 @@ int Marker::getConnect(void) {
 	return _connected;
 }
 
-double* Marker::getEnd(void) {
+const rs::Pos Marker::getEnd(void) {
 	return _e;
 }
 
@@ -34,7 +25,7 @@ int Marker::getID(void) {
 	return _id;
 }
 
-double* Marker::getStart(void) {
+const rs::Pos Marker::getStart(void) {
 	return _s;
 }
 

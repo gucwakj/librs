@@ -3,6 +3,10 @@
 
 #include <string>
 
+#include <rs/Pos>
+#include <rs/Quat>
+#include <rs/Vec>
+
 namespace rsXML {
 
 	// class
@@ -12,11 +16,11 @@ namespace rsXML {
 			Marker(int);
 			virtual ~Marker(void) {};
 
-			double* getColor(void);
+			const rs::Vec getColor(void);
 			int getConnect(void);
-			double* getEnd(void);
+			const rs::Pos getEnd(void);
 			int getID(void);
-			double* getStart(void);
+			const rs::Pos getStart(void);
 			int getSize(void);
 			int getForm(void);
 			std::string getLabel(void);
@@ -30,14 +34,14 @@ namespace rsXML {
 
 		// private data
 		private:
-			double _c[4];	// color
-			double _e[3];	// end position
-			double _s[3];	// start position
 			int _connected;	// connect to view
 			int _id;		// id
 			int _size;		// size of object
 			int _type;		// type
 			std::string _l;	// label
+			rs::Pos _e;		// end position
+			rs::Pos _s;		// start position
+			rs::Vec _c;		// color
 	};
 
 } // namespace rsXML

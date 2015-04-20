@@ -1,0 +1,28 @@
+#ifndef RSCALLBACK_OBSTACLECALLBACK_
+#define RSCALLBACK_OBSTACLECALLBACK_
+
+#include <osg/Node>
+#include <osg/NodeVisitor>
+
+#include <rsSim/Sim>
+
+namespace rsCallback {
+
+	// class
+	class ObstacleCallback : public osg::NodeCallback {
+		// public functions
+		public:
+			ObstacleCallback(rsSim::Obstacle*);
+			virtual ~ObstacleCallback(void) {};
+
+			virtual void operator()(osg::Node*, osg::NodeVisitor*);
+
+		// private data
+		private:
+			rsSim::Obstacle *_obstacle;
+	};
+
+} // namespace rsCallback
+
+#endif // RSCALLBACK_OBSTACLECALLBACK_
+

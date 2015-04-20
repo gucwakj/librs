@@ -37,7 +37,7 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsScene debug rsScened)
 # add source files to library
 set (SRCS ${SRCS}
 	callback.cpp
-	groundCallback.cpp
+	obstacleCallback.cpp
 )
 if (ENABLE_LINKBOT)
 	set (SRCS ${SRCS} linkbotCallback.cpp)

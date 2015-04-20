@@ -1,5 +1,5 @@
 #include <rsCallback/Callback>
-#include <rsCallback/GroundCallback>
+#include <rsCallback/ObstacleCallback>
 #include <rsCallback/LinkbotCallback>
 #include <rsCallback/MindstormsCallback>
 
@@ -10,7 +10,7 @@ Callback::Callback(void) {
 }
 
 void Callback::attachCallback(rsScene::Obstacle *scene, rsSim::Obstacle *sim) {
-	scene->setUpdateCallback(new GroundCallback(sim));
+	scene->setUpdateCallback(new ObstacleCallback(sim));
 }
 
 void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::BodyList &bodies) {

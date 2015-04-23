@@ -18,7 +18,6 @@ osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
 Scene::Scene(void) : KeyboardHandler() {
 	// set notification level to no output
 	osg::setNotifyLevel(osg::ALWAYS);
-	//osg::setNotifyLevel(osg::DEBUG_FP);
 
 	// staging area for new insertions
 	_staging = new osg::Group;
@@ -108,16 +107,16 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 		if (robot && test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
-			/*if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+			if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
 				this->setHUD(true);
 				this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
 				this->getHUDText()->setText("Robots are Colliding!");
 				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
-			}*/
-			//else {
+			}
+			else {
 				this->setHUD(false);
 				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), c);
-		//	}
+			}
 			break;
 		}
 		// get ground node
@@ -1263,8 +1262,8 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	// initialize variables
 	osg::ref_ptr<osg::Node> body[rsMindstorms::NUM_PARTS];	// TODO: add
 	//osg::ref_ptr<osg::Geode> body[rsMindstorms::NUM_PARTS];		// TODO: remove
-	osg::Box *box;
-	osg::Cylinder *cyl;
+	//osg::Box *box;		// TODO: remove
+	//osg::Cylinder *cyl;		// TODO: remove
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsMindstorms::NUM_PARTS];
 
 	// create transforms
@@ -1279,7 +1278,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	robot->setTrace(trace);
 
 	// body
-	body[rsMindstorms::BODY] = osgDB::readNodeFile(_tex_path + "mindstorms/nxt_body.stl");	// TODO: add
+	body[rsMindstorms::BODY] = osgDB::readNodeFile(_tex_path + "mindstorms/body.3ds");	// TODO: add
 	//box = new osg::Box(osg::Vec3d(0, 0, 0), 0.09175, 0.17300, 0.13400);		// TODO: remove
 	//body[rsMindstorms::BODY]->addDrawable(new osg::ShapeDrawable(box));		// TODO: remove
 	body[rsMindstorms::BODY]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));

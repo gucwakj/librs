@@ -3,9 +3,7 @@
 
 using namespace rsXML;
 
-Mindstorms::Mindstorms(int form, bool trace) : rsRobots::Robot(form), rsXML::Robot(trace) {
-	_a.allocate(3);
-};
+Mindstorms::Mindstorms(int form, bool trace) : rsRobots::Robot(form), rsXML::Robot(trace) { };
 
 void Mindstorms::postProcess(void) {
 	// adjust height to be above zero

@@ -331,7 +331,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
-			if (!node->QueryDoubleAttribute("size", &a))
+			if (!node->QueryDoubleAttribute("radius", &a))
 				_marker.back()->setSize(a);
 		}
 		else if ( !strcmp(node->Value(), "grid") ) {
@@ -364,7 +364,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setColor(a, b, c, d);
 			}
 			// label
-			if ( (ele = node->FirstChildElement("label")) ) {
+			if ( (ele = node->FirstChildElement("name")) ) {
 				_marker.back()->setLabel(ele->GetText());
 			}
 			// position

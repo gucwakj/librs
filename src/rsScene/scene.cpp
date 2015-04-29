@@ -92,7 +92,12 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)), c);
 			}
 			// get ground node
-			if (test && !test->getName().compare(0, 6, "ground")) {
+			else if (test && !test->getName().compare(0, 6, "ground")) {
+				if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0)))
+					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
+			}
+			// get marker node
+			else if (test && !test->getName().compare(0, 6, "marker")) {
 				if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0)))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
 			}
@@ -135,6 +140,12 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 			}
 			break;
 		}
+		// get marker node
+		else if (!robot && test && !test->getName().compare(std::string("marker").append(std::to_string(id)))) {
+			this->setHUD(false);
+			this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), c);
+			break;
+		}
 	}
 }
 
@@ -145,6 +156,11 @@ int Scene::deleteObstacle(int id) {
 		if (test && !test->getName().compare(std::string("ground").append(std::to_string(id)))) {
 			if (test->getUpdateCallback() != NULL)
 				test->removeUpdateCallback(test->getUpdateCallback());
+			_scene->removeChild(test);
+			MUTEX_UNLOCK(&(_thread_mutex));
+			return 0;
+		}
+		else if (test && !test->getName().compare(std::string("marker").append(std::to_string(id)))) {
 			_scene->removeChild(test);
 			MUTEX_UNLOCK(&(_thread_mutex));
 			return 0;
@@ -233,7 +249,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	marker->addChild(pat.get());
 
 	// set user properties of node
-	marker->setName(std::string("ground").append(std::to_string(id)));
+	marker->setName(std::string("marker").append(std::to_string(id)));
 
 	// add to scenegraph
 	_staging->addChild(marker);
@@ -669,7 +685,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 			}
 		}
 	}
-	else if (!parent->getName().compare(0, 6, "ground")) {
+	else if (!parent->getName().compare(0, 6, "ground") || !parent->getName().compare(0, 6, "marker")) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
 			osgFX::Scribe *scribe = new osgFX::Scribe();

@@ -186,10 +186,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	// draw specific marker
 	switch (type) {
 		case rs::DOT: {
-			osg::Sphere *sphere = new osg::Sphere(osg::Vec3d(0, 0, 0), size/500.0);
-			osg::ShapeDrawable *pointDrawable = new osg::ShapeDrawable(sphere);
-			pointDrawable->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
-			geode->addDrawable(pointDrawable);
+			geode->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), size/500.0)));
 			break;
 		}
 		case rs::LINE: {
@@ -199,10 +196,6 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			vert->push_back(osg::Vec3(p2[0], p2[1], p2[2]));
 			geom->setVertexArray(vert);
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
-			osg::Vec4Array *colors = new osg::Vec4Array;
-			colors->push_back(osg::Vec4(c[0], c[1], c[2], c[3]));
-			geom->setColorArray(colors);
-			geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 			osg::LineWidth *width = new osg::LineWidth();
 			width->setWidth(3*size);
 			geode->addDrawable(geom);
@@ -216,7 +209,6 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 			label->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 			label->setCharacterSize(25*size);
-			label->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
 			label->setDrawMode(osgText::Text::TEXT);
 			label->setPosition(osg::Vec3(0, 0, 0));
 			label->setText(s);
@@ -228,6 +220,10 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	// set rendering properties
 	geode->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+	geode->setCullingActive(false);
 
 	// add positioning capability
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
@@ -249,28 +245,25 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 	// create ground objects
 	osg::ref_ptr<osg::Group> obstacle = new osg::Group();
 	osg::ref_ptr<osg::Geode> body = new osg::Geode;
-	osg::ref_ptr<osg::ShapeDrawable> shape;
 
 	switch (type) {
 		case rs::BOX:
-			shape = new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2]));
+			body->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2])));
 			break;
 		case rs::CYLINDER:
-			shape = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[0], l[1]));
+			body->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[0], l[1])));
 			break;
 		case rs::SPHERE:
-			shape = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0]));
+			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0])));
 			break;
 	}
-	shape->setColor(osg::Vec4(c[0], c[1], c[2], c[3]));
-	body->addDrawable(shape);
 
 	// set rendering properties
 	body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	body->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-	body->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 	body->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	body->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
 	body->setCullingActive(false);
 
 	// add positioning capability

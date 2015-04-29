@@ -376,11 +376,13 @@ osgText::Text* Scene::getHUDText(void) {
 	// get text geode
 	osg::Geode *geode;
 	for (unsigned int i = 0; i < _root->getNumChildren(); i++) {
-		if (!_root->getChild(i)->getName().compare("HUDProjection"))
+		if (!_root->getChild(i)->getName().compare("HUDProjection")) {
 			geode = _root->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0)->asGeode();
+			return dynamic_cast<osgText::Text *>(geode->getDrawable(0));
+		}
 	}
-	// return text
-	return dynamic_cast<osgText::Text *>(geode->getDrawable(0));
+	// return
+	return NULL;
 }
 
 std::string Scene::getTexturePath(void) {

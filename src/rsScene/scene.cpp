@@ -91,8 +91,8 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 				if (dynamic_cast<osgFX::Scribe *>(test->getChild(2)->asTransform()->getChild(0)))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)), c);
 			}
-			// get ground node
-			else if (test && !test->getName().compare(0, 6, "ground")) {
+			// get obstacle node
+			else if (test && !test->getName().compare(0, 8, "obstacle")) {
 				if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0)))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
 			}
@@ -124,8 +124,8 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 			}
 			break;
 		}
-		// get ground node
-		else if (!robot && test && !test->getName().compare(std::string("ground").append(std::to_string(id)))) {
+		// get obstacle node
+		else if (!robot && test && !test->getName().compare(std::string("obstacle").append(std::to_string(id)))) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
 			if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
@@ -153,7 +153,7 @@ int Scene::deleteObstacle(int id) {
 	MUTEX_LOCK(&(_thread_mutex));
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
-		if (test && !test->getName().compare(std::string("ground").append(std::to_string(id)))) {
+		if (test && !test->getName().compare(std::string("obstacle").append(std::to_string(id)))) {
 			if (test->getUpdateCallback() != NULL)
 				test->removeUpdateCallback(test->getUpdateCallback());
 			_scene->removeChild(test);
@@ -258,7 +258,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 }
 
 Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec &c, const rs::Vec &l, const rs::Quat &q) {
-	// create ground objects
+	// create obstacle objects
 	osg::ref_ptr<osg::Group> obstacle = new osg::Group();
 	osg::ref_ptr<osg::Geode> body = new osg::Geode;
 
@@ -290,7 +290,7 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 	obstacle->addChild(pat.get());
 
 	// set user properties of node
-	obstacle->setName(std::string("ground").append(std::to_string(id)));
+	obstacle->setName(std::string("obstacle").append(std::to_string(id)));
 
 	// add to scenegraph
 	_staging->addChild(obstacle);
@@ -685,7 +685,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 			}
 		}
 	}
-	else if (!parent->getName().compare(0, 6, "ground") || !parent->getName().compare(0, 6, "marker")) {
+	else if (!parent->getName().compare(0, 8, "obstacle") || !parent->getName().compare(0, 6, "marker")) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
 			osgFX::Scribe *scribe = new osgFX::Scribe();
@@ -711,7 +711,7 @@ void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
 		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
 		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
 	}
-	else if (!parent->getName().compare(0, 6, "ground")) {
+	else if (!parent->getName().compare(0, 8, "obstacle")) {
 		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
 		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
 	}
@@ -1498,8 +1498,8 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 				retval = true;
 			}
 		}
-		// get ground node
-		if (test && !test->getName().compare(0, 6, "ground") && (test->getName().compare(6, 1, std::to_string(id)))) {
+		// get obstacle node
+		if (test && !test->getName().compare(0, 8, "obstacle") && (test->getName().compare(8, 1, std::to_string(id)))) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
 			if (bb.intersects(cbbv.getBoundingBox())) {

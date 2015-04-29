@@ -1475,12 +1475,12 @@ void* Scene::graphics_thread(void *arg) {
 bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 	// find nodes of intersection
 	osg::Group *test = NULL;
-	osg::ComputeBoundsVisitor cbbv;
 	bool retval = false;
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		// get robot node
 		if (test && (!test->getName().compare(0, 5, "robot")) && (test->getName().compare(5, 1, std::to_string(id)))) {
+			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
 			if (bb.intersects(cbbv.getBoundingBox())) {
 				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
@@ -1489,6 +1489,7 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 		}
 		// get ground node
 		if (test && !test->getName().compare(0, 6, "ground") && (test->getName().compare(6, 1, std::to_string(id)))) {
+			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
 			if (bb.intersects(cbbv.getBoundingBox())) {
 				this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);

@@ -11,6 +11,7 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_ground = -1;
 	_id = -1;
 	_trace = trace;
+	_wheels.allocate(2);
 }
 
 Robot::~Robot(void) {
@@ -76,6 +77,10 @@ double Robot::getRadius(void) {
 
 bool Robot::getTrace(void) {
 	return _trace;
+}
+
+const rs::Vec Robot::getWheels(void) {
+	return _wheels;
 }
 
 void Robot::printDebug(void) {
@@ -145,5 +150,10 @@ void Robot::setRotation(double a, double b, double c) {
 	_q.multiply(sin(0.5*a), 0, 0, cos(0.5*a));
 	_q.multiply(0, sin(0.5*b), 0, cos(0.5*b));
 	_q.multiply(0, 0, sin(0.5*c), cos(0.5*c));
+}
+
+void Robot::setWheels(int left, int right) {
+	_wheels[0] = left;
+	_wheels[1] = right;
 }
 

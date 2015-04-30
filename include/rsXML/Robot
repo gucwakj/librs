@@ -36,6 +36,7 @@ namespace rsXML {
 			const rs::Quat getQuaternion(void);
 			double getRadius(void);
 			bool getTrace(void);
+			const rs::Vec getWheels(void);
 			virtual void postProcess(void) {};
 			void printDebug(void);
 			void setConnect(int);
@@ -49,6 +50,7 @@ namespace rsXML {
 			void setPosition(double, double, double);
 			void setPsi(double);
 			void setRotation(double, double, double);
+			void setWheels(int, int);
 
 		// data
 		protected:
@@ -63,6 +65,7 @@ namespace rsXML {
 			rs::Quat _q;
 			rs::Vec _a;
 			rs::Vec _c;
+			rs::Vec _wheels;
 			std::string _name;
 	};
 

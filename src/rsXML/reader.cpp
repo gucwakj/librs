@@ -596,6 +596,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				_robot.back()->addConnector(new Conn(0, 0,  2, 2, 2, 0, 2, 8));
 				_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, 0, 1, 8));
 				_robot.back()->addConnector(new Conn(0, 0,  a, 3, 3, 0, 2, 8));
+				_robot.back()->setWheels(i, i);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -727,6 +728,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
 			}
+			if ( (ele = node->FirstChildElement("wheels")) ) {
+				ele->QueryIntAttribute("size", &i);
+				_robot.back()->setWheels(i, i);
+			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
@@ -762,6 +767,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
+			}
+			if ( (ele = node->FirstChildElement("wheels")) ) {
+				ele->QueryIntAttribute("size", &i);
+				_robot.back()->setWheels(i, i);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);

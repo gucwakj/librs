@@ -4,12 +4,14 @@ using namespace rsRobots;
 using namespace rsMindstorms;
 
 Mindstorms::Mindstorms(int form) : Robot(form) {
+	_bigwheel_radius = 0.02843;
 	_body_height = 0.13400;
 	_body_length = 0.17300;
 	_body_width = 0.09175;
 	_offset.push_back(rs::Pos(0, -0.03568, 0.06700));						// body
 	_offset.push_back(rs::Pos(-_body_width/2 - _wheel_depth/2, 0, 0));		// wheel1
 	_offset.push_back(rs::Pos(_body_width/2 + _wheel_depth/2, 0, 0));		// wheel2
+	_smallwheel_radius = 0.02843;
 	_wheel_depth = 0.02660;
 	_wheel_radius = 0.02843;
 }

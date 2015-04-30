@@ -47,6 +47,7 @@ namespace rsLinkbot {
 
 	// connectors
 	enum Connector {
+		NONE,
 		BIGWHEEL,
 		BRIDGE,
 		CASTER,
@@ -113,6 +114,13 @@ namespace rsMindstorms {
 		JOINT1,
 		JOINT2,
 		NUM_JOINTS
+	};
+
+	// wheels
+	enum Wheel {
+		NONE,
+		BIG,
+		SMALL
 	};
 
 } // namespace rsMindstorms

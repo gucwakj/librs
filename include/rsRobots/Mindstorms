@@ -15,6 +15,11 @@ namespace rsRobots {
 		// inherited functions
 		public:
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
+
+		// data
+		protected:
+			double _bigwheel_radius;
+			double _smallwheel_radius;
 	};
 
 } // namespace rsRobots

@@ -64,6 +64,7 @@ namespace rsScene {
 			int drawMarker(int, int, const rs::Pos&, const rs::Pos&, const rs::Vec&, int, std::string);
 			Obstacle* drawObstacle(int, int, const rs::Pos&, const rs::Vec&, const rs::Vec&, const rs::Quat&);
 			Robot* drawRobot(rsRobots::Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
+			void drawWheel(rsRobots::Robot*, Robot*, int, int);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			void setGrid(std::vector<double>, bool = false);
@@ -93,6 +94,7 @@ namespace rsScene {
 			void draw_robot_linkbot(rsRobots::Linkbot*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
 			void draw_robot_linkbot_conn(rsRobots::Linkbot*, Robot*, int, int, int, double, int, int);
 			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
+			void draw_robot_mindstorms_wheel(rsRobots::Mindstorms*, Robot*, int, int);
 			void draw_scene_outdoors(void);
 			void draw_scene_board(void);
 			void draw_skybox(void);

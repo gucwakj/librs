@@ -381,6 +381,14 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 	return group;
 }
 
+void Scene::drawWheel(rsRobots::Robot *robot, Robot *group, int type, int face) {
+	switch (robot->getForm()) {
+		case rs::EV3: case rs::NXT:
+			this->draw_robot_mindstorms_wheel(dynamic_cast<rsRobots::Mindstorms*>(robot), group, type, face);
+			break;
+	}
+}
+
 osgText::Text* Scene::getHUDText(void) {
 	// get text geode
 	osg::Geode *geode;
@@ -1271,53 +1279,70 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 
 void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
 	// initialize variables
-	osg::ref_ptr<osg::Node> body[rsMindstorms::NUM_PARTS];
-	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsMindstorms::NUM_PARTS];
+	osg::ref_ptr<osg::Node> body;
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat;
 
 	// create transforms
-	//for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
-	for (int i = 0; i < 1; i++) {
-		pat[i] = new osg::PositionAttitudeTransform;
-		group->addChild(pat[i].get());
-	}
+	pat = new osg::PositionAttitudeTransform;
+	group->addChild(pat.get());
 
 	// set tracing
 	robot->setTrace(trace);
 
 	// body
-	body[rsMindstorms::BODY] = osgDB::readNodeFile(_tex_path + "mindstorms/body.3ds");
-	body[rsMindstorms::BODY]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
-	pat[rsMindstorms::BODY]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-	pat[rsMindstorms::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+	body = osgDB::readNodeFile(_tex_path + "mindstorms/body.3ds");
+	body->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
+	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
-	// wheel1
-	rs::Quat q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL1, a[rsMindstorms::JOINT1], q);
-	rs::Pos p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL1, p, q);
-	body[rsMindstorms::WHEEL1] = osgDB::readNodeFile(_tex_path + "mindstorms/wheel.3ds");
-	body[rsMindstorms::WHEEL1]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
-	pat[rsMindstorms::WHEEL1]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-	pat[rsMindstorms::WHEEL1]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+	// set rendering properties
+	body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	body->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	body->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	body->setCullingActive(false);
 
-	// wheel2
-	q1 = robot->getRobotBodyQuaternion(rsMindstorms::WHEEL2, a[rsMindstorms::JOINT2], q);
-	p1 = robot->getRobotBodyPosition(rsMindstorms::WHEEL2, p, q);
-	body[rsMindstorms::WHEEL2] = osgDB::readNodeFile(_tex_path + "mindstorms/wheel.3ds");
-	body[rsMindstorms::WHEEL2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
-	pat[rsMindstorms::WHEEL2]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-	pat[rsMindstorms::WHEEL2]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+	// add body to transform
+	pat->addChild(body);
+}
 
-	// set rendering
-	//for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
-	for (int i = 0; i < 1; i++) {
-		// set rendering properties
-		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-		body[i]->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		body[i]->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
-		body[i]->setCullingActive(false);
-		// add bodies to transforms
-		pat[i]->addChild(body[i]);
-	}
+void Scene::draw_robot_mindstorms_wheel(rsRobots::Mindstorms *robot, Robot *group, int type, int face) {
+	// get robot p&q
+	osg::PositionAttitudeTransform *pat;
+	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::BODY));
+	osg::Vec3d p = pat->getPosition();
+	osg::Quat q = pat->getAttitude();
+
+	// wheel position
+	rs::Quat q1 = robot->getRobotBodyQuaternion(face, 0, rs::Quat(q[0], q[1], q[2], q[3]));
+	rs::Pos p1 = robot->getRobotBodyPosition(face, rs::Pos(p[0], p[1], p[2]), rs::Quat(q[0], q[1], q[2], q[3]));
+
+	// PAT to transform mesh
+	osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
+	transform->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	transform->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
+
+	// wheel
+	osg::ref_ptr<osg::Node> node;
+	node = osgDB::readNodeFile(_tex_path + "mindstorms/wheel.3ds");
+	transform->setScale(osg::Vec3d(1, robot->getWheelRatio(type), robot->getWheelRatio(type)));
+	node->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
+
+	// set rendering properties
+	node->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	node->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	node->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	node->setCullingActive(false);
+
+	// add node to transform
+	transform->addChild(node);
+
+	// set user properties of node
+	node->setName("wheel");
+
+	// add to scenegraph
+	group->addChild(transform);
 }
 
 void Scene::draw_scene_outdoors(void) {

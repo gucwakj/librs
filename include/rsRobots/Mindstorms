@@ -12,6 +12,9 @@ namespace rsRobots {
 			Mindstorms(int = rs::EV3);
 			virtual ~Mindstorms(void) {};
 
+			double getWheelRatio(int);
+			double riseByWheels(int);
+
 		// inherited functions
 		public:
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);

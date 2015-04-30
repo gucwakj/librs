@@ -529,7 +529,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 	tinyxml2::XMLElement *ele = NULL;
 	tinyxml2::XMLElement *side = NULL;
 	int *rtmp, *ftmp, *ntmp, *atmp, ctype = 0, cnum = 0;
-	int custom = 0, i = 0, orientation = 0;
+	int custom = 0, i = 0, j = 0, orientation = 0;
 	double size = 0, a, b, c, d;
 
 	// check for existence of node
@@ -589,14 +589,15 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
-				ele->QueryIntAttribute("size", &i);
+				ele->QueryIntAttribute("left", &i);
+				ele->QueryIntAttribute("right", &j);
 				_robot.back()->addConnector(new Conn(0, 0, -1, 1, 1, 0, 1, 8));
-				_robot.back()->addConnector(new Conn(0, 0,  a, 1, 1, 0, 2, 8));
+				_robot.back()->addConnector(new Conn(0, 0,  i, 1, 1, 0, 2, 8));
 				_robot.back()->addConnector(new Conn(0, 0, -1, 2, 2, 0, 1, 8));
 				_robot.back()->addConnector(new Conn(0, 0,  2, 2, 2, 0, 2, 8));
 				_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, 0, 1, 8));
-				_robot.back()->addConnector(new Conn(0, 0,  a, 3, 3, 0, 2, 8));
-				_robot.back()->setWheels(i, i);
+				_robot.back()->addConnector(new Conn(0, 0,  i, 3, 3, 0, 2, 8));
+				_robot.back()->setWheels(i, j);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -729,8 +730,9 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
-				ele->QueryIntAttribute("size", &i);
-				_robot.back()->setWheels(i, i);
+				ele->QueryIntAttribute("left", &i);
+				ele->QueryIntAttribute("right", &j);
+				_robot.back()->setWheels(i, j);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -769,8 +771,9 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
-				ele->QueryIntAttribute("size", &i);
-				_robot.back()->setWheels(i, i);
+				ele->QueryIntAttribute("left", &i);
+				ele->QueryIntAttribute("right", &j);
+				_robot.back()->setWheels(i, j);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);

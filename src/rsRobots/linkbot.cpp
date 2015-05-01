@@ -259,3 +259,28 @@ double Linkbot::riseByWheels(int wheel_type, double radius) {
 	return -1;
 }
 
+const rs::Quat Linkbot::tiltForWheels(int type, int face, double &p2, double radius) {
+	if (type == -1) {
+		p2 = 0;
+		return rs::Quat();
+	}
+
+	int i = 1;
+	if (face == FACE3) i = -1;
+
+	if (type == TINYWHEEL) {
+		p2 = 0.0020705;
+		return rs::Quat(0, i*0.0285493, 0, 0.999592);
+	}
+	else if (type == SMALLWHEEL) {
+		p2 = 0.003318;
+		return rs::Quat(0, i*0.0469256, 0, 0.998898);
+	}
+	else if (type == BIGWHEEL) {
+		p2 = 0.0058091;
+		return rs::Quat(0, i*0.0820308, 0, 0.996629);
+	}
+
+	return rs::Quat();
+}
+

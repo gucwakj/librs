@@ -6,6 +6,7 @@
 #include <unistd.h>
 #endif
 
+#include <rs/Macros>
 #include <rsRobots/rgbhashtable.h>
 #include <rsSim/Sim>
 #include <rsSim/Robot>
@@ -69,7 +70,7 @@ int Robot::moveJointNB(int id, double angle) {
 	MUTEX_LOCK(&_goal_mutex);
 
 	// set new goal angles
-	if (_motor[id].omega < -EPSILON) angle = -angle;
+	if (_motor[id].omega < -rs::EPSILON) angle = -angle;
 	_motor[id].goal += rs::D2R(angle);
 
 	// actively seeking an angle
@@ -286,12 +287,12 @@ const rs::Quat Robot::getQuaternion(void) {
 double Robot::getRotation(int body, int i) {
 	const double *R = dBodyGetRotation(_body[body]);
 	double angles[3] = {0};
-    if ( fabs(R[8]-1) < DBL_EPSILON ) {         // R_31 == 1; theta = M_PI/2
+    if ( fabs(R[8]-1) < rs::EPSILON ) {         // R_31 == 1; theta = M_PI/2
         angles[0] = atan2(-R[1], -R[2]);		// psi
         angles[1] = M_PI/2;						// theta
         angles[2] = 0;							// phi
     }
-    else if ( fabs(R[8]+1) < DBL_EPSILON ) {    // R_31 == -1; theta = -M_PI/2
+    else if ( fabs(R[8]+1) < rs::EPSILON ) {    // R_31 == -1; theta = -M_PI/2
         angles[0] = atan2(R[1], R[2]);			// psi
         angles[1] = -M_PI/2;					// theta
         angles[2] = 0;							// phi

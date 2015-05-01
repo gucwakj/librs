@@ -21,7 +21,7 @@
 #include <osgViewer/ViewerEventHandlers>
 
 #include <rs/Enum>
-#include <rs/Macros>
+#include <rs/Threads>
 #include <rsRobots/Linkbot>
 #include <rsRobots/Mindstorms>
 #include <rsScene/KeyboardHandler>

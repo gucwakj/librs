@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <rs/Macros>
 #include <rsSim/Sim>
 #include <rsSim/Mindstorms>
 
@@ -268,7 +269,7 @@ void Mindstorms::simPreCollisionThread(void) {
 				}
 				break;
 			case SEEK:
-				if ((_motor[i].goal - 6*_motor[i].encoder - _motor[i].theta) > EPSILON) {
+				if ((_motor[i].goal - 6*_motor[i].encoder - _motor[i].theta) > rs::EPSILON) {
 					_motor[i].state = POSITIVE;
 					if (_motor[i].starting++ < 25)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].starting*fabs(_motor[i].omega)/50);
@@ -279,15 +280,15 @@ void Mindstorms::simPreCollisionThread(void) {
 					else
 						dJointSetAMotorParam(_motor[i].id, dParamVel, fabs(_motor[i].omega));
 				}
-				else if ((_motor[i].goal - 3*_motor[i].encoder - _motor[i].theta) > EPSILON) {
+				else if ((_motor[i].goal - 3*_motor[i].encoder - _motor[i].theta) > rs::EPSILON) {
 					_motor[i].state = POSITIVE;
 					dJointSetAMotorParam(_motor[i].id, dParamVel, fabs(_motor[i].omega)/2);
 				}
-				else if ((_motor[i].goal - _motor[i].encoder - _motor[i].theta) > EPSILON) {
+				else if ((_motor[i].goal - _motor[i].encoder - _motor[i].theta) > rs::EPSILON) {
 					_motor[i].state = POSITIVE;
 					dJointSetAMotorParam(_motor[i].id, dParamVel, fabs(_motor[i].omega)/4);
 				}
-				else if ((_motor[i].theta - _motor[i].goal - 6*_motor[i].encoder) > EPSILON) {
+				else if ((_motor[i].theta - _motor[i].goal - 6*_motor[i].encoder) > rs::EPSILON) {
 					_motor[i].state = NEGATIVE;
 					if (_motor[i].starting++ < 25)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, -_motor[i].starting*fabs(_motor[i].omega)/50);
@@ -298,11 +299,11 @@ void Mindstorms::simPreCollisionThread(void) {
 					else
 						dJointSetAMotorParam(_motor[i].id, dParamVel, -fabs(_motor[i].omega));
 				}
-				else if ((_motor[i].theta - _motor[i].goal - 3*_motor[i].encoder) > EPSILON) {
+				else if ((_motor[i].theta - _motor[i].goal - 3*_motor[i].encoder) > rs::EPSILON) {
 					_motor[i].state = NEGATIVE;
 					dJointSetAMotorParam(_motor[i].id, dParamVel, -fabs(_motor[i].omega)/2);
 				}
-				else if ((_motor[i].theta - _motor[i].goal - _motor[i].encoder) > EPSILON) {
+				else if ((_motor[i].theta - _motor[i].goal - _motor[i].encoder) > rs::EPSILON) {
 					_motor[i].state = NEGATIVE;
 					dJointSetAMotorParam(_motor[i].id, dParamVel, -fabs(_motor[i].omega)/4);
 				}

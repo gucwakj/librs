@@ -18,7 +18,7 @@ void Linkbot::postProcess(void) {
 	// reposition robot in space
 	if (_base == NULL) {
 		// adjust height to be above zero
-		if (fabs(_p[2]) < (_body_radius - EPSILON)) {
+		if (fabs(_p[2]) < (_body_radius - rs::EPSILON)) {
 			_p.add(_q.multiply(0, 0, _body_height/2));
 		}
 

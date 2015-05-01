@@ -44,7 +44,7 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 
 	// convert input angles to radians
 	for (int i = 0; i < _dof; i++) {
-		_motor[i].goal = _motor[i].theta = DEG2RAD(a[i]);
+		_motor[i].goal = _motor[i].theta = rs::D2R(a[i]);
 	}
 
 	// build robot bodies
@@ -116,7 +116,7 @@ void Mindstorms::init_params(void) {
 		_motor[i].accel.period = 0;
 		_motor[i].accel.start = 0;
 		_motor[i].alpha = 0;
-		_motor[i].encoder = DEG2RAD(0.25);
+		_motor[i].encoder = rs::D2R(0.25);
 		_motor[i].goal = 0;
 		_motor[i].mode = SEEK;
 		_motor[i].offset = 0;

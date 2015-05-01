@@ -8,10 +8,15 @@
 #include <pthread.h>
 #endif // _WIN32
 
+namespace rs {
+
+	inline double D2R(double x) { return (x * 0.0174532925199433); }
+	inline double R2D(double x) { return (x * 57.295779513082321); }
+
+} // namespace rs
+
 #define EPSILON DBL_EPSILON
 #define RECORD_ANGLE_ALLOC_SIZE 16
-#define DEG2RAD(x) ((x) * M_PI / 180.0)
-#define RAD2DEG(x) ((x) * 180.0 / M_PI)
 #define angle2distance(radius, angle) ((radius) * (angle * 0.01745329251994329547))
 #define distance2angle(radius, distance) (((distance)/(radius))*57.29577951308232286465)
 #define DEPRECATED(from, to) fprintf(_stderr, "Warning: The function \"%s()\" is deprecated. Please use \"%s()\"\n" , from, to)

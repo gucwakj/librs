@@ -70,7 +70,7 @@ int Robot::moveJointNB(int id, double angle) {
 
 	// set new goal angles
 	if (_motor[id].omega < -EPSILON) angle = -angle;
-	_motor[id].goal += DEG2RAD(angle);
+	_motor[id].goal += rs::D2R(angle);
 
 	// actively seeking an angle
 	_motor[id].mode = SEEK;
@@ -107,7 +107,7 @@ int Robot::moveJointToNB(int id, double angle) {
 	MUTEX_LOCK(&_goal_mutex);
 
 	// set new goal angles
-	_motor[id].goal = DEG2RAD(angle);
+	_motor[id].goal = rs::D2R(angle);
 
 	// actively seeking an angle
 	_motor[id].mode = SEEK;
@@ -185,12 +185,12 @@ int Robot::moveWait(void) {
 }
 
 int Robot::setJointSpeed(int id, double speed) {
-	if (speed > RAD2DEG(_motor[id].omega_max)) {
+	if (speed > rs::R2D(_motor[id].omega_max)) {
 		fprintf(stderr, "Warning: Setting the speed for joint %d to %.2lf degrees per second is "
 			"beyond the hardware limit of %.2lf degrees per second.\n",
-			id+1, speed, RAD2DEG(_motor[id].omega_max));
+			id+1, speed, rs::R2D(_motor[id].omega_max));
 	}
-	_motor[id].omega = DEG2RAD(speed);
+	_motor[id].omega = rs::D2R(speed);
 
 	// success
 	return 0;
@@ -200,7 +200,7 @@ int Robot::setJointSpeedRatio(int id, double ratio) {
 	if ( ratio < 0 || ratio > 1 ) {
 		return -1;
 	}
-	return this->setJointSpeed(id, ratio * RAD2DEG(_motor[(int)id].omega_max));
+	return this->setJointSpeed(id, ratio * rs::R2D(_motor[(int)id].omega_max));
 }
 
 /**********************************************************

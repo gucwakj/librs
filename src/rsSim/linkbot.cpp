@@ -168,7 +168,7 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int gr
 int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyID base, int face, int orientation, int ground) {
 	// calculate center of robot location
 	rs::Pos P = this->getRobotCenterPosition(face, p, q);
-	rs::Quat Q = this->getRobotCenterQuaternion(face, orientation, DEG2RAD(a[face-1]), q);
+	rs::Quat Q = this->getRobotCenterQuaternion(face, orientation, rs::D2R(a[face-1]), q);
 
 	// build new module
 	this->buildIndividual(P, Q, a);
@@ -191,7 +191,7 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 
 	// convert input angles to radians
 	for (int i = 0; i < _dof; i++) {
-		_motor[i].goal = _motor[i].theta = DEG2RAD(a[i]);
+		_motor[i].goal = _motor[i].theta = rs::D2R(a[i]);
 	}
 	_motor[_disabled].goal = _motor[_disabled].theta = 0;
 
@@ -338,7 +338,7 @@ void Linkbot::init_params(void) {
 		_motor[i].accel.period = 0;
 		_motor[i].accel.start = 0;
 		_motor[i].alpha = 0;
-		_motor[i].encoder = DEG2RAD(0.25);
+		_motor[i].encoder = rs::D2R(0.25);
 		_motor[i].goal = 0;
 		_motor[i].mode = SEEK;
 		_motor[i].offset = 0;

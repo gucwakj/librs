@@ -586,7 +586,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
+				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
 				ele->QueryIntAttribute("left", &i);
@@ -644,7 +644,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
+				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -691,7 +691,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
+				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -727,7 +727,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
+				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
 				ele->QueryIntAttribute("left", &i);
@@ -768,7 +768,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_robot.back()->setRotation(DEG2RAD(a), DEG2RAD(b), DEG2RAD(c));
+				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
 				ele->QueryIntAttribute("left", &i);

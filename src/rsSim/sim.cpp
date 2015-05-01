@@ -38,6 +38,7 @@ Sim::Sim(bool pause, bool rt) {
 	_rt = rt;											// real time
 	_running = true;									// is simulation running
 	_step = 0.004;										// initial time step
+	_stop = 0;											// time at which to stop simulation
 
 	// thread variables
 	MUTEX_INIT(&_clock_mutex);
@@ -306,18 +307,29 @@ void Sim::run(int milliseconds, void (*output)(void), int interval) {
 	// start simulation
 	this->start();
 
-	// sleep and run output
-	for (int i = 0; i < milliseconds/interval; i++) {
-#ifdef _WIN32
-		Sleep(interval);
-#else
-		usleep(interval*1000);
-#endif
-		if (output) output();
+	if (_rt) {
+		// sleep and run output
+		for (int i = 0; i < milliseconds/interval; i++) {
+			#ifdef _WIN32
+				Sleep(interval);
+			#else
+				usleep(interval*1000);
+			#endif
+			if (output) output();
+		}
+		// end simulation
+		this->stop();
 	}
-
-	// end simulation
-	this->stop();
+	else {
+		// set stopping time
+		_stop = milliseconds/1000.0;
+		// wait for simulation loop to signal
+		MUTEX_LOCK(&_running_mutex);
+		while (_running) {
+			COND_WAIT(&_running_cond, &_running_mutex);
+		}
+		MUTEX_UNLOCK(&_running_mutex);
+	}
 }
 
 int Sim::setCollisions(int mode) {
@@ -521,6 +533,9 @@ void* Sim::simulation_thread(void *arg) {
 				MUTEX_UNLOCK(&(sim->_step_mutex));
 			}
 
+			// stop when clock has reached max time
+			if (sim->_stop && sim->_clock >= sim->_stop) { sim->_running = 0; }
+
 			// lock pause variable
 			MUTEX_LOCK(&(sim->_pause_mutex));
 		}
@@ -539,6 +554,9 @@ void* Sim::simulation_thread(void *arg) {
 	}
 	// unlock running variable
 	MUTEX_UNLOCK(&(sim->_running_mutex));
+
+	// signal waiting threads
+	COND_SIGNAL(&(sim->_running_cond));
 
 	// cleanup
 	delete [] dt;

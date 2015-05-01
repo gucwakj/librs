@@ -365,7 +365,7 @@ int Sim::setMu(double robot, double ground) {
 	return 0;
 }
 
-int Sim::setPause(int mode) {
+int Sim::pause(int mode) {
 	// lock pause
 	MUTEX_LOCK(&_pause_mutex);
 

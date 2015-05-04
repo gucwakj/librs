@@ -591,12 +591,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			if ( (ele = node->FirstChildElement("wheels")) ) {
 				ele->QueryIntAttribute("left", &i);
 				ele->QueryIntAttribute("right", &j);
-				_robot.back()->addConnector(new Conn(0, 0, -1, 1, 1, 0, 1, 8));
-				_robot.back()->addConnector(new Conn(0, 0,  i, 1, 1, 0, 2, 8));
-				_robot.back()->addConnector(new Conn(0, 0, -1, 2, 2, 0, 1, 8));
-				_robot.back()->addConnector(new Conn(0, 0,  2, 2, 2, 0, 2, 8));
-				_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, 0, 1, 8));
-				_robot.back()->addConnector(new Conn(0, 0,  i, 3, 3, 0, 2, 8));
+				_robot.back()->addConnector(new Conn(0, 0, -1, 1, 1, 0, 1, rsLinkbot::SIMPLE));
+				_robot.back()->addConnector(new Conn(0, 0,  i, 1, 1, 0, 2, rsLinkbot::SIMPLE));
+				_robot.back()->addConnector(new Conn(0, 0, -1, 2, 2, 0, 1, rsLinkbot::SIMPLE));
+				_robot.back()->addConnector(new Conn(0, 0,  rsLinkbot::CASTER, 2, 2, 0, 2, rsLinkbot::SIMPLE));
+				_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, 0, 1, rsLinkbot::SIMPLE));
+				_robot.back()->addConnector(new Conn(0, 0,  j, 3, 3, 0, 2, rsLinkbot::SIMPLE));
 				_robot.back()->setWheels(i, j);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;

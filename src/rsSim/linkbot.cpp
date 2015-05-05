@@ -7,7 +7,7 @@
 using namespace rsSim;
 using namespace rsLinkbot;
 
-Linkbot::Linkbot(int form) : rsRobots::Robot(form) {
+Linkbot::Linkbot(int form) : rsRobots::Robot(form), rsRobots::Linkbot(form) {
 	// initialize parameters
 	this->init_params();
 }

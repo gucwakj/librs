@@ -366,6 +366,13 @@ int Sim::setMu(double robot, double ground) {
 	return 0;
 }
 
+// research: sinusoid joint motion frequency
+void Sim::setRobotSinusoidFrequency(double omega) {
+	for (unsigned int i = 0; i < _robot.size(); i++) {
+		_robot[i].robot->setSinusoidFrequency(omega);
+	}
+}
+
 int Sim::pause(int mode) {
 	// lock pause
 	MUTEX_LOCK(&_pause_mutex);

@@ -331,6 +331,7 @@ void Linkbot::init_params(void) {
 	// create arrays for linkbots
 	_motor.resize(_dof);
 	_fb.resize(_dof + 1);
+	_sine.resize(_dof);
 
 	// fill with default data
 	for (int i = 0; i < _dof; i++) {
@@ -359,6 +360,14 @@ void Linkbot::init_params(void) {
 		_motor[i].theta = 0;
 		MUTEX_INIT(&_motor[i].success_mutex);
 		COND_INIT(&_motor[i].success_cond);
+		// research: sinusoid motion
+		_sine[i].delay = 0;
+		_sine[i].init = 0;
+		_sine[i].gain = 0;
+		_sine[i].period = 0;
+		_sine[i].phase = 0;
+		_sine[i].run = 0;
+		_sine[i].start = 0;
 	}
 	_connected = 0;
 	_distOffset = 0;
@@ -545,6 +554,51 @@ void Linkbot::simPreCollisionThread(void) {
 					dJointSetAMotorParam(_motor[i].id, dParamVel, 0);
 				}
 				break;
+			case SINE: {
+				// delay for phase angle
+				if (_sine[i].phase && _sine[i].run == 0) {
+					_sine[i].delay = (2*M_PI - _sine[i].phase) / step;
+					_sine[i].run++;
+				}
+				else if (_sine[i].phase == 0)
+					_sine[i].run++;
+
+				// delay for phase angle
+				if (_sine[i].delay) { _sine[i].delay--; break; }
+
+				// reenable body on start
+				dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);
+				dBodyEnable(_body[0]);
+
+				// init params on first run (post-delay)
+				if (_sine[i].run == 1) {
+					_sine[i].init = _motor[i].theta;
+					_sine[i].start = _sim->getClock();
+					_sine[i].run++;
+				}
+
+				// calculate new angle
+				double t = _sim->getClock() + step;
+				angle = _sine[i].gain*sin((t - _sine[i].start)/_sine[i].period) + _sine[i].init;
+
+				// set new omega
+				_motor[i].omega = (angle - _motor[i].theta)/step;
+				_motor[i].goal += step*_motor[i].omega;
+				_motor[i].state = NEUTRAL;
+
+				// give it an initial push
+				if (0 < _motor[i].omega && _motor[i].omega < 0.02)
+					_motor[i].omega = 0.02;
+				else if (-0.02 < _motor[i].omega && _motor[i].omega < 0)
+					_motor[i].omega = -0.02;
+
+				// move forever
+				dJointEnable(_motor[i].id);
+				dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
+
+				// end
+				break;
+			}
 		}
 	}
 

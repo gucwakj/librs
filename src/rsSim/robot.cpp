@@ -95,6 +95,32 @@ int Robot::moveJointNB(int id, double angle) {
 	return 0;
 }
 
+int Robot::moveJointSinusoid(int id) {
+	// lock goal
+	MUTEX_LOCK(&_goal_mutex);
+
+	// set motion parameters
+	_motor[id].mode = SINE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[id].id);
+	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[id].success_mutex);
+	_motor[id].success = false;
+	MUTEX_UNLOCK(&_motor[id].success_mutex);
+
+	// unlock goal
+	MUTEX_UNLOCK(&_goal_mutex);
+
+	// success
+	return 0;
+}
+
 int Robot::moveJointTo(int id, double angle) {
 	this->moveJointToNB(id, angle);
 	this->moveJointWait(id);

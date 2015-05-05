@@ -1502,9 +1502,6 @@ void* Scene::graphics_thread(void *arg) {
 	delete p->_viewer;
 #endif
 
-	// trigger end of code when graphics window is closed
-	//g_sim->done();
-
 	// return
 	return arg;
 }

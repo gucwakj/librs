@@ -176,7 +176,6 @@ void Mindstorms::simPreCollisionThread(void) {
 		dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);
 		// engage motor depending upon motor mode
 		double t = 0, angle = 0, h = 0, dt = 0;
-		//double step = g_sim->getStep();
 		double step = _sim->getStep();
 		switch (_motor[i].mode) {
 			case ACCEL_CONSTANT:
@@ -212,7 +211,6 @@ void Mindstorms::simPreCollisionThread(void) {
 				// init params on first run
 				if (_motor[i].accel.run == 0) {
 					_motor[i].accel.init = _motor[i].theta;
-					//_motor[i].accel.start = g_sim->getClock();
 					_motor[i].accel.start = _sim->getClock();
 					_motor[i].accel.run = 1;
 					break;
@@ -220,7 +218,6 @@ void Mindstorms::simPreCollisionThread(void) {
 
 				// calculate new angle
 				h = _motor[i].goal - _motor[i].accel.init;
-				//t = g_sim->getClock();
 				t = _sim->getClock();
 				dt = (t - _motor[i].accel.start)/_motor[i].accel.period;
 				if (_motor[i].mode == ACCEL_CYCLOIDAL)

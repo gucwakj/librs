@@ -31,8 +31,6 @@ namespace rsSim {
 			int moveJointTo(int, double);
 			int moveJointToNB(int, double);
 			int moveJointWait(int);
-			int moveNB(double*);
-			int moveToNB(double*);
 			int moveWait(void);
 			int setJointSpeed(int, double);
 			int setJointSpeedRatio(int, double);

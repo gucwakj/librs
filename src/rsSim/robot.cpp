@@ -142,24 +142,6 @@ int Robot::moveJointWait(int id) {
 	return 0;
 }
 
-int Robot::moveNB(double *angles) {
-	for (int i = 0; i < _dof; i++) {
-		this->moveJointNB(i, angles[i]);
-	}
-
-	// success
-	return 0;
-}
-
-int Robot::moveToNB(double *angles) {
-	for (int i = 0; i < _dof; i++) {
-		this->moveJointToNB(static_cast<int>(i), angles[i]);
-	}
-
-	// success
-	return 0;
-}
-
 int Robot::moveWait(void) {
 	// lock
 	MUTEX_LOCK(&_success_mutex);

@@ -221,9 +221,9 @@ void Mindstorms::simPreCollisionThread(void) {
 				t = _sim->getClock();
 				dt = (t - _motor[i].accel.start)/_motor[i].accel.period;
 				if (_motor[i].mode == ACCEL_CYCLOIDAL)
-					angle = h*(dt - sin(2*M_PI*dt)/2/M_PI) + _motor[i].accel.init;
+					angle = h*(dt - sin(2*rs::PI*dt)/2/rs::PI) + _motor[i].accel.init;
 				else if (_motor[i].mode == ACCEL_HARMONIC)
-					angle = h*(1 - cos(M_PI*dt))/2 + _motor[i].accel.init;
+					angle = h*(1 - cos(rs::PI*dt))/2 + _motor[i].accel.init;
 
 				// set new omega
 				_motor[i].omega = (angle - _motor[i].theta)/step;

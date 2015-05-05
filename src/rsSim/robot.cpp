@@ -283,14 +283,14 @@ const rs::Quat Robot::getQuaternion(void) {
 double Robot::getRotation(int body, int i) {
 	const double *R = dBodyGetRotation(_body[body]);
 	double angles[3] = {0};
-    if ( fabs(R[8]-1) < rs::EPSILON ) {         // R_31 == 1; theta = M_PI/2
+    if ( fabs(R[8]-1) < rs::EPSILON ) {         // R_31 == 1; theta = rs::PI/2
         angles[0] = atan2(-R[1], -R[2]);		// psi
-        angles[1] = M_PI/2;						// theta
+        angles[1] = rs::PI/2;					// theta
         angles[2] = 0;							// phi
     }
-    else if ( fabs(R[8]+1) < rs::EPSILON ) {    // R_31 == -1; theta = -M_PI/2
+    else if ( fabs(R[8]+1) < rs::EPSILON ) {    // R_31 == -1; theta = -rs::PI/2
         angles[0] = atan2(R[1], R[2]);			// psi
-        angles[1] = -M_PI/2;					// theta
+        angles[1] = -rs::PI/2;					// theta
         angles[2] = 0;							// phi
     }
     else {
@@ -303,8 +303,8 @@ double Robot::getRotation(int body, int i) {
 
 double Robot::mod_angle(double past_ang, double cur_ang, double ang_rate) {
     double new_ang = 0;
-    int stp = (int)( fabs(past_ang) / M_PI );
-    double past_ang_mod = fabs(past_ang) - stp*M_PI;
+    int stp = (int)( fabs(past_ang) / rs::PI );
+    double past_ang_mod = fabs(past_ang) - stp*rs::PI;
 
     if ( (int)(ang_rate*1000) == 0 ) {
         new_ang = past_ang;
@@ -312,31 +312,31 @@ double Robot::mod_angle(double past_ang, double cur_ang, double ang_rate) {
     // positive angular velocity, positive angle
     else if ( ang_rate > 0 && past_ang >= 0 ) {
         // cross 180
-        if ( cur_ang < 0 && !(stp % 2) ) {  new_ang = past_ang + (cur_ang - past_ang_mod + 2*M_PI); }
+        if ( cur_ang < 0 && !(stp % 2) ) {  new_ang = past_ang + (cur_ang - past_ang_mod + 2*rs::PI); }
         // negative
-        else if ( cur_ang < 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang - past_ang_mod + M_PI);   }
+        else if ( cur_ang < 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang - past_ang_mod + rs::PI);   }
         // cross 0
-        else if ( cur_ang > 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang - past_ang_mod + M_PI);   }
+        else if ( cur_ang > 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang - past_ang_mod + rs::PI);   }
         // positive
         else if ( cur_ang > 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod);  }
     }
     // positive angular velocity, negative angle
     else if ( ang_rate > 0 && past_ang < 0 ) {
         // cross 180
-        if ( cur_ang < 0 && (stp % 2) ) {   new_ang = past_ang + (cur_ang + past_ang_mod + M_PI);   }
+        if ( cur_ang < 0 && (stp % 2) ) {   new_ang = past_ang + (cur_ang + past_ang_mod + rs::PI);   }
         // negative
         else if ( cur_ang < 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod);  }
         // cross 0
         else if ( cur_ang > 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod);  }
         // positive
-        else if ( cur_ang > 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang + past_ang_mod - M_PI);   }
+        else if ( cur_ang > 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang + past_ang_mod - rs::PI);   }
     }
     // negative angular velocity, positive angle
     else if ( ang_rate < 0 && past_ang >= 0 ) {
         // cross 180
-        if ( cur_ang > 0 && (stp % 2) ) {   new_ang = past_ang + (cur_ang - past_ang_mod - M_PI);   }
+        if ( cur_ang > 0 && (stp % 2) ) {   new_ang = past_ang + (cur_ang - past_ang_mod - rs::PI);   }
         // negative
-        else if ( cur_ang < 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang - past_ang_mod + M_PI);   }
+        else if ( cur_ang < 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang - past_ang_mod + rs::PI);   }
         // cross 0
         else if ( cur_ang < 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod);  }
         // positive
@@ -345,13 +345,13 @@ double Robot::mod_angle(double past_ang, double cur_ang, double ang_rate) {
     // negative angular velocity, negative angle
     else if ( ang_rate < 0 && past_ang < 0 ) {
         // cross 180
-        if ( cur_ang > 0 && !(stp % 2) ) {  new_ang = past_ang + (cur_ang + past_ang_mod - 2*M_PI); }
+        if ( cur_ang > 0 && !(stp % 2) ) {  new_ang = past_ang + (cur_ang + past_ang_mod - 2*rs::PI); }
         // negative
         else if ( cur_ang < 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod);  }
         // cross 0
-        else if ( cur_ang < 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang + past_ang_mod - M_PI);   }
+        else if ( cur_ang < 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang + past_ang_mod - rs::PI);   }
         // positive
-        else if ( cur_ang > 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang + past_ang_mod - M_PI);   }
+        else if ( cur_ang > 0 && (stp % 2) ) {  new_ang = past_ang + (cur_ang + past_ang_mod - rs::PI);   }
     }
 
     return new_ang;
@@ -406,7 +406,7 @@ double Robot::normal(double sigma) {
 	double u2 = this->uniform();
 
 	// box-muller transform to gaussian
-	return sigma*(sqrt(-2.0*log(u1))*cos(2*M_PI*u2));
+	return sigma*(sqrt(-2.0*log(u1))*cos(2*rs::PI*u2));
 }
 
 double Robot::uniform(void) {

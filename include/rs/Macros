@@ -7,6 +7,7 @@ namespace rs {
 	inline double R2D(double x) { return (x * 57.295779513082321); }
 
 	static double EPSILON = 0.0000001;
+	static double PI = 3.14159265358979323846;
 
 } // namespace rs
 

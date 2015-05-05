@@ -5,6 +5,7 @@
 #include <unistd.h>
 #endif
 
+#include <rs/Macros>
 #include <rsSim/Sim>
 
 using namespace rsSim;
@@ -173,8 +174,8 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l
 	dGeomSetBody(geom, *body);
 	dGeomSetOffsetPosition(geom, -m.c[0], -m.c[1], -m.c[2]);
 	dMatrix3 R;
-	if (axis == 1) {		dRFromAxisAndAngle(R, 0, 1, 0, M_PI/2); }
-	else if (axis == 2) {	dRFromAxisAndAngle(R, 1, 0, 0, M_PI/2); }
+	if (axis == 1) {		dRFromAxisAndAngle(R, 0, 1, 0, rs::PI/2); }
+	else if (axis == 2) {	dRFromAxisAndAngle(R, 1, 0, 0, rs::PI/2); }
 	else if (axis == 3) {	dRFromAxisAndAngle(R, 0, 0, 1, 0); }
 	dGeomSetOffsetRotation(geom, R);
 

@@ -570,11 +570,11 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
 				else if (i == rs::UP)
-					_robot.back()->setPsi(M_PI/2);
+					_robot.back()->setPsi(rs::PI/2);
 				else if (i == rs::LEFT)
-					_robot.back()->setPsi(M_PI);
+					_robot.back()->setPsi(rs::PI);
 				else if (i == rs::DOWN)
-					_robot.back()->setPsi(3*M_PI/2);
+					_robot.back()->setPsi(3*rs::PI/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
@@ -628,11 +628,11 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
 				else if (i == rs::UP)
-					_robot.back()->setPsi(M_PI/2);
+					_robot.back()->setPsi(rs::PI/2);
 				else if (i == rs::LEFT)
-					_robot.back()->setPsi(M_PI);
+					_robot.back()->setPsi(rs::PI);
 				else if (i == rs::DOWN)
-					_robot.back()->setPsi(3*M_PI/2);
+					_robot.back()->setPsi(3*rs::PI/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);
@@ -675,11 +675,11 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
 				else if (i == rs::UP)
-					_robot.back()->setPsi(M_PI/2);
+					_robot.back()->setPsi(rs::PI/2);
 				else if (i == rs::LEFT)
-					_robot.back()->setPsi(M_PI);
+					_robot.back()->setPsi(rs::PI);
 				else if (i == rs::DOWN)
-					_robot.back()->setPsi(3*M_PI/2);
+					_robot.back()->setPsi(3*rs::PI/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				ele->QueryDoubleAttribute("x", &a);

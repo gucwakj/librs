@@ -637,7 +637,7 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 	// set mass of body
 	dMass m;
 	dMassSetBox(&m, 1000, 2*_conn_depth, 1.5*_face_radius, _body_height);
-	dMassTranslate(&m, 8*_conn_depth, 0, -_body_height/2);
+	//dMassTranslate(&m, 8*_conn_depth, 0, -_body_height/2);
 
 	// build geometries
 	dGeomID geom[4];
@@ -645,6 +645,7 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 	// set geometry 0 - box
 	geom[0] = dCreateBox(_space, _conn_depth, 1.5*_face_radius, _body_height);
 	dGeomSetBody(geom[0], conn.body);
+	dGeomSetOffsetPosition(geom[0], -m.c[0], -m.c[1], -m.c[2]);
 
 	// default 3ds caster
 	if (!custom) {
@@ -661,7 +662,7 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 		// set geometry 3 - sphere
 		geom[3] = dCreateSphere(_space, 0.006);
 		dGeomSetBody(geom[3], conn.body);
-		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.0368 - m.c[0], -m.c[1], -_body_height/2 - 0.005 - m.c[2]);
+		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.0368 - m.c[0], -m.c[1], -_body_height/2 - 0.004 - m.c[2]);
 	}
 	// custom drawn one for mathematics
 	else {

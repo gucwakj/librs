@@ -127,7 +127,7 @@ const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::
 	else if (type == rsLinkbot::BRIDGE)
 		return P.add(Q.multiply(_conn_depth/2, _bridge_length/2 - _face_radius, 0));
 	else if (type == rsLinkbot::CASTER)
-		return P.add(Q.multiply(_conn_depth/4, 0, 0));
+		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::CUBE)
 		return P.add(Q.multiply(_cubic_length/2, 0, 0));
 	else if (type == rsLinkbot::DOUBLEBRIDGE)
@@ -260,27 +260,98 @@ double Linkbot::riseByWheels(int wheel_type, double radius) {
 }
 
 const rs::Quat Linkbot::tiltForWheels(int type, int face, double &p2, double radius) {
+	// invalid type
 	if (type == -1) {
 		p2 = 0;
 		return rs::Quat();
 	}
 
+	// get other wheel joint
+	int other = 0;
+	if (face == FACE1) other = 1;
+
+	// tilt left or right based upon face
 	int i = 1;
 	if (face == FACE3) i = -1;
 
+	// set wheel on this face
+	_wheels[(other ? 0 : 1)] = type;
+
+	// tilt
 	if (type == TINYWHEEL) {
-		p2 = 0.0020705;
-		return rs::Quat(0, i*0.0285493, 0, 0.999592);
+		if (_wheels[other] == TINYWHEEL) {
+			p2 = 0.0029595;
+			double q[4] = {0, 0.0285493, 0, 0.999592};
+			double length = q[1]*q[1] + q[3]*q[3];
+			return rs::Quat().multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
+		}
+		else if (_wheels[other] == SMALLWHEEL) {
+			p2 = 0.0030787;
+			double q[4] = {0, 0.0469256, 0, 0.998898};
+			double length = q[1]*q[1] + q[3]*q[3];
+			return rs::Quat(0, -i*0.0171147, 0, 0.999851).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
+		}
+		else if (_wheels[other] == BIGWHEEL) {
+			p2 = 0.0037111;
+			double q[4] = {0, 0.0820308, 0, 0.996629};
+			double length = q[1]*q[1] + q[3]*q[3];
+			return rs::Quat(0, -i*0.0480794, 0, 0.998843).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
+		}
+		else {
+			p2 = 0.0020705;
+			return rs::Quat(0, i*0.0285493, 0, 0.999592);
+		}
 	}
 	else if (type == SMALLWHEEL) {
-		p2 = 0.003318;
-		return rs::Quat(0, i*0.0469256, 0, 0.998898);
+		if (_wheels[other] == TINYWHEEL) {
+			p2 = 0.0043264;
+			double q[4] = {0, 0.0285493, 0, 0.999592};
+			double length = q[1]*q[1] + q[3]*q[3];
+			return rs::Quat(0, i*0.0171147, 0, 0.999851).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
+		}
+		else if (_wheels[other] == SMALLWHEEL) {
+			p2 = 0.0048818;
+			double q[4] = {0, 0.0469256, 0, 0.998898};
+			double length = q[1]*q[1] + q[3]*q[3];
+			return rs::Quat().multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
+		}
+		else if (_wheels[other] == BIGWHEEL) {
+			p2 = 0.0078349;
+			double q[4] = {0, 0.0820308, 0, 0.996629};
+			double length = q[1]*q[1] + q[3]*q[3];
+			return rs::Quat(0, -i*0.0326405, 0, 0.999466).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
+		}
+		else {
+			p2 = 0.003318;
+			return rs::Quat(0, i*0.0469256, 0, 0.998898);
+		}
 	}
 	else if (type == BIGWHEEL) {
-		p2 = 0.0058091;
-		return rs::Quat(0, i*0.0820308, 0, 0.996629);
+		if (_wheels[other] == TINYWHEEL) {
+			p2 = 0.0074497;
+			double q[4] = {0, -i*0.0285493, 0, 0.999592};
+			double length = q[1]*q[1] + q[3]*q[3];
+			return rs::Quat(0, i*0.0480794, 0, 0.998843).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
+		}
+		else if (_wheels[other] == SMALLWHEEL) {
+			p2 = 0.0078349;
+			double q[4] = {0, -i*0.0469256, 0, 0.998898};
+			double length = q[1]*q[1] + q[3]*q[3];
+			return rs::Quat(0, i*0.0326405, 0, 0.999466).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
+		}
+		else if (_wheels[other] == BIGWHEEL) {
+			p2 = 0.0087409;
+			double q[4] = {0, -i*0.0820308, 0, 0.996629};
+			double length = q[1]*q[1] + q[3]*q[3];
+			return rs::Quat().multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
+		}
+		else {
+			p2 = 0.0058091;
+			return rs::Quat(0, i*0.0820308, 0, 0.996629);
+		}
 	}
 
+	// return default
 	return rs::Quat();
 }
 

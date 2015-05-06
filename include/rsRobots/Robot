@@ -48,6 +48,7 @@ namespace rsRobots {
 			double _rgb[3];
 			int _form;
 			int _id;
+			int _wheels[2];
 			std::string _name;
 			std::vector<rs::Pos> _offset;
 	};

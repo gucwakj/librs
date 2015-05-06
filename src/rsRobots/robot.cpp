@@ -9,6 +9,8 @@ Robot::Robot(int form) {
 	_rgb[1] = 0;
 	_rgb[2] = 0;
 	_trace = 0;
+	_wheels[0] = -1;
+	_wheels[1] = -1;
 }
 
 Robot::~Robot(void) {

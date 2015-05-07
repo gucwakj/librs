@@ -1,4 +1,3 @@
-#include <iostream>
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -52,7 +51,6 @@ Sim::Sim(bool pause, bool rt) {
 }
 
 Sim::~Sim(void) {
-std::cerr << "rsSim/~Sim start" << std::endl;
 	// remove simulation
 	MUTEX_LOCK(&_running_mutex);
 	_running = false;
@@ -75,7 +73,6 @@ std::cerr << "rsSim/~Sim start" << std::endl;
 	for (unsigned int i = 0; i < _robot.size(); i++) {
 		_robot.erase(_robot.begin() + i);
 	}
-std::cerr << "rsSim/~Sim end" << std::endl;
 }
 
 /**********************************************************

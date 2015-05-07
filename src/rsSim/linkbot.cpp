@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <rs/Macros>
 #include <rsSim/Sim>
 #include <rsSim/Linkbot>
@@ -13,13 +11,11 @@ Linkbot::Linkbot(int form) : rsRobots::Robot(form), rsRobots::Linkbot(form) {
 }
 
 Linkbot::~Linkbot(void) {
-std::cerr << "rsSim/~Linkbot start" << std::endl;
 	// delete mutexes
 	for (int i = 0; i < _dof; i++) {
 		MUTEX_DESTROY(&_motor[i].success_mutex);
 		COND_DESTROY(&_motor[i].success_cond);
 	}
-std::cerr << "rsSim/~Linkbot end" << std::endl;
 }
 
 void Linkbot::moveJointSinusoid(int id) {

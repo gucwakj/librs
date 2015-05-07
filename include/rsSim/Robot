@@ -28,7 +28,6 @@ namespace rsSim {
 			int holdJoints(void);
 			int moveJoint(int, double);
 			int moveJointNB(int, double);
-			int moveJointSinusoid(int);
 			int moveJointTo(int, double);
 			int moveJointToNB(int, double);
 			int moveJointWait(int);
@@ -83,16 +82,6 @@ namespace rsSim {
 				double period;		// motion period
 				double run;			// number of motions
 			};
-			// research: motor sinusoid motion
-			struct Sinusoid {
-				double init;			// initial angle
-				double gain;			// gain
-				double period;			// period
-				double phase;			// phase shift
-				double start;			// motion start time
-				int delay;				// time delay for phase shift
-				int run;				// number of motions
-			};
 			// motor
 			struct Motor {
 				bool success;			// trigger for motion completion
@@ -136,7 +125,6 @@ namespace rsSim {
 			int _connected;				// connected to controller
 			int _dof;					// number of DOF
 			int _seed;					// seed for random number generation
-			std::vector<Sinusoid> _sine;// research: sinusoid parameters
 			MUTEX_T _goal_mutex;		// goal value being written
 			MUTEX_T _success_mutex;		// completed step
 			COND_T _success_cond;		// completed step

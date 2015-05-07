@@ -42,7 +42,6 @@ namespace rsSim {
 			int setCollisions(int);
 			int setCOR(double, double);
 			int setMu(double, double);
-			void setRobotSinusoidFrequency(double);
 			void start(void);
 			void stop(void);
 

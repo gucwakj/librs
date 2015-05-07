@@ -22,6 +22,10 @@ namespace rsSim {
 			const rs::Pos getFootForce(void);
 			const rs::Pos getFootTorque(void);
 			const rs::Vec getJoints(void);
+			void moveJointSinusoid(int);		// research
+			void setSinusoidGain(double);		// research
+			void setSinusoidFrequency(double);		// research
+			void setSinusoidPhaseShift(double);		// research
 
 		// inherited functions from ModularRobot class
 		protected:
@@ -52,8 +56,20 @@ namespace rsSim {
 
 		// private variables
 		private:
-			std::vector<std::tuple<dBodyID, double, double, double>> _f;		// forces to add to bodies
-			std::vector<std::tuple<dBodyID, double, double, double>> _t;		// torque to add to bodies
+			// research: motor sinusoid motion
+			struct Sinusoid {
+				double init;			// initial angle
+				double gain;			// gain
+				double period;			// period
+				double phase;			// phase shift
+				double start;			// motion start time
+				int delay;				// time delay for phase shift
+				int run;				// number of motions
+			};
+
+			std::vector<Sinusoid> _sine;										// research: sinusoid parameters
+			std::vector<std::tuple<dBodyID, double, double, double>> _f;		// research: forces to add to bodies
+			std::vector<std::tuple<dBodyID, double, double, double>> _t;		// research: torque to add to bodies
 	};
 
 } // namespace rsSim

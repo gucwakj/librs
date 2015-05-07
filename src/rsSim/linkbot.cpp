@@ -22,6 +22,47 @@ std::cerr << "rsSim/~Linkbot start" << std::endl;
 std::cerr << "rsSim/~Linkbot end" << std::endl;
 }
 
+void Linkbot::moveJointSinusoid(int id) {
+	// lock goal
+	MUTEX_LOCK(&_goal_mutex);
+
+	// set motion parameters
+	_motor[id].mode = SINE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[id].id);
+	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[id].success_mutex);
+	_motor[id].success = false;
+	MUTEX_UNLOCK(&_motor[id].success_mutex);
+
+	// unlock goal
+	MUTEX_UNLOCK(&_goal_mutex);
+}
+
+void Linkbot::setSinusoidGain(double gain) {
+	for (unsigned int i = 0; i < _sine.size(); i++) {
+		_sine[i].gain = gain;
+	}
+}
+
+void Linkbot::setSinusoidFrequency(double omega) {
+	for (unsigned int i = 0; i < _sine.size(); i++) {
+		_sine[i].period = 1/omega;
+	}
+}
+
+void Linkbot::setSinusoidPhaseShift(double phase) {
+	for (unsigned int i = 0; i < _sine.size(); i++) {
+		_sine[i].phase = phase;
+	}
+}
+
 /**********************************************************
 	inherited functions
  **********************************************************/

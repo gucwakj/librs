@@ -9,8 +9,8 @@ namespace rsRobots {
 	class Mindstorms : virtual public Robot {
 		// public functions
 		public:
-			Mindstorms(int = rs::EV3);
-			virtual ~Mindstorms(void) {};
+			Mindstorms(int);
+			virtual ~Mindstorms(void) { };
 
 			double getWheelRatio(int);
 			double riseByWheels(int);

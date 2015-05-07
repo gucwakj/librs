@@ -7,7 +7,7 @@
 using namespace rsSim;
 using namespace rsMindstorms;
 
-Mindstorms::Mindstorms(int form) : rsRobots::Robot(form) {
+Mindstorms::Mindstorms(int form) : rsRobots::Robot(form), rsRobots::Mindstorms(form) {
 	// initialize parameters
 	this->init_params();
 }

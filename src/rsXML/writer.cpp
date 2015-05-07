@@ -412,6 +412,20 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 		node->QueryIntAttribute("id", &j);
 		if (j == id) {
 			node->SetAttribute("form", form);
+			switch (form) {
+				case rs::LINKBOTI:
+					node->SetValue("linkboti");
+					break;
+				case rs::LINKBOTL:
+					node->SetValue("linkbotl");
+					break;
+				case rs::EV3:
+					node->SetValue("ev3");
+					break;
+				case rs::NXT:
+					node->SetValue("nxt");
+					break;
+			}
 			return node;
 		}
 		node = node->NextSiblingElement();

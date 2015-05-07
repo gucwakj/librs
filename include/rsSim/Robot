@@ -24,6 +24,7 @@ namespace rsSim {
 			Robot(void);
 			virtual ~Robot(void);
 
+			double getAngle(int);
 			int holdJoint(int);
 			int holdJoints(void);
 			int moveJoint(int, double);
@@ -34,7 +35,6 @@ namespace rsSim {
 			int moveWait(void);
 			int addToSim(dWorldID&, dSpaceID&, int, rsSim::Sim*);
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, int) { return 0; };
-			virtual double getAngle(int) { return 0; };
 			BodyList& getBodyList(void);
 			double getCenter(int);
 			const rs::Pos getPosition(void);
@@ -45,6 +45,7 @@ namespace rsSim {
 
 		// utility functions
 		protected:
+			virtual double calculate_angle(int) { return 0; };
 			int doze(double);
 			int fixBodyToGround(dBodyID);
 			dBodyID getBodyID(int);

@@ -326,7 +326,7 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	return 0;
 }
 
-double Linkbot::getAngle(int id) {
+double Linkbot::calculate_angle(int id) {
 	if (id == _disabled)
 		_motor[id].theta = 0;
 	else
@@ -404,8 +404,8 @@ void Linkbot::init_params(void) {
 		// research: sinusoid motion
 		_sine[i].delay = 0;
 		_sine[i].init = 0;
-		_sine[i].gain = 0;
-		_sine[i].period = 0;
+		_sine[i].gain = 1;
+		_sine[i].period = 1;
 		_sine[i].phase = 0;
 		_sine[i].run = 0;
 		_sine[i].start = 0;
@@ -448,7 +448,7 @@ void Linkbot::simPreCollisionThread(void) {
 	for (int i = 0; i < _dof; i++) {
 		if (_disabled == i) continue;
 		// store current angle
-		_motor[i].theta = getAngle(i);
+		_motor[i].theta = calculate_angle(i);
 		// set rotation axis
 		dVector3 axis;
 		dJointGetHingeAxis(_motor[i].joint, axis);

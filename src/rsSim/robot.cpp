@@ -40,6 +40,10 @@ std::cerr << "rsSim/~Robot start" << std::endl;
 std::cerr << "rsSim/~Robot end" << std::endl;
 }
 
+double Robot::getAngle(int id) {
+	return _motor[id].theta;
+}
+
 int Robot::holdJoint(int id) {
 	_motor[id].omega = 0;
 

@@ -170,11 +170,10 @@ int Robot::moveWait(void) {
 /**********************************************************
 	protected functions for inherited classes
  **********************************************************/
-int Robot::addToSim(dWorldID &world, dSpaceID &space, int id, int pos, Sim *sim) {
+int Robot::addToSim(dWorldID &world, dSpaceID &space, int id, Sim *sim) {
 	_world = world;
 	_space = dHashSpaceCreate(space);
 	_id = id;
-	_pos = pos;
 	_sim = sim;
 
 	// success

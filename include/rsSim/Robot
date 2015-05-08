@@ -32,7 +32,7 @@ namespace rsSim {
 			int moveJointToNB(int, double);
 			int moveJointWait(int);
 			int moveWait(void);
-			int addToSim(dWorldID&, dSpaceID&, int, int, rsSim::Sim*);
+			int addToSim(dWorldID&, dSpaceID&, int, rsSim::Sim*);
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, int) { return 0; };
 			virtual double getAngle(int) { return 0; };
 			BodyList& getBodyList(void);
@@ -124,7 +124,6 @@ namespace rsSim {
 			double _trackwidth;			// trackwidth of robot
 			int _connected;				// connected to controller
 			int _dof;					// number of DOF
-			int _pos;					// position in simulation
 			int _seed;					// seed for random number generation
 			MUTEX_T _goal_mutex;		// goal value being written
 			MUTEX_T _success_mutex;		// completed step

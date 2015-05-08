@@ -90,7 +90,7 @@ int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat 
 	_robot.back().robot = robot;
 
 	// give simulation data to robot
-	robot->addToSim(_world, _space, id, _robot.size()-1, this);
+	robot->addToSim(_world, _space, id, this);
 
 	// build
 	robot->build(p, q, a, ground);
@@ -111,7 +111,7 @@ int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const 
 	_robot.back().robot = robot;
 
 	// give simulation data to robot
-	robot->addToSim(_world, _space, id, _robot.size()-1, this);
+	robot->addToSim(_world, _space, id, this);
 
 	// build
 	rs::Quat Q = dynamic_cast<rsSim::ModularRobot*>(base)->getRobotBodyQuaternion(face1, base->getAngle(face1-1), base->getQuaternion());

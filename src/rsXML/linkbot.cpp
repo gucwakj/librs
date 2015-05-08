@@ -17,35 +17,19 @@ void Linkbot::postProcess(void) {
 
 	// reposition robot in space
 	if (_base == NULL) {
+		// tilt for wheels
+		double p2;
+		_q.multiply(this->tiltForWheels(_wheels[0], 1, p2));
+		_p[2] += p2;
+		_q.multiply(this->tiltForWheels(_wheels[1], 3, p2));
+		_p[2] += p2;
+
 		// adjust height to be above zero
-		if (fabs(_p[2]) < (_body_radius - rs::EPSILON)) {
-			_p.add(_q.multiply(0, 0, _body_height/2));
+		if (fabs(_p[2]) < (this->getBodyHeight() - rs::EPSILON)) {
+			_p.add(0, 0, this->getBodyHeight()/2);
 		}
 
-		// check for wheels
-		for (unsigned int i = 0; i < _conn.size(); i++) {
-			if (_conn[i]->getConn() == rsLinkbot::BIGWHEEL) {
-				_p[2] += (_bigwheel_radius - _body_height/2);
-				_wheel_radius = _bigwheel_radius;
-				break;
-			}
-			else if (_conn[i]->getConn() == rsLinkbot::SMALLWHEEL) {
-				_p[2] += (_smallwheel_radius - _body_height/2);
-				_wheel_radius = _smallwheel_radius;
-				break;
-			}
-			else if (_conn[i]->getConn() == rsLinkbot::TINYWHEEL) {
-				_p[2] += (_tinywheel_radius - _body_height/2);
-				_wheel_radius = _tinywheel_radius;
-				break;
-			}
-			else if (_conn[i]->getConn() == rsLinkbot::WHEEL) {
-				_p[2] += (_conn[i]->getSize() - _body_height/2);
-				_wheel_radius = _conn[i]->getSize();
-				break;
-			}
-		}
-
+		// TODO:  needs deletion when tilt takes casters into account
 		// tilt for casters
 		for (unsigned int i = 0; i < _conn.size(); i++) {
 			if (_conn[i]->getType() == rsLinkbot::CASTER && !static_cast<int>(_conn[i]->getSize()))

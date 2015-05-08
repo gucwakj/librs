@@ -41,7 +41,7 @@ std::cerr << "rsSim/~Robot end" << std::endl;
 }
 
 int Robot::holdJoint(int id) {
-	this->setJointSpeed(id, 0);
+	_motor[id].omega = 0;
 
 	// success
 	return 0;
@@ -50,7 +50,7 @@ int Robot::holdJoint(int id) {
 int Robot::holdJoints(void) {
 	// set joints to zero speed
 	for (int i = 0; i < _dof; i++) {
-		this->setJointSpeed(static_cast<int>(i), 0);
+		_motor[i].omega = 0;
 	}
 
 	// success
@@ -165,25 +165,6 @@ int Robot::moveWait(void) {
 
 	// success
 	return 0;
-}
-
-int Robot::setJointSpeed(int id, double speed) {
-	if (speed > rs::R2D(_motor[id].omega_max)) {
-		fprintf(stderr, "Warning: Setting the speed for joint %d to %.2lf degrees per second is "
-			"beyond the hardware limit of %.2lf degrees per second.\n",
-			id+1, speed, rs::R2D(_motor[id].omega_max));
-	}
-	_motor[id].omega = rs::D2R(speed);
-
-	// success
-	return 0;
-}
-
-int Robot::setJointSpeedRatio(int id, double ratio) {
-	if ( ratio < 0 || ratio > 1 ) {
-		return -1;
-	}
-	return this->setJointSpeed(id, ratio * rs::R2D(_motor[(int)id].omega_max));
 }
 
 /**********************************************************

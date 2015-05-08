@@ -1371,7 +1371,7 @@ void Scene::draw_scene_outdoors(void) {
 	geom->setTexCoordArray(0, tcoords);
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
-	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "ground/terrain.png"));
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "background/terrain.png"));
 	tex->setDataVariance(osg::Object::DYNAMIC);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
@@ -1409,7 +1409,7 @@ void Scene::draw_scene_board(void) {
 	geom->setTexCoordArray(0, tcoords);
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
-	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "ground/terrain.png"));
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "background/terrain.png"));
 	tex->setDataVariance(osg::Object::DYNAMIC);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
@@ -1433,12 +1433,12 @@ void Scene::draw_skybox(void) {
 	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat;
 	stateset->setTextureAttribute(0, tm);
 	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap;
-	osg::Image* imagePosX = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_right.png");
-	osg::Image* imageNegX = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_left.png");
-	osg::Image* imagePosY = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_top.png");
-	osg::Image* imageNegY = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_top.png");
-	osg::Image* imagePosZ = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_front.png");
-	osg::Image* imageNegZ = osgDB::readImageFile(_tex_path + "ground/checkered/checkered_back.png");
+	osg::Image* imagePosX = osgDB::readImageFile(_tex_path + "background/sky/right.png");
+	osg::Image* imageNegX = osgDB::readImageFile(_tex_path + "background/sky/left.png");
+	osg::Image* imagePosY = osgDB::readImageFile(_tex_path + "background/sky/top.png");
+	osg::Image* imageNegY = osgDB::readImageFile(_tex_path + "background/sky/top.png");
+	osg::Image* imagePosZ = osgDB::readImageFile(_tex_path + "background/sky/front.png");
+	osg::Image* imageNegZ = osgDB::readImageFile(_tex_path + "background/sky/back.png");
 	if (imagePosX && imageNegX && imagePosY && imageNegY && imagePosZ && imageNegZ) {
 		skymap->setImage(osg::TextureCubeMap::POSITIVE_X, imagePosX);
 		skymap->setImage(osg::TextureCubeMap::NEGATIVE_X, imageNegX);

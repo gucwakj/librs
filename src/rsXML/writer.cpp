@@ -161,12 +161,17 @@ void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, const rs::P
 		case rs::LINKBOTI:
 		case rs::LINKBOTL:
 		case rs::LINKBOTT:
+			joint->DeleteAttribute("w1");
+			joint->DeleteAttribute("w2");
 			joint->SetAttribute("f1", r[0]);
 			joint->SetAttribute("f2", r[1]);
 			joint->SetAttribute("f3", r[2]);
 			break;
 		case rs::EV3:
 		case rs::NXT:
+			joint->DeleteAttribute("f1");
+			joint->DeleteAttribute("f2");
+			joint->DeleteAttribute("f3");
 			joint->SetAttribute("w1", r[0]);
 			joint->SetAttribute("w2", r[1]);
 			break;

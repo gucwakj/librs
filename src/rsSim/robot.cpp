@@ -180,17 +180,6 @@ int Robot::addToSim(dWorldID &world, dSpaceID &space, int id, Sim *sim) {
 	return 0;
 }
 
-double Robot::convert(double value, int tometer) {
-	double tmp = 0;
-
-	/*if (tometer)
-		tmp = ((_sim->getUnits()) ? value/39.370 : value/100);
-	else
-		tmp = ((_sim->getUnits()) ? value*39.370 : value*100);*/
-
-	return tmp;
-}
-
 int Robot::doze(double ms) {
 #ifdef _WIN32
 	Sleep(ms);

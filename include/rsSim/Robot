@@ -45,7 +45,6 @@ namespace rsSim {
 
 		// utility functions
 		protected:
-			double convert(double, int);
 			int doze(double);
 			int fixBodyToGround(dBodyID);
 			dBodyID getBodyID(int);

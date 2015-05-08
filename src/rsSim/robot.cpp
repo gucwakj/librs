@@ -154,7 +154,7 @@ int Robot::moveWait(void) {
 	while (success != _dof) {
 		COND_WAIT(&_success_cond, &_success_mutex);
 		success = 0;
-		for (int i = 0; i < _dof; i++) { success += _motor[static_cast<int>(i)].success; }
+		for (int i = 0; i < _dof; i++) { success += _motor[i].success; }
 	}
 	// reset motor states
 	for (int i = 0; i < _dof; i++) {

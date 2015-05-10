@@ -20,7 +20,6 @@
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 
-#include <rs/Enum>
 #include <rs/Threads>
 #include <rsRobots/Linkbot>
 #include <rsRobots/Mindstorms>
@@ -39,16 +38,6 @@ namespace rsScene {
 	typedef osg::Group Obstacle;
 	typedef osg::Group Robot;
 
-	// enum
-	enum Levels {
-		NONE,
-		OUTDOORS,
-		BOARD,
-		ROBOPLAY2013,
-		ROBOPLAY2014,
-		NUM_LEVELS
-	};
-
 	// class
 	class Scene : public KeyboardHandler {
 		// public functions
@@ -56,7 +45,7 @@ namespace rsScene {
 			Scene(void);
 			virtual ~Scene(void);
 
-			int addChildren(void);
+			int addAndRemoveChildren(void);
 			void addHighlight(int, bool = true, bool = true, const rs::Vec& = rs::Vec(1, 1, 0));
 			int deleteObstacle(int);
 			int deleteRobot(int);
@@ -67,6 +56,7 @@ namespace rsScene {
 			void drawWheel(rsRobots::Robot*, Robot*, int, int);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
+			void setBackgroundImage(int, std::string);
 			void setGrid(std::vector<double>, bool = false);
 			void setHighlight(bool);
 			void setHUD(bool);
@@ -111,11 +101,12 @@ namespace rsScene {
 			osg::Camera *_camera;				// camera to view scene
 			osg::Group *_background;			// pieces of each level which are interchangeable
 			osg::Group *_root;					// root node of scene
-			osg::Group *_staging;				// temp variable for adding objects
+			osg::Group *_staging[2];			// temp variable for adding objects
 			osgViewer::Viewer *_viewer;			// viewer
 			osgShadow::ShadowedScene *_scene;	// shadow root of scene
-			std::string _tex_path;				// texture path
+			std::string _model_path;			// path for 3ds models
 			std::vector<double> _grid;			// grid
+			std::vector<std::string> _path;		// image paths
 			MUTEX_T _thread_mutex;				// mutex: thread running state
 			THREAD_T _osgThread;				// thread: graphics window
 	};

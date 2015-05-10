@@ -20,6 +20,8 @@ namespace rsXML {
 			virtual ~Reader(void);
 
 			int addNewRobot(Robot*);
+			std::string getBackgroundImage(int);
+			int getLevel(void);
 			Obstacle* getObstacle(int);
 			Marker* getMarker(int);
 			Marker* getNextMarker(int = -1);
@@ -40,6 +42,7 @@ namespace rsXML {
 		// private functions
 		private:
 			void load_file(const char*, tinyxml2::XMLDocument*);
+			std::string load_background_file(const char*, tinyxml2::XMLDocument*);
 			void read_config(tinyxml2::XMLDocument*);
 			void read_graphics(tinyxml2::XMLDocument*);
 			void read_obstacles(tinyxml2::XMLDocument*);
@@ -60,9 +63,14 @@ namespace rsXML {
 			std::vector<Obstacle*> _obstacle;	// ground obstacles
 			std::vector<Marker*> _marker;		// graphical markers
 			std::vector<Robot*> _robot;			// simulation robots
+
+			std::string _name;
+			int _level;
+			std::vector<std::string> _bpath;
 	};
 
 	std::string getDefaultPath(void);
+	std::string getDefaultTexturePath(void);
 
 } // namespace rsXML
 

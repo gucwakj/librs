@@ -32,6 +32,28 @@ namespace rs {
 		DOWN
 	};
 
+	// levels for simulation
+	namespace Level {
+		enum Levels {
+			None,
+			Outdoors,
+			Board,
+			Num_Levels
+		};
+	} // namespace Level
+
+	// all images to load for each level
+	enum Images {
+		FRONT,
+		LEFTSIDE,
+		BACK,
+		RIGHTSIDE,
+		TOP,
+		BOTTOM,
+		GROUND,
+		NUM_IMAGES
+	};
+
 } // namespace rs
 
 namespace rsLinkbot {

@@ -1,0 +1,17 @@
+<?RoboSim Background XML?>
+
+<level>board</level>
+
+<name>2014 RoboPlay Challenge Competition</name>
+
+<background>
+	<ground>board.png</ground>
+</background>
+
+<ground>
+    <box id="0">
+        <color r="1" g="0" b="0" alpha="1"/>
+        <rotation x="0" y="0" z="0" w="1"/>
+        <position x="0.1" y="0.1" z="0"/>
+    </box>
+</ground>

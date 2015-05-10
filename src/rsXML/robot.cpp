@@ -5,6 +5,7 @@
 using namespace rsXML;
 
 Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
+	_base = NULL;
 	_connected = 0;
 	_c.allocate(4);
 	_ground = -1;

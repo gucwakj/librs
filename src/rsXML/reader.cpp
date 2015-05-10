@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iostream>
 
+#include <rs/Enum>
 #include <rs/Macros>
 #include <rsXML/Reader>
 #include <rsXML/Linkbot>
@@ -51,6 +52,14 @@ Reader::~Reader(void) {
 int Reader::addNewRobot(Robot *bot) {
 	_robot.push_back(bot);
 	return 0;
+}
+
+std::string Reader::getBackgroundImage(int pos) {
+	return _bpath[pos];
+}
+
+int Reader::getLevel(void) {
+	return _level;
 }
 
 Obstacle* Reader::getObstacle(int id) {
@@ -233,9 +242,36 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 	}
 }
 
+std::string Reader::load_background_file(const char *dir, tinyxml2::XMLDocument *doc) {
+	std::string directory(dir);
+
+	// get file name to load
+	std::string file; file.append(directory).append("/background.xml");
+
+	// if full path, open and return
+	FILE *fp = fopen(file.c_str(), "r");
+	if (fp) {
+		int output = doc->LoadFile(file.c_str());
+		if (output) std::cerr << "Warning: Could not find RoboSim background file.  Using default settings." << std::endl;
+		return NULL;
+	}
+
+	// get default file location
+	std::string path = rsXML::getDefaultTexturePath();
+	std::string filepath(path); filepath.append(directory).append("/background.xml");
+
+	// load file
+	int output = doc->LoadFile(filepath.c_str());
+	if (output) std::cerr << "Warning: Could not find RoboSim background file.  Using default settings." << std::endl;
+
+	// return path of file
+	return path.append(directory).append("/");
+}
+
 void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
+	tinyxml2::XMLElement *ele = NULL;
 
 	// check if should start paused
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("version")) ) {
@@ -263,6 +299,43 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("realtime")) ) {
 		node->QueryIntText(reinterpret_cast<int *>(&_rt));
 	}
+
+	// check for the background node
+	if ( (node = doc->FirstChildElement("config")->FirstChildElement("background")) ) {
+		tinyxml2::XMLDocument bdoc;
+		std::string path = this->load_background_file(node->GetText(), &bdoc);
+		if ( (node = bdoc.FirstChildElement("name")) )
+			_name = node->GetText();
+		if ( (node = bdoc.FirstChildElement("level")) ) {
+			if ( !strcmp(node->GetText(), "board") )
+				_level = rs::Level::Board;
+			else if ( !strcmp(node->GetText(), "outdoors") )
+				_level = rs::Level::Outdoors;
+		}
+		if ( (node = bdoc.FirstChildElement("background")) ) {
+			_bpath.resize(7);
+			ele = node->FirstChildElement("ground");
+			if (ele) _bpath[rs::GROUND].append(path).append(ele->GetText());
+			ele = node->FirstChildElement("front");
+			if (ele) _bpath[rs::FRONT].append(path).append(ele->GetText());
+			ele = node->FirstChildElement("left");
+			if (ele) _bpath[rs::LEFTSIDE].append(path).append(ele->GetText());
+			ele = node->FirstChildElement("back");
+			if (ele) _bpath[rs::BACK].append(path).append(ele->GetText());
+			ele = node->FirstChildElement("right");
+			if (ele) _bpath[rs::RIGHTSIDE].append(path).append(ele->GetText());
+			ele = node->FirstChildElement("top");
+			if (ele) _bpath[rs::TOP].append(path).append(ele->GetText());
+			ele = node->FirstChildElement("bottom");
+			if (ele) _bpath[rs::BOTTOM].append(path).append(ele->GetText());
+		}
+		if ( (node = bdoc.FirstChildElement("ground")) ) {
+			this->read_obstacles(&bdoc);
+		}
+		if ( (node = bdoc.FirstChildElement("graphics")) ) {
+			this->read_graphics(&bdoc);
+		}
+	}
 }
 
 void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
@@ -282,10 +355,12 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 		if ( !strcmp(node->Value(), "line") ) {
 			// create object
 			_marker.push_back(new Marker(rs::LINE));
+			// id
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -294,6 +369,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 			// end position
 			if ( (ele = node->FirstChildElement("end")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
@@ -301,22 +377,27 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 			// start position
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
-			if (!node->QueryDoubleAttribute("width", &a))
+			if ( !node->QueryDoubleAttribute("width", &a) ) {
+				a = 0;
 				_marker.back()->setSize(a);
+			}
 		}
 		else if ( !strcmp(node->Value(), "dot") ) {
 			// create object
 			_marker.push_back(new Marker(rs::DOT));
+			// id
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -325,14 +406,17 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
-			if (!node->QueryDoubleAttribute("radius", &a))
+			if ( !node->QueryDoubleAttribute("radius", &a) ) {
+				a = 0;
 				_marker.back()->setSize(a);
+			}
 		}
 		else if ( !strcmp(node->Value(), "grid") ) {
 			node->QueryDoubleAttribute("tics", &_grid[0]);
@@ -353,10 +437,12 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 		else if ( !strcmp(node->Value(), "text") ) {
 			// create object
 			_marker.push_back(new Marker(rs::TEXT));
+			// id
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -369,6 +455,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
@@ -405,10 +492,12 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 		if ( !strcmp(node->Value(), "box") ) {
 			// create object
 			_obstacle.push_back(new Obstacle(rs::BOX));
+			// id
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -417,18 +506,20 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_obstacle.back()->setDimensions(a, b, c);
 			}
 			// mass
-			if (node->QueryDoubleAttribute("mass", &a))
-				_obstacle.back()->setMass(0.1);
-			else
+			if ( !node->QueryDoubleAttribute("mass", &a) ) {
+				a = 0;
 				_obstacle.back()->setMass(a);
+			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
@@ -436,6 +527,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
@@ -445,20 +537,17 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 		else if ( !strcmp(node->Value(), "cylinder") ) {
 			// create object
 			_obstacle.push_back(new Obstacle(rs::CYLINDER));
+			// id
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
-			// mass
-			if (node->QueryDoubleAttribute("mass", &a))
-				_obstacle.back()->setMass(0.1);
-			else
-				_obstacle.back()->setMass(a);
 			// axis
-			if (node->QueryDoubleAttribute("axis", &a))
-				_obstacle.back()->setAxis(1);
-			else
+			if ( !node->QueryDoubleAttribute("axis", &a) ) {
+				a = 0;
 				_obstacle.back()->setAxis(a);
+			}
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -467,12 +556,19 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
+				a = 0; b = 0;
 				ele->QueryDoubleAttribute("radius", &a);
 				ele->QueryDoubleAttribute("length", &b);
 				_obstacle.back()->setDimensions(a, b, 0);
 			}
+			// mass
+			if ( !node->QueryDoubleAttribute("mass", &a) ) {
+				a = 0;
+				_obstacle.back()->setMass(a);
+			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
@@ -480,6 +576,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
@@ -489,15 +586,12 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 		else if ( !strcmp(node->Value(), "sphere") ) {
 			// create object
 			_obstacle.push_back(new Obstacle(rs::SPHERE));
+			// id
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
-			// mass
-			if (node->QueryDoubleAttribute("mass", &a))
-				_obstacle.back()->setMass(0.1);
-			else
-				_obstacle.back()->setMass(a);
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -506,11 +600,18 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
+				a = 0;
 				ele->QueryDoubleAttribute("radius", &a);
 				_obstacle.back()->setDimensions(a, 0, 0);
 			}
+			// mass
+			if ( !node->QueryDoubleAttribute("mass", &a) ) {
+				a = 0;
+				_obstacle.back()->setMass(a);
+			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
@@ -548,12 +649,14 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("f1", &a);
 				ele->QueryDoubleAttribute("f2", &b);
 				ele->QueryDoubleAttribute("f3", &c);
 				_robot.back()->setJoints(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -577,18 +680,21 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 					_robot.back()->setPsi(3*rs::PI/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
+				i = 0; j = 0;
 				ele->QueryIntAttribute("left", &i);
 				ele->QueryIntAttribute("right", &j);
 				if (i) {
@@ -613,12 +719,14 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("f1", &a);
 				ele->QueryDoubleAttribute("f2", &b);
 				ele->QueryDoubleAttribute("f3", &c);
 				_robot.back()->setJoints(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -641,12 +749,14 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 					_robot.back()->setPsi(3*rs::PI/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
@@ -660,12 +770,14 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("f1", &a);
 				ele->QueryDoubleAttribute("f2", &b);
 				ele->QueryDoubleAttribute("f3", &c);
 				_robot.back()->setJoints(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -688,12 +800,14 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 					_robot.back()->setPsi(3*rs::PI/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
@@ -707,11 +821,13 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
+				a = 0; b = 0;
 				ele->QueryDoubleAttribute("w1", &a);
 				ele->QueryDoubleAttribute("w2", &b);
 				_robot.back()->setJoints(a, b);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -724,18 +840,21 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				_robot.back()->setName(str);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
+				i = 0; j = 0;
 				ele->QueryIntAttribute("left", &i);
 				ele->QueryIntAttribute("right", &j);
 				_robot.back()->setWheels(i, j);
@@ -748,11 +867,13 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
+				a = 0; b = 0;
 				ele->QueryDoubleAttribute("w1", &a);
 				ele->QueryDoubleAttribute("w2", &b);
 				_robot.back()->setJoints(a, b);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
+				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
 				ele->QueryDoubleAttribute("g", &b);
 				ele->QueryDoubleAttribute("b", &c);
@@ -765,18 +886,21 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				_robot.back()->setName(str);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0;
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
+				i = 0; j = 0;
 				ele->QueryIntAttribute("left", &i);
 				ele->QueryIntAttribute("right", &j);
 				_robot.back()->setWheels(i, j);
@@ -942,6 +1066,30 @@ std::string rsXML::getDefaultPath(void) {
 	path.append("/.robosimrc");
 #endif
 
+	return path;
+}
+
+std::string rsXML::getDefaultTexturePath(void) {
+    std::string path;
+#ifdef _WIN32
+    DWORD size = 128;
+    HKEY key;
+#if defined(_WIN64)
+    RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\Wow6432Node\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
+#else
+    RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
+#endif
+    char path[128];
+    RegQueryValueEx(key, TEXT("CHHOME"), NULL, NULL, (LPBYTE)path, &size);
+    path[size] = '\0';
+    if (path[0] == '\0')
+        path = "C:/Ch";
+    else
+        path = path;
+    path += "/package/chrobosim/data/";
+#else
+	path = "/home/kgucwa/projects/librs/resources/background/";
+#endif
 	return path;
 }
 

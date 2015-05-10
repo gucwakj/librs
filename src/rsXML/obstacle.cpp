@@ -5,12 +5,19 @@
 using namespace rsXML;
 
 Obstacle::Obstacle(int type) {
-	_axis = 0;
+	_axis = 1;
 	_connected = 0;
-	_mass = 0;
+	_mass = 0.1;
 	_type = type;
 	_l.allocate(3);
+	_l[0] = 0.1;
+	_l[1] = 0.1;
+	_l[2] = 0.1;
 	_c.allocate(4);
+	_c[0] = 1;
+	_c[1] = 0;
+	_c[2] = 0;
+	_c[3] = 1;
 }
 
 double Obstacle::getAxis(void) {

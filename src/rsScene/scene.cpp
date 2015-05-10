@@ -2,6 +2,7 @@
 #include <osgFX/Scribe>
 #include <osgDB/FileUtils>
 
+#include <rs/Enum>
 #include <rs/Macros>
 #include <rsScene/MouseHandler>
 #include <rsScene/Scene>
@@ -21,7 +22,8 @@ Scene::Scene(void) : KeyboardHandler() {
 	osg::setNotifyLevel(osg::ALWAYS);
 
 	// staging area for new insertions
-	_staging = new osg::Group;
+	_staging[0] = new osg::Group;
+	_staging[1] = new osg::Group;
 
 	// set default level to load
 	_level = -1;
@@ -47,7 +49,15 @@ Scene::Scene(void) : KeyboardHandler() {
 	_thread = false;
 
 	// set texture path
-	_tex_path = this->getTexturePath();
+	_model_path = this->getTexturePath();
+	_path.resize(rs::NUM_IMAGES);
+	_path[rs::GROUND].append(_model_path).append("background/outdoors/terrain.png");
+	_path[rs::FRONT].append(_model_path).append("background/outdoors/sky/front.png");
+	_path[rs::LEFTSIDE].append(_model_path).append("background/outdoors/sky/left.png");
+	_path[rs::BACK].append(_model_path).append("background/outdoors/sky/back.png");
+	_path[rs::RIGHTSIDE].append(_model_path).append("background/outdoors/sky/right.png");
+	_path[rs::TOP].append(_model_path).append("background/outdoors/sky/top.png");
+	_path[rs::BOTTOM].append(_model_path).append("background/outdoors/sky/bottom.png");
 
 	// flags for graphical output options
 	_highlight = false;
@@ -72,10 +82,16 @@ std::cerr << "rsScene/~Scene end" << std::endl;
 /**********************************************************
 	public functions
  **********************************************************/
-int Scene::addChildren(void) {
-	while (_staging->getNumChildren()) {
-		_scene->addChild(_staging->getChild(0));
-		_staging->removeChild(0, 1);
+int Scene::addAndRemoveChildren(void) {
+	while (_staging[0]->getNumChildren()) {
+		_scene->addChild(_staging[0]->getChild(0));
+		_staging[0]->removeChild(0, 1);
+	}
+	while (_staging[1]->getNumChildren()) {
+		if (_staging[1]->getChild(0)->getUpdateCallback() != NULL)
+			_staging[1]->getChild(0)->removeUpdateCallback(_staging[1]->getChild(0)->getUpdateCallback());
+		_scene->removeChild(_staging[1]->getChild(0));
+		_staging[1]->removeChild(0, 1);
 	}
 	return 0;
 }
@@ -151,39 +167,28 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 }
 
 int Scene::deleteObstacle(int id) {
-	MUTEX_LOCK(&(_thread_mutex));
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		if (test && !test->getName().compare(std::string("obstacle").append(std::to_string(id)))) {
-			if (test->getUpdateCallback() != NULL)
-				test->removeUpdateCallback(test->getUpdateCallback());
-			_scene->removeChild(test);
-			MUTEX_UNLOCK(&(_thread_mutex));
+			_staging[1]->addChild(test);
 			return 0;
 		}
 		else if (test && !test->getName().compare(std::string("marker").append(std::to_string(id)))) {
-			_scene->removeChild(test);
-			MUTEX_UNLOCK(&(_thread_mutex));
+			_staging[1]->addChild(test);
 			return 0;
 		}
 	}
-	MUTEX_UNLOCK(&(_thread_mutex));
 	return -1;
 }
 
 int Scene::deleteRobot(int id) {
-	MUTEX_LOCK(&(_thread_mutex));
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		if (test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
-			if (test->getUpdateCallback() != NULL)
-				test->removeUpdateCallback(test->getUpdateCallback());
-			_scene->removeChild(test);
-			MUTEX_UNLOCK(&(_thread_mutex));
+			_staging[1]->addChild(test);
 			return 0;
 		}
 	}
-	MUTEX_UNLOCK(&(_thread_mutex));
 	return -1;
 }
 
@@ -253,7 +258,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	marker->setName(std::string("marker").append(std::to_string(id)));
 
 	// add to scenegraph
-	_staging->addChild(marker);
+	_staging[0]->addChild(marker);
 
 	return 0;
 }
@@ -294,7 +299,7 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 	obstacle->setName(std::string("obstacle").append(std::to_string(id)));
 
 	// add to scenegraph
-	_staging->addChild(obstacle);
+	_staging[0]->addChild(obstacle);
 
 	// success
 	return obstacle;
@@ -376,7 +381,7 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 	group->setName(std::string("robot").append(std::to_string(robot->getID())));
 
 	// add to scenegraph
-	_staging->addChild(group);
+	_staging[0]->addChild(group);
 
 	// return robot
 	return group;
@@ -392,7 +397,7 @@ void Scene::drawWheel(rsRobots::Robot *robot, Robot *group, int type, int face) 
 
 osgText::Text* Scene::getHUDText(void) {
 	// get text geode
-	osg::Geode *geode;
+	osg::Geode *geode = NULL;
 	for (unsigned int i = 0; i < _root->getNumChildren(); i++) {
 		if (!_root->getChild(i)->getName().compare("HUDProjection")) {
 			geode = _root->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0)->asGeode();
@@ -426,6 +431,10 @@ std::string Scene::getTexturePath(void) {
 	path = "/home/kgucwa/projects/librs/resources/";
 #endif
 	return path;
+}
+
+void Scene::setBackgroundImage(int pos, std::string path) {
+	_path[pos] = path;
 }
 
 void Scene::setGrid(std::vector<double> grid, bool draw) {
@@ -476,18 +485,19 @@ void Scene::setLevel(int level) {
 	_level = level;
 
 	// remove background pieces
-	if (_background && _background->getNumChildren())
+	if (_background && _background->getNumChildren()) {
 		_background->removeChildren(0, _background->getNumChildren());
+	}
 
 	// level==NONE, return
-	if (_level == NONE) return;
+	if (_level == rs::Level::None) return;
 
 	// draw new level
 	switch (level) {
-		case OUTDOORS:
+		case rs::Level::Outdoors:
 			this->draw_scene_outdoors();
 			break;
-		case BOARD:
+		case rs::Level::Board:
 			this->draw_scene_board();
 			break;
 	}
@@ -511,8 +521,10 @@ void Scene::setMouseHandler(rsScene::MouseHandler *mh) {
 void Scene::setPauseText(int pause) {
 	if (pause)
 		this->getHUDText()->setText("Paused: Press any key to restart");
-	else
+	else {
+		this->setHUD(false);
 		this->getHUDText()->setText("");
+	}
 }
 
 void Scene::setUnits(bool units) {
@@ -581,7 +593,7 @@ int Scene::setupScene(double w, double h, bool pause) {
 	// draw background pieces for levels
 	_background = new osg::Group();
 	_scene->addChild(_background);
-	this->setLevel(OUTDOORS);
+	this->setLevel(rs::Level::Outdoors);
 
 	// optimize the scene graph, remove redundancies
 	osgUtil::Optimizer optimizer;
@@ -787,6 +799,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		//gridGeode->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
 		gridGeode->addDrawable(gridLines);
+		gridGeode->setName("tics");
 		_background->addChild(gridGeode);
 
 		// grid lines for each foot
@@ -832,6 +845,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		//gridGeode2->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
 		gridGeode2->addDrawable(gridLines2);
+		gridGeode2->setName("hash");
 		_background->addChild(gridGeode2);
 
 		// x- and y-axis lines
@@ -888,6 +902,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		//gridGeode3->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
 		gridGeode3->addDrawable(gridLines3);
+		gridGeode3->setName("axes");
 		_background->addChild(gridGeode3);
 
 		// x-axis label
@@ -916,6 +931,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xbillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
 		xbillboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		xbillboard->setNodeMask(~IS_PICKABLE_MASK);
+		xbillboard->setName("xlabel");
 		_background->addChild(xbillboard);
 
 		// y-axis label
@@ -943,6 +959,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ybillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
 		ybillboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		ybillboard->setNodeMask(~IS_PICKABLE_MASK);
+		ybillboard->setName("xlabel");
 		_background->addChild(ybillboard);
 
 		// x grid numbering
@@ -1073,7 +1090,9 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 	text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 	text->setMaximumWidth(w);
 	text->setCharacterSize(20);
-	if (paused) text->setText("Paused: Press any key to start");
+	text->setThreadSafeRefUnref(true);
+	text->setDataVariance(osg::Object::DYNAMIC);
+	if (paused) text->setText(std::string("Paused: Press any key to start"));
 	text->setAxisAlignment(osgText::Text::SCREEN);
 	text->setAlignment(osgText::Text::CENTER_CENTER);
 	text->setDrawMode(osgText::Text::TEXT);
@@ -1083,18 +1102,15 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 
 	// background rectangle
 	osg::Vec3Array *vertices = new osg::Vec3Array;
-	vertices->push_back(osg::Vec3(0, p*h, -0.1));
 	vertices->push_back(osg::Vec3(0, 0, -0.1));
 	vertices->push_back(osg::Vec3(w, 0, -0.1));
 	vertices->push_back(osg::Vec3(w, p*h, -0.1));
+	vertices->push_back(osg::Vec3(0, p*h, -0.1));
 	geom->setVertexArray(vertices);
-	osg::Vec3Array *normals = new osg::Vec3Array;
-	normals->push_back(osg::Vec3(0, 0, 1));
-	geom->setNormalArray(normals, osg::Array::BIND_OVERALL);
 	osg::Vec4Array *colors = new osg::Vec4Array;
 	colors->push_back(osg::Vec4(0, 0, 0, 0.6));
 	geom->setColorArray(colors, osg::Array::BIND_OVERALL);
-	geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	geom->getOrCreateStateSet()->setMode(GL_BLEND,osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
@@ -1117,7 +1133,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	robot->setTrace(trace);
 
 	// draw body
-	body[rsLinkbot::BODY] = osgDB::readNodeFile(_tex_path + "linkbot/body.3ds");
+	body[rsLinkbot::BODY] = osgDB::readNodeFile(_model_path + "linkbot/body.3ds");
 	body[rsLinkbot::BODY]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	pat[rsLinkbot::BODY]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 	pat[rsLinkbot::BODY]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
@@ -1137,7 +1153,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	// draw face1
 	rs::Quat q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE1, rs::D2R(a[rsLinkbot::JOINT1]), q);
 	rs::Pos p1 = robot->getRobotBodyPosition(rsLinkbot::FACE1, p, q);
-	body[rsLinkbot::FACE1] = osgDB::readNodeFile(_tex_path + "linkbot/face_rotate.3ds");
+	body[rsLinkbot::FACE1] = osgDB::readNodeFile(_model_path + "linkbot/face_rotate.3ds");
 	body[rsLinkbot::FACE1]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	pat[rsLinkbot::FACE1]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
 	pat[rsLinkbot::FACE1]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
@@ -1146,11 +1162,11 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE2, rs::D2R(a[rsLinkbot::JOINT2]), q);
 	p1 = robot->getRobotBodyPosition(rsLinkbot::FACE2, p, q);
 	if (robot->getForm() == rs::LINKBOTI) {
-		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/face_fixed.3ds");
+		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_model_path + "linkbot/face_fixed.3ds");
 		body[rsLinkbot::FACE2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	}
 	else {
-		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_tex_path + "linkbot/face_rotate.3ds");
+		body[rsLinkbot::FACE2] = osgDB::readNodeFile(_model_path + "linkbot/face_rotate.3ds");
 		body[rsLinkbot::FACE2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	}
 	pat[rsLinkbot::FACE2]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
@@ -1160,11 +1176,11 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 	q1 = robot->getRobotBodyQuaternion(rsLinkbot::FACE3, rs::D2R(a[rsLinkbot::JOINT3]), q);
 	p1 = robot->getRobotBodyPosition(rsLinkbot::FACE3, p, q);
 	if (robot->getForm() == rs::LINKBOTL) {
-		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/face_fixed.3ds");
+		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_model_path + "linkbot/face_fixed.3ds");
 		body[rsLinkbot::FACE3]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	}
 	else {
-		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_tex_path + "linkbot/face_rotate.3ds");
+		body[rsLinkbot::FACE3] = osgDB::readNodeFile(_model_path + "linkbot/face_rotate.3ds");
 		body[rsLinkbot::FACE3]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	}
 	pat[rsLinkbot::FACE3]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
@@ -1215,13 +1231,13 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 	osg::ref_ptr<osg::Node> node;
 	switch (type) {
 		case rsLinkbot::BIGWHEEL:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/bigwheel.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/bigwheel.3ds");
 			break;
 		case rsLinkbot::BRIDGE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/bridge.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/bridge.3ds");
 			break;
 		case rsLinkbot::CASTER:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/caster.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/caster.3ds");
 			/*if (size) {
 				transform->setScale(osg::Vec3d(1, 1, robot->getCasterScale()));
 				osg::ref_ptr<osg::PositionAttitudeTransform> transform2 = new osg::PositionAttitudeTransform();
@@ -1231,31 +1247,31 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 			}*/
 			break;
 		case rsLinkbot::CUBE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/cube.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/cube.3ds");
 			break;
 		case rsLinkbot::DOUBLEBRIDGE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/doublebridge.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/doublebridge.3ds");
 			break;
 		case rsLinkbot::FACEPLATE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/faceplate.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/faceplate.3ds");
 			break;
 		case rsLinkbot::GRIPPER:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/gripper.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/gripper.3ds");
 			break;
 		case rsLinkbot::OMNIPLATE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/omnidrive.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/omnidrive.3ds");
 			break;
 		case rsLinkbot::SIMPLE:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/simple.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/simple.3ds");
 			break;
 		case rsLinkbot::SMALLWHEEL:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/smallwheel.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/smallwheel.3ds");
 			break;
 		case rsLinkbot::TINYWHEEL:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/tinywheel.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/tinywheel.3ds");
 			break;
 		case rsLinkbot::WHEEL:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/tinywheel.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/tinywheel.3ds");
 			transform->setScale(osg::Vec3d(1, robot->getWheelRatio(rsLinkbot::TINYWHEEL), robot->getWheelRatio(rsLinkbot::TINYWHEEL)));
 			break;
 	}
@@ -1291,7 +1307,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	robot->setTrace(trace);
 
 	// body
-	body = osgDB::readNodeFile(_tex_path + "mindstorms/body.3ds");
+	body = osgDB::readNodeFile(_model_path + "mindstorms/body.3ds");
 	body->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
@@ -1325,7 +1341,7 @@ void Scene::draw_robot_mindstorms_wheel(rsRobots::Mindstorms *robot, Robot *grou
 
 	// wheel
 	osg::ref_ptr<osg::Node> node;
-	node = osgDB::readNodeFile(_tex_path + "mindstorms/wheel.3ds");
+	node = osgDB::readNodeFile(_model_path + "mindstorms/wheel.3ds");
 	transform->setScale(osg::Vec3d(1, robot->getWheelRatio(type), robot->getWheelRatio(type)));
 	node->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 
@@ -1371,7 +1387,7 @@ void Scene::draw_scene_outdoors(void) {
 	geom->setTexCoordArray(0, tcoords);
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
-	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "background/outdoors/terrain.png"));
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::GROUND]));
 	tex->setDataVariance(osg::Object::DYNAMIC);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
@@ -1406,7 +1422,7 @@ void Scene::draw_scene_board(void) {
 	geom->setTexCoordArray(0, tcoords);
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
-	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "background/2014RoboPlay/board.png"));
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::GROUND]));
 	tex->setDataVariance(osg::Object::DYNAMIC);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
@@ -1427,12 +1443,12 @@ void Scene::draw_skybox(void) {
 	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat;
 	stateset->setTextureAttribute(0, tm);
 	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap;
-	osg::Image* imagePosX = osgDB::readImageFile(_tex_path + "background/outdoors/sky/right.png");
-	osg::Image* imageNegX = osgDB::readImageFile(_tex_path + "background/outdoors/sky/left.png");
-	osg::Image* imagePosY = osgDB::readImageFile(_tex_path + "background/outdoors/sky/top.png");
-	osg::Image* imageNegY = osgDB::readImageFile(_tex_path + "background/outdoors/sky/top.png");
-	osg::Image* imagePosZ = osgDB::readImageFile(_tex_path + "background/outdoors/sky/front.png");
-	osg::Image* imageNegZ = osgDB::readImageFile(_tex_path + "background/outdoors/sky/back.png");
+	osg::Image* imagePosX = osgDB::readImageFile(_path[rs::RIGHTSIDE]);
+	osg::Image* imageNegX = osgDB::readImageFile(_path[rs::LEFTSIDE]);
+	osg::Image* imagePosY = osgDB::readImageFile(_path[rs::TOP]);
+	osg::Image* imageNegY = osgDB::readImageFile(_path[rs::TOP]);
+	osg::Image* imagePosZ = osgDB::readImageFile(_path[rs::FRONT]);
+	osg::Image* imageNegZ = osgDB::readImageFile(_path[rs::BACK]);
 	if (imagePosX && imageNegX && imagePosY && imageNegY && imagePosZ && imageNegZ) {
 		skymap->setImage(osg::TextureCubeMap::POSITIVE_X, imagePosX);
 		skymap->setImage(osg::TextureCubeMap::NEGATIVE_X, imageNegX);
@@ -1484,7 +1500,7 @@ void* Scene::graphics_thread(void *arg) {
 		MUTEX_UNLOCK(&(p->_thread_mutex));
 
 		p->_viewer->frame();
-		p->addChildren();
+		p->addAndRemoveChildren();
 
 		MUTEX_LOCK(&(p->_thread_mutex));
 	}

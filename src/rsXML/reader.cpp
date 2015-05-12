@@ -287,6 +287,8 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 		std::string name(node->GetText());
 		_background = new BackgroundReader(name);
 	}
+	else
+		_background = new BackgroundReader("outdoors");
 }
 
 void Reader::read_graphics(tinyxml2::XMLDocument *doc) {

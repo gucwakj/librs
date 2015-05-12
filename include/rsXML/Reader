@@ -9,6 +9,7 @@
 #include <rsXML/Marker>
 #include <rsXML/Obstacle>
 #include <rsXML/Robot>
+#include <rsXML/BackgroundReader>
 
 namespace rsXML {
 
@@ -16,15 +17,16 @@ namespace rsXML {
 	class Reader {
 		// public functions
 		public:
-			Reader(const char*, bool process = true);
+			Reader(const char*, bool = true);
 			virtual ~Reader(void);
 
 			int addNewRobot(Robot*);
 			std::string getBackgroundImage(int);
 			int getLevel(void);
-			Obstacle* getObstacle(int);
+			std::string getName(void);
 			Marker* getMarker(int);
 			Marker* getNextMarker(int = -1);
+			Obstacle* getObstacle(int);
 			Obstacle* getNextObstacle(int = -1);
 			Robot* getNextRobot(int);
 			std::vector<double> getFriction(void);
@@ -63,14 +65,10 @@ namespace rsXML {
 			std::vector<Obstacle*> _obstacle;	// ground obstacles
 			std::vector<Marker*> _marker;		// graphical markers
 			std::vector<Robot*> _robot;			// simulation robots
-
-			std::string _name;
-			int _level;
-			std::vector<std::string> _bpath;
+			BackgroundReader *_background;		// background information
 	};
 
 	std::string getDefaultPath(void);
-	std::string getDefaultTexturePath(void);
 
 } // namespace rsXML
 

@@ -1,0 +1,50 @@
+#ifndef RSXML_BACKGROUNDREADER_
+#define RSXML_BACKGROUNDREADER_
+
+#include <string>
+#include <vector>
+
+#include <tinyxml2.h>
+
+namespace rsXML {
+
+	class Marker;
+	class Obstacle;
+
+	// class
+	class BackgroundReader {
+		// public functions
+		public:
+			BackgroundReader(std::string);
+			virtual ~BackgroundReader(void);
+
+			std::string getBackgroundImage(unsigned int);
+			int getLevel(void);
+			std::string getName(void);
+			Marker* getNextMarker(int = -1);
+			Obstacle* getNextObstacle(int = -1);
+			int getNumObstacles(void);
+			int getNumMarkers(void);
+
+		// private functions
+		private:
+			std::string load_file(std::string, tinyxml2::XMLDocument*);
+			void read_background(tinyxml2::XMLDocument*, std::string);
+			void read_graphics(tinyxml2::XMLDocument*);
+			void read_obstacles(tinyxml2::XMLDocument*);
+
+		// private data
+		private:
+			int _level;							// level to load
+			std::string _name;					// name of Scene
+			std::vector<Obstacle*> _obstacle;	// ground obstacles
+			std::vector<Marker*> _marker;		// graphical markers
+			std::vector<std::string> _path;		// image paths
+	};
+
+	std::string getDefaultBackgroundPath(void);
+
+} // namespace rsXML
+
+#endif // RSXML_BACKGROUNDREADER_
+

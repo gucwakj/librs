@@ -11,6 +11,7 @@ using namespace rsXML;
 
 Reader::Reader(const char *name, bool process) {
 	// set default values
+	_background = NULL;
 	_pause = true;
 	_preconfig = false;
 	_rt = true;
@@ -44,22 +45,30 @@ Reader::~Reader(void) {
 	for (unsigned int i = 0; i < _robot.size(); i++) {
 		delete _robot[i];
 	}
+	delete _background;
 }
 
 /**********************************************************
 	public functions
  **********************************************************/
+std::string Reader::getBackgroundImage(int pos) {
+	if (!_background) return std::string();
+	return _background->getBackgroundImage(pos);
+}
+
+int Reader::getLevel(void) {
+	if (!_background) return -1;
+	return _background->getLevel();
+}
+
 int Reader::addNewRobot(Robot *bot) {
 	_robot.push_back(bot);
 	return 0;
 }
 
-std::string Reader::getBackgroundImage(int pos) {
-	return _bpath[pos];
-}
-
-int Reader::getLevel(void) {
-	return _level;
+std::string Reader::getName(void) {
+	if (!_background) return std::string();
+	return _background->getName();
 }
 
 Obstacle* Reader::getObstacle(int id) {
@@ -242,36 +251,9 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 	}
 }
 
-std::string Reader::load_background_file(const char *dir, tinyxml2::XMLDocument *doc) {
-	std::string directory(dir);
-
-	// get file name to load
-	std::string file; file.append(directory).append("/background.xml");
-
-	// if full path, open and return
-	FILE *fp = fopen(file.c_str(), "r");
-	if (fp) {
-		int output = doc->LoadFile(file.c_str());
-		if (output) std::cerr << "Warning: Could not find RoboSim background file.  Using default settings." << std::endl;
-		return NULL;
-	}
-
-	// get default file location
-	std::string path = rsXML::getDefaultTexturePath();
-	std::string filepath(path); filepath.append(directory).append("/background.xml");
-
-	// load file
-	int output = doc->LoadFile(filepath.c_str());
-	if (output) std::cerr << "Warning: Could not find RoboSim background file.  Using default settings." << std::endl;
-
-	// return path of file
-	return path.append(directory).append("/");
-}
-
 void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
-	tinyxml2::XMLElement *ele = NULL;
 
 	// check if should start paused
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("version")) ) {
@@ -302,39 +284,8 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 
 	// check for the background node
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("background")) ) {
-		tinyxml2::XMLDocument bdoc;
-		std::string path = this->load_background_file(node->GetText(), &bdoc);
-		if ( (node = bdoc.FirstChildElement("name")) )
-			_name = node->GetText();
-		if ( (node = bdoc.FirstChildElement("level")) ) {
-			if ( !strcmp(node->GetText(), "board") )
-				_level = rs::Level::Board;
-			else if ( !strcmp(node->GetText(), "outdoors") )
-				_level = rs::Level::Outdoors;
-		}
-		if ( (node = bdoc.FirstChildElement("background")) ) {
-			_bpath.resize(7);
-			ele = node->FirstChildElement("ground");
-			if (ele) _bpath[rs::GROUND].append(path).append(ele->GetText());
-			ele = node->FirstChildElement("front");
-			if (ele) _bpath[rs::FRONT].append(path).append(ele->GetText());
-			ele = node->FirstChildElement("left");
-			if (ele) _bpath[rs::LEFTSIDE].append(path).append(ele->GetText());
-			ele = node->FirstChildElement("back");
-			if (ele) _bpath[rs::BACK].append(path).append(ele->GetText());
-			ele = node->FirstChildElement("right");
-			if (ele) _bpath[rs::RIGHTSIDE].append(path).append(ele->GetText());
-			ele = node->FirstChildElement("top");
-			if (ele) _bpath[rs::TOP].append(path).append(ele->GetText());
-			ele = node->FirstChildElement("bottom");
-			if (ele) _bpath[rs::BOTTOM].append(path).append(ele->GetText());
-		}
-		if ( (node = bdoc.FirstChildElement("ground")) ) {
-			this->read_obstacles(&bdoc);
-		}
-		if ( (node = bdoc.FirstChildElement("graphics")) ) {
-			this->read_graphics(&bdoc);
-		}
+		std::string name(node->GetText());
+		_background = new BackgroundReader(name);
 	}
 }
 
@@ -1068,7 +1019,7 @@ std::string rsXML::getDefaultPath(void) {
 
 	return path;
 }
-
+/*
 std::string rsXML::getDefaultTexturePath(void) {
     std::string path;
 #ifdef _WIN32
@@ -1092,4 +1043,4 @@ std::string rsXML::getDefaultTexturePath(void) {
 #endif
 	return path;
 }
-
+*/

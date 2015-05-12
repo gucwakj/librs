@@ -1,0 +1,15 @@
+<?RoboSim Background XML?>
+
+<level>outdoors</level>
+
+<name>Outdoors</name>
+
+<background>
+	<ground>terrain.png</ground>
+	<front>sky/front.png</front>
+	<left>sky/left.png</left>
+	<back>sky/back.png</back>
+	<right>sky/right.png</right>
+	<top>sky/top.png</top>
+	<bottom>sky/bottom.png</bottom>
+</background>

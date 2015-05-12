@@ -25,6 +25,7 @@ set (SRCS ${SRCS}
 	marker.cpp
 	obstacle.cpp
 	robot.cpp
+	backgroundReader.cpp
 	reader.cpp
 	writer.cpp
 )

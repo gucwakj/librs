@@ -276,6 +276,12 @@ bool Writer::deleteRobot(int id) {
 	return false;
 }
 
+void Writer::setBackground(std::string name) {
+	this->getOrCreateElement("config", "background")->DeleteChildren();
+	this->getOrCreateElement("config", "background")->InsertFirstChild(this->toText(name));
+	this->save();
+}
+
 void Writer::setGrid(std::vector<double> grid) {
 	// clear old grid settings
 	tinyxml2::XMLElement *g = this->getOrCreateElement("graphics", "grid");

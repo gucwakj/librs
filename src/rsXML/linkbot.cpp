@@ -25,7 +25,7 @@ void Linkbot::postProcess(void) {
 		_p[2] += p2;
 
 		// adjust height to be above zero
-		if (fabs(_p[2]) < (this->getBodyHeight() - rs::EPSILON)) {
+		if (fabs(_p[2]) < (this->getBodyHeight()/2 - rs::EPSILON)) {
 			_p.add(0, 0, this->getBodyHeight()/2);
 		}
 

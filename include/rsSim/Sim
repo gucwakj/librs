@@ -31,6 +31,7 @@ namespace rsSim {
 			double getClock(void);
 			int getCOR(double&, double&);
 			void getCoM(double&, double&, double&);
+			double getFitness(void);
 			int getMu(double&, double&);
 			bool getPause(void);
 			Robot* getRobot(int);
@@ -41,6 +42,7 @@ namespace rsSim {
 			void run(int, void (*output)(void) = NULL, int interval = 0);
 			int setCollisions(int);
 			int setCOR(double, double);
+			void setGoalSinusoid(double, double, double);
 			int setMu(double, double);
 			void start(void);
 			void stop(void);
@@ -57,7 +59,9 @@ namespace rsSim {
 			bool _rt;							// flag: run in real time
 			bool _pause;						// flag: paused
 			double _clock;						// clock time of simulation
+			double _fitness;					// research: fitness calculation
 			double _friction[2];				// coefficient of friction [body/ground, body/body]
+			double _goal[3];					// research: sinusoid parameters for motion goal
 			double _restitution[2];				// coefficient of restitution [body/ground, body/body]
 			double _step;						// time step of simulation
 			double _stop;						// time to stop simulation
@@ -75,6 +79,7 @@ namespace rsSim {
 
 		// private functions
 		private:
+			void calculate_fitness(void);
 			static void collision(void*, dGeomID, dGeomID);	// wrapper function for nearCallback to work in class
 			static void* simulation_thread(void*);			// simulation thread function
 	};

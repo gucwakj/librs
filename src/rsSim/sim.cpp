@@ -4,6 +4,8 @@
 #include <unistd.h>
 #endif
 
+#include <iostream>
+
 #include <rs/Macros>
 #include <rsSim/Sim>
 
@@ -34,6 +36,7 @@ Sim::Sim(bool pause, bool rt) {
 	// simulation variables
 	_clock = 0;											// start clock
 	_collision = true;									// perform inter-robot collisions
+	_fitness = 0;										// research: fitness of motion
 	_pause = pause;										// start paused
 	_rt = rt;											// real time
 	_running = true;									// is simulation running
@@ -260,6 +263,10 @@ void Sim::getCoM(double &x, double &y, double &z) {
 	z = com[2];
 }
 
+double Sim::getFitness(void) {
+	return _fitness;
+}
+
 int Sim::getMu(double &robot, double &ground) {
 	robot = _friction[0];
 	ground = _friction[1];
@@ -353,6 +360,12 @@ int Sim::setCOR(double robot, double ground) {
 
 	// success
 	return 0;
+}
+
+void Sim::setGoalSinusoid(double a, double b, double c) {
+	_goal[0] = a;
+	_goal[1] = b;
+	_goal[2] = c;
 }
 
 int Sim::setMu(double robot, double ground) {
@@ -483,6 +496,9 @@ void* Sim::simulation_thread(void *arg) {
 			}
 			MUTEX_UNLOCK(&(sim->_robot_mutex));
 
+			// research: calculate fitness
+			sim->calculate_fitness();
+
 			// get ending time
 			if (sim->_rt) {
 #ifdef _WIN32
@@ -561,6 +577,22 @@ void* Sim::simulation_thread(void *arg) {
 
 	// end
 	return NULL;
+}
+
+void Sim::calculate_fitness(void) {
+	// get joint to follow desired sinusoid
+	double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]);
+	_fitness += pow(sine - _robot[0].robot->getAngle(2), 2);
+
+	// sync two joints to the same motion
+	//_fitness += (_robot[0].robot->getAngle(2) - _robot[1].robot->getAngle(2))*(_robot[0].robot->getAngle(2) - _robot[1].robot->getAngle(2));
+
+	// kill if fitness is getting too far away
+	if (_fitness > 100) {
+		MUTEX_LOCK(&_running_mutex);
+		_running = 0;
+		MUTEX_UNLOCK(&_running_mutex);
+	}
 }
 
 void Sim::collision(void *data, dGeomID o1, dGeomID o2) {

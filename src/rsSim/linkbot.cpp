@@ -1,4 +1,3 @@
-#include <iostream>
 #include <rs/Macros>
 #include <rsSim/Sim>
 #include <rsSim/Linkbot>
@@ -332,6 +331,37 @@ double Linkbot::calculate_angle(int id) {
     return _motor[id].theta;
 }
 
+const rs::Pos Linkbot::getCoM(double &mass) {
+	double total = 0;
+	double x = 0, y = 0, z = 0;
+	// body parts
+	for (int i = 0; i < NUM_PARTS; i++) {
+		dMass m;
+		dBodyGetMass(_body[i], &m);
+		const double *p = dBodyGetPosition(_body[i]);
+		x += m.mass*p[0];
+		y += m.mass*p[1];
+		z += m.mass*p[2];
+		total += m.mass;
+	}
+	// connectors
+	for (unsigned int i = 0; i < _conn.size(); i++) {
+		dMass m;
+		dBodyGetMass(_conn[i].body, &m);
+		const double *p = dBodyGetPosition(_conn[i].body);
+		x += m.mass*p[0];
+		y += m.mass*p[1];
+		z += m.mass*p[2];
+		total += m.mass;
+	}
+	x /= total;
+	y /= total;
+	z /= total;
+
+	mass = total;
+	return rs::Pos(x, y, z);
+}
+
 const rs::Pos Linkbot::getFootForce(void) {
 	return rs::Pos(-_fb[JOINT2].f2[0], -_fb[JOINT2].f2[1], -_fb[JOINT2].f2[2]);
 }
@@ -342,25 +372,6 @@ const rs::Pos Linkbot::getFootTorque(void) {
 
 const rs::Vec Linkbot::getJoints(void) {
 	return rs::Vec(_motor[JOINT1].theta, _motor[JOINT2].theta, _motor[JOINT3].theta);
-}
-
-void Linkbot::getCoM(double &x, double &y, double &z) {
-	dMass m[NUM_PARTS];
-	double total = 0;
-	x = 0, y = 0, z = 0;
-	for (int i = 0; i < NUM_PARTS; i++) {
-		dBodyGetMass(_body[i], &m[i]);
-	}
-	for (int i = 0; i < NUM_PARTS; i++) {
-		const double *p = dBodyGetPosition(_body[i]);
-		x += m[i].mass*p[0];
-		y += m[i].mass*p[1];
-		z += m[i].mass*p[2];
-		total += m[i].mass;
-	}
-	x /= total;
-	y /= total;
-	z /= total;
 }
 
 void Linkbot::init_params(void) {

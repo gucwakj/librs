@@ -251,16 +251,18 @@ int Sim::getCOR(double &robot, double &ground) {
 }
 
 void Sim::getCoM(double &x, double &y, double &z) {
-	double com[3] = {0}, a, b, c;
+	double total = 0;
 	for (unsigned int i = 0; i < _robot.size(); i++) {
-		_robot[i].robot->getCoM(a, b, c);
-		com[0] += a;
-		com[1] += b;
-		com[2] += c;
+		double m;
+		rs::Pos p = _robot[i].robot->getCoM(m);
+		x += m*p[0];
+		y += m*p[1];
+		z += m*p[2];
+		total += m;
 	}
-	x = com[0];
-	y = com[1];
-	z = com[2];
+	x /= total;
+	y /= total;
+	z /= total;
 }
 
 double Sim::getFitness(void) {
@@ -424,6 +426,69 @@ void Sim::stop(void) {
 /**********************************************************
 	Private functions
  **********************************************************/
+void Sim::calculate_fitness(void) {
+	// get whole system CoM
+	double x, y, z;
+	this->getCoM(x, y, z);
+
+	// system CoM following sinusoid
+	double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]);
+	_fitness += pow(sine - z, 2);
+
+	// one joint following sinusoid
+	//double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]);
+	//_fitness += pow(sine - _robot[0].robot->getAngle(2), 2);
+
+	// sync two joints to the same motion
+	//_fitness += (_robot[0].robot->getAngle(2) - _robot[1].robot->getAngle(2))*(_robot[0].robot->getAngle(2) - _robot[1].robot->getAngle(2));
+
+	// kill if fitness is getting too far away
+	if (_fitness > 100) {
+		MUTEX_LOCK(&_running_mutex);
+		_running = 0;
+		MUTEX_UNLOCK(&_running_mutex);
+	}
+}
+
+void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
+	// cast void pointer to pointer to class
+	Sim *ptr = (Sim *)data;
+
+	// get bodies of geoms
+	dBodyID b1 = dGeomGetBody(o1);
+	dBodyID b2 = dGeomGetBody(o2);
+
+	// if geom bodies are connected, do not intersect
+	if ( b1 && b2 && dAreConnected(b1, b2) ) return;
+
+	// do not collide spaces (robots) together
+	if (!ptr->_collision && dGeomIsSpace(o1) && dGeomIsSpace(o2)) {
+		return;
+	}
+
+	// special case for collision of spaces
+	if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {
+		dSpaceCollide2(o1, o2, ptr, &ptr->collision);
+		if ( dGeomIsSpace(o1) )	dSpaceCollide((dSpaceID)o1, ptr, &ptr->collision);
+		if ( dGeomIsSpace(o2) ) dSpaceCollide((dSpaceID)o2, ptr, &ptr->collision);
+	}
+	else {
+		dContact contact[8] = {0};
+		for ( int i = 0; i < dCollide(o1, o2, 8, &contact[0].geom, sizeof(dContact)); i++ ) {
+			if ( dGeomGetSpace(o1) == ptr->_space || dGeomGetSpace(o2) == ptr->_space ) {
+				contact[i].surface.mu = ptr->_friction[0];
+				contact[i].surface.bounce = ptr->_restitution[0];
+			}
+			else {
+				contact[i].surface.mu = ptr->_friction[1];
+				contact[i].surface.bounce = ptr->_restitution[1];
+			}
+			contact[i].surface.mode = dContactBounce | dContactApprox1;
+			dJointAttach(dJointCreateContact(ptr->_world, ptr->_group, contact + i), b1, b2);
+		}
+	}
+}
+
 void* Sim::simulation_thread(void *arg) {
 	// cast to type sim
 	Sim *sim = (Sim *)arg;
@@ -577,60 +642,5 @@ void* Sim::simulation_thread(void *arg) {
 
 	// end
 	return NULL;
-}
-
-void Sim::calculate_fitness(void) {
-	// get joint to follow desired sinusoid
-	double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]);
-	_fitness += pow(sine - _robot[0].robot->getAngle(2), 2);
-
-	// sync two joints to the same motion
-	//_fitness += (_robot[0].robot->getAngle(2) - _robot[1].robot->getAngle(2))*(_robot[0].robot->getAngle(2) - _robot[1].robot->getAngle(2));
-
-	// kill if fitness is getting too far away
-	if (_fitness > 100) {
-		MUTEX_LOCK(&_running_mutex);
-		_running = 0;
-		MUTEX_UNLOCK(&_running_mutex);
-	}
-}
-
-void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
-	// cast void pointer to pointer to class
-	Sim *ptr = (Sim *)data;
-
-	// get bodies of geoms
-	dBodyID b1 = dGeomGetBody(o1);
-	dBodyID b2 = dGeomGetBody(o2);
-
-	// if geom bodies are connected, do not intersect
-	if ( b1 && b2 && dAreConnected(b1, b2) ) return;
-
-	// do not collide spaces (robots) together
-	if (!ptr->_collision && dGeomIsSpace(o1) && dGeomIsSpace(o2)) {
-		return;
-	}
-
-	// special case for collision of spaces
-	if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {
-		dSpaceCollide2(o1, o2, ptr, &ptr->collision);
-		if ( dGeomIsSpace(o1) )	dSpaceCollide((dSpaceID)o1, ptr, &ptr->collision);
-		if ( dGeomIsSpace(o2) ) dSpaceCollide((dSpaceID)o2, ptr, &ptr->collision);
-	}
-	else {
-		dContact contact[8] = {0};
-		for ( int i = 0; i < dCollide(o1, o2, 8, &contact[0].geom, sizeof(dContact)); i++ ) {
-			if ( dGeomGetSpace(o1) == ptr->_space || dGeomGetSpace(o2) == ptr->_space ) {
-				contact[i].surface.mu = ptr->_friction[0];
-				contact[i].surface.bounce = ptr->_restitution[0];
-			}
-			else {
-				contact[i].surface.mu = ptr->_friction[1];
-				contact[i].surface.bounce = ptr->_restitution[1];
-			}
-			contact[i].surface.mode = dContactBounce | dContactApprox1;
-			dJointAttach(dJointCreateContact(ptr->_world, ptr->_group, contact + i), b1, b2);
-		}
-	}
 }
 

@@ -42,7 +42,7 @@ namespace rsSim {
 			void run(int, void (*output)(void) = NULL, int interval = 0);
 			int setCollisions(int);
 			int setCOR(double, double);
-			void setGoalSinusoid(double, double, double);
+			void setGoalSinusoid(double, double, double);		// research
 			int setMu(double, double);
 			void start(void);
 			void stop(void);

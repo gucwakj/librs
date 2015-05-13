@@ -27,6 +27,10 @@ BackgroundReader::BackgroundReader(std::string dir) {
 			_level = rs::Level::Outdoors;
 	}
 
+	// get screenshot
+	if ( (node = doc.FirstChildElement("screenshot")) )
+		_screenshot.append(path).append(node->GetText());
+
 	this->read_background(&doc, path);
 	this->read_obstacles(&doc);
 	this->read_graphics(&doc);
@@ -49,6 +53,10 @@ int BackgroundReader::getLevel(void) {
 
 std::string BackgroundReader::getName(void) {
 	return _name;
+}
+
+std::string BackgroundReader::getScreenshot(void) {
+	return _screenshot;
 }
 
 /**********************************************************

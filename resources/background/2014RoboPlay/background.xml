@@ -4,6 +4,8 @@
 
 <name>2014 RoboPlay Challenge Competition</name>
 
+<screenshot>screenshot.png</screenshot>
+
 <background>
 	<ground>board.png</ground>
 </background>

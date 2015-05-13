@@ -25,6 +25,7 @@ namespace rsXML {
 			Obstacle* getNextObstacle(int = -1);
 			int getNumObstacles(void);
 			int getNumMarkers(void);
+			std::string getScreenshot(void);
 
 		// private functions
 		private:
@@ -37,6 +38,7 @@ namespace rsXML {
 		private:
 			int _level;							// level to load
 			std::string _name;					// name of Scene
+			std::string _screenshot;			// path of screenshot
 			std::vector<Obstacle*> _obstacle;	// ground obstacles
 			std::vector<Marker*> _marker;		// graphical markers
 			std::vector<std::string> _path;		// image paths

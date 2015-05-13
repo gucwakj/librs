@@ -364,10 +364,11 @@ int Sim::setCOR(double robot, double ground) {
 	return 0;
 }
 
-void Sim::setGoalSinusoid(double a, double b, double c) {
+void Sim::setGoalSinusoid(double a, double b, double c, double d) {
 	_goal[0] = a;
 	_goal[1] = b;
-	_goal[2] = c;
+	_goal[2] = 3*rs::PI/2;
+	_goal[3] = a + d;
 }
 
 int Sim::setMu(double robot, double ground) {
@@ -432,7 +433,7 @@ void Sim::calculate_fitness(void) {
 	this->getCoM(x, y, z);
 
 	// system CoM following sinusoid
-	double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]);
+	double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]) + _goal[3];
 	_fitness += pow(sine - z, 2);
 
 	// one joint following sinusoid

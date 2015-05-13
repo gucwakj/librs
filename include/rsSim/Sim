@@ -42,7 +42,7 @@ namespace rsSim {
 			void run(int, void (*output)(void) = NULL, int interval = 0);
 			int setCollisions(int);
 			int setCOR(double, double);
-			void setGoalSinusoid(double, double, double);		// research
+			void setGoalSinusoid(double, double, double, double);		// research
 			int setMu(double, double);
 			void start(void);
 			void stop(void);
@@ -61,7 +61,7 @@ namespace rsSim {
 			double _clock;						// clock time of simulation
 			double _fitness;					// research: fitness calculation
 			double _friction[2];				// coefficient of friction [body/ground, body/body]
-			double _goal[3];					// research: sinusoid parameters for motion goal
+			double _goal[4];					// research: sinusoid parameters for motion goal
 			double _restitution[2];				// coefficient of restitution [body/ground, body/body]
 			double _step;						// time step of simulation
 			double _stop;						// time to stop simulation

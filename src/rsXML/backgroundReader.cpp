@@ -30,7 +30,6 @@ BackgroundReader::BackgroundReader(std::string dir) {
 	this->read_background(&doc, path);
 	this->read_obstacles(&doc);
 	this->read_graphics(&doc);
-
 }
 
 BackgroundReader::~BackgroundReader(void) {

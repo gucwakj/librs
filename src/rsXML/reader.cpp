@@ -1021,28 +1021,4 @@ std::string rsXML::getDefaultPath(void) {
 
 	return path;
 }
-/*
-std::string rsXML::getDefaultTexturePath(void) {
-    std::string path;
-#ifdef _WIN32
-    DWORD size = 128;
-    HKEY key;
-#if defined(_WIN64)
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\Wow6432Node\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
-#else
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
-#endif
-    char path[128];
-    RegQueryValueEx(key, TEXT("CHHOME"), NULL, NULL, (LPBYTE)path, &size);
-    path[size] = '\0';
-    if (path[0] == '\0')
-        path = "C:/Ch";
-    else
-        path = path;
-    path += "/package/chrobosim/data/";
-#else
-	path = "/home/kgucwa/projects/librs/resources/background/";
-#endif
-	return path;
-}
-*/
+

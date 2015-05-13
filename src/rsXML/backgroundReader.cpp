@@ -74,7 +74,7 @@ std::string BackgroundReader::load_file(std::string dir, tinyxml2::XMLDocument *
 	if (fp) {
 		int output = doc->LoadFile(file.c_str());
 		if (output) std::cerr << "Warning: Could not find RoboSim background file.  Using default settings." << std::endl;
-		return directory.append("/");
+		else return directory.append("/");
 	}
 
 	// get default file location
@@ -82,8 +82,7 @@ std::string BackgroundReader::load_file(std::string dir, tinyxml2::XMLDocument *
 	std::string filepath(path); filepath.append(directory).append("/background.xml");
 
 	// load file
-	int output = doc->LoadFile(filepath.c_str());
-	if (output) std::cerr << "Warning: Could not find RoboSim background file.  Using default settings." << std::endl;
+	doc->LoadFile(filepath.c_str());
 
 	// return path of file
 	return path.append(directory).append("/");

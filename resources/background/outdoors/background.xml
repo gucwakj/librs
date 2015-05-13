@@ -4,6 +4,8 @@
 
 <name>Outdoors</name>
 
+<screenshot>screenshot.png</screenshot>
+
 <background>
 	<ground>terrain.png</ground>
 	<front>sky/front.png</front>

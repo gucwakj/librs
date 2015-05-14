@@ -21,6 +21,7 @@ namespace rsXML {
 			virtual ~Reader(void);
 
 			int addNewRobot(Robot*);
+			void addBackgroundObjects(void);
 			std::string getBackgroundImage(int);
 			int getLevel(void);
 			std::string getName(void);

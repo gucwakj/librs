@@ -11,9 +11,28 @@
 </background>
 
 <obstacles>
-    <box id="0">
+    <cylinder id="0" mass="0">
         <color r="1" g="0" b="0" alpha="1"/>
-        <rotation x="0" y="0" z="0" w="1"/>
-        <position x="0.1" y="0.1" z="0"/>
-    </box>
+        <rotation psi="0" theta="90" phi="0"/>
+        <position x="0" y="-0.6095" z="0.013"/>
+		<size length="2.438" radius="0.0125"/>
+    </cylinder>
+    <cylinder id="0" mass="0">
+        <color r="1" g="0" b="0" alpha="1"/>
+        <rotation psi="0" theta="90" phi="0"/>
+        <position x="0" y="0.6095" z="0.013"/>
+		<size length="2.438" radius="0.0125"/>
+    </cylinder>
+    <cylinder id="0" mass="0">
+        <color r="1" g="0" b="0" alpha="1"/>
+        <rotation psi="90" theta="0" phi="0"/>
+        <position x="-1.219" y="0" z="0.013"/>
+		<size length="1.219" radius="0.0125"/>
+    </cylinder>
+    <cylinder id="0" mass="0">
+        <color r="1" g="0" b="0" alpha="1"/>
+        <rotation psi="90" theta="0" phi="0"/>
+        <position x="1.219" y="0" z="0.013"/>
+		<size length="1.219" radius="0.0125"/>
+    </cylinder>
 </obstacles>

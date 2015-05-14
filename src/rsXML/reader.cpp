@@ -66,6 +66,13 @@ int Reader::addNewRobot(Robot *bot) {
 	return 0;
 }
 
+void Reader::addBackgroundObjects(void) {
+	for (int i = 0; i < _background->getNumMarkers(); i++)
+		_marker.push_back(_background->getMarker(i));
+	for (int i = 0; i < _background->getNumObstacles(); i++)
+		_obstacle.push_back(_background->getObstacle(i));
+}
+
 std::string Reader::getName(void) {
 	if (!_background) return std::string();
 	return _background->getName();
@@ -289,12 +296,6 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	}
 	else
 		_background = new BackgroundReader("outdoors");
-
-	// get objects from background into this list
-	for (int i = 0; i < _background->getNumMarkers(); i++)
-		_marker.push_back(_background->getMarker(i));
-	for (int i = 0; i < _background->getNumObstacles(); i++)
-		_obstacle.push_back(_background->getObstacle(i));
 }
 
 void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
@@ -490,7 +491,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_obstacle.back()->setRotation(a, b, c);
+				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
 		else if ( !strcmp(node->Value(), "cylinder") ) {
@@ -539,7 +540,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_obstacle.back()->setRotation(a, b, c);
+				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
 		else if ( !strcmp(node->Value(), "sphere") ) {

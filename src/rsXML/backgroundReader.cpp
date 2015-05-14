@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <rs/Enum>
+#include <rs/Macros>
 #include <rsXML/Marker>
 #include <rsXML/Obstacle>
 #include <rsXML/BackgroundReader>
@@ -298,7 +299,7 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_obstacle.back()->setRotation(a, b, c);
+				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
 		else if ( !strcmp(node->Value(), "cylinder") ) {
@@ -347,7 +348,7 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("psi", &a);
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
-				_obstacle.back()->setRotation(a, b, c);
+				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
 		else if ( !strcmp(node->Value(), "sphere") ) {

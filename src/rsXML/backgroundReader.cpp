@@ -250,7 +250,7 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 	double a, b, c, d;
 
 	// check for existence of node
-	if ( (node = doc->FirstChildElement("ground")) ) {
+	if ( (node = doc->FirstChildElement("obstacles")) ) {
 		node = node->FirstChildElement();
 	}
 

@@ -433,8 +433,15 @@ void Sim::calculate_fitness(void) {
 	this->getCoM(x, y, z);
 
 	// system CoM following sinusoid
-	double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]) + _goal[3];
-	_fitness += pow(sine - z, 2);
+	double t = _clock - _step;
+	double sine = _goal[0]*sin(_goal[1]*t + _goal[2]) + _goal[3];
+	_fitness += pow(0 - x, 2);		// straying from y-axis
+	_fitness += pow(t - y, 2);		// moving forward with sinusoid motion
+	_fitness += pow(sine - z, 2);	// moving upward with sinusoid motion
+
+	// system CoM following sinusoid in place
+	//double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]) + _goal[3];
+	//_fitness += pow(sine - z, 2);
 
 	// one joint following sinusoid
 	//double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]);

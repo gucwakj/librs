@@ -96,6 +96,13 @@ int Scene::addAndRemoveChildren(void) {
 	return 0;
 }
 
+void Scene::addChildrenToBackground(void) {
+	while (_staging[0]->getNumChildren()) {
+		_background->addChild(_staging[0]->getChild(0));
+		_staging[0]->removeChild(0, 1);
+	}
+}
+
 void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 	// deselect everything
 	if (exclusive) {

@@ -289,6 +289,12 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	}
 	else
 		_background = new BackgroundReader("outdoors");
+
+	// get objects from background into this list
+	for (int i = 0; i < _background->getNumMarkers(); i++)
+		_marker.push_back(_background->getMarker(i));
+	for (int i = 0; i < _background->getNumObstacles(); i++)
+		_obstacle.push_back(_background->getObstacle(i));
 }
 
 void Reader::read_graphics(tinyxml2::XMLDocument *doc) {

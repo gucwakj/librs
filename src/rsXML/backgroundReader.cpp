@@ -51,8 +51,24 @@ int BackgroundReader::getLevel(void) {
 	return _level;
 }
 
+Marker* BackgroundReader::getMarker(int id) {
+	return _marker[id];
+}
+
 std::string BackgroundReader::getName(void) {
 	return _name;
+}
+
+int BackgroundReader::getNumObstacles(void) {
+	return _obstacle.size();
+}
+
+int BackgroundReader::getNumMarkers(void) {
+	return _marker.size();
+}
+
+Obstacle* BackgroundReader::getObstacle(int id) {
+	return _obstacle[id];
 }
 
 std::string BackgroundReader::getScreenshot(void) {

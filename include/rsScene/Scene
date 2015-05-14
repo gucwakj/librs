@@ -46,6 +46,7 @@ namespace rsScene {
 			virtual ~Scene(void);
 
 			int addAndRemoveChildren(void);
+			void addChildrenToBackground(void);
 			void addHighlight(int, bool = true, bool = true, const rs::Vec& = rs::Vec(1, 1, 0));
 			int deleteObstacle(int);
 			int deleteRobot(int);

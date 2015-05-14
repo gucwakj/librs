@@ -20,11 +20,11 @@ namespace rsXML {
 
 			std::string getBackgroundImage(unsigned int);
 			int getLevel(void);
+			Marker* getMarker(int);
 			std::string getName(void);
-			Marker* getNextMarker(int = -1);
-			Obstacle* getNextObstacle(int = -1);
 			int getNumObstacles(void);
 			int getNumMarkers(void);
+			Obstacle* getObstacle(int);
 			std::string getScreenshot(void);
 
 		// private functions

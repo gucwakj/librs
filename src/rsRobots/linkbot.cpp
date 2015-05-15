@@ -261,7 +261,7 @@ double Linkbot::riseByWheels(int wheel_type, double radius) {
 
 const rs::Quat Linkbot::tiltForWheels(int type, int face, double &p2, double radius) {
 	// invalid type
-	if (type == -1) {
+	if (type == 0) {
 		p2 = 0;
 		return rs::Quat();
 	}
@@ -352,6 +352,7 @@ const rs::Quat Linkbot::tiltForWheels(int type, int face, double &p2, double rad
 	}
 
 	// return default
+	p2 = 0;
 	return rs::Quat();
 }
 

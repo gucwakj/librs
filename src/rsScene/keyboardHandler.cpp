@@ -50,7 +50,14 @@ bool KeyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionA
 							}
 						}
 						// get obstacle node
-						if (test && (!test->getName().compare(0, 6, "ground"))) {
+						else if (test && !test->getName().compare(0, 8, "obstacle")) {
+							if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0))) {
+								bs = test->getBound();
+								break;
+							}
+						}
+						// get marker node
+						else if (test && !test->getName().compare(0, 6, "marker")) {
 							if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0))) {
 								bs = test->getBound();
 								break;

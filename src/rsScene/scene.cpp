@@ -521,9 +521,11 @@ void Scene::setMouseHandler(rsScene::MouseHandler *mh) {
 		}
 	}
 
-	// set new handler
-	mh->setName("mouse");
-	_viewer->addEventHandler(mh);
+	if (mh) {
+		// set new handler
+		mh->setName("mouse");
+		_viewer->addEventHandler(mh);
+	}
 }
 
 void Scene::setPauseText(int pause) {

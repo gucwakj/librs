@@ -226,7 +226,7 @@ bool Reader::getUnits(void) {
  **********************************************************/
 void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 	// get file
-	if (name) {
+	if ( strcmp(name, "") ) {
 #ifdef _WIN32
 		char base[512];
 		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
@@ -255,7 +255,6 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 	if (output) {
 		std::cerr << "Error: Could not find RoboSim config file." << std::endl;
 		std::cerr << "Please run RoboSim GUI." << std::endl;
-		exit(-1);
 	}
 }
 

@@ -30,7 +30,7 @@ Vec::Vec(double a, double b, double c, double d) {
 }
 
 Vec::Vec(const Vec &v) {
-	for (int i = 0; i < v.size(); i++) {
+	for (unsigned int i = 0; i < v.size(); i++) {
 		_v.push_back(v[i]);
 	}
 }
@@ -61,7 +61,7 @@ void Vec::print(void) {
 	std::cerr << std::endl;
 }
 
-int Vec::size(void) const {
+unsigned int Vec::size(void) const {
 	return _v.size();
 }
 

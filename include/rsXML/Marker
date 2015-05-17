@@ -10,7 +10,7 @@
 namespace rsXML {
 
 	// class
-	class Marker {
+	class LIBRSEXPORT Marker {
 		// public functions
 		public:
 			Marker(int);

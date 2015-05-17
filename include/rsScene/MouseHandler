@@ -8,6 +8,8 @@
 #include <osgUtil/IntersectionVisitor>
 #include <osgViewer/Viewer>
 
+#include <rs/Macros>
+
 extern osg::Node::NodeMask NOT_VISIBLE_MASK;
 extern osg::Node::NodeMask RECEIVES_SHADOW_MASK;
 extern osg::Node::NodeMask CASTS_SHADOW_MASK;
@@ -20,7 +22,7 @@ namespace rsScene {
 	class Scene;
 
 	// classes
-	class MouseHandler : public osgGA::GUIEventHandler {
+	class LIBRSEXPORT MouseHandler : public osgGA::GUIEventHandler {
 		// public functions
 		public:
 			MouseHandler(rsScene::Scene*);

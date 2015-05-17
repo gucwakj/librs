@@ -3,13 +3,15 @@ project (rsRobots)
 
 # include directory
 include_directories (
-	"${LIBRS_SOURCE_DIR}/include/${PROJECT_NAME}"
-	"${LIBRS_BINARY_DIR}"
+	"${LibRS_SOURCE_DIR}/include/${PROJECT_NAME}"
+	"${LibRS_BINARY_DIR}"
 )
+
+# add LibRS library
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized rs debug rsd)
 
 # add source files to library
 set (SRCS ${SRCS}
-	rgbhashtable.c
 	robot.cpp
 )
 if (ENABLE_LINKBOT)
@@ -26,5 +28,5 @@ add_library (rsRobots SHARED ${SRCS})
 target_link_libraries (rsRobots ${EXTRA_LIBS})
 
 # set version properties
-set_target_properties (rsRobots PROPERTIES VERSION ${LIBRS_VERSION} SOVERSION ${LIBRS_SO_VERSION})
+set_target_properties (rsRobots PROPERTIES VERSION ${LibRS_VERSION} SOVERSION ${LibRS_SO_VERSION})
 

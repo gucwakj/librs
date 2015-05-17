@@ -3,8 +3,8 @@ project (rs)
 
 # include directory
 include_directories (
-	"${LIBRS_SOURCE_DIR}/include/${PROJECT_NAME}"
-	"${LIBRS_BINARY_DIR}"
+	"${LibRS_SOURCE_DIR}/include/${PROJECT_NAME}"
+	"${LibRS_BINARY_DIR}"
 )
 
 # add source files to library
@@ -21,5 +21,5 @@ add_library (rs SHARED ${SRCS})
 target_link_libraries (rs ${EXTRA_LIBS})
 
 # set version properties
-set_target_properties (rs PROPERTIES VERSION ${LIBRS_VERSION} SOVERSION ${LIBRS_SO_VERSION})
+set_target_properties (rs PROPERTIES VERSION ${LibRS_VERSION} SOVERSION ${LibRS_SO_VERSION})
 

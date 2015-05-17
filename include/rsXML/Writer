@@ -11,7 +11,7 @@
 namespace rsXML {
 
 	// class
-	class Writer {
+	class LIBRSEXPORT Writer {
 		// public functions
 		public:
 			Writer(std::string, const std::string&);

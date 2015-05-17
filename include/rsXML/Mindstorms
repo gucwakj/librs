@@ -7,7 +7,7 @@
 namespace rsXML {
 
 	// class
-	class Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
+	class LIBRSEXPORT Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
 		public:
 			Mindstorms(int = rs::EV3, bool = true);
 			virtual ~Mindstorms(void) { };

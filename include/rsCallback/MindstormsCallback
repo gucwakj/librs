@@ -9,7 +9,7 @@
 namespace rsCallback {
 
 	// class
-	class MindstormsCallback : public osg::NodeCallback {
+	class LIBRSEXPORT MindstormsCallback : public osg::NodeCallback {
 		// public functions
 		public:
 			MindstormsCallback(rsSim::Mindstorms*, rsSim::BodyList&, bool);

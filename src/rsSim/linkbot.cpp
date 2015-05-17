@@ -203,7 +203,8 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	this->build_face(FACE3, this->getRobotBodyPosition(FACE3, p, q), this->getRobotBodyQuaternion(FACE3, 0, q));
 
 	// joint variable
-	dJointID joint[_dof];
+	std::vector<dJointID> joint;
+	joint.resize(_dof);
 	rs::Pos o;
 
 	// joint for body to face 1

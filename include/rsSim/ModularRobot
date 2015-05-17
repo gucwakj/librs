@@ -20,7 +20,7 @@ namespace rsSim {
 	typedef std::vector<Connector> ConnectorList;
 
 	// class
-	class ModularRobot : virtual public rsRobots::ModularRobot, virtual public rsSim::Robot {
+	class LIBRSEXPORT ModularRobot : virtual public rsRobots::ModularRobot, virtual public rsSim::Robot {
 		// public functions
 		public:
 			ModularRobot(void);

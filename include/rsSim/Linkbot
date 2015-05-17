@@ -9,7 +9,7 @@
 namespace rsSim {
 
 	// base class
-	class Linkbot : virtual public rsRobots::Linkbot, virtual public ModularRobot {
+	class LIBRSEXPORT Linkbot : virtual public rsRobots::Linkbot, virtual public ModularRobot {
 		// public api
 		public:
 			Linkbot(int);

@@ -1,13 +1,15 @@
 #ifndef RS_QUAT_
 #define RS_QUAT_
 
+#include <rs/Macros>
+
 namespace rs {
 
 	// forward declare
 	class Pos;
 
 	// quaternion class
-	class Quat {
+	class LIBRSEXPORT Quat {
 		public:
 			Quat(void);
 			Quat(double, double, double, double);

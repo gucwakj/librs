@@ -12,9 +12,12 @@ namespace rs {
 } // namespace rs
 
 #ifdef _WIN32
-#define DLLIMPORT __declspec(dllexport)
+#include <windows.h>
+#include <Shlobj.h>
+#include <Shlwapi.h>
+#define LIBRSEXPORT __declspec(dllexport)
 #else
-#define DLLIMPORT
+#define LIBRSEXPORT
 #endif // _WIN32
 
 #endif // RS_MACROS_

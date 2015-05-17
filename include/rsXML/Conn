@@ -1,10 +1,12 @@
 #ifndef RSXML_CONN_
 #define RSXML_CONN_
 
+#include <rs/Macros>
+
 namespace rsXML {
 
 	// class
-	class Conn {
+	class LIBRSEXPORT Conn {
 		// public functions
 		public:
 			Conn(void);

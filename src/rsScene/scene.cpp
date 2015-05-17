@@ -425,14 +425,15 @@ std::string Scene::getTexturePath(void) {
 #else
 	RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
 #endif
-	char path[128];
-	RegQueryValueEx(key, TEXT("CHHOME"), NULL, NULL, (LPBYTE)path, &size);
-	path[size] = '\0';
-	if (path[0] == '\0')
+	char base[128];
+	RegQueryValueEx(key, TEXT("CHHOME"), NULL, NULL, (LPBYTE)base, &size);
+	base[size] = '\0';
+	if (base[0] == '\0')
 		path = "C:/Ch";
 	else
-		path = path;
+		path = base;
 	path += "/package/chrobosim/data/";
+	path = "C:/Users/kgucwa/projects/librs/resources/";
 #else
 	osgDB::setLibraryFilePathList("/home/kgucwa/projects/librs/deps/osg/build/lib/");
 	path = "/home/kgucwa/projects/librs/resources/";

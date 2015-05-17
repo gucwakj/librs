@@ -6,7 +6,7 @@
 namespace rsRobots {
 
 	// class
-	class ModularRobot : virtual public Robot {
+	class LIBRSEXPORT ModularRobot : virtual public Robot {
 		// public functions
 		public:
 			ModularRobot(void) : Robot(rs::ROBOT) {};

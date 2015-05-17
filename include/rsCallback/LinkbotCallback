@@ -9,7 +9,7 @@
 namespace rsCallback {
 
 	// class
-	class LinkbotCallback : public osg::NodeCallback {
+	class LIBRSEXPORT LinkbotCallback : public osg::NodeCallback {
 		// public functions
 		public:
 			LinkbotCallback(rsSim::Linkbot*, rsSim::BodyList&, rsSim::ConnectorList&, bool);

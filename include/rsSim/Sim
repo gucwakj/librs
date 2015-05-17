@@ -14,7 +14,7 @@ namespace rsSim {
 	typedef dBodyID Obstacle;
 
 	// class
-	class Sim {
+	class LIBRSEXPORT Sim {
 		// public functions
 		public:
 			Sim(bool, bool);

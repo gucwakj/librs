@@ -1,4 +1,5 @@
 #include <cstring>
+#include <ctime>
 #include <iostream>
 #ifdef _WIN32
 #include <windows.h>
@@ -7,7 +8,6 @@
 #endif
 
 #include <rs/Macros>
-#include <rsRobots/rgbhashtable.h>
 #include <rsSim/Sim>
 #include <rsSim/Robot>
 

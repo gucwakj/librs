@@ -7,7 +7,7 @@
 namespace rsCallback {
 
 	// class
-	class Callback {
+	class LIBRSEXPORT Callback {
 		// public functions
 		public:
 			Callback(void);

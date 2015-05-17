@@ -7,6 +7,9 @@
 #include <rsScene/Scene>
 #include <rsCallback/LinkbotCallback>
 
+osg::Node::NodeMask NOT_VISIBLE_MASK = 0x0;
+osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
+
 using namespace rsCallback;
 
 LinkbotCallback::LinkbotCallback(rsSim::Linkbot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {

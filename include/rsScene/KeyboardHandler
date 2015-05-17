@@ -9,6 +9,8 @@
 #include <osgShadow/ShadowedScene>
 #include <osgViewer/Viewer>
 
+#include <rs/Macros>
+
 extern osg::Node::NodeMask NOT_VISIBLE_MASK;
 extern osg::Node::NodeMask RECEIVES_SHADOW_MASK;
 extern osg::Node::NodeMask CASTS_SHADOW_MASK;
@@ -18,7 +20,7 @@ extern osg::Node::NodeMask VISIBLE_MASK;
 namespace rsScene {
 
 	// class
-	class KeyboardHandler : public osgGA::GUIEventHandler {
+	class LIBRSEXPORT KeyboardHandler : public osgGA::GUIEventHandler {
 		// public functions
 		public:
 			KeyboardHandler(void) { };

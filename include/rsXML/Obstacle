@@ -8,7 +8,7 @@
 namespace rsXML {
 
 	// class
-	class Obstacle {
+	class LIBRSEXPORT Obstacle {
 		// public functions
 		public:
 			Obstacle(int);

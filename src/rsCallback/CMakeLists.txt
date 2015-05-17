@@ -3,18 +3,18 @@ project (rsCallback)
 
 # include directory
 include_directories (
-	"${LIBRS_SOURCE_DIR}/include/${PROJECT_NAME}"
-	"${LIBRS_BINARY_DIR}"
+	"${LibRS_SOURCE_DIR}/include/${PROJECT_NAME}"
+	"${LibRS_BINARY_DIR}"
 )
 
 # add ODE library
 if (WIN32)
-	include_directories ("${LIBRS_SOURCE_DIR}/deps/ode/include")
-	link_directories ("${LIBRS_SOURCE_DIR}/deps/ode/lib/Release")
-	link_directories ("${LIBRS_SOURCE_DIR}/deps/ode/lib/Debug")
+	include_directories ("${LibRS_SOURCE_DIR}/deps/ode/include")
+	link_directories ("${LibRS_SOURCE_DIR}/deps/ode/lib/Release")
+	link_directories ("${LibRS_SOURCE_DIR}/deps/ode/lib/Debug")
 else ()
-	include_directories ("${LIBRS_SOURCE_DIR}/deps/ode/sys/include")
-	link_directories ("${LIBRS_SOURCE_DIR}/deps/ode/sys/lib")
+	include_directories ("${LibRS_SOURCE_DIR}/deps/ode/sys/include")
+	link_directories ("${LibRS_SOURCE_DIR}/deps/ode/sys/lib")
 endif ()
 set (EXTRA_LIBS ${EXTRA_LIBS} ode)
 
@@ -23,13 +23,14 @@ add_definitions (-DdDOUBLE)
 add_definitions (-DdNODEBUG)
 
 # add OpenSceneGraph library
-include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/include")
-include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/include")
-link_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/lib")
+include_directories ("${LibRS_SOURCE_DIR}/deps/osg/build/include")
+include_directories ("${LibRS_SOURCE_DIR}/deps/osg/include")
+link_directories ("${LibRS_SOURCE_DIR}/deps/osg/build/lib")
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized osg debug osgd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgText debug osgTextd)
 
-# add rsRobots
+# add LibRS library
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized rs debug rsd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsSim debug rsSimd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsScene debug rsScened)
@@ -53,5 +54,5 @@ add_library (rsCallback SHARED ${SRCS})
 target_link_libraries (rsCallback ${EXTRA_LIBS})
 
 # set version properties
-set_target_properties (rsCallback PROPERTIES VERSION ${LIBRS_VERSION} SOVERSION ${LIBRS_SO_VERSION})
+set_target_properties (rsCallback PROPERTIES VERSION ${LibRS_VERSION} SOVERSION ${LibRS_SO_VERSION})
 

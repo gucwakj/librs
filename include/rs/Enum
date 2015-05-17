@@ -68,7 +68,7 @@ namespace rsLinkbot {
 	};
 
 	// connectors
-	enum Connector {
+	enum Connectors {
 		NONE,
 		BIGWHEEL,
 		BRIDGE,

@@ -3,14 +3,17 @@ project (rsScene)
 
 # include directory
 include_directories (
-	"${LIBRS_SOURCE_DIR}/include/${PROJECT_NAME}"
-	"${LIBRS_BINARY_DIR}"
+	"${LibRS_SOURCE_DIR}/include/${PROJECT_NAME}"
+	"${LibRS_BINARY_DIR}"
 )
 
 # add OpenSceneGraph library
-include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/include")
-include_directories ("${LIBRS_SOURCE_DIR}/deps/osg/include")
-link_directories ("${LIBRS_SOURCE_DIR}/deps/osg/build/lib")
+#include_directories ("${LibRS_SOURCE_DIR}/deps/osg/build/include")
+#include_directories ("${LibRS_SOURCE_DIR}/deps/osg/include")
+#link_directories ("${LibRS_SOURCE_DIR}/deps/osg/build/lib")
+include_directories ("C:/Users/kgucwa/Downloads/OpenSceneGraph-3.2.1/build/include")
+include_directories ("C:/Users/kgucwa/Downloads/OpenSceneGraph-3.2.1/include")
+link_directories ("C:/Users/kgucwa/Downloads/OpenSceneGraph-3.2.1/build/lib")
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized OpenThreads debug OpenThreadsd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized osg debug osgd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgDB debug osgDBd)
@@ -32,7 +35,8 @@ endif ()
 find_package (Threads)
 set (EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
-# add rsRobots
+# add LibRS library
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized rs debug rsd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
 
 # add source files to library
@@ -51,5 +55,5 @@ add_library (rsScene SHARED ${SRCS})
 target_link_libraries (rsScene ${EXTRA_LIBS})
 
 # set version properties
-set_target_properties (rsScene PROPERTIES VERSION ${LIBRS_VERSION} SOVERSION ${LIBRS_SO_VERSION})
+set_target_properties (rsScene PROPERTIES VERSION ${LibRS_VERSION} SOVERSION ${LibRS_SO_VERSION})
 

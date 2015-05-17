@@ -9,7 +9,7 @@
 namespace rsCallback {
 
 	// class
-	class ObstacleCallback : public osg::NodeCallback {
+	class LIBRSEXPORT ObstacleCallback : public osg::NodeCallback {
 		// public functions
 		public:
 			ObstacleCallback(rsSim::Obstacle*);

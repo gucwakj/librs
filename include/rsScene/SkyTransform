@@ -6,9 +6,11 @@
 #include <osg/Transform>
 #include <osgUtil/CullVisitor>
 
+#include <rs/Macros>
+
 namespace rsScene {
 
-	class SkyTransform : public osg::Transform {
+	class LIBRSEXPORT SkyTransform : public osg::Transform {
 		// public functions
 		public:
 			virtual bool computeLocalToWorldMatrix(osg::Matrix&, osg::NodeVisitor*) const;

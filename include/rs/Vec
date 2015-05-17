@@ -1,12 +1,14 @@
 #ifndef RS_VEC_
 #define RS_VEC_
 
+#include <rs/Macros>
+
 #include <vector>
 
 namespace rs {
 
 	// vector class
-	class Vec {
+	class LIBRSEXPORT Vec {
 		public:
 			Vec(void);
 			Vec(int);
@@ -19,7 +21,7 @@ namespace rs {
 			void add(double);
 			void allocate(int);
 			void print(void);
-			int size(void) const;
+			unsigned int size(void) const;
 
 			// access operators
 			inline double& operator[](int i) { return _v[i]; }

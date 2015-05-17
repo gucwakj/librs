@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <algorithm>
 
 #include "GlyphGeometry.h"
 

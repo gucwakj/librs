@@ -6,6 +6,7 @@
 
 #include <tinyxml2.h>
 
+#include <rs/Macros>
 #include <rsXML/Marker>
 #include <rsXML/Obstacle>
 #include <rsXML/Robot>
@@ -14,7 +15,7 @@
 namespace rsXML {
 
 	// class
-	class Reader {
+	class LIBRSEXPORT Reader {
 		// public functions
 		public:
 			Reader(const char*, bool = true);
@@ -45,7 +46,6 @@ namespace rsXML {
 		// private functions
 		private:
 			void load_file(const char*, tinyxml2::XMLDocument*);
-			std::string load_background_file(const char*, tinyxml2::XMLDocument*);
 			void read_config(tinyxml2::XMLDocument*);
 			void read_graphics(tinyxml2::XMLDocument*);
 			void read_obstacles(tinyxml2::XMLDocument*);
@@ -69,7 +69,7 @@ namespace rsXML {
 			BackgroundReader *_background;		// background information
 	};
 
-	std::string getDefaultPath(void);
+	std::string LIBRSEXPORT getDefaultPath(void);
 
 } // namespace rsXML
 

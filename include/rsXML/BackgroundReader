@@ -12,7 +12,7 @@ namespace rsXML {
 	class Obstacle;
 
 	// class
-	class BackgroundReader {
+	class LIBRSEXPORT BackgroundReader {
 		// public functions
 		public:
 			BackgroundReader(std::string);
@@ -44,7 +44,7 @@ namespace rsXML {
 			std::vector<std::string> _path;		// image paths
 	};
 
-	std::string getDefaultBackgroundPath(void);
+	std::string LIBRSEXPORT getDefaultBackgroundPath(void);
 
 } // namespace rsXML
 

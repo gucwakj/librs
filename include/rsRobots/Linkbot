@@ -6,7 +6,7 @@
 namespace rsRobots {
 
 	// class
-	class Linkbot : virtual public ModularRobot {
+	class LIBRSEXPORT Linkbot : virtual public ModularRobot {
 		// public functions
 		public:
 			Linkbot(int);

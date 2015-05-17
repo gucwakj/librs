@@ -54,7 +54,8 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	this->build_wheel(WHEEL2, this->getRobotBodyPosition(WHEEL2, p, q), this->getRobotBodyQuaternion(WHEEL2, 0, q));
 
 	// joint variable
-	dJointID joint[_dof];
+	std::vector<dJointID> joint;
+	joint.resize(_dof);
 	rs::Pos o;
 
 	// joint for body to wheel 1

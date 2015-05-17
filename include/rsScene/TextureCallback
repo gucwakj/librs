@@ -7,9 +7,11 @@
 #include <osg/TexMat>
 #include <osgUtil/CullVisitor>
 
+#include <rs/Macros>
+
 namespace rsScene {
 
-	class TextureCallback : public osg::NodeCallback {
+	class LIBRSEXPORT TextureCallback : public osg::NodeCallback {
 		// public functions
 		public:
 			TextureCallback(osg::TexMat &tm) : _texMat(tm) {};

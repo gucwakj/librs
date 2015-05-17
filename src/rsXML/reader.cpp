@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include <rs/Enum>
-#include <rs/Macros>
 #include <rsXML/Reader>
 #include <rsXML/Linkbot>
 #include <rsXML/Mindstorms>
@@ -229,7 +228,9 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 	// get file
 	if (name) {
 #ifdef _WIN32
-		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, _path))) {
+		char base[512];
+		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
+			_path.append(base);
 			_path.append("\\");
 			_path.append(name);
 		}
@@ -243,11 +244,11 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 		else {
 			_path.append("/.robosimrc");
 		}
+#endif
 	}
 	else {
 		_path = rsXML::getDefaultPath();
 	}
-#endif
 
 	// load file
 	int output = doc->LoadFile(_path.c_str());
@@ -1018,7 +1019,9 @@ std::string rsXML::getDefaultPath(void) {
 	std::string path;
 
 #ifdef _WIN32
-	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path))) {
+	char base[512];
+	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
+		path.append(base);
 		path.append("\\robosimrc");
 	}
 #else

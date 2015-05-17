@@ -13,7 +13,7 @@
 namespace rsRobots {
 
 	// class
-	class Robot {
+	class LIBRSEXPORT Robot {
 		// public functions
 		public:
 			Robot(int);

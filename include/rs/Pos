@@ -1,10 +1,12 @@
 #ifndef RS_POS_
 #define RS_POS_
 
+#include <rs/Macros>
+
 namespace rs {
 
 	// position class
-	class Pos {
+	class LIBRSEXPORT Pos {
 		public:
 			Pos(void);
 			Pos(double, double, double);

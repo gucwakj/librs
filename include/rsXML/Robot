@@ -16,7 +16,7 @@ namespace rsXML {
 	typedef std::vector<Conn*> ConnectorList;
 
 	// class
-	class Robot : virtual public rsRobots::Robot {
+	class LIBRSEXPORT Robot : virtual public rsRobots::Robot {
 		// public functions
 		public:
 			Robot(bool);

@@ -39,7 +39,7 @@ namespace rsScene {
 	typedef osg::Group Robot;
 
 	// class
-	class Scene : public KeyboardHandler {
+	class LIBRSEXPORT Scene : public KeyboardHandler {
 		// public functions
 		public:
 			Scene(void);

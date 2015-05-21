@@ -22,12 +22,12 @@ Reader::Reader(const char *name, bool process) {
 		_restitution.push_back(0);
 	}
 	for (int i = 0; i < 7; i++) {
-		_grid.push_back(0);
+		_grid.push_back(-1);
 	}
 
 	// read XML file
 	tinyxml2::XMLDocument doc;
-	this->load_file(name, &doc);
+	this->load_file("", &doc);
 	this->read_config(&doc);
 	this->read_obstacles(&doc);
 	this->read_graphics(&doc);
@@ -186,6 +186,11 @@ std::vector<double> Reader::getFriction(void) {
 }
 
 std::vector<double> Reader::getGrid(void) {
+	for (int i = 0; i < 6; i++) {
+		if (_grid[i] == -1) continue;
+		if (_units) _grid[i] /= 100;
+		else _grid[i] /= 39.37;
+	}
 	return _grid;
 }
 
@@ -344,9 +349,9 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
-			if ( !node->QueryDoubleAttribute("width", &a) ) {
-				a = 0;
-				_marker.back()->setSize(a);
+			if ( !node->QueryIntAttribute("width", &i) ) {
+				i = 0;
+				_marker.back()->setSize(i);
 			}
 		}
 		else if ( !strcmp(node->Value(), "dot") ) {
@@ -373,9 +378,9 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
-			if ( !node->QueryDoubleAttribute("radius", &a) ) {
-				a = 0;
-				_marker.back()->setSize(a);
+			if ( !node->QueryIntAttribute("radius", &i) ) {
+				i = 0;
+				_marker.back()->setSize(i);
 			}
 		}
 		else if ( !strcmp(node->Value(), "grid") ) {
@@ -386,10 +391,6 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			node->QueryDoubleAttribute("miny", &_grid[4]);
 			node->QueryDoubleAttribute("maxy", &_grid[5]);
 			node->QueryDoubleAttribute("enabled", &_grid[6]);
-			for (int i = 0; i < 6; i++) {
-				if (_units) _grid[i] /= 100;
-				else _grid[i] /= 39.37;
-			}
 		}
 		else if ( !strcmp(node->Value(), "trace") ) {
 			node->QueryIntText(reinterpret_cast<int *>(&_trace));
@@ -424,10 +425,6 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "units") ) {
 			node->QueryIntText(reinterpret_cast<int *>(&_units));
-			for (int i = 0; i < 6; i++) {
-				if (_units) _grid[i] /= 100;
-				else _grid[i] /= 39.37;
-			}
 		}
 
 		// go to next node
@@ -1020,7 +1017,7 @@ std::string rsXML::getDefaultPath(void) {
 #ifdef _WIN32
 	char base[512];
 	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
-		path.append(base);
+		path = base;
 		path.append("\\robosimrc");
 	}
 #else

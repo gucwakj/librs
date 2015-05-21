@@ -1,6 +1,8 @@
 #ifndef RSSCENE_SCENE_
 #define RSSCENE_SCENE_
 
+#include <OpenThreads/Thread>
+
 #include <osg/BoundingBox>
 #include <osg/Depth>
 #include <osg/LineWidth>
@@ -12,9 +14,9 @@
 #include <osgDB/ReadFile>
 #include <osgGA/OrbitManipulator>
 #include <osgGA/StateSetManipulator>
-#include <osgText/Text>
 #include <osgShadow/ShadowMap>
 #include <osgShadow/ShadowedScene>
+#include <osgText/Text>
 #include <osgUtil/SmoothingVisitor>
 #include <osgUtil/Optimizer>
 #include <osgViewer/Viewer>
@@ -33,7 +35,6 @@ extern osg::Node::NodeMask IS_PICKABLE_MASK;
 extern osg::Node::NodeMask VISIBLE_MASK;
 
 namespace rsScene {
-
 	// typedefs
 	typedef osg::Group Obstacle;
 	typedef osg::Group Robot;
@@ -48,6 +49,7 @@ namespace rsScene {
 			int addAndRemoveChildren(void);
 			void addChildrenToBackground(void);
 			void addHighlight(int, bool = true, bool = true, const rs::Vec& = rs::Vec(1, 1, 0));
+			int deleteMarker(int);
 			int deleteObstacle(int);
 			int deleteRobot(int);
 			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, int, double, int, int);
@@ -58,6 +60,7 @@ namespace rsScene {
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			void setBackgroundImage(int, std::string);
+			void setFrameRate(int);
 			void setGrid(std::vector<double>, bool = false);
 			void setHighlight(bool);
 			void setHUD(bool);
@@ -99,6 +102,7 @@ namespace rsScene {
 			bool _thread;						// flag: thread is running
 			bool _units;						// flag: SI (true) or customary (false)
 			int _level;							// level to load
+			int _rate;							// desired frame rate
 			osg::Camera *_camera;				// camera to view scene
 			osg::Group *_background;			// pieces of each level which are interchangeable
 			osg::Group *_root;					// root node of scene

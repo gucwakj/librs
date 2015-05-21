@@ -1,6 +1,6 @@
 #include <osg/ComputeBoundsVisitor>
-#include <osgFX/Scribe>
 #include <osgDB/FileUtils>
+#include <osgFX/Scribe>
 
 #include <rs/Enum>
 #include <rs/Macros>
@@ -38,10 +38,8 @@ Scene::Scene(void) : KeyboardHandler() {
 	_grid.push_back(24);	// max y
 	_grid.push_back(1);		// enabled?
 	for (int i = 0; i < 6; i++) {
-		if (_units)
-			_grid[i] /= 100;
-		else
-			_grid[i] /= 39.37;
+		if (_units) _grid[i] /= 100;
+		else _grid[i] /= 39.37;
 	}
 
 	// set thread mutex
@@ -83,10 +81,17 @@ std::cerr << "rsScene/~Scene end" << std::endl;
 	public functions
  **********************************************************/
 int Scene::addAndRemoveChildren(void) {
+	// add new robots to scene
 	while (_staging[0]->getNumChildren()) {
 		_scene->addChild(_staging[0]->getChild(0));
 		_staging[0]->removeChild(0, 1);
 	}
+
+	// share newly created data with other nodes
+	osgDB::SharedStateManager *ssm = osgDB::Registry::instance()->getSharedStateManager();
+	if (ssm) ssm->share(_root);
+
+	// remove robots from scene
 	while (_staging[1]->getNumChildren()) {
 		if (_staging[1]->getChild(0)->getUpdateCallback() != NULL)
 			_staging[1]->getChild(0)->removeUpdateCallback(_staging[1]->getChild(0)->getUpdateCallback());
@@ -173,14 +178,21 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 	}
 }
 
+int Scene::deleteMarker(int id) {
+	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
+		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		if (test && !test->getName().compare(std::string("marker").append(std::to_string(id)))) {
+			_staging[1]->addChild(test);
+			return 0;
+		}
+	}
+	return -1;
+}
+
 int Scene::deleteObstacle(int id) {
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		if (test && !test->getName().compare(std::string("obstacle").append(std::to_string(id)))) {
-			_staging[1]->addChild(test);
-			return 0;
-		}
-		else if (test && !test->getName().compare(std::string("marker").append(std::to_string(id)))) {
 			_staging[1]->addChild(test);
 			return 0;
 		}
@@ -384,7 +396,7 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 
 	// set user properties of node
 	label_geode->setName("robotHUD");
-	trackingGeode->setName("trace");
+	trackingGeode->setName("robotTrace");
 	group->setName(std::string("robot").append(std::to_string(robot->getID())));
 
 	// add to scenegraph
@@ -433,7 +445,6 @@ std::string Scene::getTexturePath(void) {
 	else
 		path = base;
 	path += "/package/chrobosim/data/";
-	path = "C:/Users/kgucwa/projects/librs/resources/";
 #else
 	osgDB::setLibraryFilePathList("/home/kgucwa/projects/librs/deps/osg/build/lib/");
 	path = "/home/kgucwa/projects/librs/resources/";
@@ -442,18 +453,22 @@ std::string Scene::getTexturePath(void) {
 }
 
 void Scene::setBackgroundImage(int pos, std::string path) {
-	_path[pos] = path;
+	if (!path.empty()) _path[pos] = path;
+}
+
+void Scene::setFrameRate(int rate) {
+	_rate = (rate > 0) ? rate : _rate;
 }
 
 void Scene::setGrid(std::vector<double> grid, bool draw) {
 	// save new values
-	_grid[0] = grid[0];
-	_grid[1] = grid[1];
-	_grid[2] = grid[2];
-	_grid[3] = grid[3];
-	_grid[4] = grid[4];
-	_grid[5] = grid[5];
-	_grid[6] = grid[6];
+	if (grid[0] != -1) _grid[0] = grid[0];
+	if (grid[1] != -1) _grid[1] = grid[1];
+	if (grid[2] != -1) _grid[2] = grid[2];
+	if (grid[3] != -1) _grid[3] = grid[3];
+	if (grid[4] != -1) _grid[4] = grid[4];
+	if (grid[5] != -1) _grid[5] = grid[5];
+	if (grid[6] != -1) _grid[6] = grid[6];
 
 	// draw grid if there is a background on which to draw
 	if (_level && draw) {
@@ -543,7 +558,7 @@ void Scene::setUnits(bool units) {
 
 int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	// camera properties
-	_camera = new osg::Camera;
+	osg::ref_ptr<osg::Camera> _camera = new osg::Camera();
 	_camera->setGraphicsContext(gc);
 	_camera->setClearColor(osg::Vec4(0, 0, 0, 1));
 	_camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -554,7 +569,7 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	_camera->setComputeNearFarMode(osgUtil::CullVisitor::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
 	_camera->setCullingMode(osgUtil::CullVisitor::NO_CULLING);
 	_camera->setNearFarRatio(0.00001);
-	_viewer->addSlave(_camera);
+	_viewer->addSlave(_camera.get());
 
 	// viewer camera properties
 	osg::ref_ptr<osgGA::OrbitManipulator> cameraManipulator = new osgGA::OrbitManipulator();
@@ -614,7 +629,6 @@ int Scene::setupScene(double w, double h, bool pause) {
 
 	// create and add mouse handler
 	osg::ref_ptr<MouseHandler> mh = new MouseHandler(this);
-	mh->setName("mouse");
 	_viewer->addEventHandler(mh);
 
 	// show scene
@@ -629,12 +643,12 @@ int Scene::setupViewer(osgViewer::Viewer *viewer) {
 	if (viewer)
 		_viewer = viewer;
 	else
-		_viewer = new osgViewer::Viewer;
+		_viewer = new osgViewer::Viewer();
 
 	// set threading model
 	_viewer->setThreadingModel(osgViewer::Viewer::SingleThreaded);
 
-	// event handler
+	// statistics event handler
 	_viewer->addEventHandler(new osgViewer::StatsHandler);
 
 	// success
@@ -642,53 +656,6 @@ int Scene::setupViewer(osgViewer::Viewer *viewer) {
 }
 
 void Scene::start(int pause) {
-	// initialize variables
-	unsigned int width, height;
-
-	// window interface
-	osg::GraphicsContext::WindowingSystemInterface *wsi = osg::GraphicsContext::getWindowingSystemInterface();
-	if (!wsi) {
-		osg::notify(osg::NOTICE) << "osg: cannot create windows." << std::endl;
-		return;
-	}
-	wsi->getScreenResolution(osg::GraphicsContext::ScreenIdentifier(0), width, height);
-
-	// window traits
-	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-	traits->width = width/2;
-	traits->height = 3*width/8;
-	traits->x = width - traits->width - 10;
-	traits->y = height - traits->height - 50;
-	traits->windowDecoration = true;
-	traits->doubleBuffer = true;
-	traits->vsync = false;
-	traits->sharedContext = 0;
-
-	// graphics context
-	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
-	if (gc.valid()) {
-		gc->setClearColor(osg::Vec4f(0.f,0.f,0.f,1.f));
-		gc->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	else {
-		osg::notify(osg::NOTICE) << "osg: cannot create graphics." << std::endl;
-		return;
-	}
-
-	// set up viewer
-	this->setupViewer(NULL);
-
-	// set up the camera
-	this->setupCamera(gc.get(), traits->width, traits->height);
-
-	// set up scene
-	this->setupScene(traits->width, traits->height, pause);
-
-    // thread is now running
-	MUTEX_INIT(&_thread_mutex);
-	_thread = true;
-
-	// create graphics thread
 	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
 }
 
@@ -1398,7 +1365,6 @@ void Scene::draw_scene_outdoors(void) {
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
 	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::GROUND]));
-	tex->setDataVariance(osg::Object::DYNAMIC);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
@@ -1433,7 +1399,6 @@ void Scene::draw_scene_board(void) {
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
 	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::GROUND]));
-	tex->setDataVariance(osg::Object::DYNAMIC);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
@@ -1501,6 +1466,51 @@ void* Scene::graphics_thread(void *arg) {
 	// cast viewer
 	Scene *p = (Scene *)arg;
 
+	// initialize variables
+	unsigned int width, height;
+
+	// window interface
+	osg::GraphicsContext::WindowingSystemInterface *wsi = osg::GraphicsContext::getWindowingSystemInterface();
+	if (!wsi) {
+		std::cerr << "osg: cannot create windows." << std::endl;
+		return NULL;
+	}
+	wsi->getScreenResolution(osg::GraphicsContext::ScreenIdentifier(0), width, height);
+
+	// window traits
+	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+	traits->width = width / 2;
+	traits->height = 3 * width / 8;
+	traits->x = width - traits->width - 10;
+	traits->y = height - traits->height - 50;
+	traits->windowDecoration = true;
+	traits->doubleBuffer = true;
+	traits->vsync = false;
+	traits->sharedContext = 0;
+
+	// graphics context
+	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+	if (gc.valid()) {
+		gc->setClearColor(osg::Vec4f(0, 0, 0, 1));
+	}
+	else {
+		std::cerr << "osg: cannot create graphics." << std::endl;
+		return NULL;
+	}
+
+	// set up viewer
+	p->setupViewer(NULL);
+
+	// set up the camera
+	p->setupCamera(gc.get(), traits->width, traits->height);
+
+	// set up scene
+	p->setupScene(traits->width, traits->height, 1);
+
+	// thread is now running
+	MUTEX_INIT(&(p->_thread_mutex));
+	p->_thread = true;
+
 	// viewer event handlers
 	p->_viewer->addEventHandler(new osgViewer::WindowSizeHandler);
 
@@ -1509,8 +1519,18 @@ void* Scene::graphics_thread(void *arg) {
 	while (p->_thread && !p->_viewer->done()) {
 		MUTEX_UNLOCK(&(p->_thread_mutex));
 
+		// start clock for frame rate calculation
+		double minFrameTime = (p->_rate > 0.0) ? 1.0 / p->_rate : 0.0;
+		osg::Timer_t startFrameTick = osg::Timer::instance()->tick();
+
+		// update thread & scene elements
 		p->_viewer->frame();
 		p->addAndRemoveChildren();
+
+		// pause for proper frame rate
+		osg::Timer_t endFrameTick = osg::Timer::instance()->tick();
+		double frameTime = osg::Timer::instance()->delta_s(startFrameTick, endFrameTick);
+		if (frameTime < minFrameTime) OpenThreads::Thread::microSleep(static_cast<unsigned int>(1000000.0*(minFrameTime - frameTime)));
 
 		MUTEX_LOCK(&(p->_thread_mutex));
 	}

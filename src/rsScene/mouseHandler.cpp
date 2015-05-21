@@ -10,6 +10,9 @@ MouseHandler::MouseHandler(rsScene::Scene *scene) {
 
 	// scene to which this handler is attached
 	_scene = scene;
+
+	// give it a name
+	this->setName("mouse");
 }
 
 bool MouseHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {

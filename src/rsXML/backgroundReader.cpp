@@ -410,7 +410,6 @@ std::string rsXML::getDefaultBackgroundPath(void) {
     else
         path = base;
     path += "/package/chrobosim/data/";
-	path = "C:/Users/kgucwa/projects/librs/resources/background/";
 #else
 	path = "/home/kgucwa/projects/librs/resources/background/";
 #endif

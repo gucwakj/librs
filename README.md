@@ -70,7 +70,7 @@ $ cd ../
 ```
 cd deps/tinyxml2/
 mkdir build/
-use cmake-gui to configure with visual studio 9 and generate
+use cmake-gui to configure with Visual Studio 12 2013 {Win64} and generate
 open build/tinyxml2.sln in visual studio
 build Release solution
 ```
@@ -87,25 +87,25 @@ build Release solution
 ```
 cd deps/osg/
 mkdir build/
-use cmake-gui to configure with visual studio 9 and generate
-	config option: ACTUAL_3RDPARTY_DIR set to osg/third_party/VC9/{x86/x64}
+cd build/
+cmake -G "Visual Studio 12 2013 Win64" -DCMAKE_PREFIX_PATH="C:/Qt/5.4.1/5.4/msvc2013_64_opengl/lib/cmake"
+	-DDESIRED_QT_VERSION=5 -DACTUAL_3RDPARTY_DIR="../third_party/{x64/x86}" ..
 open build/OpenSceneGraph.sln in visual studio
-build Release solution, unecessary plugins can be disabled
-	curently used plugins:
-		3ds
-		png
+build Release solution
+	packages used:	osg osgDB osgFX osgGA osgQt osgShadow osgText
+					osgUtil osgViewer osgdb_3ds osgdb_png
 ```
 
 #### librs
 ```
 mkdir build/
-use cmake-gui to configure with visual studio 9 and generate
-open build/robosim.sln in visual studio
+use cmake-gui to configure with visual studio 12 2013 {Win64} and generate
+open build/LibRS.sln in visual studio
 build Release solution
 ```
 
 ## Credits
-(c) 2014
+(c) 2014 - 2015
 
 The University of California, Davis
 Center for Integrated Computing and STEM Education

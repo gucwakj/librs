@@ -233,8 +233,8 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 		case rs::LINE: {
 			osg::Geometry *geom = new osg::Geometry();
 			osg::Vec3Array *vert = new osg::Vec3Array();
-			vert->push_back(osg::Vec3(p1[0], p1[1], p1[2]));
-			vert->push_back(osg::Vec3(p2[0], p2[1], p2[2]));
+			vert->push_back(osg::Vec3(0, 0, 0));
+			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]));
 			geom->setVertexArray(vert);
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
 			osg::LineWidth *width = new osg::LineWidth();
@@ -1418,12 +1418,12 @@ void Scene::draw_skybox(void) {
 	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat;
 	stateset->setTextureAttribute(0, tm);
 	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap;
-	osg::Image* imagePosX = osgDB::readImageFile(_path[rs::RIGHTSIDE]);
-	osg::Image* imageNegX = osgDB::readImageFile(_path[rs::LEFTSIDE]);
-	osg::Image* imagePosY = osgDB::readImageFile(_path[rs::TOP]);
-	osg::Image* imageNegY = osgDB::readImageFile(_path[rs::TOP]);
-	osg::Image* imagePosZ = osgDB::readImageFile(_path[rs::FRONT]);
-	osg::Image* imageNegZ = osgDB::readImageFile(_path[rs::BACK]);
+	osg::Image *imagePosX = osgDB::readImageFile(_path[rs::RIGHTSIDE]);
+	osg::Image *imageNegX = osgDB::readImageFile(_path[rs::LEFTSIDE]);
+	osg::Image *imagePosY = osgDB::readImageFile(_path[rs::TOP]);
+	osg::Image *imageNegY = osgDB::readImageFile(_path[rs::TOP]);
+	osg::Image *imagePosZ = osgDB::readImageFile(_path[rs::FRONT]);
+	osg::Image *imageNegZ = osgDB::readImageFile(_path[rs::BACK]);
 	if (imagePosX && imageNegX && imagePosY && imageNegY && imagePosZ && imageNegZ) {
 		skymap->setImage(osg::TextureCubeMap::POSITIVE_X, imagePosX);
 		skymap->setImage(osg::TextureCubeMap::NEGATIVE_X, imageNegX);

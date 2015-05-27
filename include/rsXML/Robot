@@ -50,6 +50,7 @@ namespace rsXML {
 			void setPosition(double, double, double);
 			void setPsi(double);
 			void setRotation(double, double, double);
+			void setRotation(double, double, double, double);
 			void setWheels(int, int);
 
 		// data

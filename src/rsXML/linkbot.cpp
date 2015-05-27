@@ -1,9 +1,15 @@
 #include <rs/Macros>
 #include <rsXML/Linkbot>
 
+using namespace rsLinkbot;
 using namespace rsXML;
 
-Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsRobots::Linkbot(form), rsXML::Robot(trace) { };
+Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsRobots::Linkbot(form), rsXML::Robot(trace) {
+	_a.allocate(NUM_JOINTS);
+	for (unsigned int i = 0; i < _a.size(); i++) {
+		_a[i] = 0;
+	}
+};
 
 void Linkbot::postProcess(void) {
 	// find if i am connected to another robot

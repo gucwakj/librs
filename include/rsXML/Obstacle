@@ -14,7 +14,7 @@ namespace rsXML {
 			Obstacle(int);
 			virtual ~Obstacle(void) {};
 
-			double getAxis(void);
+			int getAxis(void);
 			const rs::Vec getColor(void);
 			int getConnect(void);
 			const rs::Vec getDimensions(void);
@@ -23,7 +23,7 @@ namespace rsXML {
 			double getMass(void);
 			const rs::Pos getPosition(void);
 			const rs::Quat getQuaternion(void);
-			void setAxis(double);
+			void setAxis(int);
 			void setColor(double, double, double, double);
 			void setConnect(int);
 			void setDimensions(double, double, double);
@@ -34,7 +34,7 @@ namespace rsXML {
 
 		// private data
 		private:
-			double _axis;	// longitudinal axis
+			int _axis;		// longitudinal axis
 			double _mass;	// mass
 			int _connected;	// connected to sim/gui
 			int _id;		// id

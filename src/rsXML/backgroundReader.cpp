@@ -96,7 +96,8 @@ std::string BackgroundReader::load_file(std::string dir, tinyxml2::XMLDocument *
 
 	// get default file location
 	std::string path = rsXML::getDefaultBackgroundPath();
-	std::string filepath(path); filepath.append(directory).append("/background.xml");
+	std::string filepath(path);
+	filepath.append(directory).append("/background.xml");
 
 	// load file
 	doc->LoadFile(filepath.c_str());
@@ -175,8 +176,8 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
+			a = 0;
 			if ( !node->QueryDoubleAttribute("width", &a) ) {
-				a = 0;
 				_marker.back()->setSize(a);
 			}
 		}
@@ -204,8 +205,8 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
+			a = 0;
 			if ( !node->QueryDoubleAttribute("radius", &a) ) {
-				a = 0;
 				_marker.back()->setSize(a);
 			}
 		}
@@ -226,7 +227,9 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 			// label
 			if ( (ele = node->FirstChildElement("name")) ) {
-				_marker.back()->setLabel(ele->GetText());
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
+				_marker.back()->setLabel(str);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -281,8 +284,8 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				_obstacle.back()->setDimensions(a, b, c);
 			}
 			// mass
+			a = 0;
 			if ( !node->QueryDoubleAttribute("mass", &a) ) {
-				a = 0;
 				_obstacle.back()->setMass(a);
 			}
 			// position
@@ -309,8 +312,8 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
 			// axis
+			a = 0;
 			if ( !node->QueryDoubleAttribute("axis", &a) ) {
-				a = 0;
 				_obstacle.back()->setAxis(a);
 			}
 			// color
@@ -330,8 +333,8 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				_obstacle.back()->setDimensions(a, b, 0);
 			}
 			// mass
+			a = 0;
 			if ( !node->QueryDoubleAttribute("mass", &a) ) {
-				a = 0;
 				_obstacle.back()->setMass(a);
 			}
 			// position
@@ -373,8 +376,8 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				_obstacle.back()->setDimensions(a, 0, 0);
 			}
 			// mass
+			a = 0;
 			if ( !node->QueryDoubleAttribute("mass", &a) ) {
-				a = 0;
 				_obstacle.back()->setMass(a);
 			}
 			// position
@@ -409,7 +412,7 @@ std::string rsXML::getDefaultBackgroundPath(void) {
         path = "C:/Ch";
     else
         path = base;
-    path += "/package/chrobosim/data/";
+    path += "/package/chrobosim/data/background/";
 #else
 	path = "/home/kgucwa/projects/librs/resources/background/";
 #endif

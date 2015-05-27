@@ -15,15 +15,21 @@ Reader::Reader(const char *name, bool process) {
 	_preconfig = false;
 	_rt = true;
 	_trace = false;
-	_units = false;
 	_version = 0;
 	for (int i = 0; i < 2; i++) {
 		_friction.push_back(0);
 		_restitution.push_back(0);
 	}
-	for (int i = 0; i < 7; i++) {
-		_grid.push_back(-1);
-	}
+
+	// default US units and grid
+	_units = false;
+	_grid.push_back(1);
+	_grid.push_back(12);
+	_grid.push_back(-48);
+	_grid.push_back(48);
+	_grid.push_back(-48);
+	_grid.push_back(48);
+	_grid.push_back(-1);
 
 	// read XML file
 	tinyxml2::XMLDocument doc;
@@ -187,7 +193,6 @@ std::vector<double> Reader::getFriction(void) {
 
 std::vector<double> Reader::getGrid(void) {
 	for (int i = 0; i < 6; i++) {
-		if (_grid[i] == -1) continue;
 		if (_units) _grid[i] /= 100;
 		else _grid[i] /= 39.37;
 	}
@@ -236,7 +241,7 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 		char base[512];
 		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
 			_path.append(base);
-			_path.append("\\");
+			_path.append("\\C-STEM Studio\\RoboSim\\");
 			_path.append(name);
 		}
 #else
@@ -321,6 +326,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// create object
 			_marker.push_back(new Marker(rs::LINE));
 			// id
+			i = 0;
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
 			// color
@@ -349,8 +355,8 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
+			i = 0;
 			if ( !node->QueryIntAttribute("width", &i) ) {
-				i = 0;
 				_marker.back()->setSize(i);
 			}
 		}
@@ -358,6 +364,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// create object
 			_marker.push_back(new Marker(rs::DOT));
 			// id
+			i = 0;
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
 			// color
@@ -378,8 +385,8 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
+			i = 0;
 			if ( !node->QueryIntAttribute("radius", &i) ) {
-				i = 0;
 				_marker.back()->setSize(i);
 			}
 		}
@@ -399,6 +406,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// create object
 			_marker.push_back(new Marker(rs::TEXT));
 			// id
+			i = 0;
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
 			// color
@@ -450,6 +458,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// create object
 			_obstacle.push_back(new Obstacle(rs::BOX));
 			// id
+			i = 0;
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
 			// color
@@ -470,8 +479,8 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				_obstacle.back()->setDimensions(a, b, c);
 			}
 			// mass
+			a = 0;
 			if ( !node->QueryDoubleAttribute("mass", &a) ) {
-				a = 0;
 				_obstacle.back()->setMass(a);
 			}
 			// position
@@ -495,12 +504,13 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// create object
 			_obstacle.push_back(new Obstacle(rs::CYLINDER));
 			// id
+			i = 0;
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
 			// axis
-			if ( !node->QueryDoubleAttribute("axis", &a) ) {
-				a = 0;
-				_obstacle.back()->setAxis(a);
+			i = 0;
+			if ( !node->QueryIntAttribute("axis", &i) ) {
+				_obstacle.back()->setAxis(i);
 			}
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
@@ -519,8 +529,8 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				_obstacle.back()->setDimensions(a, b, 0);
 			}
 			// mass
+			a = 0;
 			if ( !node->QueryDoubleAttribute("mass", &a) ) {
-				a = 0;
 				_obstacle.back()->setMass(a);
 			}
 			// position
@@ -544,6 +554,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// create object
 			_obstacle.push_back(new Obstacle(rs::SPHERE));
 			// id
+			i = 0;
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
 			// color
@@ -556,14 +567,14 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
-			if ( (ele = node->FirstChildElement("size")) ) {
+			if ((ele = node->FirstChildElement("size"))) {
 				a = 0;
 				ele->QueryDoubleAttribute("radius", &a);
 				_obstacle.back()->setDimensions(a, 0, 0);
 			}
 			// mass
+			a = 0;
 			if ( !node->QueryDoubleAttribute("mass", &a) ) {
-				a = 0;
 				_obstacle.back()->setMass(a);
 			}
 			// position
@@ -625,6 +636,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
+			int i = 0;
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				_robot.back()->setOrientation(i);
 				if (i == rs::RIGHT)
@@ -649,6 +661,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
+				a = 0; b = 0; c = 0, d = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryDoubleAttribute("w", &d);
+				_robot.back()->setRotation(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
 				i = 0; j = 0;
@@ -695,6 +713,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
+			i = 0;
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
@@ -718,6 +737,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
+				a = 0; b = 0; c = 0, d = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryDoubleAttribute("w", &d);
+				_robot.back()->setRotation(a, b, c, d);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -746,6 +771,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
+			i = 0;
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
@@ -769,6 +795,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
+				a = 0; b = 0; c = 0, d = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryDoubleAttribute("w", &d);
+				_robot.back()->setRotation(a, b, c, d);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
@@ -809,6 +841,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
+				a = 0; b = 0; c = 0, d = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryDoubleAttribute("w", &d);
+				_robot.back()->setRotation(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
 				i = 0; j = 0;
@@ -855,6 +893,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryDoubleAttribute("theta", &b);
 				ele->QueryDoubleAttribute("phi", &c);
 				_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
+				a = 0; b = 0; c = 0, d = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryDoubleAttribute("w", &d);
+				_robot.back()->setRotation(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
 				i = 0; j = 0;
@@ -1018,7 +1062,7 @@ std::string rsXML::getDefaultPath(void) {
 	char base[512];
 	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
 		path = base;
-		path.append("\\robosimrc");
+		path.append("\\C-STEM Studio\\RoboSim\\robosim.xml");
 	}
 #else
 	path = getenv("HOME");

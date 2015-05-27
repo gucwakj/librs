@@ -20,7 +20,7 @@ Obstacle::Obstacle(int type) {
 	_c[3] = 1;
 }
 
-double Obstacle::getAxis(void) {
+int Obstacle::getAxis(void) {
 	return _axis;
 }
 
@@ -56,8 +56,8 @@ const rs::Quat Obstacle::getQuaternion(void) {
 	return _q;
 }
 
-void Obstacle::setAxis(double a) {
-	_axis = a;
+void Obstacle::setAxis(int i) {
+	_axis = i;
 }
 
 void Obstacle::setColor(double a, double b, double c, double d) {

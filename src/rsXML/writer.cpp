@@ -14,37 +14,40 @@ Writer::Writer(std::string name, const std::string &orig) {
 		std::cerr << "         Starting a new XML document at " << name << std::endl;
 	}
 
-	// create simulation
-	tinyxml2::XMLElement *node;
-	if ( !(node = _doc.FirstChildElement("sim")) ) {
-		tinyxml2::XMLElement *sim = _doc.NewElement("sim");
-		_doc.InsertFirstChild(sim);
+	// create new nodes
+	tinyxml2::XMLElement *node = NULL;
+	tinyxml2::XMLElement *ele = NULL;
+
+	// create config
+	if (!(node = _doc.FirstChildElement("config"))) {
+		ele = _doc.NewElement("config");
+		_doc.InsertFirstChild(ele);
 	}
 
 	// create graphics
-	if ( !(node = _doc.FirstChildElement("graphics")) ) {
-		tinyxml2::XMLElement *graphics = _doc.NewElement("graphics");
-		_doc.InsertFirstChild(graphics);
+	if (!(node = _doc.FirstChildElement("graphics"))) {
+		_doc.InsertAfterChild(ele, _doc.NewElement("graphics"));
+		ele = _doc.FirstChildElement("graphics");
 	}
 
 	// create ground
-	if ( !(node = _doc.FirstChildElement("ground")) ) {
-		tinyxml2::XMLElement *ground = _doc.NewElement("ground");
-		_doc.InsertFirstChild(ground);
+	if (!(node = _doc.FirstChildElement("ground"))) {
+		_doc.InsertAfterChild(ele, _doc.NewElement("ground"));
+		ele = _doc.FirstChildElement("ground");
 	}
 
-	// create config
-	if ( !(node = _doc.FirstChildElement("config")) ) {
-		tinyxml2::XMLElement *config = _doc.NewElement("config");
-		_doc.InsertFirstChild(config);
+	// create simulation
+	if (!(node = _doc.FirstChildElement("sim"))) {
+		_doc.InsertAfterChild(ele, _doc.NewElement("sim"));
+		ele = _doc.FirstChildElement("sim");
 	}
 
 	// create declaration
-	/*if ( !(node = _doc.FirstChildElement("RoboSim XML Configuration")) ) {
-std::cerr << "Here" << std::endl;
-		tinyxml2::XMLDeclaration *dec = _doc.NewDeclaration("RoboSim XML Configuration");
+	tinyxml2::XMLDeclaration *dec = NULL;
+	if (!(dec = _doc.FirstChild()->ToDeclaration())) {
+		dec = _doc.NewDeclaration("RoboSim XML Configuration");
 		_doc.InsertFirstChild(dec);
-	}*/
+	}
 
 	// write to disk
 	this->save();
@@ -354,7 +357,7 @@ tinyxml2::XMLElement* Writer::getOrCreateElement(const char *parent, const char 
 tinyxml2::XMLElement* Writer::getOrCreateMarker(int form, int id) {
 	tinyxml2::XMLElement *graphics = _doc.FirstChildElement("graphics");
 	tinyxml2::XMLElement *node = graphics->FirstChildElement();
-	int j;
+	int j = -1;
 	while (node) {
 		node->QueryIntAttribute("id", &j);
 		if (j == id) {
@@ -376,17 +379,14 @@ tinyxml2::XMLElement* Writer::getOrCreateMarker(int form, int id) {
 	}
 	node->SetAttribute("id", id);
 	node->SetAttribute("form", form);
-	if (id == 0)
-		graphics->InsertFirstChild(node);
-	else
-		graphics->InsertAfterChild(getOrCreateMarker(form, id-1), node);
+	graphics->InsertFirstChild(node);
 	return node;
 }
 
 tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
 	tinyxml2::XMLElement *ground = _doc.FirstChildElement("ground");
 	tinyxml2::XMLElement *node = ground->FirstChildElement();
-	int j;
+	int j = -1;
 	while (node) {
 		node->QueryIntAttribute("id", &j);
 		if (j == id) {
@@ -408,17 +408,14 @@ tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
 	}
 	node->SetAttribute("id", id);
 	node->SetAttribute("form", form);
-	if (id == 0)
-		ground->InsertFirstChild(node);
-	else
-		ground->InsertAfterChild(getOrCreateObstacle(form, id-1), node);
+	ground->InsertFirstChild(node);
 	return node;
 }
 
 tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
 	tinyxml2::XMLElement *node = sim->FirstChildElement();
-	int j;
+	int j = -1;
 	while (node) {
 		node->QueryIntAttribute("id", &j);
 		if (j == id) {
@@ -465,16 +462,13 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 	}
 	node->SetAttribute("id", id);
 	node->SetAttribute("form", form);
-	if (id == 0)
-		sim->InsertFirstChild(node);
-	else
-		sim->InsertAfterChild(getOrCreateRobot(form, id-1), node);
+	sim->InsertFirstChild(node);
 	return node;
 }
 
 tinyxml2::XMLElement* Writer::getOrCreateSide(tinyxml2::XMLElement *p, const char *child, int id) {
 	tinyxml2::XMLElement *e = p->FirstChildElement(child);
-	int i;
+	int i = -1;
 	if (!e) {
 		e = _doc.NewElement(child);
 		p->InsertEndChild(e);

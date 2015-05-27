@@ -8,10 +8,16 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_base = NULL;
 	_connected = 0;
 	_c.allocate(4);
+	_c[0] = 1;
+	_c[1] = 0;
+	_c[2] = 0;
+	_c[3] = 1;
 	_ground = -1;
 	_id = -1;
 	_trace = trace;
 	_wheels.allocate(2);
+	_wheels[0] = 0;
+	_wheels[1] = 0;
 }
 
 Robot::~Robot(void) {
@@ -150,6 +156,13 @@ void Robot::setRotation(double a, double b, double c) {
 	_q.multiply(sin(0.5*a), 0, 0, cos(0.5*a));
 	_q.multiply(0, sin(0.5*b), 0, cos(0.5*b));
 	_q.multiply(0, 0, sin(0.5*c), cos(0.5*c));
+}
+
+void Robot::setRotation(double a, double b, double c, double d) {
+	_q[0] = a;
+	_q[1] = b;
+	_q[2] = c;
+	_q[3] = d;
 }
 
 void Robot::setWheels(int left, int right) {

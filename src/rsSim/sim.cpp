@@ -252,6 +252,7 @@ int Sim::getCOR(double &robot, double &ground) {
 
 void Sim::getCoM(double &x, double &y, double &z) {
 	double total = 0;
+	x = 0; y = 0; z = 0;
 	for (unsigned int i = 0; i < _robot.size(); i++) {
 		double m;
 		rs::Pos p = _robot[i].robot->getCoM(m);
@@ -266,7 +267,7 @@ void Sim::getCoM(double &x, double &y, double &z) {
 }
 
 double Sim::getFitness(void) {
-	return _fitness;
+	return (1/_fitness);
 }
 
 int Sim::getMu(double &robot, double &ground) {
@@ -432,30 +433,32 @@ void Sim::calculate_fitness(void) {
 	double x, y, z;
 	this->getCoM(x, y, z);
 
-	// system CoM following sinusoid
+	// get time
 	double t = _clock - _step;
-	double sine = _goal[0]*sin(_goal[1]*t + _goal[2]) + _goal[3];
-	_fitness += pow(0 - x, 2);		// straying from y-axis
-	_fitness += pow(t - y, 2);		// moving forward with sinusoid motion
-	_fitness += pow(sine - z, 2);	// moving upward with sinusoid motion
+	if (t == 0) return;
 
-	// system CoM following sinusoid in place
-	//double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]) + _goal[3];
-	//_fitness += pow(sine - z, 2);
+	// sinusoid calculation
+	double sine = _goal[0]*sin(_goal[1]*t + _goal[2]) + _goal[3];
+
+	// system CoM following sinusoid
+	_fitness += (1/t)*3*pow(0 - x, 2);		// straying from y-axis
+	//_fitness += (1/t)*pow(t - y, 2);			// moving forward with sinusoid motion
+	_fitness += (1/t)*pow(sine - z, 2);		// moving upward with sinusoid motion
 
 	// one joint following sinusoid
-	//double sine = _goal[0]*sin(_goal[1]*(_clock-_step) + _goal[2]);
 	//_fitness += pow(sine - _robot[0].robot->getAngle(2), 2);
 
-	// sync two joints to the same motion
-	//_fitness += (_robot[0].robot->getAngle(2) - _robot[1].robot->getAngle(2))*(_robot[0].robot->getAngle(2) - _robot[1].robot->getAngle(2));
+	// output
+	//std::cerr << "fit: " << t << " " << _fitness << std::endl;
+	//std::cerr << "fit: " << 3*pow(0 - x, 2) << " " << pow(t - y, 2) << " " << pow(sine - z, 2) << std::endl;
 
 	// kill if fitness is getting too far away
-	if (_fitness > 100) {
+	/*if (_fitness > 1000) {
+		// stop simulation
 		MUTEX_LOCK(&_running_mutex);
 		_running = 0;
 		MUTEX_UNLOCK(&_running_mutex);
-	}
+	}*/
 }
 
 void Sim::collision(void *data, dGeomID o1, dGeomID o2) {

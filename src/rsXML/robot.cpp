@@ -7,6 +7,10 @@ using namespace rsXML;
 Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_connected = 0;
 	_c.allocate(4);
+	_c[0] = 1;
+	_c[1] = 0;
+	_c[2] = 0;
+	_c[3] = 1;
 	_ground = -1;
 	_id = -1;
 	_trace = trace;

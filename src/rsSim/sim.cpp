@@ -368,8 +368,10 @@ int Sim::setCOR(double robot, double ground) {
 void Sim::setGoalSinusoid(double a, double b, double c, double d) {
 	_goal[0] = a;
 	_goal[1] = b;
-	_goal[2] = 3*rs::PI/2;
-	_goal[3] = a + d;
+	//_goal[2] = 3*rs::PI/2;
+	_goal[2] = c;
+	//_goal[3] = a + d;
+	_goal[3] = d;
 }
 
 int Sim::setMu(double robot, double ground) {
@@ -437,13 +439,35 @@ void Sim::calculate_fitness(void) {
 	double t = _clock - _step;
 	if (t == 0) return;
 
-	// sinusoid calculation
-	double sine = _goal[0]*sin(_goal[1]*t + _goal[2]) + _goal[3];
+	double t2 = (t - floor(t/4/rs::PI*_goal[1])*4*rs::PI/_goal[1])/100;
+	double xg = 0, yg = 0, zg = 0;
+	if (t2 < rs::PI/_goal[1]) {
+		yg = t2;
+		zg = _goal[0]*sin(_goal[1]*(yg) + _goal[2]) + _goal[3];
+	}
+	else if (t2 < 2*rs::PI/_goal[1]) {
+		yg = 2*rs::PI/_goal[1] - t2;
+		zg = -_goal[0]*sin(_goal[1]*(rs::PI/_goal[1] - yg) + _goal[2]) + _goal[3];
+	}
+	else if (t2 < 3*rs::PI/_goal[1]) {
+		yg = 2*rs::PI/_goal[1] - t2;
+		zg = _goal[0]*sin(_goal[1]*(2*rs::PI/_goal[1] - yg) + _goal[2]) + _goal[3];
+	}
+	else {
+		yg = t2 - 4*rs::PI/_goal[1];
+		zg = _goal[0]*sin(_goal[1]*(yg - 4*rs::PI/_goal[1]) + _goal[2]) + _goal[3];
+	}
 
-	// system CoM following sinusoid
-	_fitness += (1/t)*3*pow(0 - x, 2);		// straying from y-axis
+	// system CoM following sinusoid leg
+	_fitness += (1/t)*3*pow(xg - x, 2);		// straying from y-axis
+	_fitness += (1/t)*1*pow(yg - y, 2);		// moving forward with sinusoid motion
+	_fitness += (1/t)*1*pow(zg - z, 2);		// moving up/down with sinusoid motion
+
+	// system CoM following sinusoid forward motion with snake
+	//double sine = _goal[0]*sin(_goal[1]*t + _goal[2]) + _goal[3];
+	//_fitness += (1/t)*3*pow(0 - x, 2);		// straying from y-axis
 	//_fitness += (1/t)*pow(t - y, 2);			// moving forward with sinusoid motion
-	_fitness += (1/t)*pow(sine - z, 2);		// moving upward with sinusoid motion
+	//_fitness += (1/t)*pow(sine - z, 2);		// moving upward with sinusoid motion
 
 	// one joint following sinusoid
 	//_fitness += pow(sine - _robot[0].robot->getAngle(2), 2);

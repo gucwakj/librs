@@ -609,8 +609,13 @@ void Linkbot::simPreCollisionThread(void) {
 					if (_sine[i].phase < 0)
 						_sine[i].delay = -_sine[i].phase / step;
 					else {
-						_sine[i].delay = (M_PI - _sine[i].phase) / step;
-						_sine[i].gain = -_sine[i].gain;
+						if ( static_cast<int>(_sine[i].phase/M_PI) % 2 ) {
+							_sine[i].delay = (2*M_PI - _sine[i].phase) / step;
+						}
+						else {
+							_sine[i].delay = (M_PI - _sine[i].phase) / step;
+							_sine[i].gain = -_sine[i].gain;
+						}
 					}
 					_sine[i].run++;
 				}

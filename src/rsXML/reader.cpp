@@ -943,10 +943,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ctype = rsLinkbot::GRIPPER;
 				cnum = 1;
 			}
-			/*else if ( !strcmp(node->Value(), "l") ) {
-				ctype = rsLinkbot::L;
-				cnum = 3;
-			}*/
 			else if ( !strcmp(node->Value(), "omnidrive") ) {
 				ctype = rsLinkbot::OMNIPLATE;
 				cnum = 4;
@@ -961,14 +957,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ctype = rsLinkbot::SMALLWHEEL;
 				cnum = 1;
 			}
-			/*else if ( !strcmp(node->Value(), "square") ) {
-				ctype = rsLinkbot::SQUARE;
-				cnum = 4;
-			}
-			else if ( !strcmp(node->Value(), "tank") ) {
-				ctype = rsLinkbot::TANK;
-				cnum = 3;
-			}*/
 			else if ( !strcmp(node->Value(), "tinywheel") ) {
 				ctype = rsLinkbot::TINYWHEEL;
 				cnum = 1;

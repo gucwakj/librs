@@ -33,7 +33,7 @@ namespace rsSim {
 			int moveJointWait(int);
 			int moveWait(void);
 			int addToSim(dWorldID&, dSpaceID&, int, rsSim::Sim*);
-			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, int) { return 0; };
+			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int) { return 0; };
 			virtual double getAngle(int) { return 0; };
 			BodyList& getBodyList(void);
 			double getCenter(int);

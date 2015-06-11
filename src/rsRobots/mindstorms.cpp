@@ -52,3 +52,37 @@ double Mindstorms::riseByWheels(int type) {
 	return -1;
 }
 
+const rs::Quat Mindstorms::tiltForWheels(int type1, int type2, double &p2) {
+	// invalid type
+	if (type1 == 0 || type2 == 0) {
+		p2 = 0;
+		return rs::Quat();
+	}
+
+	// set wheel on this face
+	_wheels[JOINT1] = type1;
+	_wheels[JOINT2] = type2;
+
+	// tilt
+	if (type1 == SMALL && type2 == SMALL) {
+		p2 = 0.014900;
+		return rs::Quat(0.021252, 0, 0.000875, 0.999774);
+	}
+	else if (type1 == SMALL && type2 == BIG) {
+		p2 = 0.019656;
+		return rs::Quat(0.056011, -0.054997, 0.037315, 0.996216);
+	}
+	else if (type1 == BIG && type2 == SMALL) {
+		p2 = 0.019656;
+		return rs::Quat(0.055916, 0.055094, -0.035580, 0.996279);
+	}
+	else if (type1 == BIG && type2 == BIG) {
+		p2 = 0.023194;
+		return rs::Quat(0.077761, 0, 0.000872, 0.996972);
+	}
+
+	// return default
+	p2 = 0;
+	return rs::Quat();
+}
+

@@ -23,7 +23,11 @@ Mindstorms::~Mindstorms(void) {
 /**********************************************************
 	inherited functions
  **********************************************************/
-int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int ground) {
+int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
+	// set wheels
+	_wheels[0] = w[0];
+	_wheels[1] = w[1];
+
 	// build
 	this->buildIndividual(p, q, a);
 
@@ -384,9 +388,16 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 }
 
 void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
+	// get radius
+	double radius = 0.001;
+	if (id == BIG)
+		radius = _bigwheel_radius;
+	else if (id == SMALL)
+		radius = _smallwheel_radius;
+
 	// set mass of body
 	dMass m;
-	dMassSetCylinder(&m, 270, 1, 2*_wheel_radius, _wheel_depth);
+	dMassSetCylinder(&m, 270, 1, 2*radius, _wheel_depth);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[id], &m);
 
@@ -397,7 +408,7 @@ void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
 	dBodySetFiniteRotationMode(_body[id], 1);
 
 	// set geometry
-	dGeomID geom = dCreateCylinder(_space, _wheel_radius, _wheel_depth);
+	dGeomID geom = dCreateCylinder(_space, radius, _wheel_depth);
 	dGeomSetBody(geom, _body[id]);
 	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom, Q1);

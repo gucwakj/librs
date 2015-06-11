@@ -836,6 +836,11 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ctype = rsLinkbot::SMALLWHEEL;
 				cnum = 1;
 			}
+			else if ( !strcmp(node->Value(), "salamander") ) {
+				ctype = rsLinkbot::SALAMANDER;
+				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
+			}
 			/*else if ( !strcmp(node->Value(), "square") ) {
 				ctype = rsLinkbot::SQUARE;
 				cnum = 4;

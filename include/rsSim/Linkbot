@@ -51,6 +51,7 @@ namespace rsSim {
 			void build_faceplate(Connector&);
 			void build_gripper(Connector&, int);
 			void build_omnidrive(Connector&);
+			void build_salamander(Connector&);
 			void build_simple(Connector&);
 			void build_wheel(Connector&, double);
 

@@ -5,9 +5,9 @@ using namespace rsMindstorms;
 
 Mindstorms::Mindstorms(int form) : Robot(form) {
 	_bigwheel_radius = 0.04100;
-	_body_height = 0.13400;
-	_body_length = 0.17300;
-	_body_width = 0.08700;
+	_body_height = 0.123879;
+	_body_length = 0.148832;
+	_body_width = 0.087319;
 	_smallwheel_radius = 0.02800;
 	_wheel_depth = 0.02660;
 	_wheel_radius = 0.02800;
@@ -64,21 +64,25 @@ const rs::Quat Mindstorms::tiltForWheels(int type1, int type2, double &p2) {
 	_wheels[JOINT2] = type2;
 
 	// tilt
+	if (type1 == NONE && type2 == NONE) {
+		p2 = 0.021420;
+		return rs::Quat(-0.0746256, 0, 0, 0.997212);
+	}
 	if (type1 == SMALL && type2 == SMALL) {
-		p2 = 0.014900;
-		return rs::Quat(0.021252, 0, 0.000875, 0.999774);
+		p2 = 0.028812;
+		return rs::Quat(-0.022158, 0, 0, 0.999755);
 	}
 	else if (type1 == SMALL && type2 == BIG) {
-		p2 = 0.019656;
-		return rs::Quat(0.056011, -0.054997, 0.037315, 0.996216);
+		p2 = 0.034112;
+		return rs::Quat(0.027590, -0.055976, 0.033117, 0.997501);
 	}
 	else if (type1 == BIG && type2 == SMALL) {
-		p2 = 0.019656;
-		return rs::Quat(0.055916, 0.055094, -0.035580, 0.996279);
+		p2 = 0.034112;
+		return rs::Quat(0.027590, 0.055976, -0.033117, 0.997501);
 	}
 	else if (type1 == BIG && type2 == BIG) {
-		p2 = 0.023194;
-		return rs::Quat(0.077761, 0, 0.000872, 0.996972);
+		p2 = 0.037561;
+		return rs::Quat(0.048244, 0, 0, 0.998836);
 	}
 
 	// return default

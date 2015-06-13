@@ -382,9 +382,9 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dGeomSetOffsetPosition(geom[0], 0, 0, 0);
 
 	// set geometry 1 - sphere
-	geom[1] = dCreateSphere(_space, 0.01573);
+	geom[1] = dCreateSphere(_space, 0.010229);
 	dGeomSetBody(geom[1], _body[BODY]);
-	dGeomSetOffsetPosition(geom[1], 0, -_body_length/2 + 0.01573/2, -_body_height/2 - 0.01573/2);
+	dGeomSetOffsetPosition(geom[1], 0, -_body_length/2 + 0.010229, -_body_height/2 - 0.010229);
 }
 
 void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {

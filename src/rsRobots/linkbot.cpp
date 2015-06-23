@@ -119,13 +119,11 @@ const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientatio
 	else if (type == rsLinkbot::EL) {
 		if (side == SIDE2)
 			return Q.multiply(0, 0, sin(0.785398), cos(0.785398));
-		else if (side == SIDE3) {
-			Q.multiply(sin(0.785398), 0, 0, cos(0.785398));
-			return Q.multiply(0, 0, sin(2.356194), cos(2.356194));
-		}
+		else if (side == SIDE3)
+			return Q.multiply(0, sin(0.785398), 0, cos(0.785398));
 		else if (side == SIDE4) {
-			Q.multiply(sin(0.785398), 0, 0, cos(0.785398));
-			return Q.multiply(0, 0, sin(0.785398), cos(0.785398));
+			Q.multiply(0, sin(2.356194), 0, cos(2.356194));
+			return Q.multiply(sin(1.570796), 0, 0, cos(1.570796));
 		}
 	}
 	else if (type == rsLinkbot::OMNIPLATE)

@@ -1234,6 +1234,9 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 		case rsLinkbot::DOUBLEBRIDGE:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/doublebridge.3ds");
 			break;
+		case rsLinkbot::EL:
+			node = osgDB::readNodeFile(_tex_path + "linkbot/simple.3ds");
+			break;
 		case rsLinkbot::FACEPLATE:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/faceplate.3ds");
 			break;

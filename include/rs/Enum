@@ -53,6 +53,7 @@ namespace rsLinkbot {
 		CASTER,
 		CUBE,
 		DOUBLEBRIDGE,
+		EL,
 		FACEPLATE,
 		GRIPPER,
 		OMNIPLATE,

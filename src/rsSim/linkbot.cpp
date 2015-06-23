@@ -1,3 +1,4 @@
+#include <iostream>
 #include <rs/Macros>
 #include <rsSim/Sim>
 #include <rsSim/Linkbot>
@@ -16,6 +17,34 @@ Linkbot::~Linkbot(void) {
 		MUTEX_DESTROY(&_motor[i].success_mutex);
 		COND_DESTROY(&_motor[i].success_cond);
 	}
+}
+
+void Linkbot::moveJointOnce(int id, double *values) {
+	// lock goal
+	MUTEX_LOCK(&_goal_mutex);
+
+	// set motion parameters
+	_motor[id].mode = SINGULAR;
+	_motor[id].state = POSITIVE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[id].id);
+	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// set array
+	_loc[id] = 0;
+	_values[id] = values;
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[id].success_mutex);
+	_motor[id].success = false;
+	MUTEX_UNLOCK(&_motor[id].success_mutex);
+
+	// unlock goal
+	MUTEX_UNLOCK(&_goal_mutex);
 }
 
 void Linkbot::moveJointSinusoid(int id) {
@@ -115,6 +144,9 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 			break;
 		case DOUBLEBRIDGE:
 			this->build_doublebridge(_conn.back());
+			break;
+		case EL:
+			this->build_el(_conn.back());
 			break;
 		case FACEPLATE:
 			this->build_faceplate(_conn.back());
@@ -383,7 +415,8 @@ void Linkbot::init_params(void) {
 	// create arrays for linkbots
 	_motor.resize(_dof);
 	_fb.resize(_dof + 1);
-	_sine.resize(_dof);
+	_sine.resize(_dof);		// research
+	_values.resize(_dof);	// research
 
 	// fill with default data
 	for (int i = 0; i < _dof; i++) {
@@ -420,6 +453,8 @@ void Linkbot::init_params(void) {
 		_sine[i].phase = 0;
 		_sine[i].run = 0;
 		_sine[i].start = 0;
+		// research: array of values
+		_values[i] = NULL;
 	}
 	_connected = 0;
 	_distOffset = 0;
@@ -661,6 +696,25 @@ void Linkbot::simPreCollisionThread(void) {
 				// end
 				break;
 			}
+			case SINGULAR: {
+				// reenable body on start
+				dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);
+				dBodyEnable(_body[0]);
+
+				// set new omega
+				double angle = _values[i][_loc[i]];
+				_motor[i].omega = (angle - _motor[i].theta)/step;
+				_motor[i].goal = angle;
+				_motor[i].state = NEUTRAL;
+				_loc[i]++;
+
+				// move forever
+				dJointEnable(_motor[i].id);
+				dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
+
+				// end
+				break;
+			}
 		}
 	}
 
@@ -827,6 +881,18 @@ void Linkbot::build_doublebridge(Connector &conn) {
 	dGeomSetBody(geom, conn.body);
 }
 
+void Linkbot::build_el(Connector &conn) {
+	// set mass of body
+	dMass m;
+	dMassSetBox(&m, 170, _conn_depth, 2*_face_radius, _conn_height);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(conn.body, &m);
+
+	// set geometry
+	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_face_radius, _conn_height);
+	dGeomSetBody(geom, conn.body);
+}
+
 void Linkbot::build_face(int id, const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m;
@@ -920,7 +986,8 @@ void Linkbot::build_salamander(Connector &conn) {
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, _conn_depth, _salamander_length, _conn_height);
+	//dGeomID geom = dCreateBox(_space, _conn_depth, _salamander_length, _conn_height);
+	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_face_radius, _conn_height);
 	dGeomSetBody(geom, conn.body);
 }
 

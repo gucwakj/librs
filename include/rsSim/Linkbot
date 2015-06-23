@@ -22,6 +22,7 @@ namespace rsSim {
 			const rs::Pos getFootForce(void);
 			const rs::Pos getFootTorque(void);
 			const rs::Vec getJoints(void);
+			void moveJointOnce(int, double*);		// research
 			void moveJointSinusoid(int);		// research
 			void setSinusoidGain(double);		// research
 			void setSinusoidFrequency(double);		// research
@@ -47,6 +48,7 @@ namespace rsSim {
 			void build_caster(Connector&, int);
 			void build_cube(Connector&);
 			void build_doublebridge(Connector&);
+			void build_el(Connector&);
 			void build_face(int, const rs::Pos&, const rs::Quat&);
 			void build_faceplate(Connector&);
 			void build_gripper(Connector&, int);
@@ -71,6 +73,8 @@ namespace rsSim {
 			std::vector<Sinusoid> _sine;										// research: sinusoid parameters
 			std::vector<std::tuple<dBodyID, double, double, double>> _f;		// research: forces to add to bodies
 			std::vector<std::tuple<dBodyID, double, double, double>> _t;		// research: torque to add to bodies
+			std::vector<double *> _values;										// research: values of integrated array
+			int _loc[3];
 	};
 
 } // namespace rsSim

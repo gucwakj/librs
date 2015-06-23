@@ -275,53 +275,47 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	this->build_face(FACE3, this->getRobotBodyPosition(FACE3, p, q), this->getRobotBodyQuaternion(FACE3, 0, q));
 
 	// joint variable
-	dJointID joint[_dof];
 	rs::Pos o;
 
 	// joint for body to face 1
-	joint[JOINT1] = dJointCreateHinge(_world, 0);
-	dJointAttach(joint[JOINT1], _body[BODY], _body[FACE1]);
+	_motor[JOINT1].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[JOINT1].joint, _body[BODY], _body[FACE1]);
 	o = q.multiply(-_body_width/2, 0, 0);
-	dJointSetHingeAnchor(joint[JOINT1], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+	dJointSetHingeAnchor(_motor[JOINT1].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 	o = q.multiply(1, 0, 0);
-	dJointSetHingeAxis(joint[JOINT1], o[0], o[1], o[2]);
+	dJointSetHingeAxis(_motor[JOINT1].joint, o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[FACE1], o[0], o[1], o[2]);
-	dJointSetFeedback(joint[JOINT1], &(_fb[JOINT1]));
 
 	// joint for body to face 2
 	if (_disabled == JOINT2) {
-		joint[JOINT2] = dJointCreateFixed(_world, 0);
-		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
-		dJointSetFixed(joint[JOINT2]);
-		dJointSetFeedback(joint[JOINT2], &(_fb[JOINT2]));
+		_motor[JOINT2].joint = dJointCreateFixed(_world, 0);
+		dJointAttach(_motor[JOINT2].joint, _body[BODY], _body[FACE2]);
+		dJointSetFixed(_motor[JOINT2].joint);
 	}
 	else {
-		joint[JOINT2] = dJointCreateHinge(_world, 0);
-		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
+		_motor[JOINT2].joint = dJointCreateHinge(_world, 0);
+		dJointAttach(_motor[JOINT2].joint, _body[BODY], _body[FACE2]);
 		o = q.multiply(0, -_body_width/2, 0);
-		dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		dJointSetHingeAnchor(_motor[JOINT2].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(0, 1, 0);
-		dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
+		dJointSetHingeAxis(_motor[JOINT2].joint, o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE2], o[0], o[1], o[2]);
-		dJointSetFeedback(joint[JOINT2], &(_fb[JOINT2]));
 	}
 
 	// joint for body to face 3
 	if (_disabled == JOINT3) {
-		joint[JOINT3] = dJointCreateFixed(_world, 0);
-		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
-		dJointSetFixed(joint[JOINT3]);
-		dJointSetFeedback(joint[JOINT3], &(_fb[JOINT3]));
+		_motor[JOINT3].joint = dJointCreateFixed(_world, 0);
+		dJointAttach(_motor[JOINT3].joint, _body[BODY], _body[FACE3]);
+		dJointSetFixed(_motor[JOINT3].joint);
 	}
 	else {
-		joint[JOINT3] = dJointCreateHinge(_world, 0);
-		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
+		_motor[JOINT3].joint = dJointCreateHinge(_world, 0);
+		dJointAttach(_motor[JOINT3].joint, _body[BODY], _body[FACE3]);
 		o = q.multiply(-_body_width/2, 0, 0);
-		dJointSetHingeAnchor(joint[JOINT3], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		dJointSetHingeAnchor(_motor[JOINT3].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(-1, 0, 0);
-		dJointSetHingeAxis(joint[JOINT3], o[0], o[1], o[2]);
+		dJointSetHingeAxis(_motor[JOINT3].joint, o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE3], o[0], o[1], o[2]);
-		dJointSetFeedback(joint[JOINT3], &(_fb[JOINT3]));
 	}
 
 	// build rotated joints
@@ -335,7 +329,6 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	// build motors
 	for (int i = 0; i < _dof; i++) {
 		_motor[i].id = dJointCreateAMotor(_world, 0);
-		_motor[i].joint = joint[i];
 		dJointAttach(_motor[i].id, _body[BODY], _body[FACE1 + i]);
 		dJointSetAMotorMode(_motor[i].id, dAMotorUser);
 		dJointSetAMotorNumAxes(_motor[i].id, 1);
@@ -359,11 +352,9 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 
 double Linkbot::calculate_angle(int id) {
 	if (id == _disabled)
-		_motor[id].theta = 0;
-	else
-		_motor[id].theta = mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
+		return 0;
 
-    return _motor[id].theta;
+	return mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
 }
 
 const rs::Pos Linkbot::getCoM(double &mass) {

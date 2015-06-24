@@ -819,6 +819,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ctype = rsLinkbot::FACEPLATE;
 				cnum = 1;
 			}
+			else if ( !strcmp(node->Value(), "foot") ) {
+				ctype = rsLinkbot::FOOT;
+				cnum = 1;
+			}
 			else if ( !strcmp(node->Value(), "gripper") ) {
 				ctype = rsLinkbot::GRIPPER;
 				cnum = 1;

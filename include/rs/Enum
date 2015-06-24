@@ -55,6 +55,7 @@ namespace rsLinkbot {
 		DOUBLEBRIDGE,
 		EL,
 		FACEPLATE,
+		FOOT,
 		GRIPPER,
 		OMNIPLATE,
 		SALAMANDER,

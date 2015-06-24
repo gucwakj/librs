@@ -159,6 +159,8 @@ const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::FACEPLATE)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
+	else if (type == rsLinkbot::FOOT)
+		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::GRIPPER)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::OMNIPLATE)

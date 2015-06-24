@@ -151,6 +151,9 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		case FACEPLATE:
 			this->build_faceplate(_conn.back());
 			break;
+		case FOOT:
+			this->build_foot(_conn.back());
+			break;
 		case GRIPPER:
 			this->build_gripper(_conn.back(), face);
 			break;
@@ -923,6 +926,18 @@ void Linkbot::build_faceplate(Connector &conn) {
 
 	// set geometry
 	dGeomID geom = dCreateBox(_space, _conn_depth, _body_height, _body_height);
+	dGeomSetBody(geom, conn.body);
+}
+
+void Linkbot::build_foot(Connector &conn) {
+	// set mass of body
+	dMass m;
+	dMassSetBox(&m, 170, _conn_depth, 2*_face_radius, _conn_height);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(conn.body, &m);
+
+	// set geometry
+	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_face_radius, _conn_height);
 	dGeomSetBody(geom, conn.body);
 }
 

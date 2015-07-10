@@ -1241,7 +1241,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 			node = osgDB::readNodeFile(_tex_path + "linkbot/faceplate.3ds");
 			break;
 		case rsLinkbot::FOOT:
-			node = osgDB::readNodeFile(_tex_path + "linkbot/simple.3ds");
+			node = osgDB::readNodeFile(_tex_path + "linkbot/foot.3ds");
 			break;
 		case rsLinkbot::GRIPPER:
 			node = osgDB::readNodeFile(_tex_path + "linkbot/gripper.3ds");

@@ -41,7 +41,11 @@ const Pos Pos::add(double x, double y, double z) {
 	return (*this);
 }
 
-void Pos::print(void) {
-	std::cerr << "P: " << _v[0] << " " << _v[1] << " " << _v[2] << std::endl;
+void Pos::print(char *name) {
+	std::cerr << name << ": " << _v[0] << " " << _v[1] << " " << _v[2] << std::endl;
+}
+
+void Pos::print(char *name) const {
+	std::cerr << name << ": " << _v[0] << " " << _v[1] << " " << _v[2] << std::endl;
 }
 

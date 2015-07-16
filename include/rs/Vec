@@ -20,7 +20,8 @@ namespace rs {
 
 			void add(double);
 			void allocate(int);
-			void print(void);
+			void print(char* = "V");
+			void print(char* = "V") const;
 			unsigned int size(void) const;
 
 			// access operators

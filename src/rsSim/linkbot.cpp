@@ -134,7 +134,7 @@ void Linkbot::addTorque(int face, const rs::Pos &t) {
 	dBodyAddForce(_body[face], t[0], t[1], t[2]);
 }
 
-int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int ground) {
+int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
 	// build
 	this->buildIndividual(p, q, a);
 

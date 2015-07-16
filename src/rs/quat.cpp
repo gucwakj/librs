@@ -65,7 +65,11 @@ const Quat Quat::multiply(double x, double y, double z, double w){
 	return (*this);
 }
 
-void Quat::print(void) {
-	std::cerr << "Q: " << _v[0] << " " << _v[1] << " " << _v[2] << " " << _v[3] << std::endl;
+void Quat::print(char *name) {
+	std::cerr << name << ": " << _v[0] << " " << _v[1] << " " << _v[2] << " " << _v[3] << std::endl;
+}
+
+void Quat::print(char *name) const {
+	std::cerr << name << ": " << _v[0] << " " << _v[1] << " " << _v[2] << " " << _v[3] << std::endl;
 }
 

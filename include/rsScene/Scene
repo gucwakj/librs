@@ -97,6 +97,7 @@ namespace rsScene {
 
 		// private data
 		private:
+			bool _graphics;						// flag: graphics setup ready
 			bool _highlight;					// flag: enable object highlight on click
 			bool _label;						// flag: enable object hud on click
 			bool _thread;						// flag: thread is running
@@ -112,7 +113,9 @@ namespace rsScene {
 			std::string _model_path;			// path for 3ds models
 			std::vector<double> _grid;			// grid
 			std::vector<std::string> _path;		// image paths
+			COND_T _graphics_cond;				// condition: graphics setup waiting
 			MUTEX_T _thread_mutex;				// mutex: thread running state
+			MUTEX_T _graphics_mutex;			// mutex: graphics setup complete
 			THREAD_T _osgThread;				// thread: graphics window
 	};
 

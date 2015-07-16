@@ -73,6 +73,8 @@ std::cerr << "rsScene/~Scene start" << std::endl;
 	}
 
 	// clean mutexes
+	COND_DESTROY(&_graphics_mutex);
+	MUTEX_DESTROY(&_graphics_mutex);
 	MUTEX_DESTROY(&_thread_mutex);
 std::cerr << "rsScene/~Scene end" << std::endl;
 }
@@ -656,7 +658,20 @@ int Scene::setupViewer(osgViewer::Viewer *viewer) {
 }
 
 void Scene::start(int pause) {
+	// init graphics variables
+	COND_INIT(&_graphics_cond);
+	MUTEX_INIT(&_graphics_mutex);
+	_graphics = false;
+
+	// create thread
 	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
+
+	// wait for graphics to be set up
+	MUTEX_LOCK(&_graphics_mutex);
+	while (!_graphics) {
+		COND_WAIT(&_graphics_cond, &_graphics_mutex);
+	}
+	MUTEX_UNLOCK(&_graphics_mutex);
 }
 
 void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec &c, bool on) {
@@ -1513,6 +1528,9 @@ void* Scene::graphics_thread(void *arg) {
 
 	// viewer event handlers
 	p->_viewer->addEventHandler(new osgViewer::WindowSizeHandler);
+
+	// signal calling function that setup is done
+	COND_ACTION(&(p->_graphics_cond), &(p->_graphics_mutex), p->_graphics = true);
 
 	// run viewer
 	MUTEX_LOCK(&(p->_thread_mutex));

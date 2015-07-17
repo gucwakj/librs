@@ -16,11 +16,7 @@ namespace rsSim {
 			virtual ~Linkbot(void);
 
 			virtual int addConnector(int, int, int = rs::RIGHT, double = 0, int = 1, int = -1);
-			void addForce(int, const rs::Pos&);
-			void addTorque(int, const rs::Pos&);
 			virtual void getCoM(double&, double&, double&);
-			const rs::Pos getFootForce(void);
-			const rs::Pos getFootTorque(void);
 			const rs::Vec getJoints(void);
 
 		// inherited functions from ModularRobot class
@@ -49,11 +45,6 @@ namespace rsSim {
 			void build_omnidrive(Connector&);
 			void build_simple(Connector&);
 			void build_wheel(Connector&, double);
-
-		// private variables
-		private:
-			std::vector<std::tuple<dBodyID, double, double, double>> _f;		// forces to add to bodies
-			std::vector<std::tuple<dBodyID, double, double, double>> _t;		// torque to add to bodies
 	};
 
 } // namespace rsSim

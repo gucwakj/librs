@@ -13,14 +13,6 @@ std::cerr << "rsSim/~ModularRobot start" << std::endl;
 std::cerr << "rsSim/~ModularRobot end" << std::endl;
 }
 
-const rs::Pos ModularRobot::getAttachmentForce(void) {
-	return rs::Pos(_fb[_dof].f2[0], _fb[_dof].f2[1], _fb[_dof].f2[2]);
-}
-
-const rs::Pos ModularRobot::getAttachmentTorque(void) {
-	return rs::Pos(_fb[_dof].t2[0], _fb[_dof].t2[1], _fb[_dof].t2[2]);
-}
-
 ConnectorList& ModularRobot::getConnectorList(void) {
 	return _conn;
 }
@@ -42,15 +34,12 @@ int ModularRobot::getConnectorOrientation(int face) {
 /**********************************************************
 	protected functions for inherited classes
  **********************************************************/
-int ModularRobot::fix_body_to_connector(dBodyID cBody, int face, dJointFeedback *fb) {
+int ModularRobot::fix_body_to_connector(dBodyID cBody, int face) {
 	// fixed joint
 	dJointID joint = dJointCreateFixed(_world, 0);
 
 	// attach to correct body
 	dJointAttach(joint, cBody, this->getBodyID(face));
-
-	// attach feedback
-	dJointSetFeedback(joint, fb);
 
 	// set joint params
 	dJointSetFixed(joint);
@@ -59,7 +48,7 @@ int ModularRobot::fix_body_to_connector(dBodyID cBody, int face, dJointFeedback 
 	return 0;
 }
 
-int ModularRobot::fix_connector_to_body(int face, dBodyID cBody, dJointFeedback *fb, int conn) {
+int ModularRobot::fix_connector_to_body(int face, dBodyID cBody, int conn) {
 	// fixed joint
 	dJointID joint = dJointCreateFixed(_world, 0);
 
@@ -72,9 +61,6 @@ int ModularRobot::fix_connector_to_body(int face, dBodyID cBody, dJointFeedback 
 
 	// attach to correct body
 	dJointAttach(joint, body, cBody);
-
-	// attach feedback
-	//dJointSetFeedback(joint, fb);		// TODO: causes ode 'CHECK_NOT_LOCKED(geom->parent_space)' segfault
 
 	// set joint params
 	dJointSetFixed(joint);

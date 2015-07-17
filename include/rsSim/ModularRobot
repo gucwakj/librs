@@ -9,7 +9,6 @@ namespace rsSim {
 	// connector struct
 	struct Connector {
 		dBodyID body;
-		dJointFeedback fb;
 		double o[3];
 		int face, type;
 		int d_side, d_type;
@@ -28,21 +27,18 @@ namespace rsSim {
 
 			virtual int addConnector(int, int, int = rs::RIGHT, double = 0, int = 1, int = -1) { return 0; };
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, dBodyID, int, int, int)  { return 0; };
-			const rs::Pos getAttachmentForce(void);
-			const rs::Pos getAttachmentTorque(void);
 			dBodyID getConnectorBodyID(int);
 			int getConnectorOrientation(int);
 			ConnectorList& getConnectorList(void);
 
 		// utility functions
 		protected:
-			int fix_body_to_connector(dBodyID, int, dJointFeedback* = NULL);
-			int fix_connector_to_body(int, dBodyID, dJointFeedback* = NULL, int = -1);
+			int fix_body_to_connector(dBodyID, int);
+			int fix_connector_to_body(int, dBodyID, int = -1);
 
 		// data members
 		protected:
 			ConnectorList _conn;				// connectors
-			std::vector<dJointFeedback> _fb;	// feedback forces from joints
 	};
 
 } // namepsace rsSim

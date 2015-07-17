@@ -118,20 +118,10 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 	dBodySetQuaternion(_conn.back().body, Q);
 
 	// fix connector to body
-	this->fix_connector_to_body(face, _conn.back().body, &(_conn.back().fb), conn);
+	this->fix_connector_to_body(face, _conn.back().body, conn);
 
 	// success
 	return 0;
-}
-
-void Linkbot::addForce(int face, const rs::Pos &f) {
-	_f.push_back(std::make_tuple(_body[face], f[0], f[1], f[2]));
-	dBodyAddForce(_body[face], f[0], f[1], f[2]);
-}
-
-void Linkbot::addTorque(int face, const rs::Pos &t) {
-	_t.push_back(std::make_tuple(_body[face], t[0], t[1], t[2]));
-	dBodyAddForce(_body[face], t[0], t[1], t[2]);
 }
 
 int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
@@ -174,9 +164,6 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyI
 	// build new module
 	this->buildIndividual(P, Q, a);
 
-	// add fixed joint to attach two modules
-	this->fix_body_to_connector(base, face, &(_fb.back()));
-
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);
 
@@ -215,14 +202,12 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	o = q.multiply(1, 0, 0);
 	dJointSetHingeAxis(joint[JOINT1], o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[FACE1], o[0], o[1], o[2]);
-	dJointSetFeedback(joint[JOINT1], &(_fb[JOINT1]));
 
 	// joint for body to face 2
 	if (_disabled == JOINT2) {
 		joint[JOINT2] = dJointCreateFixed(_world, 0);
 		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
 		dJointSetFixed(joint[JOINT2]);
-		dJointSetFeedback(joint[JOINT2], &(_fb[JOINT2]));
 	}
 	else {
 		joint[JOINT2] = dJointCreateHinge(_world, 0);
@@ -232,7 +217,6 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 		o = q.multiply(0, 1, 0);
 		dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE2], o[0], o[1], o[2]);
-		dJointSetFeedback(joint[JOINT2], &(_fb[JOINT2]));
 	}
 
 	// joint for body to face 3
@@ -240,7 +224,6 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 		joint[JOINT3] = dJointCreateFixed(_world, 0);
 		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
 		dJointSetFixed(joint[JOINT3]);
-		dJointSetFeedback(joint[JOINT3], &(_fb[JOINT3]));
 	}
 	else {
 		joint[JOINT3] = dJointCreateHinge(_world, 0);
@@ -250,7 +233,6 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 		o = q.multiply(-1, 0, 0);
 		dJointSetHingeAxis(joint[JOINT3], o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE3], o[0], o[1], o[2]);
-		dJointSetFeedback(joint[JOINT3], &(_fb[JOINT3]));
 	}
 
 	// build rotated joints
@@ -295,14 +277,6 @@ double Linkbot::getAngle(int id) {
     return _motor[id].theta;
 }
 
-const rs::Pos Linkbot::getFootForce(void) {
-	return rs::Pos(-_fb[JOINT2].f2[0], -_fb[JOINT2].f2[1], -_fb[JOINT2].f2[2]);
-}
-
-const rs::Pos Linkbot::getFootTorque(void) {
-	return rs::Pos(-_fb[JOINT2].t2[0], -_fb[JOINT2].t2[1], -_fb[JOINT2].t2[2]);
-}
-
 const rs::Vec Linkbot::getJoints(void) {
 	return rs::Vec(_motor[JOINT1].theta, _motor[JOINT2].theta, _motor[JOINT3].theta);
 }
@@ -331,7 +305,6 @@ void Linkbot::init_params(void) {
 
 	// create arrays for linkbots
 	_motor.resize(_dof);
-	_fb.resize(_dof + 1);
 
 	// fill with default data
 	for (int i = 0; i < _dof; i++) {
@@ -377,14 +350,6 @@ void Linkbot::simPreCollisionThread(void) {
 	// lock angle and goal
 	MUTEX_LOCK(&_goal_mutex);
 	MUTEX_LOCK(&_theta_mutex);
-
-	// apply forces
-	for (unsigned int i = 0; i < _f.size(); i++) {
-		dBodyAddForce(std::get<0>(_f[i]), std::get<1>(_f[i]), std::get<2>(_f[i]), std::get<3>(_f[i]));
-	}
-	for (unsigned int i = 0; i < _t.size(); i++) {
-		dBodyAddTorque(std::get<0>(_t[i]), std::get<1>(_t[i]), std::get<2>(_t[i]), std::get<3>(_t[i]));
-	}
 
 	// get body rotation from world
 	const double *R = dBodyGetRotation(_body[BODY]);

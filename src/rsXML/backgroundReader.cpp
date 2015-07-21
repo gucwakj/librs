@@ -21,8 +21,10 @@ BackgroundReader::BackgroundReader(std::string dir) {
 		_name = node->GetText();
 
 	// get level
-	if ( (node = doc.FirstChildElement("level")) ) {
-		if ( !strcmp(node->GetText(), "board") )
+	if ((node = doc.FirstChildElement("level"))) {
+		if (!strcmp(node->GetText(), "none"))
+			_level = rs::Level::None;
+		else if ( !strcmp(node->GetText(), "board") )
 			_level = rs::Level::Board;
 		else if ( !strcmp(node->GetText(), "outdoors") )
 			_level = rs::Level::Outdoors;

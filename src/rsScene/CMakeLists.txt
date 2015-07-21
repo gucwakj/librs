@@ -54,3 +54,11 @@ target_link_libraries (rsScene ${EXTRA_LIBS})
 # set version properties
 set_target_properties (rsScene PROPERTIES VERSION ${LibRS_VERSION} SOVERSION ${LibRS_SO_VERSION})
 
+if (WIN32)
+	add_custom_command (TARGET rsScene
+		POST_BUILD
+		COMMAND "mt.exe" -manifest \"${CMAKE_CURRENT_SOURCE_DIR}\\..\\..\\resources\\dpiawarescaling.manifest\" -outputresource:\"${OUTPUT_BINDIR}\\rsScene.dll\"\;\#2
+		COMMENT "Adding display aware manifest..."
+	)
+endif ()
+

@@ -413,12 +413,15 @@ tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
 }
 
 tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
+	// get robot elements
 	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
 	tinyxml2::XMLElement *node = sim->FirstChildElement();
-	int j = -1;
+
+	// reform old node with 'id' to new robot form
+	int i = -1;
 	while (node) {
-		node->QueryIntAttribute("id", &j);
-		if (j == id) {
+		node->QueryIntAttribute("id", &i);
+		if (i == id) {
 			node->SetAttribute("form", form);
 			switch (form) {
 				case rs::LINKBOTI:
@@ -438,6 +441,8 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 		}
 		node = node->NextSiblingElement();
 	}
+
+	// create new node if one matching 'id' is not found
 	switch (form) {
 		case rs::LINKBOTI:
 			node = _doc.NewElement("linkboti");
@@ -462,6 +467,20 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 	}
 	node->SetAttribute("id", id);
 	node->SetAttribute("form", form);
+
+	// insert after node with id = id-1
+	tinyxml2::XMLElement *prev_node = sim->FirstChildElement();
+	while (prev_node) {
+		int i = -1;
+		prev_node->QueryIntAttribute("id", &i);
+		if (i == id - 1) {
+			sim->InsertAfterChild(prev_node, node);
+			return node;
+		}
+		node = node->NextSiblingElement();
+	}
+
+	// insert at beginning
 	sim->InsertFirstChild(node);
 	return node;
 }

@@ -1,6 +1,5 @@
 #include <cstring>
 #include <ctime>
-#include <iostream>
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -27,17 +26,14 @@ Robot::Robot(void) : rsRobots::Robot(rs::ROBOT) {
 }
 
 Robot::~Robot(void) {
-std::cerr << "rsSim/~Robot start" << std::endl;
 	// delete robot from simulation
-	if (_sim)
-		_sim->deleteRobot(_id);
+	if (_sim) _sim->deleteRobot(_id);
 
 	// destroy mutexes
 	MUTEX_DESTROY(&_goal_mutex);
 	MUTEX_DESTROY(&_success_mutex);
 	COND_DESTROY(&_success_cond);
 	MUTEX_DESTROY(&_theta_mutex);
-std::cerr << "rsSim/~Robot end" << std::endl;
 }
 
 int Robot::holdJoint(int id) {

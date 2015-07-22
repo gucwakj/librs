@@ -29,6 +29,7 @@ namespace rsRobots {
 			double getWheelRadius(void);
 			void setID(int);
 			void setForm(int);
+			void setLED(const rs::Vec&);
 			void setName(std::string);
 			void setTrace(bool);
 			void setWheelRadius(double);

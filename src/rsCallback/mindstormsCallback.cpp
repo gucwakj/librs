@@ -2,6 +2,7 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>
 
+#include <rsScene/Scene>
 #include <rsCallback/MindstormsCallback>
 
 using namespace rsCallback;
@@ -28,7 +29,7 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		if (_units)
 			text.append("\n\n(" + std::to_string(x*100) + ", " + std::to_string(y*100) + ") [cm]");
 		else
-			text.append("\n\n(" + std::to_string(y*39.37) + ", " + std::to_string(y*39.37) + ") [cm]");
+			text.append("\n\n(" + std::to_string(y*39.37) + ", " + std::to_string(y*39.37) + ") [in]");
 		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
 		label->setText(text);
 		label->setPosition(osg::Vec3(x, y, z));
@@ -56,9 +57,9 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		}
 		// child 2: bodies; drawable 2: led
-		//osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(0)->asGeode()->getDrawable(2));
-		//double *rgb = _robot->getRGB();
-		//led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
+		osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(0)->asGeode()->getDrawable(2));
+		double *rgb = _robot->getRGB();
+		led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
 	}
 	traverse(node, nv);
 }

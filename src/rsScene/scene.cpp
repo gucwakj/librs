@@ -63,7 +63,6 @@ Scene::Scene(void) : KeyboardHandler() {
 }
 
 Scene::~Scene(void) {
-std::cerr << "rsScene/~Scene start" << std::endl;
 	// stop thread
 	if (_osgThread) {
 		MUTEX_LOCK(&_thread_mutex);
@@ -76,7 +75,6 @@ std::cerr << "rsScene/~Scene start" << std::endl;
 	COND_DESTROY(&_graphics_mutex);
 	MUTEX_DESTROY(&_graphics_mutex);
 	MUTEX_DESTROY(&_thread_mutex);
-std::cerr << "rsScene/~Scene end" << std::endl;
 }
 
 /**********************************************************
@@ -353,7 +351,7 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 	if (_units)
 		text.append("\n\n(" + std::to_string(p[0]*100) + ", " + std::to_string(p[1]*100) + ") [cm]");
 	else
-		text.append("\n\n(" + std::to_string(p[0]*39.37) + ", " + std::to_string(p[1]*39.37) + ") [cm]");
+		text.append("\n\n(" + std::to_string(p[0]*39.37) + ", " + std::to_string(p[1]*39.37) + ") [in]");
 	label->setText(text);
 	label->setPosition(osg::Vec3(p[0], p[1], p[2] + (robot->getID() % 2 ? 0.08 : 0) + 0.08));
 	osg::Geode *label_geode = new osg::Geode();
@@ -546,8 +544,10 @@ void Scene::setMouseHandler(rsScene::MouseHandler *mh) {
 }
 
 void Scene::setPauseText(int pause) {
-	if (pause)
+	if (pause) {
+		this->setHUD(true);
 		this->getHUDText()->setText("Paused: Press any key to restart");
+	}
 	else {
 		this->setHUD(false);
 		this->getHUDText()->setText("");

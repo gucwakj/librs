@@ -1,5 +1,4 @@
 #include <rsSim/ModularRobot>
-#include <iostream>
 
 using namespace rsSim;
 
@@ -7,10 +6,8 @@ ModularRobot::ModularRobot(void) : rsRobots::Robot(rs::ROBOT) {
 }
 
 ModularRobot::~ModularRobot(void) {
-std::cerr << "rsSim/~ModularRobot start" << std::endl;
 	// destroy connectors array
 	_conn.empty();
-std::cerr << "rsSim/~ModularRobot end" << std::endl;
 }
 
 ConnectorList& ModularRobot::getConnectorList(void) {

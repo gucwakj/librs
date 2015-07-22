@@ -64,6 +64,12 @@ void Robot::setForm(int form) {
 	_form = form;
 }
 
+void Robot::setLED(const rs::Vec &c) {
+	_rgb[0] = c[0];
+	_rgb[1] = c[1];
+	_rgb[2] = c[2];
+}
+
 void Robot::setName(std::string name) {
 	_name = name;
 }

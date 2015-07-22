@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <rs/Macros>
 #include <rsSim/Sim>
 #include <rsSim/Mindstorms>

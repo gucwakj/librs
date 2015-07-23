@@ -51,9 +51,14 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	}
 
 	// build robot bodies
-	this->build_body(this->getRobotBodyPosition(BODY, p, q), this->getRobotBodyQuaternion(BODY, 0, q));
+	const rs::Pos p1 = this->getRobotBodyPosition(BODY, p, q);
+	const rs::Quat q1 = this->getRobotBodyQuaternion(BODY, 0, q);
+	this->build_body(p1, q1);
 	this->build_wheel(WHEEL1, this->getRobotBodyPosition(WHEEL1, p, q), this->getRobotBodyQuaternion(WHEEL1, 0, q));
 	this->build_wheel(WHEEL2, this->getRobotBodyPosition(WHEEL2, p, q), this->getRobotBodyQuaternion(WHEEL2, 0, q));
+
+	// set center offset
+	_center[1] = -p1[1] / cos(2 * asin(q1[0]));
 
 	// joint variable
 	std::vector<dJointID> joint;
@@ -74,7 +79,7 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	dJointAttach(joint[JOINT2], _body[BODY], _body[WHEEL2]);
 	o = q.multiply(_body_width/2, 0, 0);
 	dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-	o = q.multiply(-1, 0, 0);
+	o = q.multiply(1, 0, 0);
 	dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[WHEEL2], o[0], o[1], o[2]);
 
@@ -92,7 +97,7 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	}
 	o = q.multiply(1, 0, 0);
 	dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, o[0], o[1], o[2]);
-	o = q.multiply(-1, 0, 0);
+	o = q.multiply(1, 0, 0);
 	dJointSetAMotorAxis(_motor[JOINT2].id, 0, 1, o[0], o[1], o[2]);
 
 	// set damping on all bodies to 0.1
@@ -135,7 +140,7 @@ void Mindstorms::init_params(void) {
 		_motor[i].state = NEUTRAL;
 		_motor[i].stopping = 0;
 		_motor[i].success = true;
-		_motor[i].tau_max = 2;
+		_motor[i].tau_max = 4;
 		_motor[i].timeout = 0;
 		_motor[i].theta = 0;
 		MUTEX_INIT(&_motor[i].success_mutex);
@@ -165,7 +170,7 @@ void Mindstorms::simPreCollisionThread(void) {
 	_accel[1] = R[9];
 	_accel[2] = R[10];
 	// add gaussian noise to accel
-	this->noisy(_accel, 3, 0.005);
+	//this->noisy(_accel, 3, 0.005);
 
 	// update angle values for each degree of freedom
 	for (int i = 0; i < _dof; i++) {
@@ -361,7 +366,7 @@ void Mindstorms::simPostCollisionThread(void) {
 void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 1000, _body_width, _body_length, _body_height);
+	dMassSetBox(&m, 500, _body_width, _body_length, _body_height);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[BODY], &m);
 
@@ -380,22 +385,22 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dGeomSetOffsetPosition(geom[0], 0, 0, 0);
 
 	// set geometry 1 - sphere
-	geom[1] = dCreateSphere(_space, 0.010229);
+	geom[1] = dCreateSphere(_space, 0.020458);
 	dGeomSetBody(geom[1], _body[BODY]);
-	dGeomSetOffsetPosition(geom[1], 0, -_body_length/2 + 0.010229, -_body_height/2 - 0.010229);
+	dGeomSetOffsetPosition(geom[1], 0, -_body_length/2 + 0.020458, -_body_height/2 - 0.01557);
 }
 
 void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
 	// get radius
 	double radius = 0.001;
-	if (id == BIG)
+	if (_wheels[id-1] == BIG)
 		radius = _bigwheel_radius;
-	else if (id == SMALL)
+	else if (_wheels[id-1] == SMALL)
 		radius = _smallwheel_radius;
 
 	// set mass of body
 	dMass m;
-	dMassSetCylinder(&m, 270, 1, 2*radius, _wheel_depth);
+	dMassSetCylinder(&m, 170, 1, 2*radius, _wheel_depth);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[id], &m);
 

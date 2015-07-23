@@ -23,10 +23,6 @@ const rs::Quat Mindstorms::getRobotBodyQuaternion(int body, double theta, const 
 	// new quaternion
 	rs::Quat Q(q);
 
-	// calculate offset quaternion
-	if (body == WHEEL1)
-		Q.multiply(rs::Quat(0, 0, sin(1.570796), cos(1.570796)));
-
 	// wheel rotation
 	Q.multiply(rs::Quat(sin(0.5*theta), 0, 0, cos(0.5*theta)));
 

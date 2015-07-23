@@ -1304,6 +1304,18 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
+	// draw 'led'
+	osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, 0.02, 0), 0.01, 0.01);
+	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
+	led->setColor(osg::Vec4(c[0], c[1], c[2], 1));
+	osg::Geode *bodyled = new osg::Geode();
+	bodyled->addDrawable(led);
+	bodyled->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	bodyled->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	bodyled->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	bodyled->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	bodyled->setCullingActive(false);
+
 	// set rendering properties
 	body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
@@ -1313,12 +1325,14 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 
 	// add body to transform
 	pat->addChild(body);
+	// add 'led' as second child of body
+	pat->addChild(bodyled);
 }
 
 void Scene::draw_robot_mindstorms_wheel(rsRobots::Mindstorms *robot, Robot *group, int type, int face) {
 	// get robot p&q
 	osg::PositionAttitudeTransform *pat;
-	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::BODY));
+	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsMindstorms::BODY));
 	osg::Vec3d p = pat->getPosition();
 	osg::Quat q = pat->getAttitude();
 

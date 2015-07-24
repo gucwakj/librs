@@ -208,7 +208,7 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	else {
 		joint[JOINT2] = dJointCreateHinge(_world, 0);
 		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
-		o = q.multiply(0, -_body_width/2, 0);
+		o = q.multiply(0, -_body_length, 0);
 		dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(0, 1, 0);
 		dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
@@ -224,7 +224,7 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	else {
 		joint[JOINT3] = dJointCreateHinge(_world, 0);
 		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
-		o = q.multiply(-_body_width/2, 0, 0);
+		o = q.multiply(_body_width/2, 0, 0);
 		dJointSetHingeAnchor(joint[JOINT3], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(-1, 0, 0);
 		dJointSetHingeAxis(joint[JOINT3], o[0], o[1], o[2]);

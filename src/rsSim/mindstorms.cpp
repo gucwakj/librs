@@ -56,6 +56,7 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	this->build_body(p1, q1);
 	this->build_wheel(WHEEL1, this->getRobotBodyPosition(WHEEL1, p, q), this->getRobotBodyQuaternion(WHEEL1, 0, q));
 	this->build_wheel(WHEEL2, this->getRobotBodyPosition(WHEEL2, p, q), this->getRobotBodyQuaternion(WHEEL2, 0, q));
+	this->build_caster(p1, q1);
 
 	// set center offset
 	_center[1] = -p1[1] / cos(2 * asin(q1[0]));
@@ -83,6 +84,16 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[WHEEL2], o[0], o[1], o[2]);
 
+	// joint for body to caster
+	dJointID jointC = dJointCreateHinge2(_world, 0);
+	dJointAttach(jointC, _body[BODY], _body[CASTER]);
+	o = q.multiply(0, -_body_length / 2 + 0.020458, -_body_height / 2 - 0.01557);
+	dJointSetHinge2Anchor(jointC, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+	o = q.multiply(0, 0, 1);
+	dJointSetHinge2Axis1(jointC, o[0], o[1], o[2]);
+	o = q.multiply(1, 0, 0);
+	dJointSetHinge2Axis2(jointC, o[0], o[1], o[2]);
+
 	// build motors
 	for (int i = 0; i < _dof; i++) {
 		_motor[i].id = dJointCreateAMotor(_world, 0);
@@ -97,7 +108,6 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	}
 	o = q.multiply(1, 0, 0);
 	dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, o[0], o[1], o[2]);
-	o = q.multiply(1, 0, 0);
 	dJointSetAMotorAxis(_motor[JOINT2].id, 0, 1, o[0], o[1], o[2]);
 
 	// set damping on all bodies to 0.1
@@ -415,5 +425,23 @@ void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
 	dGeomSetBody(geom, _body[id]);
 	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom, Q1);
+}
+
+void Mindstorms::build_caster(const rs::Pos &p, const rs::Quat &q) {
+	// set mass of body
+	dMass m;
+	dMassSetSphere(&m, 10, 2 * 0.020458);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(_body[CASTER], &m);
+
+	// set body parameters
+	dBodySetPosition(_body[CASTER], p[0], p[1] - _body_length / 2 + 0.020458, p[2] - _body_height / 2 - 0.01557);
+	dQuaternion Q = {q[3], q[0], q[1], q[2]};
+	dBodySetQuaternion(_body[CASTER], Q);
+	dBodySetFiniteRotationMode(_body[CASTER], 1);
+
+	// set geometry
+	dGeomID geom = dCreateSphere(_space, 0.020458);
+	dGeomSetBody(geom, _body[CASTER]);
 }
 

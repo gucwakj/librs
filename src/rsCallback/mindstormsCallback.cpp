@@ -60,7 +60,7 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		pat->setPosition(osg::Vec3d(pos[0], pos[1] - (p[1] - pos[1]), pos[2] - (p[2] - pos[2])));
 		pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		// draw wheels
-		for (int i = rsMindstorms::WHEEL1; i < rsMindstorms::NUM_PARTS; i++) {
+		for (int i = rsMindstorms::WHEEL1; i <= rsMindstorms::WHEEL2; i++) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));

@@ -26,6 +26,7 @@ namespace rsSim {
 		private:
 			void build_body(const rs::Pos&, const rs::Quat&);
 			void build_wheel(int, const rs::Pos&, const rs::Quat&);
+			void build_caster(const rs::Pos&, const rs::Quat&);
 	};
 
 } // namespace rsSim

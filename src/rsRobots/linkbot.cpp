@@ -259,96 +259,71 @@ double Linkbot::riseByWheels(int wheel_type, double radius) {
 	return -1;
 }
 
-const rs::Quat Linkbot::tiltForWheels(int type, int face, double &p2, double radius) {
-	// invalid type
-	if (type == 0) {
-		p2 = 0;
-		return rs::Quat();
-	}
-
-	// get other wheel joint
-	int other = 0;
-	if (face == FACE1) other = 1;
-
-	// tilt left or right based upon face
-	int i = 1;
-	if (face == FACE3) i = -1;
-
+const rs::Quat Linkbot::tiltForWheels(int type1, int type2, double &p2) {
 	// set wheel on this face
-	_wheels[(other ? 0 : 1)] = type;
+	_wheels[JOINT1] = type1;
+	_wheels[JOINT3] = type2;
 
 	// tilt
-	if (type == TINYWHEEL) {
-		if (_wheels[other] == TINYWHEEL) {
-			p2 = 0.0029595;
-			double q[4] = {0, 0.0285493, 0, 0.999592};
-			double length = q[1]*q[1] + q[3]*q[3];
-			return rs::Quat().multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
-		}
-		else if (_wheels[other] == SMALLWHEEL) {
-			p2 = 0.0030787;
-			double q[4] = {0, 0.0469256, 0, 0.998898};
-			double length = q[1]*q[1] + q[3]*q[3];
-			return rs::Quat(0, -i*0.0171147, 0, 0.999851).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
-		}
-		else if (_wheels[other] == BIGWHEEL) {
-			p2 = 0.0037111;
-			double q[4] = {0, 0.0820308, 0, 0.996629};
-			double length = q[1]*q[1] + q[3]*q[3];
-			return rs::Quat(0, -i*0.0480794, 0, 0.998843).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
-		}
-		else {
-			p2 = 0.0020705;
-			return rs::Quat(0, i*0.0285493, 0, 0.999592);
-		}
+	if (type1 == NONE && type2 == TINYWHEEL) {
+		p2 = 0.002117;
+		return rs::Quat(-0.042648, -0.028636, 0.001300, 0.998679);
 	}
-	else if (type == SMALLWHEEL) {
-		if (_wheels[other] == TINYWHEEL) {
-			p2 = 0.0043264;
-			double q[4] = {0, 0.0285493, 0, 0.999592};
-			double length = q[1]*q[1] + q[3]*q[3];
-			return rs::Quat(0, i*0.0171147, 0, 0.999851).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
-		}
-		else if (_wheels[other] == SMALLWHEEL) {
-			p2 = 0.0048818;
-			double q[4] = {0, 0.0469256, 0, 0.998898};
-			double length = q[1]*q[1] + q[3]*q[3];
-			return rs::Quat().multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
-		}
-		else if (_wheels[other] == BIGWHEEL) {
-			p2 = 0.0078349;
-			double q[4] = {0, 0.0820308, 0, 0.996629};
-			double length = q[1]*q[1] + q[3]*q[3];
-			return rs::Quat(0, -i*0.0326405, 0, 0.999466).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
-		}
-		else {
-			p2 = 0.003318;
-			return rs::Quat(0, i*0.0469256, 0, 0.998898);
-		}
+	else if (type1 == NONE && type2 == SMALLWHEEL) {
+		p2 = 0.003400;
+		return rs::Quat(-0.034840, -0.046668, 0.001485, 0.9);
 	}
-	else if (type == BIGWHEEL) {
-		if (_wheels[other] == TINYWHEEL) {
-			p2 = 0.0074497;
-			double q[4] = {0, -i*0.0285493, 0, 0.999592};
-			double length = q[1]*q[1] + q[3]*q[3];
-			return rs::Quat(0, i*0.0480794, 0, 0.998843).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
-		}
-		else if (_wheels[other] == SMALLWHEEL) {
-			p2 = 0.0078349;
-			double q[4] = {0, -i*0.0469256, 0, 0.998898};
-			double length = q[1]*q[1] + q[3]*q[3];
-			return rs::Quat(0, i*0.0326405, 0, 0.999466).multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
-		}
-		else if (_wheels[other] == BIGWHEEL) {
-			p2 = 0.0087409;
-			double q[4] = {0, -i*0.0820308, 0, 0.996629};
-			double length = q[1]*q[1] + q[3]*q[3];
-			return rs::Quat().multiply(rs::Quat(0, i*q[1]/length, 0, q[3]/length));
-		}
-		else {
-			p2 = 0.0058091;
-			return rs::Quat(0, i*0.0820308, 0, 0.996629);
-		}
+	else if (type1 == NONE && type2 == BIGWHEEL) {
+		p2 = 0.005581;
+		return rs::Quat(0, -0.082108, 0, 0.996400);
+	}
+	else if (type1 == TINYWHEEL && type2 == NONE) {
+		p2 = 0.002117;
+		return rs::Quat(-0.042648, 0.028636, -0.001300, 0.998679);
+	}
+	else if (type1 == TINYWHEEL && type2 == TINYWHEEL) {
+		p2 = 0.004909;
+		return rs::Quat(-0.0277827, 0, 0, 0.999614);
+	}
+	else if (type1 == TINYWHEEL && type2 == SMALLWHEEL) {
+		p2 = 0.006137;
+		return rs::Quat(-0.021193, -0.017343, 0.000250, 0.999625);
+	}
+	else if (type1 == TINYWHEEL && type2 == BIGWHEEL) {
+		p2 = 0.009423;
+		return rs::Quat(-0.002151, -0.047644, 0, 0.998862);
+	}
+	else if (type1 == SMALLWHEEL && type2 == NONE) {
+		p2 = 0.003400;
+		return rs::Quat(-0.034840, 0.046668, -0.001485, 0.9);
+	}
+	else if (type1 == SMALLWHEEL && type2 == TINYWHEEL) {
+		p2 = 0.006137;
+		return rs::Quat(-0.021193, 0.017343, -0.00025, 0.999625);
+	}
+	else if (type1 == SMALLWHEEL && type2 == SMALLWHEEL) {
+		p2 = 0.007781;
+		return rs::Quat(-0.012152, 0, 0, 0.999926);
+	}
+	else if (type1 == SMALLWHEEL && type2 == BIGWHEEL) {
+		p2 = 0.011222;
+		return rs::Quat(0.007552, -0.031155, -0.000203, 0.999486);
+	}
+	else if (type1 == BIGWHEEL && type2 == NONE) {
+		p2 = 0.005581;
+		return rs::Quat(0, 0.082108, 0, 0.996400);
+	}
+	else if (type1 == BIGWHEEL && type2 == TINYWHEEL) {
+		p2 = 0.009423;
+		return rs::Quat(-0.002151, 0.04764, 0, 0.998862);
+	}
+	else if (type1 == BIGWHEEL && type2 == SMALLWHEEL) {
+		p2 = 0.011222;
+		return rs::Quat(0.007552, 0.031155, 0.000203, 0.9);
+	}
+	else if (type1 == BIGWHEEL && type2 == BIGWHEEL) {
+		p2 = 0.014469;
+		return rs::Quat(0.025255, 0, 0, 0.999681);
 	}
 
 	// return default

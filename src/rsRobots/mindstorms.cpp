@@ -49,12 +49,6 @@ double Mindstorms::riseByWheels(int type) {
 }
 
 const rs::Quat Mindstorms::tiltForWheels(int type1, int type2, double &p2) {
-	// invalid type
-	if (type1 == 0 || type2 == 0) {
-		p2 = 0;
-		return rs::Quat();
-	}
-
 	// set wheel on this face
 	_wheels[JOINT1] = type1;
 	_wheels[JOINT2] = type2;
@@ -64,7 +58,7 @@ const rs::Quat Mindstorms::tiltForWheels(int type1, int type2, double &p2) {
 		p2 = 0.021420;
 		return rs::Quat(-0.0746256, 0, 0, 0.997212);
 	}
-	if (type1 == SMALL && type2 == SMALL) {
+	else if (type1 == SMALL && type2 == SMALL) {
 		p2 = 0.028812;
 		return rs::Quat(-0.022158, 0, 0, 0.999755);
 	}

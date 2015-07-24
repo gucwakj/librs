@@ -98,7 +98,7 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs:
 	this->save();
 }
 
-void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, const rs::Vec &c, int mass) {
+void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, const rs::Vec &c, double mass) {
 	// set attributes
 	obstacle->SetAttribute("mass", mass);
 

@@ -60,6 +60,7 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 
 	// set center offset
 	_center[1] = -p1[1] / cos(2 * asin(q1[0]));
+	_center[2] = -(p1[2]-p[2]) / cos(2 * asin(q1[0]));
 
 	// joint variable
 	std::vector<dJointID> joint;
@@ -87,11 +88,11 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	// joint for body to caster
 	dJointID jointC = dJointCreateHinge2(_world, 0);
 	dJointAttach(jointC, _body[BODY], _body[CASTER]);
-	o = q.multiply(0, -_body_length / 2 + 0.020458, -_body_height / 2 - 0.01557);
+	o = q.multiply(0, -_body_length / 2 + 0.020458, -_body_height / 2);
 	dJointSetHinge2Anchor(jointC, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 	o = q.multiply(0, 0, 1);
 	dJointSetHinge2Axis1(jointC, o[0], o[1], o[2]);
-	o = q.multiply(1, 0, 0);
+	o = q.multiply(0, 1, 0);
 	dJointSetHinge2Axis2(jointC, o[0], o[1], o[2]);
 
 	// build motors
@@ -384,20 +385,10 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dBodySetPosition(_body[BODY], p[0], p[1], p[2]);
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
 	dBodySetQuaternion(_body[BODY], Q);
-	dBodySetFiniteRotationMode(_body[BODY], 1);
 
-	// build geometries
-	dGeomID geom[2];
-
-	// set geometry 0 - box
-	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
-	dGeomSetBody(geom[0], _body[BODY]);
-	dGeomSetOffsetPosition(geom[0], 0, 0, 0);
-
-	// set geometry 1 - sphere
-	geom[1] = dCreateSphere(_space, 0.020458);
-	dGeomSetBody(geom[1], _body[BODY]);
-	dGeomSetOffsetPosition(geom[1], 0, -_body_length/2 + 0.020458, -_body_height/2 - 0.01557);
+	// set geometry - box
+	dGeomID geom = dCreateBox(_space, _body_width, _body_length, _body_height);
+	dGeomSetBody(geom, _body[BODY]);
 }
 
 void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
@@ -438,10 +429,16 @@ void Mindstorms::build_caster(const rs::Pos &p, const rs::Quat &q) {
 	dBodySetPosition(_body[CASTER], p[0], p[1] - _body_length / 2 + 0.020458, p[2] - _body_height / 2 - 0.01557);
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
 	dBodySetQuaternion(_body[CASTER], Q);
-	dBodySetFiniteRotationMode(_body[CASTER], 1);
+
+	// build geometries
+	dGeomID geom[2];
 
 	// set geometry
-	dGeomID geom = dCreateSphere(_space, 0.020458);
-	dGeomSetBody(geom, _body[CASTER]);
+	geom[0] = dCreateSphere(_space, 0.020458);
+	dGeomSetBody(geom[0], _body[CASTER]);
+	dGeomSetOffsetPosition(geom[0], -_body_width / 2, 0, 0);
+	geom[1] = dCreateSphere(_space, 0.020458);
+	dGeomSetBody(geom[1], _body[CASTER]);
+	dGeomSetOffsetPosition(geom[1], _body_width / 2, 0, 0);
 }
 

@@ -22,7 +22,7 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		// get position
 		double x = _robot->getCenter(0);
 		double y = _robot->getCenter(1);
-		double z = _robot->getCenter(2) + (_robot->getID() % 2 ? 0.08 : 0) + 0.08;
+		double z = _robot->getCenter(2);
 		// set name or robot+id
 		if (_robot->getName().size())
 			text.append(_robot->getName());
@@ -36,7 +36,7 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		text.append(buff);
 		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
 		label->setText(text);
-		label->setPosition(osg::Vec3(x, y, z));
+		label->setPosition(osg::Vec3(x, y, z + (_robot->getID() % 2 ? 0.08 : 0) + 0.08));
 		// child 1: tracking line
 		if (_robot->getTrace()) {
 			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));
@@ -53,13 +53,12 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		}
 		// child 2->2+NUM_PARTS: bodies
 		// draw main body
-		const double *pos = dBodyGetPosition(_bodies[rsMindstorms::BODY]);
 		const double *quat = dBodyGetQuaternion(_bodies[rsMindstorms::BODY]);
-		const rs::Pos p = _robot->getRobotBodyPosition(0, rs::Pos(pos[0], pos[1], pos[2]), rs::Quat(quat[1], quat[2], quat[3], quat[0]));
 		osg::PositionAttitudeTransform *pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsMindstorms::BODY));
-		pat->setPosition(osg::Vec3d(pos[0], pos[1] - (p[1] - pos[1]), pos[2] - (p[2] - pos[2])));
+		pat->setPosition(osg::Vec3d(x, y, z));
 		pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		// draw wheels
+		const double *pos;
 		for (int i = rsMindstorms::WHEEL1; i <= rsMindstorms::WHEEL2; i++) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);

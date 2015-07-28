@@ -1288,7 +1288,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 
 void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
 	// initialize variables
-	osg::ref_ptr<osg::Node> body;
+	//osg::ref_ptr<osg::Node> body;
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat;
 
 	// create transforms
@@ -1299,13 +1299,19 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	robot->setTrace(trace);
 
 	// body
-	body = osgDB::readNodeFile(_model_path + "mindstorms/body.3ds");
-	body->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
-	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+	//body = osgDB::readNodeFile(_model_path + "mindstorms/body.3ds");
+	//body->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
+	osg::Box *box = new osg::Box(osg::Vec3d(0, 0, 0), 0.087319, 0.148832, 0.123879);		// TODO: remove
+	osg::ref_ptr<osg::Geode> body = new osg::Geode;
+	body->addDrawable(new osg::ShapeDrawable(box));		// TODO: remove
+	body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	body->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	body->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	body->setCullingActive(false);
 
 	// draw 'led'
-	osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, 0.02, 0), 0.01, 0.01);
+	/*osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, 0.02, 0), 0.01, 0.01);
 	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
 	led->setColor(osg::Vec4(c[0], c[1], c[2], 1));
 	osg::Geode *bodyled = new osg::Geode();
@@ -1314,24 +1320,20 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	bodyled->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	bodyled->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	bodyled->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
-	bodyled->setCullingActive(false);
-
-	// set rendering properties
-	body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-	body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	body->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-	body->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
-	body->setCullingActive(false);
+	bodyled->setCullingActive(false);*/
 
 	// add body to transform
 	pat->addChild(body);
 	// add 'led' as second child of body
-	pat->addChild(bodyled);
+	//pat->addChild(bodyled);
+	// set position of body
+	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 }
 
 void Scene::draw_robot_mindstorms_wheel(rsRobots::Mindstorms *robot, Robot *group, int type, int face) {
 	// get robot p&q
-	osg::PositionAttitudeTransform *pat;
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat;
 	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsMindstorms::BODY));
 	osg::Vec3d p = pat->getPosition();
 	osg::Quat q = pat->getAttitude();
@@ -1346,8 +1348,12 @@ void Scene::draw_robot_mindstorms_wheel(rsRobots::Mindstorms *robot, Robot *grou
 	transform->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 
 	// wheel
-	osg::ref_ptr<osg::Node> node;
-	node = osgDB::readNodeFile(_model_path + "mindstorms/wheel.3ds");
+	//osg::ref_ptr<osg::Node> node;
+	//node = osgDB::readNodeFile(_model_path + "mindstorms/wheel.3ds");
+	osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02800, 0.02660);		// TODO: remove
+	cyl->setRotation(osg::Quat(0, sin(1.5708 / 2), 0, cos(1.5708 / 2)));		// TODO: remove
+	osg::ref_ptr<osg::Geode> node = new osg::Geode;		// TODO: remove
+	node->addDrawable(new osg::ShapeDrawable(cyl));		// TODO: remove
 	transform->setScale(osg::Vec3d(1, robot->getWheelRatio(type), robot->getWheelRatio(type)));
 	node->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 

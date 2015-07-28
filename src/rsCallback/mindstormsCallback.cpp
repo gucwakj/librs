@@ -53,13 +53,15 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		}
 		// child 2->2+NUM_PARTS: bodies
 		// draw main body
-		const double *quat = dBodyGetQuaternion(_bodies[rsMindstorms::BODY]);
-		osg::PositionAttitudeTransform *pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsMindstorms::BODY));
-		pat->setPosition(osg::Vec3d(x, y, z));
-		pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
+		//const double *quat = dBodyGetQuaternion(_bodies[rsMindstorms::BODY]);
+		//osg::PositionAttitudeTransform *pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsMindstorms::BODY));
+		//pat->setPosition(osg::Vec3d(x, y, z));
+		//pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		// draw wheels
-		const double *pos;
-		for (int i = rsMindstorms::WHEEL1; i <= rsMindstorms::WHEEL2; i++) {
+		const double *pos, *quat;
+		osg::PositionAttitudeTransform *pat;
+		//for (int i = rsMindstorms::WHEEL1; i <= rsMindstorms::WHEEL2; i++) {
+		for (int i = rsMindstorms::BODY; i <= rsMindstorms::WHEEL2; i++) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
@@ -67,9 +69,9 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		}
 		// child 2: bodies; drawable 2: led
-		osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(1)->asGeode()->getDrawable(0));
-		double *rgb = _robot->getRGB();
-		led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
+		//osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(1)->asGeode()->getDrawable(0));
+		//double *rgb = _robot->getRGB();
+		//led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
 	}
 	traverse(node, nv);
 }

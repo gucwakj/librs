@@ -2,6 +2,8 @@
 #include <rsSim/Sim>
 #include <rsSim/Mindstorms>
 
+#include <iostream>
+
 using namespace rsSim;
 using namespace rsMindstorms;
 
@@ -56,7 +58,7 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	this->build_body(p1, q1);
 	this->build_wheel(WHEEL1, this->getRobotBodyPosition(WHEEL1, p, q), this->getRobotBodyQuaternion(WHEEL1, 0, q));
 	this->build_wheel(WHEEL2, this->getRobotBodyPosition(WHEEL2, p, q), this->getRobotBodyQuaternion(WHEEL2, 0, q));
-	this->build_caster(p1, q1);
+	//this->build_caster(p1, q1);
 
 	// set center offset
 	_center[1] = -p1[1] / cos(2 * asin(q1[0]));
@@ -138,7 +140,7 @@ void Mindstorms::init_params(void) {
 		_motor[i].alpha = 0;
 		_motor[i].encoder = rs::D2R(0.25);
 		_motor[i].goal = 0;
-		_motor[i].mode = SEEK;
+		_motor[i].mode = CONTINUOUS;
 		_motor[i].offset = 0;
 		_motor[i].omega = 0.7854;			//  45 deg/sec
 		_motor[i].omega_max = 4.1888;		// 240 deg/sec
@@ -376,19 +378,62 @@ void Mindstorms::simPostCollisionThread(void) {
  **********************************************************/
 void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
-	dMass m;
-	dMassSetBox(&m, 500, _body_width, _body_length, _body_height);
-	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
-	dBodySetMass(_body[BODY], &m);
+	//dMass m;
+	//dMassSetBox(&m, 500, _body_width, _body_length, _body_height);
+	//dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	//dBodySetMass(_body[BODY], &m);
 
 	// set body parameters
 	dBodySetPosition(_body[BODY], p[0], p[1], p[2]);
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
 	dBodySetQuaternion(_body[BODY], Q);
+	dBodySetFiniteRotationMode(_body[BODY], 1);
 
 	// set geometry - box
-	dGeomID geom = dCreateBox(_space, _body_width, _body_length, _body_height);
-	dGeomSetBody(geom, _body[BODY]);
+	//dGeomID geom = dCreateBox(_space, _body_width, _body_length, _body_height);
+	//dGeomSetBody(geom, _body[BODY]);
+
+
+
+	// build geometries
+	dGeomID geom[3];
+
+	dMass m, m1, m2;
+	dMassSetBox(&m, 1000, _body_width, _body_length, _body_height);
+	dMassSetSphere(&m1, 10, 0.020458);
+	dMassTranslate(&m1, -_body_width/2, -_body_length + 0.020458, -_body_height / 2);
+	dMassAdd(&m, &m1);
+	dMassSetSphere(&m2, 10, 0.020458);
+	dMassTranslate(&m2, _body_width/2, -_body_length + 0.020458, -_body_height / 2);
+	dMassAdd(&m, &m2);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(_body[BODY], &m);
+
+	// set geometry 0 - box
+	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
+	dGeomSetBody(geom[0], _body[BODY]);
+	dGeomSetOffsetPosition(geom[0], 0, 0, 0);
+
+	// set geometry 1 - sphere
+	geom[1] = dCreateSphere(_space, 0.010229);
+	dGeomSetBody(geom[1], _body[BODY]);
+	dGeomSetOffsetPosition(geom[1], -_body_width/2, -_body_length / 2 + 0.010229, -_body_height / 2 - 0.010229);
+
+	// set geometry 1 - sphere
+	geom[2] = dCreateSphere(_space, 0.010229);
+	dGeomSetBody(geom[2], _body[BODY]);
+	dGeomSetOffsetPosition(geom[2], _body_width/2, -_body_length / 2 + 0.010229, -_body_height / 2 - 0.010229);
+
+
+	// set geometry 1 - sphere
+	//geom[1] = dCreateSphere(_space, 0.020458);
+	//dGeomSetBody(geom[1], _body[BODY]);
+	//dGeomSetOffsetPosition(geom[1], -_body_width / 2, -_body_length + 0.020458, -_body_height / 2);
+
+	// set geometry 1 - sphere
+	//geom[2] = dCreateSphere(_space, 0.020458);
+	//dGeomSetBody(geom[2], _body[BODY]);
+//	dGeomSetOffsetPosition(geom[2], _body_width / 2, -_body_length + 0.020458, -_body_height / 2);
 }
 
 void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
@@ -401,7 +446,7 @@ void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
 
 	// set mass of body
 	dMass m;
-	dMassSetCylinder(&m, 170, 1, 2*radius, _wheel_depth);
+	dMassSetCylinder(&m, 170, 1, radius, _wheel_depth);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[id], &m);
 

@@ -383,9 +383,19 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dGeomSetOffsetPosition(geom[0], 0, 0, 0);
 
 	// set geometry 1 - sphere
+	// FAKED: adjust caster to make 3ds model look good
+	double offset;
+	if (_wheels[JOINT1] == BIG && _wheels[JOINT2] == BIG)
+		offset = -0.006;
+	else if (_wheels[JOINT1] == SMALL && _wheels[JOINT2] == BIG)
+		offset = -0.003;
+	else if (_wheels[JOINT1] == BIG && _wheels[JOINT2] == SMALL)
+		offset = -0.003;
+	else
+		offset = 0.001;
 	geom[1] = dCreateSphere(_space, 0.010229);
 	dGeomSetBody(geom[1], _body[BODY]);
-	dGeomSetOffsetPosition(geom[1], 0, -_body_length / 2 + 0.010229, -_body_height / 2);
+	dGeomSetOffsetPosition(geom[1], 0, -_body_length / 2 + 0.010229, -_body_height / 2 + offset);
 }
 
 void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {

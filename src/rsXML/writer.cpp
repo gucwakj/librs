@@ -477,7 +477,7 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 			sim->InsertAfterChild(prev_node, node);
 			return node;
 		}
-		node = node->NextSiblingElement();
+		prev_node = prev_node->NextSiblingElement();
 	}
 
 	// insert at beginning

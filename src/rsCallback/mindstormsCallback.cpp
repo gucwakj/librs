@@ -51,7 +51,7 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			array->setCount(_count++);
 		}
 		// child 2->2+NUM_PARTS: bodies
-		for (int i = 0; i <= rsMindstorms::NUM_PARTS; i++) {
+		for (int i = 0; i < rsMindstorms::NUM_PARTS; i++) {
 			const double *pos = dBodyGetPosition(_bodies[i]);
 			const double *quat = dBodyGetQuaternion(_bodies[i]);
 			osg::PositionAttitudeTransform *pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));

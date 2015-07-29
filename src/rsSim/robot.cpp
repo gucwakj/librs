@@ -230,21 +230,24 @@ const rs::Quat Robot::getQuaternion(void) {
 double Robot::getRotation(int body, int i) {
 	const double *R = dBodyGetRotation(_body[body]);
 	double angles[3] = {0};
-    if ( fabs(R[8]-1) < rs::EPSILON ) {         // R_31 == 1; theta = rs::PI/2
-        angles[0] = atan2(-R[1], -R[2]);		// psi
-        angles[1] = rs::PI/2;					// theta
-        angles[2] = 0;							// phi
-    }
-    else if ( fabs(R[8]+1) < rs::EPSILON ) {    // R_31 == -1; theta = -rs::PI/2
-        angles[0] = atan2(R[1], R[2]);			// psi
-        angles[1] = -rs::PI/2;					// theta
-        angles[2] = 0;							// phi
-    }
-    else {
-        angles[1] = asin(R[8]);
-        angles[0] = atan2(R[9]/cos(angles[0]), R[10]/cos(angles[0]));
-        angles[2] = atan2(R[4]/cos(angles[0]), R[0]/cos(angles[0]));
-    }
+	if ( fabs(R[8]-1) < rs::EPSILON ) {         // R_31 == 1; theta = rs::PI/2
+		angles[0] = atan2(-R[1], -R[2]);		// psi
+		angles[1] = rs::PI/2;					// theta
+		angles[2] = 0;							// phi
+	}
+	else if ( fabs(R[8]+1) < rs::EPSILON ) {    // R_31 == -1; theta = -rs::PI/2
+		angles[0] = atan2(R[1], R[2]);			// psi
+		angles[1] = -rs::PI/2;					// theta
+		angles[2] = 0;							// phi
+	}
+	else {
+		angles[1] = asin(R[8]);
+		angles[0] = atan2(R[9]/cos(angles[0]), R[10]/cos(angles[0]));
+		angles[2] = atan2(R[4]/cos(angles[0]), R[0]/cos(angles[0]));
+	}
+	// convert to 0->2*PI
+	if (angles[i] < 0) angles[i] = 2 * rs::PI + angles[i];
+	// return
 	return angles[i];
 }
 

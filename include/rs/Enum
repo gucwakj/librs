@@ -128,7 +128,6 @@ namespace rsMindstorms {
 		BODY,
 		WHEEL1,
 		WHEEL2,
-		CASTER,
 		NUM_PARTS
 	};
 

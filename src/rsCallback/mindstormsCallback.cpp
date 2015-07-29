@@ -22,7 +22,6 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		// get position
 		double x = _robot->getCenter(0);
 		double y = _robot->getCenter(1);
-		double z = _robot->getCenter(2);
 		// set name or robot+id
 		if (_robot->getName().size())
 			text.append(_robot->getName());
@@ -30,13 +29,13 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			text.append("Robot " + std::to_string(_robot->getID()+1));
 		// position
 		char buff[100];
-		if (_units)	sprintf(buff, "\n\n(%.2lf, %.2lf) [cm]", x * 100, y * 100);
-		else		sprintf(buff, "\n\n(%.2lf, %.2lf) [in]", x * 39.37, y * 39.37);
+		if (_units)	sprintf(buff, "\n\n(%.6lf, %.6lf) [cm]", x * 100, y * 100);
+		else		sprintf(buff, "\n\n(%.6lf, %.6lf) [in]", x * 39.37, y * 39.37);
 		// draw label
 		text.append(buff);
 		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
 		label->setText(text);
-		label->setPosition(osg::Vec3(x, y, z + (_robot->getID() % 2 ? 0.08 : 0) + 0.08));
+		label->setPosition(osg::Vec3(x, y, _robot->getCenter(2) + (_robot->getID() % 2 ? 0.08 : 0) + 0.08));
 		// child 1: tracking line
 		if (_robot->getTrace()) {
 			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));
@@ -52,26 +51,17 @@ void MindstormsCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			array->setCount(_count++);
 		}
 		// child 2->2+NUM_PARTS: bodies
-		// draw main body
-		//const double *quat = dBodyGetQuaternion(_bodies[rsMindstorms::BODY]);
-		//osg::PositionAttitudeTransform *pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsMindstorms::BODY));
-		//pat->setPosition(osg::Vec3d(x, y, z));
-		//pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
-		// draw wheels
-		const double *pos, *quat;
-		osg::PositionAttitudeTransform *pat;
-		//for (int i = rsMindstorms::WHEEL1; i <= rsMindstorms::WHEEL2; i++) {
-		for (int i = rsMindstorms::BODY; i <= rsMindstorms::WHEEL2; i++) {
-			pos = dBodyGetPosition(_bodies[i]);
-			quat = dBodyGetQuaternion(_bodies[i]);
-			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
+		for (int i = 0; i <= rsMindstorms::NUM_PARTS; i++) {
+			const double *pos = dBodyGetPosition(_bodies[i]);
+			const double *quat = dBodyGetQuaternion(_bodies[i]);
+			osg::PositionAttitudeTransform *pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
 			pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
 			pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 		}
 		// child 2: bodies; drawable 2: led
-		//osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(1)->asGeode()->getDrawable(0));
-		//double *rgb = _robot->getRGB();
-		//led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
+		osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(1)->asGeode()->getDrawable(0));
+		double *rgb = _robot->getRGB();
+		led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
 	}
 	traverse(node, nv);
 }

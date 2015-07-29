@@ -363,8 +363,8 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m, m1;
 	dMassSetBox(&m, 100, _body_width, _body_length, _body_height);
-	dMassSetSphere(&m1, 10, 0.010229);
-	dMassTranslate(&m1, 0, -_body_length + 0.010229, -_body_height / 2);
+	dMassSetSphere(&m1, 500, 0.010229);
+	dMassTranslate(&m1, 0, -_body_length + 0.010229 - 0.5, -_body_height / 2 - 0.5);
 	dMassAdd(&m, &m1);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[BODY], &m);

@@ -673,16 +673,16 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryIntAttribute("left", &i);
 				ele->QueryIntAttribute("right", &j);
 				if (i) {
-					_robot.back()->addConnector(new Conn(0, 0, -1, 1, 1, 0, 1, rsLinkbot::SIMPLE));
-					_robot.back()->addConnector(new Conn(0, 0,  i, 1, 1, 0, 2, rsLinkbot::SIMPLE));
+					_robot.back()->addConnector(new Conn(0, 0, -1, 1, 1, _robot.back()->getID(), 1, rsLinkbot::SIMPLE));
+					_robot.back()->addConnector(new Conn(0, 0, i, 1, 1, _robot.back()->getID(), 2, rsLinkbot::SIMPLE));
 				}
 				if (i || j) {
-					_robot.back()->addConnector(new Conn(0, 0, -1, 2, 2, 0, 1, rsLinkbot::SIMPLE));
-					_robot.back()->addConnector(new Conn(0, 0,  rsLinkbot::CASTER, 2, 2, 0, 2, rsLinkbot::SIMPLE));
+					_robot.back()->addConnector(new Conn(0, 0, -1, 2, 2, _robot.back()->getID(), 1, rsLinkbot::SIMPLE));
+					_robot.back()->addConnector(new Conn(0, 0, rsLinkbot::CASTER, 2, 2, _robot.back()->getID(), 2, rsLinkbot::SIMPLE));
 				}
 				if (j) {
-					_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, 0, 1, rsLinkbot::SIMPLE));
-					_robot.back()->addConnector(new Conn(0, 0,  j, 3, 3, 0, 2, rsLinkbot::SIMPLE));
+					_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, _robot.back()->getID(), 1, rsLinkbot::SIMPLE));
+					_robot.back()->addConnector(new Conn(0, 0, j, 3, 3, _robot.back()->getID(), 2, rsLinkbot::SIMPLE));
 				}
 				_robot.back()->setWheels(i, j);
 			}

@@ -599,7 +599,7 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 	// set mass of body
 	dMass m;
 	dMassSetBox(&m, 1000, 2*_conn_depth, 1.5*_face_radius, _body_height);
-	dMassTranslate(&m, 8*_conn_depth, 0, -_body_height/2);
+	//dMassTranslate(&m, 8*_conn_depth, 0, -_body_height/2);
 
 	// build geometries
 	dGeomID geom[4];

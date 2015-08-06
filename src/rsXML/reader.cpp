@@ -935,8 +935,17 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				cnum = 4;
 				node->QueryIntAttribute("orientation", &orientation);
 			}
+			else if ( !strcmp(node->Value(), "el") ) {
+				ctype = rsLinkbot::EL;
+				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
+			}
 			else if ( !strcmp(node->Value(), "faceplate") ) {
 				ctype = rsLinkbot::FACEPLATE;
+				cnum = 1;
+			}
+			else if ( !strcmp(node->Value(), "foot") ) {
+				ctype = rsLinkbot::FOOT;
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "gripper") ) {
@@ -957,6 +966,19 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ctype = rsLinkbot::SMALLWHEEL;
 				cnum = 1;
 			}
+			else if ( !strcmp(node->Value(), "salamander") ) {
+				ctype = rsLinkbot::SALAMANDER;
+				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
+			}
+			/*else if ( !strcmp(node->Value(), "square") ) {
+				ctype = rsLinkbot::SQUARE;
+				cnum = 4;
+			}
+			else if ( !strcmp(node->Value(), "tank") ) {
+				ctype = rsLinkbot::TANK;
+				cnum = 3;
+			}*/
 			else if ( !strcmp(node->Value(), "tinywheel") ) {
 				ctype = rsLinkbot::TINYWHEEL;
 				cnum = 1;

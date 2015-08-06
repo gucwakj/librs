@@ -19,6 +19,7 @@ Linkbot::Linkbot(int form) : Robot(form) {
 	_bridge_length = 0.13350;
 	_cubic_length = 0.07115;
 	_omni_length = 0.17360;
+	_salamander_length = _bridge_length + 2*_face_radius;
 	_smallwheel_radius = 0.04445;
 	_tinywheel_radius = 0.04128;
 	_wheel_depth = 0.00140;
@@ -60,6 +61,14 @@ const rs::Pos Linkbot::getConnFacePosition(int type, int side, int orientation, 
 		else if (side == SIDE4)
 			return P.add(Q.multiply(2*_conn_depth, _bridge_length - 2*_face_radius, 0));
 	}
+	else if (type == rsLinkbot::EL) {
+		if (side == SIDE2)
+			return P.add(Q.multiply(_salamander_length/4, -_body_width/2 - _face_depth, 0));
+		else if (side == SIDE3)
+			return P.add(Q.multiply(_salamander_length/4, 0, -_body_height/2 - _conn_depth));
+		else if (side == SIDE4)
+			return P.add(Q.multiply(_salamander_length/4, 0, _body_height/2 + _conn_depth));
+	}
 	else if (type == rsLinkbot::OMNIPLATE) {
 		if (side == SIDE2)
 			return P.add(Q.multiply(0, 0, -_omni_length + 2*_face_radius));
@@ -68,6 +77,8 @@ const rs::Pos Linkbot::getConnFacePosition(int type, int side, int orientation, 
 		else if (side == SIDE4)
 			return P.add(Q.multiply(0, _omni_length - 2*_face_radius, -_omni_length + 2*_face_radius));
 	}
+	else if (type == rsLinkbot::SALAMANDER)
+		return P.add(Q.multiply(-_face_depth - _body_width/2, _salamander_length, 0));
 	else if (type == rsLinkbot::SIMPLE)
 		return P.add(Q.multiply(_conn_depth, 0, 0));
 
@@ -105,8 +116,20 @@ const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientatio
 		else if (side == SIDE4)
 			return Q;
 	}
+	else if (type == rsLinkbot::EL) {
+		if (side == SIDE2)
+			return Q.multiply(0, 0, sin(0.785398), cos(0.785398));
+		else if (side == SIDE3)
+			return Q.multiply(0, sin(0.785398), 0, cos(0.785398));
+		else if (side == SIDE4) {
+			Q.multiply(0, sin(2.356194), 0, cos(2.356194));
+			return Q.multiply(sin(1.570796), 0, 0, cos(1.570796));
+		}
+	}
 	else if (type == rsLinkbot::OMNIPLATE)
 		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
+	else if (type == rsLinkbot::SALAMANDER)
+		return Q.multiply(0, 0, sin(2.356194), cos(2.356194));
 	else if (type == rsLinkbot::SIMPLE)
 		return Q;
 
@@ -132,12 +155,18 @@ const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::
 		return P.add(Q.multiply(_cubic_length/2, 0, 0));
 	else if (type == rsLinkbot::DOUBLEBRIDGE)
 		return P.add(Q.multiply(_conn_depth, _bridge_length/2 - _face_radius, 0));
+	else if (type == rsLinkbot::EL)
+		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::FACEPLATE)
+		return P.add(Q.multiply(_conn_depth/2, 0, 0));
+	else if (type == rsLinkbot::FOOT)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::GRIPPER)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::OMNIPLATE)
 		return P.add(Q.multiply(_conn_depth/2, _omni_length/2 - _face_radius, -_omni_length/2 + _face_radius));
+	else if (type == rsLinkbot::SALAMANDER)
+		return P.add(Q.multiply(-_face_depth - _body_width/2, _salamander_length/2, 0));
 	else if (type == rsLinkbot::SIMPLE)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == rsLinkbot::SMALLWHEEL)

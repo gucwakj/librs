@@ -7,7 +7,7 @@
 using namespace rsSim;
 using namespace rsMindstorms;
 
-Mindstorms::Mindstorms(int form) : rsRobots::Robot(form) {
+Mindstorms::Mindstorms(int form) : rsRobots::Robot(form), rsRobots::Mindstorms(form) {
 	// initialize parameters
 	this->init_params();
 }
@@ -103,7 +103,7 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	return 0;
 }
 
-double Mindstorms::getAngle(int id) {
+double Mindstorms::calculate_angle(int id) {
 	_motor[id].theta = mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
     return _motor[id].theta;
 }
@@ -171,7 +171,7 @@ void Mindstorms::simPreCollisionThread(void) {
 	// update angle values for each degree of freedom
 	for (int i = 0; i < _dof; i++) {
 		// store current angle
-		_motor[i].theta = getAngle(i);
+		_motor[i].theta = calculate_angle(i);
 		// set rotation axis
 		dVector3 axis;
 		dJointGetHingeAxis(_motor[i].joint, axis);

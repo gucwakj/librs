@@ -36,6 +36,10 @@ Robot::~Robot(void) {
 	MUTEX_DESTROY(&_theta_mutex);
 }
 
+double Robot::getAngle(int id) {
+	return _motor[id].theta;
+}
+
 int Robot::holdJoint(int id) {
 	_motor[id].omega = 0;
 

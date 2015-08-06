@@ -1,3 +1,4 @@
+#include <iostream>
 #include <rs/Macros>
 #include <rsSim/Sim>
 #include <rsSim/Linkbot>
@@ -16,6 +17,34 @@ Linkbot::~Linkbot(void) {
 		MUTEX_DESTROY(&_motor[i].success_mutex);
 		COND_DESTROY(&_motor[i].success_cond);
 	}
+}
+
+void Linkbot::moveJointOnce(int id, double *values) {
+	// lock goal
+	MUTEX_LOCK(&_goal_mutex);
+
+	// set motion parameters
+	_motor[id].mode = SINGULAR;
+	_motor[id].state = POSITIVE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[id].id);
+	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// set array
+	_loc[id] = 0;
+	_values[id] = values;
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[id].success_mutex);
+	_motor[id].success = false;
+	MUTEX_UNLOCK(&_motor[id].success_mutex);
+
+	// unlock goal
+	MUTEX_UNLOCK(&_goal_mutex);
 }
 
 /**********************************************************
@@ -75,14 +104,23 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		case DOUBLEBRIDGE:
 			this->build_doublebridge(_conn.back());
 			break;
+		case EL:
+			this->build_el(_conn.back());
+			break;
 		case FACEPLATE:
 			this->build_faceplate(_conn.back());
+			break;
+		case FOOT:
+			this->build_foot(_conn.back());
 			break;
 		case GRIPPER:
 			this->build_gripper(_conn.back(), face);
 			break;
 		case OMNIPLATE:
 			this->build_omnidrive(_conn.back());
+			break;
+		case SALAMANDER:
+			this->build_salamander(_conn.back());
 			break;
 		case SIMPLE:
 			this->build_simple(_conn.back());
@@ -191,12 +229,12 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	rs::Pos o;
 
 	// joint for body to face 1
-	joint[JOINT1] = dJointCreateHinge(_world, 0);
-	dJointAttach(joint[JOINT1], _body[BODY], _body[FACE1]);
+	_motor[JOINT1].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[JOINT1].joint, _body[BODY], _body[FACE1]);
 	o = q.multiply(-_body_width/2, 0, 0);
-	dJointSetHingeAnchor(joint[JOINT1], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+	dJointSetHingeAnchor(_motor[JOINT1].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 	o = q.multiply(1, 0, 0);
-	dJointSetHingeAxis(joint[JOINT1], o[0], o[1], o[2]);
+	dJointSetHingeAxis(_motor[JOINT1].joint, o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[FACE1], o[0], o[1], o[2]);
 
 	// joint for body to face 2
@@ -211,7 +249,7 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 		o = q.multiply(0, -_body_length, 0);
 		dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(0, 1, 0);
-		dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
+		dJointSetHingeAxis(_motor[JOINT2].joint, o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE2], o[0], o[1], o[2]);
 	}
 
@@ -227,7 +265,7 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 		o = q.multiply(_body_width/2, 0, 0);
 		dJointSetHingeAnchor(joint[JOINT3], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(-1, 0, 0);
-		dJointSetHingeAxis(joint[JOINT3], o[0], o[1], o[2]);
+		dJointSetHingeAxis(_motor[JOINT3].joint, o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE3], o[0], o[1], o[2]);
 	}
 
@@ -242,7 +280,6 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	// build motors
 	for (int i = 0; i < _dof; i++) {
 		_motor[i].id = dJointCreateAMotor(_world, 0);
-		_motor[i].joint = joint[i];
 		dJointAttach(_motor[i].id, _body[BODY], _body[FACE1 + i]);
 		dJointSetAMotorMode(_motor[i].id, dAMotorUser);
 		dJointSetAMotorNumAxes(_motor[i].id, 1);
@@ -264,36 +301,46 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	return 0;
 }
 
-double Linkbot::getAngle(int id) {
+double Linkbot::calculate_angle(int id) {
 	if (id == _disabled)
-		_motor[id].theta = 0;
-	else
-		_motor[id].theta = mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
+		return 0;
 
-    return _motor[id].theta;
+	return mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
 }
 
-const rs::Vec Linkbot::getJoints(void) {
-	return rs::Vec(_motor[JOINT1].theta, _motor[JOINT2].theta, _motor[JOINT3].theta);
-}
-
-void Linkbot::getCoM(double &x, double &y, double &z) {
-	dMass m[NUM_PARTS];
+const rs::Pos Linkbot::getCoM(double &mass) {
 	double total = 0;
-	x = 0, y = 0, z = 0;
+	double x = 0, y = 0, z = 0;
+	// body parts
 	for (int i = 0; i < NUM_PARTS; i++) {
-		dBodyGetMass(_body[i], &m[i]);
-	}
-	for (int i = 0; i < NUM_PARTS; i++) {
+		dMass m;
+		dBodyGetMass(_body[i], &m);
 		const double *p = dBodyGetPosition(_body[i]);
-		x += m[i].mass*p[0];
-		y += m[i].mass*p[1];
-		z += m[i].mass*p[2];
-		total += m[i].mass;
+		x += m.mass*p[0];
+		y += m.mass*p[1];
+		z += m.mass*p[2];
+		total += m.mass;
+	}
+	// connectors
+	for (unsigned int i = 0; i < _conn.size(); i++) {
+		dMass m;
+		dBodyGetMass(_conn[i].body, &m);
+		const double *p = dBodyGetPosition(_conn[i].body);
+		x += m.mass*p[0];
+		y += m.mass*p[1];
+		z += m.mass*p[2];
+		total += m.mass;
 	}
 	x /= total;
 	y /= total;
 	z /= total;
+
+	mass = total;
+	return rs::Pos(x, y, z);
+}
+
+const rs::Vec Linkbot::getJoints(void) {
+	return rs::Vec(_motor[JOINT1].theta, _motor[JOINT2].theta, _motor[JOINT3].theta);
 }
 
 void Linkbot::init_params(void) {
@@ -301,6 +348,7 @@ void Linkbot::init_params(void) {
 
 	// create arrays for linkbots
 	_motor.resize(_dof);
+	_values.resize(_dof);	// research
 
 	// fill with default data
 	for (int i = 0; i < _dof; i++) {
@@ -329,6 +377,8 @@ void Linkbot::init_params(void) {
 		_motor[i].theta = 0;
 		MUTEX_INIT(&_motor[i].success_mutex);
 		COND_INIT(&_motor[i].success_cond);
+		// research: array of values
+		_values[i] = NULL;
 	}
 	_connected = 0;
 	_distOffset = 0;
@@ -360,7 +410,7 @@ void Linkbot::simPreCollisionThread(void) {
 	for (int i = 0; i < _dof; i++) {
 		if (_disabled == i) continue;
 		// store current angle
-		_motor[i].theta = getAngle(i);
+		_motor[i].theta = calculate_angle(i);
 		// set rotation axis
 		dVector3 axis;
 		dJointGetHingeAxis(_motor[i].joint, axis);
@@ -507,6 +557,80 @@ void Linkbot::simPreCollisionThread(void) {
 					dJointSetAMotorParam(_motor[i].id, dParamVel, 0);
 				}
 				break;
+			case SINE: {
+				// delay for phase angle
+				if (_sine[i].phase && _sine[i].run == 0) {
+					if (_sine[i].phase < 0)
+						_sine[i].delay = -_sine[i].phase / step;
+					else {
+						if ( static_cast<int>(_sine[i].phase/M_PI) % 2 ) {
+							_sine[i].delay = (2*M_PI - _sine[i].phase) / step;
+						}
+						else {
+							_sine[i].delay = (M_PI - _sine[i].phase) / step;
+							_sine[i].gain = -_sine[i].gain;
+						}
+					}
+					_sine[i].run++;
+				}
+				else if (_sine[i].phase == 0)
+					_sine[i].run++;
+
+				// delay for phase angle
+				if (_sine[i].delay) { _sine[i].delay--; break; }
+
+				// reenable body on start
+				dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);
+				dBodyEnable(_body[0]);
+
+				// init params on first run (post-delay)
+				if (_sine[i].run == 1) {
+					_sine[i].init = _motor[i].theta;
+					_sine[i].start = _sim->getClock();
+					_sine[i].run++;
+				}
+
+				// calculate new angle
+				double t = _sim->getClock() + step;
+				angle = _sine[i].gain*sin((t - _sine[i].start)/_sine[i].period) + _sine[i].init;
+
+				// set new omega
+				_motor[i].omega = (angle - _motor[i].theta)/step;
+				_motor[i].goal += step*_motor[i].omega;
+				_motor[i].state = NEUTRAL;
+
+				// give it an initial push
+				if (0 < _motor[i].omega && _motor[i].omega < 0.02)
+					_motor[i].omega = 0.02;
+				else if (-0.02 < _motor[i].omega && _motor[i].omega < 0)
+					_motor[i].omega = -0.02;
+
+				// move forever
+				dJointEnable(_motor[i].id);
+				dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
+
+				// end
+				break;
+			}
+			case SINGULAR: {
+				// reenable body on start
+				dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);
+				dBodyEnable(_body[0]);
+
+				// set new omega
+				double angle = _values[i][_loc[i]];
+				_motor[i].omega = (angle - _motor[i].theta)/step;
+				_motor[i].goal = angle;
+				_motor[i].state = NEUTRAL;
+				_loc[i]++;
+
+				// move forever
+				dJointEnable(_motor[i].id);
+				dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
+
+				// end
+				break;
+			}
 		}
 	}
 
@@ -673,6 +797,18 @@ void Linkbot::build_doublebridge(Connector &conn) {
 	dGeomSetBody(geom, conn.body);
 }
 
+void Linkbot::build_el(Connector &conn) {
+	// set mass of body
+	dMass m;
+	dMassSetBox(&m, 170, _conn_depth, 2*_face_radius, _conn_height);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(conn.body, &m);
+
+	// set geometry
+	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_face_radius, _conn_height);
+	dGeomSetBody(geom, conn.body);
+}
+
 void Linkbot::build_face(int id, const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m;
@@ -712,6 +848,18 @@ void Linkbot::build_faceplate(Connector &conn) {
 
 	// set geometry
 	dGeomID geom = dCreateBox(_space, _conn_depth, _body_height, _body_height);
+	dGeomSetBody(geom, conn.body);
+}
+
+void Linkbot::build_foot(Connector &conn) {
+	// set mass of body
+	dMass m;
+	dMassSetBox(&m, 170, _conn_depth, 2*_face_radius, _conn_height);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(conn.body, &m);
+
+	// set geometry
+	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_face_radius, _conn_height);
 	dGeomSetBody(geom, conn.body);
 }
 
@@ -755,6 +903,19 @@ void Linkbot::build_omnidrive(Connector &conn) {
 
 	// set geometry
 	dGeomID geom = dCreateBox(_space, _conn_depth, _omni_length, _omni_length);
+	dGeomSetBody(geom, conn.body);
+}
+
+void Linkbot::build_salamander(Connector &conn) {
+	// set mass of body
+	dMass m;
+	dMassSetBox(&m, 170, _conn_depth, _salamander_length, _conn_height);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(conn.body, &m);
+
+	// set geometry
+	//dGeomID geom = dCreateBox(_space, _conn_depth, _salamander_length, _conn_height);
+	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_face_radius, _conn_height);
 	dGeomSetBody(geom, conn.body);
 }
 

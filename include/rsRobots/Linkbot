@@ -38,6 +38,7 @@ namespace rsRobots {
 			double _face_depth;
 			double _face_radius;
 			double _omni_length;
+			double _salamander_length;
 			double _smallwheel_radius;
 			double _tinywheel_radius;
 			int _disabled;

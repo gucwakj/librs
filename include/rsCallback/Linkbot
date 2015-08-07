@@ -1,5 +1,5 @@
-#ifndef RSCALLBACK_LINKBOTCALLBACK_
-#define RSCALLBACK_LINKBOTCALLBACK_
+#ifndef RSCALLBACK_LINKBOT_
+#define RSCALLBACK_LINKBOT_
 
 #include <osg/Node>
 #include <osg/NodeVisitor>
@@ -9,11 +9,11 @@
 namespace rsCallback {
 
 	// class
-	class LIBRSEXPORT LinkbotCallback : public osg::NodeCallback {
+	class LIBRSEXPORT Linkbot: public osg::NodeCallback {
 		// public functions
 		public:
-			LinkbotCallback(rsSim::Linkbot*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
-			virtual ~LinkbotCallback(void) {};
+			Linkbot(rsSim::Linkbot*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
+			virtual ~Linkbot(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 
@@ -28,5 +28,5 @@ namespace rsCallback {
 
 } // namespace rsCallback
 
-#endif // RSCALLBACK_LINKBOTCALLBACK_
+#endif // RSCALLBACK_LINKBOT_
 

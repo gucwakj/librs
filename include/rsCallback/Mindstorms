@@ -1,5 +1,5 @@
-#ifndef RSCALLBACK_MINDSTORMSCALLBACK_
-#define RSCALLBACK_MINDSTORMSCALLBACK_
+#ifndef RSCALLBACK_MINDSTORMS_
+#define RSCALLBACK_MINDSTORMS_
 
 #include <osg/Node>
 #include <osg/NodeVisitor>
@@ -9,11 +9,11 @@
 namespace rsCallback {
 
 	// class
-	class LIBRSEXPORT MindstormsCallback : public osg::NodeCallback {
+	class LIBRSEXPORT Mindstorms: public osg::NodeCallback {
 		// public functions
 		public:
-			MindstormsCallback(rsSim::Mindstorms*, rsSim::BodyList&, bool);
-			virtual ~MindstormsCallback(void) {};
+			Mindstorms(rsSim::Mindstorms*, rsSim::BodyList&, bool);
+			virtual ~Mindstorms(void) {};
 
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 
@@ -27,5 +27,5 @@ namespace rsCallback {
 
 } // namespace rsCallback
 
-#endif // RSCALLBACK_MINDSTORMSCALLBACK_
+#endif // RSCALLBACK_MINDSTORMS_
 

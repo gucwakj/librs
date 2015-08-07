@@ -1,15 +1,15 @@
 #include <osg/Group>
 #include <osg/PositionAttitudeTransform>
 
-#include <rsCallback/ObstacleCallback>
+#include <rsCallback/Obstacle>
 
 using namespace rsCallback;
 
-ObstacleCallback::ObstacleCallback(rsSim::Obstacle *obstacle) {
+Obstacle::Obstacle(rsSim::Obstacle *obstacle) {
 	_obstacle = obstacle;
 }
 
-void ObstacleCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
+void Obstacle::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		const double *pos = dBodyGetPosition(*_obstacle);

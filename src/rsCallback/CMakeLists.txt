@@ -38,13 +38,13 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsScene debug rsScened)
 # add source files to library
 set (SRCS ${SRCS}
 	callback.cpp
-	obstacleCallback.cpp
+	obstacle.cpp
 )
 if (ENABLE_LINKBOT)
-	set (SRCS ${SRCS} linkbotCallback.cpp)
+	set (SRCS ${SRCS} linkbot.cpp)
 endif ()
 if (ENABLE_MINDSTORMS)
-	set (SRCS ${SRCS} mindstormsCallback.cpp)
+	set (SRCS ${SRCS} mindstorms.cpp)
 endif ()
 
 # add the library

@@ -119,9 +119,6 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		case OMNIPLATE:
 			this->build_omnidrive(_conn.back());
 			break;
-		case SALAMANDER:
-			this->build_salamander(_conn.back());
-			break;
 		case SIMPLE:
 			this->build_simple(_conn.back());
 			break;
@@ -849,19 +846,6 @@ void Linkbot::build_omnidrive(Connector &conn) {
 
 	// set geometry
 	dGeomID geom = dCreateBox(_space, _conn_depth, _omni_length, _omni_length);
-	dGeomSetBody(geom, conn.body);
-}
-
-void Linkbot::build_salamander(Connector &conn) {
-	// set mass of body
-	dMass m;
-	dMassSetBox(&m, 170, _conn_depth, _salamander_length, _conn_height);
-	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
-	dBodySetMass(conn.body, &m);
-
-	// set geometry
-	//dGeomID geom = dCreateBox(_space, _conn_depth, _salamander_length, _conn_height);
-	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_face_radius, _conn_height);
 	dGeomSetBody(geom, conn.body);
 }
 

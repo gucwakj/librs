@@ -80,7 +80,6 @@ namespace rsLinkbot {
 		FOOT,
 		GRIPPER,
 		OMNIPLATE,
-		SALAMANDER,
 		SIMPLE,
 		SMALLWHEEL,
 		TINYWHEEL,

@@ -642,7 +642,7 @@ int Scene::setupScene(double w, double h, bool pause) {
 }
 
 int Scene::setupViewer(osgViewer::Viewer *viewer) {
-    // creating the viewer
+	// creating the viewer
 	if (viewer)
 		_viewer = viewer;
 	else

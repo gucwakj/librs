@@ -33,7 +33,7 @@ void Linkbot::postProcess(void) {
 			_p.add(0, 0, this->getBodyHeight()/2);
 		}
 
-		// TODO:  needs deletion when tilt takes casters into account
+		// TODO: needs deletion when tilt takes casters into account
 		// tilt for casters
 		for (unsigned int i = 0; i < _conn.size(); i++) {
 			if (_conn[i]->getType() == rsLinkbot::CASTER && !static_cast<int>(_conn[i]->getSize()))

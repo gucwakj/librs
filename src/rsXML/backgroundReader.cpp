@@ -398,23 +398,23 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 }
 
 std::string rsXML::getDefaultBackgroundPath(void) {
-    std::string path;
+	std::string path;
 #ifdef _WIN32
-    DWORD size = 128;
-    HKEY key;
+	DWORD size = 128;
+	HKEY key;
 #if defined(_WIN64)
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\Wow6432Node\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
+	RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\Wow6432Node\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
 #else
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
+	RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
 #endif
-    char base[128];
-    RegQueryValueEx(key, TEXT("CHHOME"), NULL, NULL, (LPBYTE)base, &size);
-    base[size] = '\0';
-    if (base[0] == '\0')
-        path = "C:/Ch";
-    else
-        path = base;
-    path += "/package/chrobosim/data/background/";
+	char base[128];
+	RegQueryValueEx(key, TEXT("CHHOME"), NULL, NULL, (LPBYTE)base, &size);
+	base[size] = '\0';
+	if (base[0] == '\0')
+		path = "C:/Ch";
+	else
+		path = base;
+	path += "/package/chrobosim/data/background/";
 #else
 	path = "/home/kgucwa/projects/librs/resources/background/";
 #endif

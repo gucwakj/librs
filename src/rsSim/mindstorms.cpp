@@ -102,7 +102,7 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 
 double Mindstorms::calculate_angle(int id) {
 	_motor[id].theta = mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
-    return _motor[id].theta;
+	return _motor[id].theta;
 }
 
 void Mindstorms::init_params(void) {
@@ -122,7 +122,7 @@ void Mindstorms::init_params(void) {
 		_motor[i].goal = 0;
 		_motor[i].mode = CONTINUOUS;
 		_motor[i].offset = 0;
-		_motor[i].omega = 0.7854;			//  45 deg/sec
+		_motor[i].omega = 0.7854;			// 45 deg/sec
 		_motor[i].omega_max = 4.1888;		// 240 deg/sec
 		_motor[i].record = false;
 		_motor[i].record_active = false;

@@ -166,8 +166,8 @@ Robot* Reader::getNextRobot(int form) {
 				break;
 		}
 		if (_preconfig) {
-			fprintf(stderr, "       Preconfigured Robot Configuration selected.\n");
-			fprintf(stderr, "       Please uncheck if you want to use the Individual Robot List.\n");
+			fprintf(stderr, "\tPreconfigured Robot Configuration selected.\n");
+			fprintf(stderr, "\tPlease uncheck if you want to use the Individual Robot List.\n");
 		}
 		exit(-1);
 	}

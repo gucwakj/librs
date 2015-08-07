@@ -11,7 +11,7 @@ Writer::Writer(std::string name, const std::string &orig) {
 	if (_doc.LoadFile(orig.c_str())) {
 		// warn that the old file couldn't be read
 		std::cerr << "Warning: Could not open " << orig << " for reading." << std::endl;
-		std::cerr << "         Starting a new XML document at " << name << std::endl;
+		std::cerr << "\tStarting a new XML document at " << name << std::endl;
 	}
 
 	// create new nodes

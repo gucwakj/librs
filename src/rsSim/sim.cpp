@@ -36,7 +36,6 @@ Sim::Sim(bool pause, bool rt) {
 	// simulation variables
 	_clock = 0;											// start clock
 	_collision = true;									// perform inter-robot collisions
-	_fitness = 0;										// research: fitness of motion
 	_pause = pause;										// start paused
 	_rt = rt;											// real time
 	_running = true;									// is simulation running
@@ -81,6 +80,10 @@ Sim::~Sim(void) {
 /**********************************************************
 	Public member functions
  **********************************************************/
+int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int ground) {
+	return this->addRobot(robot, id, p, q, a, rs::Vec(0, 0), ground);
+}
+
 int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
 	// lock robot data
 	MUTEX_LOCK(&_robot_mutex);
@@ -266,10 +269,6 @@ void Sim::getCoM(double &x, double &y, double &z) {
 	z /= total;
 }
 
-double Sim::getFitness(void) {
-	return (1/_fitness);
-}
-
 int Sim::getMu(double &robot, double &ground) {
 	robot = _friction[0];
 	ground = _friction[1];
@@ -365,15 +364,6 @@ int Sim::setCOR(double robot, double ground) {
 	return 0;
 }
 
-void Sim::setGoalSinusoid(double a, double b, double c, double d) {
-	_goal[0] = a;
-	_goal[1] = b;
-	//_goal[2] = 3*rs::PI/2;
-	_goal[2] = c;
-	//_goal[3] = a + d;
-	_goal[3] = d;
-}
-
 int Sim::setMu(double robot, double ground) {
 	_friction[0] = robot;
 	_friction[1] = ground;
@@ -430,61 +420,6 @@ void Sim::stop(void) {
 /**********************************************************
 	Private functions
  **********************************************************/
-void Sim::calculate_fitness(void) {
-	// get whole system CoM
-	double x, y, z;
-	this->getCoM(x, y, z);
-
-	// get time
-	double t = _clock - _step;
-	if (t == 0) return;
-
-	double t2 = (t - floor(t/4/rs::PI*_goal[1])*4*rs::PI/_goal[1])/100;
-	double xg = 0, yg = 0, zg = 0;
-	if (t2 < rs::PI/_goal[1]) {
-		yg = t2;
-		zg = _goal[0]*sin(_goal[1]*(yg) + _goal[2]) + _goal[3];
-	}
-	else if (t2 < 2*rs::PI/_goal[1]) {
-		yg = 2*rs::PI/_goal[1] - t2;
-		zg = -_goal[0]*sin(_goal[1]*(rs::PI/_goal[1] - yg) + _goal[2]) + _goal[3];
-	}
-	else if (t2 < 3*rs::PI/_goal[1]) {
-		yg = 2*rs::PI/_goal[1] - t2;
-		zg = _goal[0]*sin(_goal[1]*(2*rs::PI/_goal[1] - yg) + _goal[2]) + _goal[3];
-	}
-	else {
-		yg = t2 - 4*rs::PI/_goal[1];
-		zg = _goal[0]*sin(_goal[1]*(yg - 4*rs::PI/_goal[1]) + _goal[2]) + _goal[3];
-	}
-
-	// system CoM following sinusoid leg
-	_fitness += (1/t)*3*pow(xg - x, 2);		// straying from y-axis
-	_fitness += (1/t)*1*pow(yg - y, 2);		// moving forward with sinusoid motion
-	_fitness += (1/t)*1*pow(zg - z, 2);		// moving up/down with sinusoid motion
-
-	// system CoM following sinusoid forward motion with snake
-	//double sine = _goal[0]*sin(_goal[1]*t + _goal[2]) + _goal[3];
-	//_fitness += (1/t)*3*pow(0 - x, 2);		// straying from y-axis
-	//_fitness += (1/t)*pow(t - y, 2);			// moving forward with sinusoid motion
-	//_fitness += (1/t)*pow(sine - z, 2);		// moving upward with sinusoid motion
-
-	// one joint following sinusoid
-	//_fitness += pow(sine - _robot[0].robot->getAngle(2), 2);
-
-	// output
-	//std::cerr << "fit: " << t << " " << _fitness << std::endl;
-	//std::cerr << "fit: " << 3*pow(0 - x, 2) << " " << pow(t - y, 2) << " " << pow(sine - z, 2) << std::endl;
-
-	// kill if fitness is getting too far away
-	/*if (_fitness > 1000) {
-		// stop simulation
-		MUTEX_LOCK(&_running_mutex);
-		_running = 0;
-		MUTEX_UNLOCK(&_running_mutex);
-	}*/
-}
-
 void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 	// cast void pointer to pointer to class
 	Sim *ptr = (Sim *)data;
@@ -595,9 +530,6 @@ void* Sim::simulation_thread(void *arg) {
 				THREAD_JOIN(sim->_robot[j].thread);
 			}
 			MUTEX_UNLOCK(&(sim->_robot_mutex));
-
-			// research: calculate fitness
-			sim->calculate_fitness();
 
 			// get ending time
 			if (sim->_rt) {

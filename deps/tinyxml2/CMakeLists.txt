@@ -1,8 +1,8 @@
-project(tinyxml2)
-include(GNUInstallDirs)
+project (tinyxml2)
+include (GNUInstallDirs)
 
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-cmake_policy(VERSION 2.6)
+cmake_minimum_required (VERSION 2.6 FATAL_ERROR)
+cmake_policy (VERSION 2.6)
 
 # set lib version
 set(GENERIC_LIB_VERSION "1.0.11")
@@ -33,10 +33,9 @@ endif (WIN32)
 
 # set output directory for shared objects
 set (OUTPUT_LIBDIR "${PROJECT_BINARY_DIR}/lib")
-set (OUTPUT_BINDIR "${PROJECT_BINARY_DIR}/bin")
+#set (OUTPUT_BINDIR "${PROJECT_BINARY_DIR}/bin")
 foreach (CONF ${CMAKE_CONFIGURATION_TYPES})
 	string (TOUPPER "${CONF}" CONF)
-	set ("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}")
 	set ("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}")
 	if (WIN32)
 		set ("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}")
@@ -44,8 +43,9 @@ foreach (CONF ${CMAKE_CONFIGURATION_TYPES})
 		set ("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}")
 	endif ()
 endforeach ()
+set ("CMAKE_LIBRARY_OUTPUT_DIRECTORY" "${OUTPUT_LIBDIR}")
 make_directory (${OUTPUT_LIBDIR})
-make_directory (${OUTPUT_BINDIR})
+#make_directory (${OUTPUT_BINDIR})
 
 # add targets
 if (WIN32)

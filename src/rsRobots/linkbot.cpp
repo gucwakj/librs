@@ -276,22 +276,10 @@ double Linkbot::getCasterScale(void) {
 	return _wheel_radius/(_body_height + 0.008);
 }
 
-double Linkbot::riseByWheels(int wheel_type, double radius) {
-	if (wheel_type == TINYWHEEL)
-		return _tinywheel_radius - _body_height/2;
-	else if (wheel_type == SMALLWHEEL)
-		return _smallwheel_radius - _body_height/2;
-	else if (wheel_type == BIGWHEEL)
-		return _bigwheel_radius - _body_height/2;
-	else if (wheel_type == WHEEL)
-		return radius - _body_height/2;
-	return -1;
-}
-
 const rs::Quat Linkbot::tiltForWheels(int type1, int type2, double &p2) {
 	// set wheel on this face
-	_wheels[JOINT1] = type1;
-	_wheels[JOINT3] = type2;
+	_wheels[0] = type1;
+	_wheels[1] = type2;
 
 	// tilt
 	if (type1 == NONE && type2 == TINYWHEEL) {

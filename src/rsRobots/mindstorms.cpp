@@ -40,18 +40,10 @@ double Mindstorms::getWheelRatio(int type) {
 	return 0;
 }
 
-double Mindstorms::riseByWheels(int type) {
-	if (type == SMALL)
-		return _smallwheel_radius;
-	else if (type == BIG)
-		return _bigwheel_radius;
-	return -1;
-}
-
 const rs::Quat Mindstorms::tiltForWheels(int type1, int type2, double &p2) {
 	// set wheel on this face
-	_wheels[JOINT1] = type1;
-	_wheels[JOINT2] = type2;
+	_wheels[0] = type1;
+	_wheels[1] = type2;
 
 	// tilt
 	if (type1 == NONE && type2 == NONE) {

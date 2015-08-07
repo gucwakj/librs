@@ -35,7 +35,6 @@ namespace rsSim {
 			int moveWait(void);
 			int addToSim(dWorldID&, dSpaceID&, int, rsSim::Sim*);
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int) { return 0; };
-			virtual double getAngle(int) { return 0; };
 			BodyList& getBodyList(void);
 			double getCenter(int);
 			const rs::Pos getPosition(void);
@@ -74,7 +73,6 @@ namespace rsSim {
 				ACCEL_HARMONIC,
 				CONTINUOUS,
 				SEEK,
-				SINE,
 				SINGULAR,
 			} motorMode_t;
 

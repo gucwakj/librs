@@ -58,32 +58,29 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	this->build_wheel(WHEEL2, this->getRobotBodyPosition(WHEEL2, p, q), this->getRobotBodyQuaternion(WHEEL2, 0, q));
 
 	// joint variable
-	std::vector<dJointID> joint;
-	joint.resize(_dof);
 	rs::Pos o;
 
 	// joint for body to wheel 1
-	joint[JOINT1] = dJointCreateHinge(_world, 0);
-	dJointAttach(joint[JOINT1], _body[BODY], _body[WHEEL1]);
+	_motor[JOINT1].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[JOINT1].joint, _body[BODY], _body[WHEEL1]);
 	o = q.multiply(_wheel_depth/2, 0, 0);
 	o.add(this->getRobotBodyPosition(WHEEL1, p, q));
-	dJointSetHingeAnchor(joint[JOINT1], o[0], o[1], o[2]);
+	dJointSetHingeAnchor(_motor[JOINT1].joint, o[0], o[1], o[2]);
 	o = q.multiply(1, 0, 0);
-	dJointSetHingeAxis(joint[JOINT1], o[0], o[1], o[2]);
+	dJointSetHingeAxis(_motor[JOINT1].joint, o[0], o[1], o[2]);
 
 	// joint for body to wheel 2
-	joint[JOINT2] = dJointCreateHinge(_world, 0);
-	dJointAttach(joint[JOINT2], _body[BODY], _body[WHEEL2]);
-	o = q.multiply(-_wheel_depth / 2, 0, 0);
+	_motor[JOINT2].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[JOINT2].joint, _body[BODY], _body[WHEEL2]);
+	o = q.multiply(-_wheel_depth/2, 0, 0);
 	o.add(this->getRobotBodyPosition(WHEEL2, p, q));
-	dJointSetHingeAnchor(joint[JOINT2], o[0], o[1], o[2]);
+	dJointSetHingeAnchor(_motor[JOINT2].joint, o[0], o[1], o[2]);
 	o = q.multiply(1, 0, 0);
-	dJointSetHingeAxis(joint[JOINT2], o[0], o[1], o[2]);
+	dJointSetHingeAxis(_motor[JOINT2].joint, o[0], o[1], o[2]);
 
 	// build motors
 	for (int i = 0; i < _dof; i++) {
 		_motor[i].id = dJointCreateAMotor(_world, 0);
-		_motor[i].joint = joint[i];
 		dJointAttach(_motor[i].id, _body[BODY], _body[WHEEL1 + i]);
 		dJointSetAMotorMode(_motor[i].id, dAMotorUser);
 		dJointSetAMotorNumAxes(_motor[i].id, 1);

@@ -198,6 +198,9 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyI
 	// build new module
 	this->buildIndividual(P, Q, a);
 
+	// add fixed joint to attach two modules
+	this->fix_body_to_connector(base, face);
+
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);
 
@@ -224,8 +227,6 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	this->build_face(FACE3, this->getRobotBodyPosition(FACE3, p, q), this->getRobotBodyQuaternion(FACE3, 0, q));
 
 	// joint variable
-	std::vector<dJointID> joint;
-	joint.resize(_dof);
 	rs::Pos o;
 
 	// joint for body to face 1
@@ -239,15 +240,15 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 
 	// joint for body to face 2
 	if (_disabled == JOINT2) {
-		joint[JOINT2] = dJointCreateFixed(_world, 0);
-		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
-		dJointSetFixed(joint[JOINT2]);
+		_motor[JOINT2].joint = dJointCreateFixed(_world, 0);
+		dJointAttach(_motor[JOINT2].joint, _body[BODY], _body[FACE2]);
+		dJointSetFixed(_motor[JOINT2].joint);
 	}
 	else {
-		joint[JOINT2] = dJointCreateHinge(_world, 0);
-		dJointAttach(joint[JOINT2], _body[BODY], _body[FACE2]);
+		_motor[JOINT2].joint = dJointCreateHinge(_world, 0);
+		dJointAttach(_motor[JOINT2].joint, _body[BODY], _body[FACE2]);
 		o = q.multiply(0, -_body_length, 0);
-		dJointSetHingeAnchor(joint[JOINT2], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		dJointSetHingeAnchor(_motor[JOINT2].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(0, 1, 0);
 		dJointSetHingeAxis(_motor[JOINT2].joint, o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE2], o[0], o[1], o[2]);
@@ -255,15 +256,15 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 
 	// joint for body to face 3
 	if (_disabled == JOINT3) {
-		joint[JOINT3] = dJointCreateFixed(_world, 0);
-		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
-		dJointSetFixed(joint[JOINT3]);
+		_motor[JOINT3].joint = dJointCreateFixed(_world, 0);
+		dJointAttach(_motor[JOINT3].joint, _body[BODY], _body[FACE3]);
+		dJointSetFixed(_motor[JOINT3].joint);
 	}
 	else {
-		joint[JOINT3] = dJointCreateHinge(_world, 0);
-		dJointAttach(joint[JOINT3], _body[BODY], _body[FACE3]);
+		_motor[JOINT3].joint = dJointCreateHinge(_world, 0);
+		dJointAttach(_motor[JOINT3].joint, _body[BODY], _body[FACE3]);
 		o = q.multiply(_body_width/2, 0, 0);
-		dJointSetHingeAnchor(joint[JOINT3], o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		dJointSetHingeAnchor(_motor[JOINT3].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(-1, 0, 0);
 		dJointSetHingeAxis(_motor[JOINT3].joint, o[0], o[1], o[2]);
 		dBodySetFiniteRotationAxis(_body[FACE3], o[0], o[1], o[2]);
@@ -557,61 +558,6 @@ void Linkbot::simPreCollisionThread(void) {
 					dJointSetAMotorParam(_motor[i].id, dParamVel, 0);
 				}
 				break;
-			case SINE: {
-				// delay for phase angle
-				if (_sine[i].phase && _sine[i].run == 0) {
-					if (_sine[i].phase < 0)
-						_sine[i].delay = -_sine[i].phase / step;
-					else {
-						if ( static_cast<int>(_sine[i].phase/M_PI) % 2 ) {
-							_sine[i].delay = (2*M_PI - _sine[i].phase) / step;
-						}
-						else {
-							_sine[i].delay = (M_PI - _sine[i].phase) / step;
-							_sine[i].gain = -_sine[i].gain;
-						}
-					}
-					_sine[i].run++;
-				}
-				else if (_sine[i].phase == 0)
-					_sine[i].run++;
-
-				// delay for phase angle
-				if (_sine[i].delay) { _sine[i].delay--; break; }
-
-				// reenable body on start
-				dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);
-				dBodyEnable(_body[0]);
-
-				// init params on first run (post-delay)
-				if (_sine[i].run == 1) {
-					_sine[i].init = _motor[i].theta;
-					_sine[i].start = _sim->getClock();
-					_sine[i].run++;
-				}
-
-				// calculate new angle
-				double t = _sim->getClock() + step;
-				angle = _sine[i].gain*sin((t - _sine[i].start)/_sine[i].period) + _sine[i].init;
-
-				// set new omega
-				_motor[i].omega = (angle - _motor[i].theta)/step;
-				_motor[i].goal += step*_motor[i].omega;
-				_motor[i].state = NEUTRAL;
-
-				// give it an initial push
-				if (0 < _motor[i].omega && _motor[i].omega < 0.02)
-					_motor[i].omega = 0.02;
-				else if (-0.02 < _motor[i].omega && _motor[i].omega < 0)
-					_motor[i].omega = -0.02;
-
-				// move forever
-				dJointEnable(_motor[i].id);
-				dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
-
-				// end
-				break;
-			}
 			case SINGULAR: {
 				// reenable body on start
 				dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);

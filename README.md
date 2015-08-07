@@ -52,7 +52,7 @@ used to put all libraries into one folder for easier access.
 ```
 $ cd deps/ode/
 $ sh autogen.sh
-$ ./configure --prefix=$PWD"/sys/" --enable-double-precision --enable-shared --disable-demos --with-trimesh=none --with-drawstuff=none
+$ ./configure --prefix=$PWD"/sys/" --enable-double-precision --enable-shared --disable-demos --disable-asserts --with-trimesh=none --with-drawstuff=none
 $ make
 $ make install
 $ cd ../../
@@ -63,13 +63,13 @@ $ cd ../../
 $ cd deps/osg/
 $ mkdir build/
 $ cd build/
-$ cmake -DCMAKE_BUILD_TYPE=Release ..
-$ make osg osgDB osgGA osgShadow osgText osgViewer osgdb_png osgdb_3ds
+$ cmake -DDESIRED_QT_VERSION=5 ..
+$ make osg osgDB osgGA osgFX osgQt osgShadow osgText osgUtil osgViewer osgdb_png osgdb_3ds
 $ cd ../../../
 ```
 
 #### librs
-The four libraries of librs are built into build/lib/.
+The five libraries of librs are built into build/lib/.
 ```
 $ mkdir build/
 $ cd build/

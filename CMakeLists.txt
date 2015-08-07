@@ -65,8 +65,8 @@ endif ()
 make_directory (${OUTPUT_LIBDIR})
 
 # options for individual robot compilation
-set (ENABLE_LINKBOT ON)
-set (ENABLE_MINDSTORMS ON)
+option (ENABLE_LINKBOT "Enable linkbot compilation" ON)
+option (ENABLE_MINDSTORMS "Enable mindstorms compilation" ON)
 
 # options for building pieces of whole library
 option (ENABLE_GRAPHICS "Enable graphical library" ON)

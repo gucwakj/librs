@@ -4,8 +4,8 @@ Library for robot simulation engines.  It is split into five separate libraries
 which each provide parts of the functionality of the system.
 
 rs		base mathematics classes: position, quaternion, vectors
-rsRobots	base robot classes which have dimensions and basic information about
-			the robots
+rsRobots	base robot classes which have dimensions and basic information
+			about the robots
 rsSim		simulation engine based upon ODE
 rsScene		scene graph library based upon OSG
 rsCallback	graphical updating library using data from rsSim to manipulate
@@ -15,15 +15,15 @@ rsXML		xml parsing library
 rsSim, rsScene, and rsXML are independent and each rely upon rs and rsRobots
 for basic robot information.  rsCallback is dependent upon rsScene and rsSim.
 They can mixed and matched to create a library which provides the simulation
-funcionality necessary for specific projects.
+functionality necessary for specific projects.
 
 ## Compilation
 
-Building the librs library and its dependencies is done in four steps.
+Building the LibRS library and its dependencies is done in four steps.
 Compilation is largely based upon CMake build files with an out-of-source build
 recommended.  Instructions for Linux, Windows, and the Raspberry Pi are
 provided here.  There are three dependency libraries, ODE, OSG, and tinyxml2.
-These are built separately and linked to by the librs libraries.  Be default
+These are built separately and linked to by the LibRS libraries.  Be default
 all modules are built but can be turned off with cmake variables on the command
 line.
 ```
@@ -31,7 +31,17 @@ line.
 -DENABLE_SIM=no
 -DENABLE_XML=no
 ```
-These disable support for each of the major components of librs.
+These disable support for each of the major components of LibRS.
+
+LibRS can simulate three different types of robot modules.  Each has its own
+purpose for learning or researching.  These can also be enabled/disabled
+individually to simplify the library for a specific purpose.  By default the
+Linkbots and Mindstorms are enabled and the Dof is not.
+```
+-DENABLE_DOF=no
+-DENABLE_LINKBOT=no
+-DENABLE_MINDSTORMS=no
+```
 
 ### Linux
 
@@ -47,12 +57,14 @@ $ cd ../../../
 
 #### open dynamics engine
 ODE relies upon configure scripts to build.  The one-liner provided builds the
-shared library which is linked in the librs build scripts.  ``make install`` is
+shared library which is linked in the LibRS build scripts.  ``make install`` is
 used to put all libraries into one folder for easier access.
 ```
 $ cd deps/ode/
 $ sh autogen.sh
-$ ./configure --prefix=$PWD"/sys/" --enable-double-precision --enable-shared --disable-demos --disable-asserts --with-trimesh=none --with-drawstuff=none
+$ ./configure --prefix=$PWD"/sys/" --enable-double-precision --enable-shared \
+	--with-trimesh=none --with-drawstuff=none \
+	--disable-demos --disable-asserts
 $ make
 $ make install
 $ cd ../../
@@ -68,8 +80,8 @@ $ make osg osgDB osgGA osgFX osgQt osgShadow osgText osgUtil osgViewer osgdb_png
 $ cd ../../../
 ```
 
-#### librs
-The five libraries of librs are built into build/lib/.
+#### LibRS
+The five libraries of LibRS are built into build/lib/.
 ```
 $ mkdir build/
 $ cd build/
@@ -110,7 +122,7 @@ build Release solution
 					osgUtil osgViewer osgdb_3ds osgdb_png
 ```
 
-#### librs
+#### LibRS
 ```
 mkdir build/
 use cmake-gui to configure with visual studio 12 2013 {Win64} and generate
@@ -122,28 +134,33 @@ build Release solution
 
 #### open dynamics engine
 ODE relies upon configure scripts to build.  The one-liner provided builds the
-shared library which is linked in the librs build scripts.  ``make install`` is
+shared library which is linked in the LibRS build scripts.  ``make install`` is
 used to put all libraries into one folder for easier access.
 ```
 $ cd deps/ode/
 $ sh autogen.sh
-$ ./configure --prefix=$PWD"/sys/" --enable-double-precision --enable-shared --disable-demos --disable-asserts --with-trimesh=none --with-drawstuff=none
+$ ./configure --prefix=$PWD"/sys/" --enable-double-precision --enable-shared \
+	--with-trimesh=none --with-drawstuff=none \
+	--disable-demos --disable-asserts
 $ make
 $ make install
 $ cd ../../
 ```
 
-#### librs
+#### LibRS
 The default Raspbian image as of August 2015 is based upon Debian Wheezy which
-inclues only the gcc 4.6 compiler.  This does not have any support for c++11
-which is needed to compile librs.  The newer gcc can be gotten from the Debian
-Jessie repositories and specificed on the command line.  Disabling the Graphics
-and XML libraries are useful for running headless simulations.  The five
-libraries of librs are built into build/lib/.
+includes only the gcc 4.6 compiler.  This does not have any support for c++11
+which is needed to compile LibRS.  The newer gcc can be downloaded from the
+Debian Jessie repositories and specified on the command line.  Disabling the
+Graphics and XML libraries are useful for running headless simulations.  Also
+disabling the unnecessary robots is useful to minimize the size of the library.
+The five libraries of LibRS are built into build/lib.
 ```
 $ mkdir build/
 $ cd build/
-$ cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-4.9 -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.9 -DENABLE_GRAPHICS=no -DENABLE_XML=no ..
+$ cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-4.9 -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.9 \
+	-DENABLE_DOF=yes -DENABLE_LINKBOT=no -DENABLE_MINDSTORMS=no \
+	-DENABLE_GRAPHICS=no -DENABLE_XML=no ..
 $ make
 $ cd ../
 ```

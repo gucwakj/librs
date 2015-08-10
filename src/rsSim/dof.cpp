@@ -288,15 +288,6 @@ void Dof::simPreCollisionThread(void) {
 	MUTEX_LOCK(&_goal_mutex);
 	MUTEX_LOCK(&_theta_mutex);
 
-	// get body rotation from world
-	const double *R = dBodyGetRotation(_body[Bodies::Body]);
-	// put into accel array
-	_accel[0] = R[8];
-	_accel[1] = R[9];
-	_accel[2] = R[10];
-	// add gaussian noise to accel
-	this->noisy(_accel, 3, 0.005);
-
 	// store current angle
 	_motor[0].theta = calculate_angle(_enabled);
 	// set motor angle to current angle

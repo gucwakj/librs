@@ -36,6 +36,9 @@ set (SRCS ${SRCS}
 	modularRobot.cpp
 	sim.cpp
 )
+if (ENABLE_DOF)
+	set (SRCS ${SRCS} dof.cpp)
+endif ()
 if (ENABLE_LINKBOT)
 	set (SRCS ${SRCS} linkbot.cpp)
 endif ()

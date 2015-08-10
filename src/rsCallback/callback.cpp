@@ -1,5 +1,6 @@
 #include <rsCallback/Callback>
 #include <rsCallback/Obstacle>
+#include <rsCallback/Dof>
 #include <rsCallback/Linkbot>
 #include <rsCallback/Mindstorms>
 
@@ -23,6 +24,9 @@ void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::B
 
 void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::BodyList &bodies, rsSim::ConnectorList &conn) {
 	switch (sim->getForm()) {
+		case rs::DOF:
+			scene->setUpdateCallback(new Dof(dynamic_cast<rsSim::Dof *>(sim), bodies, conn, _units));
+			break;
 		case rs::LINKBOTI: case rs::LINKBOTL: case rs::LINKBOTT:
 			scene->setUpdateCallback(new Linkbot(dynamic_cast<rsSim::Linkbot *>(sim), bodies, conn, _units));
 			break;

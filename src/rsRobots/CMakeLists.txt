@@ -14,6 +14,9 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rs debug rsd)
 set (SRCS ${SRCS}
 	robot.cpp
 )
+if (ENABLE_DOF)
+	set (SRCS ${SRCS} dof.cpp)
+endif ()
 if (ENABLE_LINKBOT)
 	set (SRCS ${SRCS} linkbot.cpp)
 endif ()

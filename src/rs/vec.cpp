@@ -11,6 +11,10 @@ Vec::Vec(int size) {
 	_v.resize(size);
 }
 
+Vec::Vec(double a) {
+	_v.push_back(a);
+}
+
 Vec::Vec(double a, double b) {
 	_v.push_back(a);
 	_v.push_back(b);

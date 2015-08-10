@@ -1,0 +1,21 @@
+#ifndef RSXML_DOF_
+#define RSXML_DOF_
+
+#include <rsRobots/Dof>
+#include <rsXML/Robot>
+
+namespace rsXML {
+
+	// class
+	class LIBRSEXPORT Dof : virtual public rsRobots::Dof, virtual public Robot {
+		public:
+			Dof(int = -1);
+			virtual ~Dof(void) { };
+
+			virtual void postProcess(void);
+	};
+
+} // namespace rsXML
+
+#endif // RSXML_DOF_
+

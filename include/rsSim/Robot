@@ -48,7 +48,7 @@ namespace rsSim {
 			virtual double calculate_angle(int) { return 0; };
 			int doze(double);
 			int fixBodyToGround(dBodyID);
-			dBodyID getBodyID(int);
+			virtual dBodyID getBodyID(int);
 			double getRotation(int, int);
 			double mod_angle(double, double, double);
 			int noisy(double*, int, double);

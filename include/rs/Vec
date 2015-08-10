@@ -12,6 +12,7 @@ namespace rs {
 		public:
 			Vec(void);
 			Vec(int);
+			Vec(double);
 			Vec(double, double);
 			Vec(double, double, double);
 			Vec(double, double, double, double);

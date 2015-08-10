@@ -1,0 +1,86 @@
+#ifndef RSROBOTS_DOF_
+#define RSROBOTS_DOF_
+
+#include <rsRobots/ModularRobot>
+
+namespace rsDof {
+
+	namespace Bodies {
+		// bodies
+		enum Parts {
+			Body,
+			Cap,
+			Num_Parts
+		};
+
+		// joints
+		enum Joints {
+			Joint,
+			Num_Joints
+		};
+
+		// faces
+		enum Faces {
+			Face1 = 1,
+			Face2,
+			Face3,
+			Num_Faces
+		};
+	} // namespace Bodies
+
+	namespace Connectors {
+		// names
+		enum Types {
+			None,
+			El,
+			Foot,
+			Num_Connectors
+		};
+
+		// sides
+		enum Sides {
+			Side1 = 1,
+			Side2,
+			Side3,
+			Side4
+		};
+	} // namespace Connectors
+
+} // namespace rsDof
+
+namespace rsRobots {
+
+	// class
+	class LIBRSEXPORT Dof : virtual public ModularRobot {
+		// public functions
+		public:
+			Dof(int);
+			virtual ~Dof(void) { };
+
+			int getEnabled(void);
+
+		// inherited functions
+		public:
+			virtual const rs::Pos getConnBodyPosition(int, int, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getConnFacePosition(int, int, int, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getRobotCenterPosition(int, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getRobotFacePosition(int, const rs::Pos&, const rs::Quat&);
+
+			virtual const rs::Quat getConnBodyQuaternion(int, int, const rs::Quat&);
+			virtual const rs::Quat getConnFaceQuaternion(int, int, int, const rs::Quat&);
+			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
+			virtual const rs::Quat getRobotCenterQuaternion(int, int, double, const rs::Quat&);
+
+		// data
+		protected:
+			double _body_radius;
+			double _cap_depth;
+			double _cap_radius;
+			double _el_length;
+			int _enabled;
+	};
+
+} // namespace rsRobots
+
+#endif // RSROBOTS_DOF_
+

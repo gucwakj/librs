@@ -1,0 +1,51 @@
+#ifndef RSSIM_DOF_
+#define RSSIM_DOF_
+
+#include <rsRobots/Dof>
+#include <rsSim/ModularRobot>
+
+namespace rsSim {
+
+	// class
+	class LIBRSEXPORT Dof : virtual public rsRobots::Dof, virtual public ModularRobot {
+		// public api
+		public:
+			Dof(int);
+			virtual ~Dof(void);
+
+			virtual int addConnector(int, int, int = rs::RIGHT, double = 0, int = 1, int = -1);
+			virtual dBodyID getBodyID(int);
+			virtual const rs::Pos getCoM(double&);
+			const rs::Vec getJoints(void);
+			void moveJointOnce(double*);
+
+		// inherited functions from ModularRobot class
+		protected:
+			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, dBodyID, int, int, int);
+
+		// inherited functions from Robot class
+		protected:
+			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int);
+			virtual int buildIndividual(const rs::Pos&, const rs::Quat&, const rs::Vec&);
+			virtual double calculate_angle(int);
+			virtual void init_params(void);
+			virtual void simPreCollisionThread(void);
+			virtual void simPostCollisionThread(void);
+
+		// private functions
+		private:
+			void build_body(const rs::Pos&, const rs::Quat&);
+			void build_cap(const rs::Pos&, const rs::Quat&);
+			void build_el(Connector&);
+			void build_foot(Connector&);
+
+		// private variables
+		private:
+			double *_values;
+			int _loc;
+	};
+
+} // namespace rsSim
+
+#endif // RSSIM_DOF_
+

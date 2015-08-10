@@ -23,6 +23,7 @@
 #include <osgViewer/ViewerEventHandlers>
 
 #include <rs/Threads>
+#include <rsRobots/Dof>
 #include <rsRobots/Linkbot>
 #include <rsRobots/Mindstorms>
 #include <rsScene/KeyboardHandler>
@@ -85,6 +86,8 @@ namespace rsScene {
 			osg::Material* create_material(osg::Vec4);
 			void draw_grid(double, double, double, double, double, double, double);
 			void draw_global_hud(double, double, bool);
+			void draw_robot_dof(rsRobots::Dof*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
+			void draw_robot_dof_conn(rsRobots::Dof*, Robot*, int, int, int, double, int, int);
 			void draw_robot_linkbot(rsRobots::Linkbot*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
 			void draw_robot_linkbot_conn(rsRobots::Linkbot*, Robot*, int, int, int, double, int, int);
 			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);

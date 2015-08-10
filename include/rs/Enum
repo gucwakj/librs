@@ -5,6 +5,7 @@ namespace rs {
 
 	// robot forms
 	enum Form {
+		DOF,
 		LINKBOTI,
 		LINKBOTL,
 		LINKBOTT,

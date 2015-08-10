@@ -214,8 +214,11 @@ int Scene::deleteRobot(int id) {
 
 void Scene::drawConnector(rsRobots::ModularRobot *robot, Robot *group, int type, int face, int orientation, double size, int side, int conn) {
 	switch (robot->getForm()) {
+		case rs::DOF:
+			this->draw_robot_dof_conn(dynamic_cast<rsRobots::Dof *>(robot), group, type, face, orientation, size, side, conn);
+			break;
 		case rs::LINKBOTI: case rs::LINKBOTL: case rs::LINKBOTT:
-			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::Linkbot*>(robot), group, type, face, orientation, size, side, conn);
+			this->draw_robot_linkbot_conn(dynamic_cast<rsRobots::Linkbot *>(robot), group, type, face, orientation, size, side, conn);
 			break;
 	}
 }
@@ -330,11 +333,14 @@ Robot* Scene::drawRobot(rsRobots::Robot *robot, const rs::Pos &p, const rs::Quat
 	osg::ref_ptr<osg::Group> group = new osg::Group();
 
 	switch (robot->getForm()) {
+		case rs::DOF:
+			this->draw_robot_dof(dynamic_cast<rsRobots::Dof *>(robot), group, p, q, a, c, trace);
+			break;
 		case rs::LINKBOTI: case rs::LINKBOTL: case rs::LINKBOTT:
-			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot*>(robot), group, p, q, a, c, trace);
+			this->draw_robot_linkbot(dynamic_cast<rsRobots::Linkbot *>(robot), group, p, q, a, c, trace);
 			break;
 		case rs::EV3: case rs::NXT:
-			this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms*>(robot), group, p, q, a, c, trace);
+			this->draw_robot_mindstorms(dynamic_cast<rsRobots::Mindstorms *>(robot), group, p, q, a, c, trace);
 			break;
 	}
 
@@ -1109,6 +1115,116 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 
 	// add to scene
 	_root->addChild(projection);
+}
+
+void Scene::draw_robot_dof(rsRobots::Dof *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
+	// initialize variables
+	osg::ref_ptr<osg::Node> body[rsDof::Bodies::Num_Parts];
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsDof::Bodies::Num_Parts];
+
+	// create transforms
+	for (int i = 0; i < rsDof::Bodies::Num_Parts; i++) {
+		pat[i] = new osg::PositionAttitudeTransform;
+		group->addChild(pat[i]);
+	}
+
+	// set tracing
+	robot->setTrace(trace);
+
+	// draw body
+	body[rsDof::Bodies::Body] = osgDB::readNodeFile(_model_path + "dof/body.3ds");
+	body[rsDof::Bodies::Body]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
+	pat[rsDof::Bodies::Body]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat[rsDof::Bodies::Body]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+
+	// draw 'led'
+	osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, -0.02, 0.0308), 0.01, 0.01);
+	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
+	led->setColor(osg::Vec4(c[0], c[1], c[2], 1));
+	osg::Geode *bodyled = new osg::Geode();
+	bodyled->addDrawable(led);
+	bodyled->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	bodyled->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	bodyled->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	bodyled->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	bodyled->setCullingActive(false);
+
+	// draw face
+	rs::Quat q1 = robot->getRobotBodyQuaternion(robot->getEnabled(), rs::D2R(a[0]), q);
+	rs::Pos p1 = robot->getRobotBodyPosition(robot->getEnabled(), p, q);
+	body[rsDof::Bodies::Cap] = osgDB::readNodeFile(_model_path + "dof/cap.3ds");
+	body[rsDof::Bodies::Cap]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
+	pat[rsDof::Bodies::Cap]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	pat[rsDof::Bodies::Cap]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
+
+	// set rendering
+	for (int i = 0; i < rsDof::Bodies::Num_Parts; i++) {
+		// set rendering properties
+		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		body[i]->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		body[i]->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+		body[i]->setCullingActive(false);
+		pat[i]->addChild(body[i]);
+	}
+	// add 'led' as second child of body
+	pat[rsDof::Bodies::Body]->addChild(bodyled);
+}
+
+void Scene::draw_robot_dof_conn(rsRobots::Dof *robot, Robot *group, int type, int face, int orientation, double size, int side, int conn) {
+	// get robot p&q
+	osg::PositionAttitudeTransform *pat;
+	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsDof::Bodies::Body));
+	osg::Vec3d p = pat->getPosition();
+	osg::Quat q = pat->getAttitude();
+
+	// get face p&q
+	rs::Quat Q1 = robot->getRobotBodyQuaternion(face, 0, rs::Quat(q[0], q[1], q[2], q[3]));
+	rs::Pos P1 = robot->getRobotFacePosition(face, rs::Pos(p[0], p[1], p[2]), rs::Quat(q[0], q[1], q[2], q[3]));
+	if (conn == -1) {
+		P1 = robot->getConnBodyPosition(type, orientation, P1, Q1);
+		Q1 = robot->getConnBodyQuaternion(type, orientation, Q1);
+	}
+	else {
+		P1 = robot->getConnFacePosition(type, side, orientation, P1, Q1);
+		Q1 = robot->getConnFaceQuaternion(type, side, orientation, Q1);
+		type = conn;
+		P1 = robot->getConnBodyPosition(type, orientation, P1, Q1);
+		Q1 = robot->getConnBodyQuaternion(type, orientation, Q1);
+	}
+
+	// PAT to transform mesh
+	osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
+	transform->setPosition(osg::Vec3d(P1[0], P1[1], P1[2]));
+	transform->setAttitude(osg::Quat(Q1[0], Q1[1], Q1[2], Q1[3]));
+
+	// create node to hold mesh
+	osg::ref_ptr<osg::Node> node;
+	switch (type) {
+		case rsDof::Connectors::El:
+			node = osgDB::readNodeFile(_model_path + "dof/el.3ds");
+			break;
+		case rsDof::Connectors::Foot:
+			node = osgDB::readNodeFile(_model_path + "dof/foot.3ds");
+			break;
+	}
+	node->setCullingActive(false);
+
+	// set rendering properties
+	node->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.125, 0.369, 0.773, 1)));
+	node->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	node->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	node->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+
+	// add body to pat
+	transform->addChild(node);
+
+	// set user properties of node
+	node->setName("connector");
+
+	// add to scenegraph
+	group->addChild(transform);
 }
 
 void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {

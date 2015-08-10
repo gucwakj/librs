@@ -65,6 +65,7 @@ endif ()
 make_directory (${OUTPUT_LIBDIR})
 
 # options for individual robot compilation
+option (ENABLE_DOF "Enable dof compilation" OFF)
 option (ENABLE_LINKBOT "Enable linkbot compilation" ON)
 option (ENABLE_MINDSTORMS "Enable mindstorms compilation" ON)
 

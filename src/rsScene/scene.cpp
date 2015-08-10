@@ -751,15 +751,15 @@ osg::Material* Scene::create_material(osg::Vec4 color) {
 }
 
 void Scene::draw_grid(double tics, double hash, double minx, double maxx, double miny, double maxy, double enabled) {
-	if ((maxx - minx < -rs::EPSILON) || (maxy - miny < -rs::EPSILON))
+	if ((maxx - minx < -rs::Epsilon) || (maxy - miny < -rs::Epsilon))
 		return;
 
 	if ( (int)(enabled) ) {
 		// grid lines for each sub-foot
-		double minx1 = static_cast<int>(ceil(((minx < -rs::EPSILON) ? 1.001 : 0.999)*minx/tics))*tics;
-		double miny1 = static_cast<int>(ceil(((miny < -rs::EPSILON) ? 1.001 : 0.999)*miny/tics))*tics;
-		double maxx1 = static_cast<int>(floor(((maxx < -rs::EPSILON) ? 0.999 : 1.001)*maxx/tics))*tics;
-		double maxy1 = static_cast<int>(floor(((maxy < -rs::EPSILON) ? 0.999 : 1.001)*maxy/tics))*tics;
+		double minx1 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.001 : 0.999)*minx/tics))*tics;
+		double miny1 = static_cast<int>(ceil(((miny < -rs::Epsilon) ? 1.001 : 0.999)*miny/tics))*tics;
+		double maxx1 = static_cast<int>(floor(((maxx < -rs::Epsilon) ? 0.999 : 1.001)*maxx/tics))*tics;
+		double maxy1 = static_cast<int>(floor(((maxy < -rs::Epsilon) ? 0.999 : 1.001)*maxy/tics))*tics;
 		int numx1 = static_cast<int>(ceil(1.001*(maxx1 - minx1)/tics));
 		int numy1 = static_cast<int>(ceil(1.001*(maxy1 - miny1)/tics));
 		int numVertices = 2*numx1 + 2*numy1;
@@ -802,10 +802,10 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		_background->addChild(gridGeode);
 
 		// grid lines for each foot
-		double minx2 = static_cast<int>(ceil(((minx < -rs::EPSILON) ? 1.01 : 0.99)*minx/hash))*hash;
-		double miny2 = static_cast<int>(ceil(((miny < -rs::EPSILON) ? 1.01 : 0.99)*miny/hash))*hash;
-		double maxx2 = static_cast<int>(floor(((maxx < -rs::EPSILON) ? 0.99 : 1.01)*maxx/hash))*hash;
-		double maxy2 = static_cast<int>(floor(((maxy < -rs::EPSILON) ? 0.99 : 1.01)*maxy/hash))*hash;
+		double minx2 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.01 : 0.99)*minx/hash))*hash;
+		double miny2 = static_cast<int>(ceil(((miny < -rs::Epsilon) ? 1.01 : 0.99)*miny/hash))*hash;
+		double maxx2 = static_cast<int>(floor(((maxx < -rs::Epsilon) ? 0.99 : 1.01)*maxx/hash))*hash;
+		double maxy2 = static_cast<int>(floor(((maxy < -rs::Epsilon) ? 0.99 : 1.01)*maxy/hash))*hash;
 		int numx2 = static_cast<int>(ceil(1.01*(maxx2 - minx2)/hash));
 		int numy2 = static_cast<int>(ceil(1.01*(maxy2 - miny2)/hash));
 		int numVertices2 = 2*numx2 + 2*numy2;
@@ -852,28 +852,28 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		osg::Geometry *gridLines3 = new osg::Geometry();
 		osg::Vec3 myCoords3[4];
 		if ( fabs(maxx) > fabs(minx) ) {
-			if (minx < -rs::EPSILON)
+			if (minx < -rs::Epsilon)
 				myCoords3[0] = osg::Vec3(minx, 0, 0);
 			else
 				myCoords3[0] = osg::Vec3(0, 0, 0);
 			myCoords3[1] = osg::Vec3(maxx, 0, 0);
 		}
 		else {
-			if (maxx < -rs::EPSILON)
+			if (maxx < -rs::Epsilon)
 				myCoords3[1] = osg::Vec3(0, 0, 0);
 			else
 				myCoords3[1] = osg::Vec3(maxx, 0, 0);
 			myCoords3[0] = osg::Vec3(minx, 0, 0);
 		}
 		if ( fabs(maxy) > fabs(miny) ) {
-			if (miny < -rs::EPSILON)
+			if (miny < -rs::Epsilon)
 				myCoords3[2] = osg::Vec3(0, miny, 0);
 			else
 				myCoords3[2] = osg::Vec3(0, 0, 0);
 			myCoords3[3] = osg::Vec3(0, maxy, 0);
 		}
 		else {
-			if (maxy < -rs::EPSILON)
+			if (maxy < -rs::Epsilon)
 				myCoords3[3] = osg::Vec3(0, 0, 0);
 			else
 				myCoords3[3] = osg::Vec3(0, maxy, 0);
@@ -915,13 +915,13 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xtext->setColor(osg::Vec4(0, 0, 0, 1));
 		xtext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 		if ( fabs(maxx) > fabs(minx) ) {
-			if (maxx < rs::EPSILON)
+			if (maxx < rs::Epsilon)
 				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
 			else
 				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
 		}
 		else {
-			if (minx < -rs::EPSILON)
+			if (minx < -rs::Epsilon)
 				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
 			else
 				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
@@ -943,13 +943,13 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ytext->setColor(osg::Vec4(0, 0, 0, 1));
 		ytext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 		if ( fabs(maxy) > fabs(miny) ) {
-			if (maxy < rs::EPSILON)
+			if (maxy < rs::Epsilon)
 				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
 			else
 				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
 		}
 		else {
-			if (miny < -rs::EPSILON)
+			if (miny < -rs::Epsilon)
 				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
 			else
 				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
@@ -973,7 +973,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xzero_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 		xnum_billboard->addDrawable(xzero_text, osg::Vec3d(-0.5*tics, -0.5*tics, 0.0));
 		// positive
-		if (maxx > rs::EPSILON) {
+		if (maxx > rs::Epsilon) {
 			for (int i = 1; i < static_cast<int>(1.01*maxx/hash + 1); i++) {
 				osg::ref_ptr<osgText::Text> xnumpos_text = new osgText::Text();
 				if (_units) sprintf(text, "   %.0lf ", 100*i*hash);
@@ -988,7 +988,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 			}
 		}
 		// negative
-		if (minx < -rs::EPSILON) {
+		if (minx < -rs::Epsilon) {
 			for (int i = 1; i < static_cast<int>(fabs(1.01*minx)/hash + 1); i++) {
 				osg::ref_ptr<osgText::Text> xnumneg_text = new osgText::Text();
 				if (_units) sprintf(text, "%.0lf    ", -100*i*hash);
@@ -1016,7 +1016,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		// y grid numbering
 		osg::ref_ptr<osg::Billboard> ynum_billboard = new osg::Billboard();
 		// positive
-		if (maxy > rs::EPSILON) {
+		if (maxy > rs::Epsilon) {
 			for (int i = 1; i < static_cast<int>(1.01*maxy/hash + 1); i++) {
 				osg::ref_ptr<osgText::Text> ynumpos_text = new osgText::Text();
 				if (_units) sprintf(text, "    %.0lf", 100*i*hash);
@@ -1031,7 +1031,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 			}
 		}
 		// negative
-		if (miny < -rs::EPSILON) {
+		if (miny < -rs::Epsilon) {
 			for (int i = 1; i < static_cast<int>(fabs(1.01*miny)/hash + 1); i++) {
 				osg::ref_ptr<osgText::Text> ynumneg_text = new osgText::Text();
 				if (_units) sprintf(text, "%.0lf    ", -100*i*hash);

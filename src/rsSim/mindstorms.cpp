@@ -222,9 +222,9 @@ void Mindstorms::simPreCollisionThread(void) {
 				t = _sim->getClock();
 				dt = (t - _motor[i].accel.start)/_motor[i].accel.period;
 				if (_motor[i].mode == ACCEL_CYCLOIDAL)
-					angle = h*(dt - sin(2*rs::PI*dt)/2/rs::PI) + _motor[i].accel.init;
+					angle = h*(dt - sin(2*rs::Pi*dt)/2/rs::Pi) + _motor[i].accel.init;
 				else if (_motor[i].mode == ACCEL_HARMONIC)
-					angle = h*(1 - cos(rs::PI*dt))/2 + _motor[i].accel.init;
+					angle = h*(1 - cos(rs::Pi*dt))/2 + _motor[i].accel.init;
 
 				// set new omega
 				_motor[i].omega = (angle - _motor[i].theta)/step;
@@ -267,7 +267,7 @@ void Mindstorms::simPreCollisionThread(void) {
 				}
 				break;
 			case SEEK:
-				if ((_motor[i].goal - 6*_motor[i].encoder - _motor[i].theta) > rs::EPSILON) {
+				if ((_motor[i].goal - 6*_motor[i].encoder - _motor[i].theta) > rs::Epsilon) {
 					_motor[i].state = POSITIVE;
 					if (_motor[i].starting++ < 25)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].starting*fabs(_motor[i].omega)/50);
@@ -278,15 +278,15 @@ void Mindstorms::simPreCollisionThread(void) {
 					else
 						dJointSetAMotorParam(_motor[i].id, dParamVel, fabs(_motor[i].omega));
 				}
-				else if ((_motor[i].goal - 3*_motor[i].encoder - _motor[i].theta) > rs::EPSILON) {
+				else if ((_motor[i].goal - 3*_motor[i].encoder - _motor[i].theta) > rs::Epsilon) {
 					_motor[i].state = POSITIVE;
 					dJointSetAMotorParam(_motor[i].id, dParamVel, fabs(_motor[i].omega)/2);
 				}
-				else if ((_motor[i].goal - _motor[i].encoder - _motor[i].theta) > rs::EPSILON) {
+				else if ((_motor[i].goal - _motor[i].encoder - _motor[i].theta) > rs::Epsilon) {
 					_motor[i].state = POSITIVE;
 					dJointSetAMotorParam(_motor[i].id, dParamVel, fabs(_motor[i].omega)/4);
 				}
-				else if ((_motor[i].theta - _motor[i].goal - 6*_motor[i].encoder) > rs::EPSILON) {
+				else if ((_motor[i].theta - _motor[i].goal - 6*_motor[i].encoder) > rs::Epsilon) {
 					_motor[i].state = NEGATIVE;
 					if (_motor[i].starting++ < 25)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, -_motor[i].starting*fabs(_motor[i].omega)/50);
@@ -297,11 +297,11 @@ void Mindstorms::simPreCollisionThread(void) {
 					else
 						dJointSetAMotorParam(_motor[i].id, dParamVel, -fabs(_motor[i].omega));
 				}
-				else if ((_motor[i].theta - _motor[i].goal - 3*_motor[i].encoder) > rs::EPSILON) {
+				else if ((_motor[i].theta - _motor[i].goal - 3*_motor[i].encoder) > rs::Epsilon) {
 					_motor[i].state = NEGATIVE;
 					dJointSetAMotorParam(_motor[i].id, dParamVel, -fabs(_motor[i].omega)/2);
 				}
-				else if ((_motor[i].theta - _motor[i].goal - _motor[i].encoder) > rs::EPSILON) {
+				else if ((_motor[i].theta - _motor[i].goal - _motor[i].encoder) > rs::Epsilon) {
 					_motor[i].state = NEGATIVE;
 					dJointSetAMotorParam(_motor[i].id, dParamVel, -fabs(_motor[i].omega)/4);
 				}

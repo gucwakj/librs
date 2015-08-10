@@ -70,7 +70,7 @@ int Robot::moveJointNB(int id, double angle) {
 	MUTEX_LOCK(&_goal_mutex);
 
 	// set new goal angles
-	if (_motor[id].omega < -rs::EPSILON) angle = -angle;
+	if (_motor[id].omega < -rs::Epsilon) angle = -angle;
 	_motor[id].goal += rs::D2R(angle);
 
 	// actively seeking an angle
@@ -234,14 +234,14 @@ const rs::Quat Robot::getQuaternion(void) {
 double Robot::getRotation(int body, int i) {
 	const double *R = dBodyGetRotation(_body[body]);
 	double angles[3] = {0};
-	if ( fabs(R[8]-1) < rs::EPSILON ) {			// R_31 == 1; theta = rs::PI/2
+	if ( fabs(R[8]-1) < rs::Epsilon ) {			// R_31 == 1; theta = rs::Pi/2
 		angles[0] = atan2(-R[1], -R[2]);		// psi
-		angles[1] = rs::PI/2;					// theta
+		angles[1] = rs::Pi/2;					// theta
 		angles[2] = 0;							// phi
 	}
-	else if ( fabs(R[8]+1) < rs::EPSILON ) {	// R_31 == -1; theta = -rs::PI/2
+	else if ( fabs(R[8]+1) < rs::Epsilon ) {	// R_31 == -1; theta = -rs::Pi/2
 		angles[0] = atan2(R[1], R[2]);			// psi
-		angles[1] = -rs::PI/2;					// theta
+		angles[1] = -rs::Pi/2;					// theta
 		angles[2] = 0;							// phi
 	}
 	else {
@@ -250,15 +250,15 @@ double Robot::getRotation(int body, int i) {
 		angles[2] = atan2(R[4]/cos(angles[0]), R[0]/cos(angles[0]));
 	}
 	// convert to 0->2*PI
-	if (angles[i] < 0) angles[i] = 2 * rs::PI + angles[i];
+	if (angles[i] < 0) angles[i] = 2 * rs::Pi + angles[i];
 	// return
 	return angles[i];
 }
 
 double Robot::mod_angle(double past_ang, double cur_ang, double ang_rate) {
 	double new_ang = 0;
-	int stp = (int)( fabs(past_ang) / rs::PI );
-	double past_ang_mod = fabs(past_ang) - stp*rs::PI;
+	int stp = (int)( fabs(past_ang) / rs::Pi );
+	double past_ang_mod = fabs(past_ang) - stp*rs::Pi;
 
 	if ( (int)(ang_rate*1000) == 0 ) {
 		new_ang = past_ang;
@@ -266,31 +266,31 @@ double Robot::mod_angle(double past_ang, double cur_ang, double ang_rate) {
 	// positive angular velocity, positive angle
 	else if ( ang_rate > 0 && past_ang >= 0 ) {
 		// cross 180
-		if ( cur_ang < 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod + 2*rs::PI); }
+		if ( cur_ang < 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod + 2*rs::Pi); }
 		// negative
-		else if ( cur_ang < 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod + rs::PI); }
+		else if ( cur_ang < 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod + rs::Pi); }
 		// cross 0
-		else if ( cur_ang > 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod + rs::PI); }
+		else if ( cur_ang > 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod + rs::Pi); }
 		// positive
 		else if ( cur_ang > 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod); }
 	}
 	// positive angular velocity, negative angle
 	else if ( ang_rate > 0 && past_ang < 0 ) {
 		// cross 180
-		if ( cur_ang < 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod + rs::PI); }
+		if ( cur_ang < 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod + rs::Pi); }
 		// negative
 		else if ( cur_ang < 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod); }
 		// cross 0
 		else if ( cur_ang > 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod); }
 		// positive
-		else if ( cur_ang > 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod - rs::PI); }
+		else if ( cur_ang > 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod - rs::Pi); }
 	}
 	// negative angular velocity, positive angle
 	else if ( ang_rate < 0 && past_ang >= 0 ) {
 		// cross 180
-		if ( cur_ang > 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod - rs::PI); }
+		if ( cur_ang > 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod - rs::Pi); }
 		// negative
-		else if ( cur_ang < 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod + rs::PI); }
+		else if ( cur_ang < 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod + rs::Pi); }
 		// cross 0
 		else if ( cur_ang < 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang - past_ang_mod); }
 		// positive
@@ -299,13 +299,13 @@ double Robot::mod_angle(double past_ang, double cur_ang, double ang_rate) {
 	// negative angular velocity, negative angle
 	else if ( ang_rate < 0 && past_ang < 0 ) {
 		// cross 180
-		if ( cur_ang > 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod - 2*rs::PI); }
+		if ( cur_ang > 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod - 2*rs::Pi); }
 		// negative
 		else if ( cur_ang < 0 && !(stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod); }
 		// cross 0
-		else if ( cur_ang < 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod - rs::PI); }
+		else if ( cur_ang < 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod - rs::Pi); }
 		// positive
-		else if ( cur_ang > 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod - rs::PI); }
+		else if ( cur_ang > 0 && (stp % 2) ) { new_ang = past_ang + (cur_ang + past_ang_mod - rs::Pi); }
 	}
 
 	return new_ang;
@@ -360,7 +360,7 @@ double Robot::normal(double sigma) {
 	double u2 = this->uniform();
 
 	// box-muller transform to gaussian
-	return sigma*(sqrt(-2.0*log(u1))*cos(2*rs::PI*u2));
+	return sigma*(sqrt(-2.0*log(u1))*cos(2*rs::Pi*u2));
 }
 
 double Robot::uniform(void) {

@@ -14,31 +14,31 @@ Dof::Dof(int joint) : rsRobots::Robot(rs::DOF), rsRobots::Dof(joint) {
 	_motor.resize(_dof);
 
 	// fill with default data
-	_motor[0].accel.init = 0;
-	_motor[0].accel.run = 0;
-	_motor[0].accel.period = 0;
-	_motor[0].accel.start = 0;
-	_motor[0].alpha = 0;
-	_motor[0].encoder = rs::D2R(0.25);
-	_motor[0].goal = 0;
-	_motor[0].mode = SEEK;
-	_motor[0].offset = 0;
-	_motor[0].omega = 0.7854;			// 45 deg/sec
-	_motor[0].omega_max = 4.1888;		// 240 deg/sec
-	_motor[0].record = false;
-	_motor[0].record_active = false;
-	_motor[0].record_num = 0;
-	_motor[0].safety_angle = 10;
-	_motor[0].safety_timeout = 4;
-	_motor[0].starting = 0;
-	_motor[0].state = NEUTRAL;
-	_motor[0].stopping = 0;
-	_motor[0].success = true;
-	_motor[0].tau_max = 2;
-	_motor[0].timeout = 0;
-	_motor[0].theta = 0;
-	MUTEX_INIT(&_motor[0].success_mutex);
-	COND_INIT(&_motor[0].success_cond);
+	_motor[Bodies::Joint].accel.init = 0;
+	_motor[Bodies::Joint].accel.run = 0;
+	_motor[Bodies::Joint].accel.period = 0;
+	_motor[Bodies::Joint].accel.start = 0;
+	_motor[Bodies::Joint].alpha = 0;
+	_motor[Bodies::Joint].encoder = rs::D2R(0.25);
+	_motor[Bodies::Joint].goal = 0;
+	_motor[Bodies::Joint].mode = SEEK;
+	_motor[Bodies::Joint].offset = 0;
+	_motor[Bodies::Joint].omega = 0.7854;			// 45 deg/sec
+	_motor[Bodies::Joint].omega_max = 4.1888;		// 240 deg/sec
+	_motor[Bodies::Joint].record = false;
+	_motor[Bodies::Joint].record_active = false;
+	_motor[Bodies::Joint].record_num = 0;
+	_motor[Bodies::Joint].safety_angle = 10;
+	_motor[Bodies::Joint].safety_timeout = 4;
+	_motor[Bodies::Joint].starting = 0;
+	_motor[Bodies::Joint].state = NEUTRAL;
+	_motor[Bodies::Joint].stopping = 0;
+	_motor[Bodies::Joint].success = true;
+	_motor[Bodies::Joint].tau_max = 2;
+	_motor[Bodies::Joint].timeout = 0;
+	_motor[Bodies::Joint].theta = 0;
+	MUTEX_INIT(&_motor[Bodies::Joint].success_mutex);
+	COND_INIT(&_motor[Bodies::Joint].success_cond);
 	_connected = 0;
 	_distOffset = 0;
 	_id = -1;
@@ -53,8 +53,8 @@ Dof::Dof(int joint) : rsRobots::Robot(rs::DOF), rsRobots::Dof(joint) {
 
 Dof::~Dof(void) {
 	// delete mutexes
-	MUTEX_DESTROY(&_motor[0].success_mutex);
-	COND_DESTROY(&_motor[0].success_cond);
+	MUTEX_DESTROY(&_motor[Bodies::Joint].success_mutex);
+	COND_DESTROY(&_motor[Bodies::Joint].success_cond);
 }
 
 void Dof::moveJointOnce(double *values) {
@@ -62,13 +62,13 @@ void Dof::moveJointOnce(double *values) {
 	MUTEX_LOCK(&_goal_mutex);
 
 	// set motion parameters
-	_motor[0].mode = SINGULAR;
-	_motor[0].state = POSITIVE;
+	_motor[Bodies::Joint].mode = SINGULAR;
+	_motor[Bodies::Joint].state = POSITIVE;
 
 	// enable motor
 	MUTEX_LOCK(&_theta_mutex);
-	dJointEnable(_motor[0].id);
-	dJointSetAMotorAngle(_motor[0].id, 0, _motor[0].theta);
+	dJointEnable(_motor[Bodies::Joint].id);
+	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
 	dBodyEnable(_body[0]);
 	MUTEX_UNLOCK(&_theta_mutex);
 
@@ -77,9 +77,9 @@ void Dof::moveJointOnce(double *values) {
 	_values = values;
 
 	// unsuccessful
-	MUTEX_LOCK(&_motor[0].success_mutex);
-	_motor[0].success = false;
-	MUTEX_UNLOCK(&_motor[0].success_mutex);
+	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
+	_motor[Bodies::Joint].success = false;
+	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
 
 	// unlock goal
 	MUTEX_UNLOCK(&_goal_mutex);
@@ -91,7 +91,7 @@ void Dof::moveJointOnce(double *values) {
 int Dof::addConnector(int type, int face, int orientation, double size, int side, int conn) {
 	// get connector body position
 	rs::Pos P1 = this->getRobotFacePosition(face, this->getPosition(), this->getQuaternion());
-	rs::Quat Q1 = this->getRobotBodyQuaternion(face, (_enabled == face) ? _motor[0].theta : 0, this->getQuaternion());
+	rs::Quat Q1 = this->getRobotBodyQuaternion(face, (_enabled == face) ? _motor[Bodies::Joint].theta : 0, this->getQuaternion());
 	if (conn == -1) {
 		P1 = this->getConnBodyPosition(type, orientation, P1, Q1);
 		Q1 = this->getConnBodyQuaternion(type, orientation, Q1);
@@ -183,7 +183,7 @@ int Dof::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) 
 	}
 
 	// convert input angle to radians
-	_motor[0].goal = _motor[0].theta = rs::D2R(a[0]);
+	_motor[Bodies::Joint].goal = _motor[Bodies::Joint].theta = rs::D2R(a[0]);
 
 	// build robot bodies
 	this->build_body(p, q);
@@ -191,44 +191,44 @@ int Dof::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) 
 
 	// build joints
 	rs::Pos o;
-	_motor[0].joint = dJointCreateHinge(_world, 0);
-	dJointAttach(_motor[0].joint, _body[Bodies::Body], _body[Bodies::Cap]);
+	_motor[Bodies::Joint].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[Bodies::Joint].joint, _body[Bodies::Body], _body[Bodies::Cap]);
 	if (_enabled == Bodies::Face1) {
 		o = q.multiply(-_body_width/2, 0, 0);
-		dJointSetHingeAnchor(_motor[0].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		dJointSetHingeAnchor(_motor[Bodies::Joint].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(1, 0, 0);
 	}
 	else if (_enabled == Bodies::Face2) {
 		o = q.multiply(0, -_body_length, 0);
-		dJointSetHingeAnchor(_motor[0].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		dJointSetHingeAnchor(_motor[Bodies::Joint].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(0, 1, 0);
 	}
 	else if (_enabled == Bodies::Face3) {
 		o = q.multiply(_body_width/2, 0, 0);
-		dJointSetHingeAnchor(_motor[0].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		dJointSetHingeAnchor(_motor[Bodies::Joint].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(-1, 0, 0);
 	}
-	dJointSetHingeAxis(_motor[0].joint, o[0], o[1], o[2]);
+	dJointSetHingeAxis(_motor[Bodies::Joint].joint, o[0], o[1], o[2]);
 	dBodySetFiniteRotationAxis(_body[Bodies::Cap], o[0], o[1], o[2]);
 
 	// build rotated joints
-	if (_motor[0].theta != 0) this->build_cap(this->getRobotBodyPosition(_enabled, p, q), this->getRobotBodyQuaternion(_enabled, _motor[0].theta, q));
+	if (_motor[Bodies::Joint].theta != 0) this->build_cap(this->getRobotBodyPosition(_enabled, p, q), this->getRobotBodyQuaternion(_enabled, _motor[Bodies::Joint].theta, q));
 
 	// set motors
-	_motor[0].id = dJointCreateAMotor(_world, 0);
-	dJointAttach(_motor[0].id, _body[Bodies::Body], _body[Bodies::Cap]);
-	dJointSetAMotorMode(_motor[0].id, dAMotorUser);
-	dJointSetAMotorNumAxes(_motor[0].id, 1);
-	dJointSetAMotorAngle(_motor[0].id, 0, 0);
-	dJointSetAMotorParam(_motor[0].id, dParamFMax, _motor[0].tau_max);
-	dJointSetAMotorParam(_motor[0].id, dParamFudgeFactor, 0.3);
+	_motor[Bodies::Joint].id = dJointCreateAMotor(_world, 0);
+	dJointAttach(_motor[Bodies::Joint].id, _body[Bodies::Body], _body[Bodies::Cap]);
+	dJointSetAMotorMode(_motor[Bodies::Joint].id, dAMotorUser);
+	dJointSetAMotorNumAxes(_motor[Bodies::Joint].id, 1);
+	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, 0);
+	dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamFMax, _motor[Bodies::Joint].tau_max);
+	dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamFudgeFactor, 0.3);
 	if (_enabled == Bodies::Face1)
 		o = q.multiply(1, 0, 0);
 	else if (_enabled == Bodies::Face2)
 		o = q.multiply(0, 1, 0);
 	else if (_enabled == Bodies::Face3)
 		o = q.multiply(-1, 0, 0);
-	dJointSetAMotorAxis(_motor[0].id, 0, 1, o[0], o[1], o[2]);
+	dJointSetAMotorAxis(_motor[Bodies::Joint].id, 0, 1, o[0], o[1], o[2]);
 
 	// set damping on all bodies to 0.1
 	for (int i = 0; i < Bodies::Num_Parts; i++) dBodySetDamping(_body[i], 0.1, 0.1);
@@ -238,7 +238,7 @@ int Dof::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) 
 }
 
 double Dof::calculate_angle(int id) {
-	return mod_angle(_motor[0].theta, dJointGetHingeAngle(_motor[0].joint), dJointGetHingeAngleRate(_motor[0].joint)) - _motor[0].offset;
+	return mod_angle(_motor[Bodies::Joint].theta, dJointGetHingeAngle(_motor[Bodies::Joint].joint), dJointGetHingeAngleRate(_motor[Bodies::Joint].joint)) - _motor[Bodies::Joint].offset;
 }
 
 dBodyID Dof::getBodyID(int face) {
@@ -278,7 +278,7 @@ const rs::Pos Dof::getCoM(double &mass) {
 }
 
 const rs::Vec Dof::getJoints(void) {
-	return rs::Vec(_motor[0].theta);
+	return rs::Vec(_motor[Bodies::Joint].theta);
 }
 
 void Dof::init_params(void) { }
@@ -289,55 +289,55 @@ void Dof::simPreCollisionThread(void) {
 	MUTEX_LOCK(&_theta_mutex);
 
 	// store current angle
-	_motor[0].theta = calculate_angle(_enabled);
+	_motor[Bodies::Joint].theta = calculate_angle(_enabled);
 	// set motor angle to current angle
-	dJointSetAMotorAngle(_motor[0].id, 0, _motor[0].theta);
+	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
 	// engage motor depending upon motor mode
 	double step = _sim->getStep();
-	switch (_motor[0].mode) {
+	switch (_motor[Bodies::Joint].mode) {
 		case SEEK:
-			if ((_motor[0].goal - 6*_motor[0].encoder - _motor[0].theta) > rs::Epsilon) {
-				_motor[0].state = POSITIVE;
-				if (_motor[0].starting++ < 25)
-					dJointSetAMotorParam(_motor[0].id, dParamVel, _motor[0].starting*fabs(_motor[0].omega)/50);
-				else if (_motor[0].starting++ < 50)
-					dJointSetAMotorParam(_motor[0].id, dParamVel, _motor[0].starting*fabs(_motor[0].omega)/150 + 0.3*fabs(_motor[0].omega));
-				else if (_motor[0].starting++ < 100)
-					dJointSetAMotorParam(_motor[0].id, dParamVel, _motor[0].starting*fabs(_motor[0].omega)/150 + fabs(_motor[0].omega)/3);
+			if ((_motor[Bodies::Joint].goal - 6*_motor[Bodies::Joint].encoder - _motor[Bodies::Joint].theta) > rs::Epsilon) {
+				_motor[Bodies::Joint].state = POSITIVE;
+				if (_motor[Bodies::Joint].starting++ < 25)
+					dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].starting*fabs(_motor[Bodies::Joint].omega)/50);
+				else if (_motor[Bodies::Joint].starting++ < 50)
+					dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].starting*fabs(_motor[Bodies::Joint].omega)/150 + 0.3*fabs(_motor[Bodies::Joint].omega));
+				else if (_motor[Bodies::Joint].starting++ < 100)
+					dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].starting*fabs(_motor[Bodies::Joint].omega)/150 + fabs(_motor[Bodies::Joint].omega)/3);
 				else
-					dJointSetAMotorParam(_motor[0].id, dParamVel, fabs(_motor[0].omega));
+					dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, fabs(_motor[Bodies::Joint].omega));
 			}
-			else if ((_motor[0].goal - 3*_motor[0].encoder - _motor[0].theta) > rs::Epsilon) {
-				_motor[0].state = POSITIVE;
-				dJointSetAMotorParam(_motor[0].id, dParamVel, fabs(_motor[0].omega)/2);
+			else if ((_motor[Bodies::Joint].goal - 3*_motor[Bodies::Joint].encoder - _motor[Bodies::Joint].theta) > rs::Epsilon) {
+				_motor[Bodies::Joint].state = POSITIVE;
+				dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, fabs(_motor[Bodies::Joint].omega)/2);
 			}
-			else if ((_motor[0].goal - _motor[0].encoder/2 - _motor[0].theta) > rs::Epsilon) {
-				_motor[0].state = POSITIVE;
-				dJointSetAMotorParam(_motor[0].id, dParamVel, fabs(_motor[0].omega)/4);
+			else if ((_motor[Bodies::Joint].goal - _motor[Bodies::Joint].encoder/2 - _motor[Bodies::Joint].theta) > rs::Epsilon) {
+				_motor[Bodies::Joint].state = POSITIVE;
+				dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, fabs(_motor[Bodies::Joint].omega)/4);
 			}
-			else if ((_motor[0].theta - _motor[0].goal - 6*_motor[0].encoder) > rs::Epsilon) {
-				_motor[0].state = NEGATIVE;
-				if (_motor[0].starting++ < 25)
-					dJointSetAMotorParam(_motor[0].id, dParamVel, -_motor[0].starting*fabs(_motor[0].omega)/50);
-				else if (_motor[0].starting++ < 50)
-					dJointSetAMotorParam(_motor[0].id, dParamVel, -_motor[0].starting*fabs(_motor[0].omega)/150 - 0.3*fabs(_motor[0].omega));
-				else if (_motor[0].starting++ < 100)
-					dJointSetAMotorParam(_motor[0].id, dParamVel, -_motor[0].starting*fabs(_motor[0].omega)/150 - fabs(_motor[0].omega)/3);
+			else if ((_motor[Bodies::Joint].theta - _motor[Bodies::Joint].goal - 6*_motor[Bodies::Joint].encoder) > rs::Epsilon) {
+				_motor[Bodies::Joint].state = NEGATIVE;
+				if (_motor[Bodies::Joint].starting++ < 25)
+					dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, -_motor[Bodies::Joint].starting*fabs(_motor[Bodies::Joint].omega)/50);
+				else if (_motor[Bodies::Joint].starting++ < 50)
+					dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, -_motor[Bodies::Joint].starting*fabs(_motor[Bodies::Joint].omega)/150 - 0.3*fabs(_motor[Bodies::Joint].omega));
+				else if (_motor[Bodies::Joint].starting++ < 100)
+					dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, -_motor[Bodies::Joint].starting*fabs(_motor[Bodies::Joint].omega)/150 - fabs(_motor[Bodies::Joint].omega)/3);
 				else
-					dJointSetAMotorParam(_motor[0].id, dParamVel, -fabs(_motor[0].omega));
+					dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, -fabs(_motor[Bodies::Joint].omega));
 			}
-			else if ((_motor[0].theta - _motor[0].goal - 3*_motor[0].encoder) > rs::Epsilon) {
-				_motor[0].state = NEGATIVE;
-				dJointSetAMotorParam(_motor[0].id, dParamVel, -fabs(_motor[0].omega)/2);
+			else if ((_motor[Bodies::Joint].theta - _motor[Bodies::Joint].goal - 3*_motor[Bodies::Joint].encoder) > rs::Epsilon) {
+				_motor[Bodies::Joint].state = NEGATIVE;
+				dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, -fabs(_motor[Bodies::Joint].omega)/2);
 			}
-			else if ((_motor[0].theta - _motor[0].goal - _motor[0].encoder/2) > rs::Epsilon) {
-				_motor[0].state = NEGATIVE;
-				dJointSetAMotorParam(_motor[0].id, dParamVel, -fabs(_motor[0].omega)/4);
+			else if ((_motor[Bodies::Joint].theta - _motor[Bodies::Joint].goal - _motor[Bodies::Joint].encoder/2) > rs::Epsilon) {
+				_motor[Bodies::Joint].state = NEGATIVE;
+				dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, -fabs(_motor[Bodies::Joint].omega)/4);
 			}
 			else {
-				_motor[0].state = HOLD;
-				_motor[0].starting = 0;
-				dJointSetAMotorParam(_motor[0].id, dParamVel, 0);
+				_motor[Bodies::Joint].state = HOLD;
+				_motor[Bodies::Joint].starting = 0;
+				dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, 0);
 			}
 			break;
 		case SINGULAR:
@@ -345,13 +345,13 @@ void Dof::simPreCollisionThread(void) {
 			dBodyEnable(_body[0]);
 
 			// set new omega
-			_motor[0].goal = _values[_loc++];
-			_motor[0].omega = (_motor[0].goal - _motor[0].theta)/step;
-			_motor[0].state = NEUTRAL;
+			_motor[Bodies::Joint].goal = _values[_loc++];
+			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
+			_motor[Bodies::Joint].state = NEUTRAL;
 
 			// move forever
-			dJointEnable(_motor[0].id);
-			dJointSetAMotorParam(_motor[0].id, dParamVel, _motor[0].omega);
+			dJointEnable(_motor[Bodies::Joint].id);
+			dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].omega);
 
 			// end
 			break;
@@ -369,19 +369,19 @@ void Dof::simPostCollisionThread(void) {
 	MUTEX_LOCK(&_success_mutex);
 
 	// lock mutex
-	MUTEX_LOCK(&_motor[0].success_mutex);
+	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
 	// zero velocity == stopped
-	_motor[0].stopping += (!(int)(dJointGetAMotorParam(_motor[0].id, dParamVel)*1000) );
+	_motor[Bodies::Joint].stopping += (!(int)(dJointGetAMotorParam(_motor[Bodies::Joint].id, dParamVel)*1000) );
 	// once motor has been stopped for 10 steps
-	if (_motor[0].stopping == 50) {
-		_motor[0].stopping = 0;
-		_motor[0].success = 1;
+	if (_motor[Bodies::Joint].stopping == 50) {
+		_motor[Bodies::Joint].stopping = 0;
+		_motor[Bodies::Joint].success = 1;
 	}
 	// signal success
-	if (_motor[0].success)
-		COND_SIGNAL(&_motor[0].success_cond);
+	if (_motor[Bodies::Joint].success)
+		COND_SIGNAL(&_motor[Bodies::Joint].success_cond);
 	// unlock mutex
-	MUTEX_UNLOCK(&_motor[0].success_mutex);
+	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
 
 	// unlock angle and goal
 	MUTEX_UNLOCK(&_success_mutex);

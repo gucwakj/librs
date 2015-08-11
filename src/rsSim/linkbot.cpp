@@ -219,9 +219,9 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 
 	// build robot bodies
 	this->build_body(p, q);
-	this->build_face(Bodies::Cap1, this->getRobotBodyPosition(Bodies::Cap1, p, q), this->getRobotBodyQuaternion(Bodies::Cap1, 0, q));
-	this->build_face(Bodies::Cap2, this->getRobotBodyPosition(Bodies::Cap2, p, q), this->getRobotBodyQuaternion(Bodies::Cap2, 0, q));
-	this->build_face(Bodies::Cap3, this->getRobotBodyPosition(Bodies::Cap3, p, q), this->getRobotBodyQuaternion(Bodies::Cap3, 0, q));
+	this->build_cap(Bodies::Cap1, this->getRobotBodyPosition(Bodies::Cap1, p, q), this->getRobotBodyQuaternion(Bodies::Cap1, 0, q));
+	this->build_cap(Bodies::Cap2, this->getRobotBodyPosition(Bodies::Cap2, p, q), this->getRobotBodyQuaternion(Bodies::Cap2, 0, q));
+	this->build_cap(Bodies::Cap3, this->getRobotBodyPosition(Bodies::Cap3, p, q), this->getRobotBodyQuaternion(Bodies::Cap3, 0, q));
 
 	// joint variable
 	rs::Pos o;
@@ -269,11 +269,11 @@ int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 
 	// build rotated joints
 	if (_motor[Bodies::Joint1].theta != 0)
-		this->build_face(Bodies::Cap1, this->getRobotBodyPosition(Bodies::Cap1, p, q), this->getRobotBodyQuaternion(Bodies::Cap1, _motor[Bodies::Joint1].theta, q));
+		this->build_cap(Bodies::Cap1, this->getRobotBodyPosition(Bodies::Cap1, p, q), this->getRobotBodyQuaternion(Bodies::Cap1, _motor[Bodies::Joint1].theta, q));
 	if (_motor[Bodies::Joint2].theta != 0)
-		this->build_face(Bodies::Cap2, this->getRobotBodyPosition(Bodies::Cap2, p, q), this->getRobotBodyQuaternion(Bodies::Cap2, _motor[Bodies::Joint2].theta, q));
+		this->build_cap(Bodies::Cap2, this->getRobotBodyPosition(Bodies::Cap2, p, q), this->getRobotBodyQuaternion(Bodies::Cap2, _motor[Bodies::Joint2].theta, q));
 	if (_motor[Bodies::Joint3].theta != 0)
-		this->build_face(Bodies::Cap3, this->getRobotBodyPosition(Bodies::Cap3, p, q), this->getRobotBodyQuaternion(Bodies::Cap3, _motor[Bodies::Joint3].theta, q));
+		this->build_cap(Bodies::Cap3, this->getRobotBodyPosition(Bodies::Cap3, p, q), this->getRobotBodyQuaternion(Bodies::Cap3, _motor[Bodies::Joint3].theta, q));
 
 	// build motors
 	for (int i = 0; i < _dof; i++) {
@@ -662,6 +662,36 @@ void Linkbot::build_bridge(Connector &conn) {
 	dGeomSetBody(geom, conn.body);
 }
 
+void Linkbot::build_cap(int id, const rs::Pos &p, const rs::Quat &q) {
+	// set mass of body
+	dMass m;
+	if (id == 2)
+		dMassSetCylinder(&m, 270, 2, 2*_face_radius, _face_depth);
+	else
+		dMassSetCylinder(&m, 270, 1, 2*_face_radius, _face_depth);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(_body[id], &m);
+
+	// set body parameters
+	dBodySetPosition(_body[id], p[0], p[1], p[2]);
+	dQuaternion Q = {q[3], q[0], q[1], q[2]};
+	dBodySetQuaternion(_body[id], Q);
+	dBodySetFiniteRotationMode(_body[id], 1);
+
+	// destroy old geom when rotating joint on rebuild
+	dGeomID geom1 = dBodyGetFirstGeom(_body[id]);
+	while (geom1) {
+		dGeomDestroy(geom1);
+		geom1 = dBodyGetNextGeom(geom1);
+	}
+
+	// set geometry
+	dGeomID geom = dCreateCylinder(_space, _face_radius, _face_depth);
+	dGeomSetBody(geom, _body[id]);
+	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
+	dGeomSetOffsetQuaternion(geom, Q1);
+}
+
 void Linkbot::build_caster(Connector &conn, int custom) {
 	// set mass of body
 	dMass m;
@@ -750,36 +780,6 @@ void Linkbot::build_el(Connector &conn) {
 	// set geometry
 	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_face_radius, _conn_height);
 	dGeomSetBody(geom, conn.body);
-}
-
-void Linkbot::build_face(int id, const rs::Pos &p, const rs::Quat &q) {
-	// set mass of body
-	dMass m;
-	if (id == 2)
-		dMassSetCylinder(&m, 270, 2, 2*_face_radius, _face_depth);
-	else
-		dMassSetCylinder(&m, 270, 1, 2*_face_radius, _face_depth);
-	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
-	dBodySetMass(_body[id], &m);
-
-	// set body parameters
-	dBodySetPosition(_body[id], p[0], p[1], p[2]);
-	dQuaternion Q = {q[3], q[0], q[1], q[2]};
-	dBodySetQuaternion(_body[id], Q);
-	dBodySetFiniteRotationMode(_body[id], 1);
-
-	// destroy old geom when rotating joint on rebuild
-	dGeomID geom1 = dBodyGetFirstGeom(_body[id]);
-	while (geom1) {
-		dGeomDestroy(geom1);
-		geom1 = dBodyGetNextGeom(geom1);
-	}
-
-	// set geometry
-	dGeomID geom = dCreateCylinder(_space, _face_radius, _face_depth);
-	dGeomSetBody(geom, _body[id]);
-	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
-	dGeomSetOffsetQuaternion(geom, Q1);
 }
 
 void Linkbot::build_faceplate(Connector &conn) {

@@ -35,11 +35,11 @@ namespace rsSim {
 		private:
 			void build_body(const rs::Pos&, const rs::Quat&);
 			void build_bridge(Connector&);
+			void build_cap(int, const rs::Pos&, const rs::Quat&);
 			void build_caster(Connector&, int);
 			void build_cube(Connector&);
 			void build_doublebridge(Connector&);
 			void build_el(Connector&);
-			void build_face(int, const rs::Pos&, const rs::Quat&);
 			void build_faceplate(Connector&);
 			void build_foot(Connector&);
 			void build_gripper(Connector&, int);

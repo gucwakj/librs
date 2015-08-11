@@ -743,16 +743,16 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ele->QueryIntAttribute("left", &i);
 				ele->QueryIntAttribute("right", &j);
 				if (i) {
-					_robot.back()->addConnector(new Conn(0, 0, -1, 1, 1, _robot.back()->getID(), 1, rsLinkbot::SIMPLE));
-					_robot.back()->addConnector(new Conn(0, 0, i, 1, 1, _robot.back()->getID(), 2, rsLinkbot::SIMPLE));
+					_robot.back()->addConnector(new Conn(0, 0, -1, 1, 1, _robot.back()->getID(), 1, rsLinkbot::Connectors::Simple));
+					_robot.back()->addConnector(new Conn(0, 0, i, 1, 1, _robot.back()->getID(), 2, rsLinkbot::Connectors::Simple));
 				}
 				if (i || j) {
-					_robot.back()->addConnector(new Conn(0, 0, -1, 2, 2, _robot.back()->getID(), 1, rsLinkbot::SIMPLE));
-					_robot.back()->addConnector(new Conn(0, 0, rsLinkbot::CASTER, 2, 2, _robot.back()->getID(), 2, rsLinkbot::SIMPLE));
+					_robot.back()->addConnector(new Conn(0, 0, -1, 2, 2, _robot.back()->getID(), 1, rsLinkbot::Connectors::Simple));
+					_robot.back()->addConnector(new Conn(0, 0, rsLinkbot::Connectors::Caster, 2, 2, _robot.back()->getID(), 2, rsLinkbot::Connectors::Simple));
 				}
 				if (j) {
-					_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, _robot.back()->getID(), 1, rsLinkbot::SIMPLE));
-					_robot.back()->addConnector(new Conn(0, 0, j, 3, 3, _robot.back()->getID(), 2, rsLinkbot::SIMPLE));
+					_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, _robot.back()->getID(), 1, rsLinkbot::Connectors::Simple));
+					_robot.back()->addConnector(new Conn(0, 0, j, 3, 3, _robot.back()->getID(), 2, rsLinkbot::Connectors::Simple));
 				}
 				_robot.back()->setWheels(i, j);
 			}
@@ -1001,27 +1001,27 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 		}
 		else {
 			if ( !strcmp(node->Value(), "bigwheel") ) {
-				ctype = rsLinkbot::BIGWHEEL;
+				ctype = rsLinkbot::Connectors::BigWheel;
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "bridge") ) {
-				ctype = rsLinkbot::BRIDGE;
+				ctype = rsLinkbot::Connectors::Bridge;
 				cnum = 2;
 				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "caster") ) {
-				ctype = rsLinkbot::CASTER;
+				ctype = rsLinkbot::Connectors::Caster;
 				cnum = 1;
 				node->QueryIntAttribute("custom", &custom);
 				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "cube") ) {
-				ctype = rsLinkbot::CUBE;
+				ctype = rsLinkbot::Connectors::Cube;
 				cnum = 5;
 				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "doublebridge") ) {
-				ctype = rsLinkbot::DOUBLEBRIDGE;
+				ctype = rsLinkbot::Connectors::DoubleBridge;
 				cnum = 4;
 				node->QueryIntAttribute("orientation", &orientation);
 			}
@@ -1031,7 +1031,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "faceplate") ) {
-				ctype = rsLinkbot::FACEPLATE;
+				ctype = rsLinkbot::Connectors::Faceplate;
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "foot") ) {
@@ -1039,37 +1039,37 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "gripper") ) {
-				ctype = rsLinkbot::GRIPPER;
+				ctype = rsLinkbot::Connectors::Gripper;
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "omnidrive") ) {
-				ctype = rsLinkbot::OMNIPLATE;
+				ctype = rsLinkbot::Connectors::Omniplate;
 				cnum = 4;
 				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "simple") ) {
-				ctype = rsLinkbot::SIMPLE;
+				ctype = rsLinkbot::Connectors::Simple;
 				cnum = 2;
 				node->QueryIntAttribute("orientation", &orientation);
 			}
 			else if ( !strcmp(node->Value(), "smallwheel") ) {
-				ctype = rsLinkbot::SMALLWHEEL;
+				ctype = rsLinkbot::Connectors::SmallWheel;
 				cnum = 1;
 			}
 			/*else if ( !strcmp(node->Value(), "square") ) {
-				ctype = rsLinkbot::SQUARE;
+				ctype = rsLinkbot::Connectors::Square;
 				cnum = 4;
 			}
 			else if ( !strcmp(node->Value(), "tank") ) {
-				ctype = rsLinkbot::TANK;
+				ctype = rsLinkbot::Connectors::Tank;
 				cnum = 3;
 			}*/
 			else if ( !strcmp(node->Value(), "tinywheel") ) {
-				ctype = rsLinkbot::TINYWHEEL;
+				ctype = rsLinkbot::Connectors::TinyWheel;
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "wheel") ) {
-				ctype = rsLinkbot::WHEEL;
+				ctype = rsLinkbot::Connectors::Wheel;
 				cnum = 1;
 				node->QueryDoubleAttribute("radius", &size);
 			}
@@ -1099,9 +1099,9 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 					else {
 						ftmp[i] = ntmp[i];
 						side->QueryIntAttribute("conn", &atmp[i]);
-						if (atmp[i] == rsLinkbot::CASTER)
+						if (atmp[i] == rsLinkbot::Connectors::Caster)
 							side->QueryDoubleAttribute("custom", &size);
-						else if (atmp[i] == rsLinkbot::WHEEL)
+						else if (atmp[i] == rsLinkbot::Connectors::Wheel)
 							side->QueryDoubleAttribute("radius", &size);
 					}
 					i++;

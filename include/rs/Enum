@@ -59,94 +59,113 @@ namespace rs {
 
 namespace rsLinkbot {
 
-	// bodies
-	enum Body {
-		BODY,
-		FACE1,
-		FACE2,
-		FACE3,
-		NUM_PARTS
-	};
+	namespace Bodies {
+		// parts
+		enum Part {
+			Body,
+			Cap1,
+			Cap2,
+			Cap3,
+			Num_Parts
+		};
 
-	// connectors
-	enum Connectors {
-		NONE,
-		BIGWHEEL,
-		BRIDGE,
-		CASTER,
-		CUBE,
-		DOUBLEBRIDGE,
-		EL,
-		FACEPLATE,
-		FOOT,
-		GRIPPER,
-		OMNIPLATE,
-		SIMPLE,
-		SMALLWHEEL,
-		TINYWHEEL,
-		WHEEL,
-		NUM_CONNECTORS
-	};
+		// joints
+		enum Joint {
+			Joint1,
+			Joint2,
+			Joint3,
+			Num_Joints
+		};
 
-	// joints
-	enum Joint {
-		JOINT1,
-		JOINT2,
-		JOINT3,
-		NUM_JOINTS
-	};
+		// faces
+		enum Face {
+			Face1 = 1,
+			Face2,
+			Face3,
+			Num_Faces
+		};
+	} // namespace Bodies
 
-	// preconfigs
-	enum Preconfig {
-		INDIVIDUAL,
-		BOW,
-		EXPLORER,
-		FOURBOTDRIVE,
-		FOURWHEELDRIVE,
-		FOURWHEELEXPLORER,
-		GROUPBOW,
-		INCHWORM,
-		LIFT,
-		OMNIDRIVE,
-		SNAKE,
-		STAND,
-		NUM_PRECONFIG
-	};
+	namespace Connectors {
+		// types
+		enum Type {
+			None,
+			BigWheel,
+			Bridge,
+			Caster,
+			Cube,
+			DoubleBridge,
+			El,
+			Faceplate,
+			Foot,
+			Gripper,
+			Omniplate,
+			Simple,
+			SmallWheel,
+			TinyWheel,
+			Wheel,
+			Num_Connectors
+		};
 
-	// connector sides
-	enum Side {
-		SIDE1 = 1,
-		SIDE2,
-		SIDE3,
-		SIDE4,
-		SIDE5
-	};
+		// sides
+		enum Side {
+			Side1 = 1,
+			Side2,
+			Side3,
+			Side4,
+			Side5
+		};
+	} // namespace Connectors
+
+	namespace Preconfigs {
+		// types
+		enum Type {
+			Individual,
+			Bow,
+			Explorer,
+			FourBotDrive,
+			FourWheelDrive,
+			FourWheelExplorer,
+			GroupBow,
+			Inchworm,
+			Lift,
+			Omnidrive,
+			Snake,
+			Stand,
+			Num_Preconfig
+		};
+	} // namespace Preconfigs
 
 } // namespace rsLinkbot
 
 namespace rsMindstorms {
 
-	// bodies
-	enum Body {
-		BODY,
-		WHEEL1,
-		WHEEL2,
-		NUM_PARTS
-	};
+	namespace Bodies {
+		// parts
+		enum Part {
+			Body,
+			Wheel1,
+			Wheel2,
+			Num_Parts
+		};
 
-	// joints
-	enum Joint {
-		JOINT1,
-		JOINT2,
-		NUM_JOINTS
-	};
+		// joints
+		enum Joint {
+			Joint1,
+			Joint2,
+			Num_Joints
+		};
+	} // namespace Bodies
 
-	// wheels
-	enum Wheel {
-		NONE,
-		BIG,
-		SMALL
-	};
+	namespace Connectors {
+		// types
+		enum Type {
+			None,
+			Big,
+			Small,
+			Num_Connectors
+		};
+	} // namespace Connectors
 
 } // namespace rsMindstorms
 

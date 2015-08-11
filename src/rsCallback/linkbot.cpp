@@ -9,6 +9,7 @@ osg::Node::NodeMask NOT_VISIBLE_MASK = 0x0;
 osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
 
 using namespace rsCallback;
+using namespace rsLinkbot;
 
 Linkbot::Linkbot(rsSim::Linkbot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
 	_bodies = bodies;
@@ -54,7 +55,7 @@ void Linkbot::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		// child 2->2+NUM_PARTS: bodies
 		const double *pos, *quat;
 		osg::PositionAttitudeTransform *pat;
-		for (int i = 0; i < rsLinkbot::NUM_PARTS; i++) {
+		for (int i = 0; i < Bodies::Num_Parts; i++) {
 			pos = dBodyGetPosition(_bodies[i]);
 			quat = dBodyGetQuaternion(_bodies[i]);
 			pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + i));
@@ -72,7 +73,7 @@ void Linkbot::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			if (_conn[i].body) {
 				pos = dBodyGetPosition(_conn[i].body);
 				quat = dBodyGetQuaternion(_conn[i].body);
-				pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsLinkbot::NUM_PARTS + i));
+				pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + Bodies::Num_Parts + i));
 				pat->setPosition(osg::Vec3d(pos[0], pos[1], pos[2]));
 				pat->setAttitude(osg::Quat(quat[1], quat[2], quat[3], quat[0]));
 			}

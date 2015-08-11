@@ -33,8 +33,8 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 
 	// set trackwidth
 	const double *pos1, *pos2;
-	pos1 = dBodyGetPosition(_body[WHEEL1]);
-	pos2 = dBodyGetPosition(_body[WHEEL2]);
+	pos1 = dBodyGetPosition(_body[Bodies::Wheel1]);
+	pos2 = dBodyGetPosition(_body[Bodies::Wheel2]);
 	_trackwidth = sqrt(pow(pos2[0] - pos1[0], 2) + pow(pos2[1] - pos1[1], 2));
 
 	// success
@@ -43,7 +43,7 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 
 int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
 	// init body parts
-	for (int i = 0; i < NUM_PARTS; i++) {
+	for (int i = 0; i < Bodies::Num_Parts; i++) {
 		_body.push_back(dBodyCreate(_world));
 	}
 
@@ -53,35 +53,35 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 	}
 
 	// build robot bodies
-	this->build_body(this->getRobotBodyPosition(BODY, p, q), this->getRobotBodyQuaternion(BODY, 0, q));
-	this->build_wheel(WHEEL1, this->getRobotBodyPosition(WHEEL1, p, q), this->getRobotBodyQuaternion(WHEEL1, 0, q));
-	this->build_wheel(WHEEL2, this->getRobotBodyPosition(WHEEL2, p, q), this->getRobotBodyQuaternion(WHEEL2, 0, q));
+	this->build_body(this->getRobotBodyPosition(Bodies::Body, p, q), this->getRobotBodyQuaternion(Bodies::Body, 0, q));
+	this->build_wheel(Bodies::Wheel1, this->getRobotBodyPosition(Bodies::Wheel1, p, q), this->getRobotBodyQuaternion(Bodies::Wheel1, 0, q));
+	this->build_wheel(Bodies::Wheel2, this->getRobotBodyPosition(Bodies::Wheel2, p, q), this->getRobotBodyQuaternion(Bodies::Wheel2, 0, q));
 
 	// joint variable
 	rs::Pos o;
 
 	// joint for body to wheel 1
-	_motor[JOINT1].joint = dJointCreateHinge(_world, 0);
-	dJointAttach(_motor[JOINT1].joint, _body[BODY], _body[WHEEL1]);
+	_motor[Bodies::Joint1].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[Bodies::Joint1].joint, _body[Bodies::Body], _body[Bodies::Wheel1]);
 	o = q.multiply(_wheel_depth/2, 0, 0);
-	o.add(this->getRobotBodyPosition(WHEEL1, p, q));
-	dJointSetHingeAnchor(_motor[JOINT1].joint, o[0], o[1], o[2]);
+	o.add(this->getRobotBodyPosition(Bodies::Wheel1, p, q));
+	dJointSetHingeAnchor(_motor[Bodies::Joint1].joint, o[0], o[1], o[2]);
 	o = q.multiply(1, 0, 0);
-	dJointSetHingeAxis(_motor[JOINT1].joint, o[0], o[1], o[2]);
+	dJointSetHingeAxis(_motor[Bodies::Joint1].joint, o[0], o[1], o[2]);
 
 	// joint for body to wheel 2
-	_motor[JOINT2].joint = dJointCreateHinge(_world, 0);
-	dJointAttach(_motor[JOINT2].joint, _body[BODY], _body[WHEEL2]);
+	_motor[Bodies::Joint2].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[Bodies::Joint2].joint, _body[Bodies::Body], _body[Bodies::Wheel2]);
 	o = q.multiply(-_wheel_depth/2, 0, 0);
-	o.add(this->getRobotBodyPosition(WHEEL2, p, q));
-	dJointSetHingeAnchor(_motor[JOINT2].joint, o[0], o[1], o[2]);
+	o.add(this->getRobotBodyPosition(Bodies::Wheel2, p, q));
+	dJointSetHingeAnchor(_motor[Bodies::Joint2].joint, o[0], o[1], o[2]);
 	o = q.multiply(1, 0, 0);
-	dJointSetHingeAxis(_motor[JOINT2].joint, o[0], o[1], o[2]);
+	dJointSetHingeAxis(_motor[Bodies::Joint2].joint, o[0], o[1], o[2]);
 
 	// build motors
 	for (int i = 0; i < _dof; i++) {
 		_motor[i].id = dJointCreateAMotor(_world, 0);
-		dJointAttach(_motor[i].id, _body[BODY], _body[WHEEL1 + i]);
+		dJointAttach(_motor[i].id, _body[Bodies::Body], _body[Bodies::Wheel1 + i]);
 		dJointSetAMotorMode(_motor[i].id, dAMotorUser);
 		dJointSetAMotorNumAxes(_motor[i].id, 1);
 		dJointSetAMotorAngle(_motor[i].id, 0, 0);
@@ -90,11 +90,11 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 		dJointDisable(_motor[i].id);
 	}
 	o = q.multiply(1, 0, 0);
-	dJointSetAMotorAxis(_motor[JOINT1].id, 0, 1, o[0], o[1], o[2]);
-	dJointSetAMotorAxis(_motor[JOINT2].id, 0, 1, o[0], o[1], o[2]);
+	dJointSetAMotorAxis(_motor[Bodies::Joint1].id, 0, 1, o[0], o[1], o[2]);
+	dJointSetAMotorAxis(_motor[Bodies::Joint2].id, 0, 1, o[0], o[1], o[2]);
 
 	// set damping on all bodies to 0.1
-	for (int i = 0; i < NUM_PARTS; i++) dBodySetDamping(_body[i], 0.1, 0.1);
+	for (int i = 0; i < Bodies::Num_Parts; i++) dBodySetDamping(_body[i], 0.1, 0.1);
 
 	// success
 	return 0;
@@ -106,7 +106,7 @@ double Mindstorms::calculate_angle(int id) {
 }
 
 void Mindstorms::init_params(void) {
-	_dof = NUM_JOINTS;
+	_dof = Bodies::Num_Joints;
 
 	// create arrays for linkbots
 	_motor.resize(_dof);
@@ -157,7 +157,7 @@ void Mindstorms::simPreCollisionThread(void) {
 	MUTEX_LOCK(&_theta_mutex);
 
 	// get body rotation from world
-	const double *R = dBodyGetRotation(_body[BODY]);
+	const double *R = dBodyGetRotation(_body[Bodies::Body]);
 	// put into accel array
 	_accel[0] = R[8];
 	_accel[1] = R[9];
@@ -344,7 +344,7 @@ void Mindstorms::simPostCollisionThread(void) {
 	}
 
 	// all joints have completed their motions
-	if (_motor[JOINT1].success && _motor[JOINT2].success)
+	if (_motor[Bodies::Joint1].success && _motor[Bodies::Joint2].success)
 		COND_SIGNAL(&_success_cond);
 
 	// unlock angle and goal
@@ -364,43 +364,43 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dMassTranslate(&m1, 0, -_body_length + 0.010229 - 0.5, -_body_height / 2 - 0.5);
 	dMassAdd(&m, &m1);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
-	dBodySetMass(_body[BODY], &m);
+	dBodySetMass(_body[Bodies::Body], &m);
 
 	// set body parameters
-	dBodySetPosition(_body[BODY], p[0], p[1], p[2]);
+	dBodySetPosition(_body[Bodies::Body], p[0], p[1], p[2]);
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
-	dBodySetQuaternion(_body[BODY], Q);
+	dBodySetQuaternion(_body[Bodies::Body], Q);
 
 	// build geometries
 	dGeomID geom[2];
 
 	// set geometry 0 - box
 	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
-	dGeomSetBody(geom[0], _body[BODY]);
+	dGeomSetBody(geom[0], _body[Bodies::Body]);
 	dGeomSetOffsetPosition(geom[0], 0, 0, 0);
 
 	// set geometry 1 - sphere
 	// FAKED: adjust caster to make 3ds model look good
 	double offset;
-	if (_wheels[JOINT1] == BIG && _wheels[JOINT2] == BIG)
+	if (_wheels[Bodies::Joint1] == Connectors::Big && _wheels[Bodies::Joint2] == Connectors::Big)
 		offset = -0.006;
-	else if (_wheels[JOINT1] == SMALL && _wheels[JOINT2] == BIG)
+	else if (_wheels[Bodies::Joint1] == Connectors::Small && _wheels[Bodies::Joint2] == Connectors::Big)
 		offset = -0.003;
-	else if (_wheels[JOINT1] == BIG && _wheels[JOINT2] == SMALL)
+	else if (_wheels[Bodies::Joint1] == Connectors::Big && _wheels[Bodies::Joint2] == Connectors::Small)
 		offset = -0.003;
 	else
 		offset = 0.001;
 	geom[1] = dCreateSphere(_space, 0.010229);
-	dGeomSetBody(geom[1], _body[BODY]);
+	dGeomSetBody(geom[1], _body[Bodies::Body]);
 	dGeomSetOffsetPosition(geom[1], 0, -_body_length / 2 + 0.010229, -_body_height / 2 + offset);
 }
 
 void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
 	// get radius
 	double radius = 0.001;
-	if (_wheels[id-1] == BIG)
+	if (_wheels[id-1] == Connectors::Big)
 		radius = _bigwheel_radius;
-	else if (_wheels[id-1] == SMALL)
+	else if (_wheels[id-1] == Connectors::Small)
 		radius = _smallwheel_radius;
 
 	// set mass of body

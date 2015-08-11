@@ -5,7 +5,7 @@ using namespace rsLinkbot;
 using namespace rsXML;
 
 Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsRobots::Linkbot(form), rsXML::Robot(trace) {
-	_a.allocate(NUM_JOINTS);
+	_a.allocate(Bodies::Num_Joints);
 	for (unsigned int i = 0; i < _a.size(); i++) {
 		_a[i] = 0;
 	}
@@ -36,7 +36,7 @@ void Linkbot::postProcess(void) {
 		// TODO: needs deletion when tilt takes casters into account
 		// tilt for casters
 		for (unsigned int i = 0; i < _conn.size(); i++) {
-			if (_conn[i]->getType() == rsLinkbot::CASTER && !static_cast<int>(_conn[i]->getSize()))
+			if (_conn[i]->getType() == Connectors::Caster && !static_cast<int>(_conn[i]->getSize()))
 				this->setPsi(atan2(_wheel_radius - _smallwheel_radius, 0.08575));
 		}
 	}

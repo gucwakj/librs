@@ -336,7 +336,7 @@ tinyxml2::XMLElement* Writer::getOrCreateConnector(int form, int orientation) {
 	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
 	tinyxml2::XMLElement *node = sim->FirstChildElement();
 	switch (form) {
-		case rsLinkbot::SIMPLE:
+		case rsLinkbot::Connectors::Simple:
 			node = _doc.NewElement("simple");
 			break;
 	}

@@ -6,8 +6,8 @@ using namespace rsLinkbot;
 Linkbot::Linkbot(int form) : Robot(form) {
 	// disabled joint
 	_disabled = -1;
-	if (form == rs::LINKBOTI) _disabled = JOINT2;
-	else if (form == rs::LINKBOTL) _disabled = JOINT3;
+	if (form == rs::LINKBOTI) _disabled = Bodies::Joint2;
+	else if (form == rs::LINKBOTL) _disabled = Bodies::Joint3;
 
 	// body parts
 	_body_length = 0.03935;
@@ -46,43 +46,43 @@ const rs::Pos Linkbot::getConnFacePosition(int type, int side, int orientation, 
 	rs::Quat Q(this->getConnBodyQuaternion(type, orientation, q));
 
 	// get offset of face
-	if (type == rsLinkbot::BRIDGE)
+	if (type == Connectors::Bridge)
 		return P.add(Q.multiply(0, _bridge_length - 2*_face_radius, 0));
-	else if (type == rsLinkbot::CUBE) {
-		if (side == SIDE2)
+	else if (type == Connectors::Cube) {
+		if (side == Connectors::Side2)
 			return P.add(Q.multiply(_cubic_length/2, _cubic_length/2, 0));
-		else if (side == SIDE3)
+		else if (side == Connectors::Side3)
 			return P.add(Q.multiply(_cubic_length, 0, 0));
-		else if (side == SIDE4)
+		else if (side == Connectors::Side4)
 			return P.add(Q.multiply(_cubic_length/2, -_cubic_length/2, 0));
-		else if (side == SIDE5)
+		else if (side == Connectors::Side5)
 			return P.add(Q.multiply(_cubic_length/2, 0, _cubic_length/2));
 	}
-	else if (type == rsLinkbot::DOUBLEBRIDGE) {
-		if (side == SIDE2)
+	else if (type == Connectors::DoubleBridge) {
+		if (side == Connectors::Side2)
 			return P.add(Q.multiply(0, _bridge_length - 2*_face_radius, 0));
-		else if (side == SIDE3)
+		else if (side == Connectors::Side3)
 			return P.add(Q.multiply(2*_conn_depth, 0, 0));
-		else if (side == SIDE4)
+		else if (side == Connectors::Side4)
 			return P.add(Q.multiply(2*_conn_depth, _bridge_length - 2*_face_radius, 0));
 	}
-	else if (type == rsLinkbot::EL) {
-		if (side == SIDE2)
+	else if (type == Connectors::El) {
+		if (side == Connectors::Side2)
 			return P.add(Q.multiply(_el_length/4, -_body_width/2 - _face_depth, 0));
-		else if (side == SIDE3)
+		else if (side == Connectors::Side3)
 			return P.add(Q.multiply(_el_length/4, 0, -_body_height/2 - _conn_depth));
-		else if (side == SIDE4)
+		else if (side == Connectors::Side4)
 			return P.add(Q.multiply(_el_length/4, 0, _body_height/2 + _conn_depth));
 	}
-	else if (type == rsLinkbot::OMNIPLATE) {
-		if (side == SIDE2)
+	else if (type == Connectors::Omniplate) {
+		if (side == Connectors::Side2)
 			return P.add(Q.multiply(0, 0, -_omni_length + 2*_face_radius));
-		else if (side == SIDE3)
+		else if (side == Connectors::Side3)
 			return P.add(Q.multiply(0, _omni_length - 2*_face_radius, 0));
-		else if (side == SIDE4)
+		else if (side == Connectors::Side4)
 			return P.add(Q.multiply(0, _omni_length - 2*_face_radius, -_omni_length + 2*_face_radius));
 	}
-	else if (type == rsLinkbot::SIMPLE)
+	else if (type == Connectors::Simple)
 		return P.add(Q.multiply(_conn_depth, 0, 0));
 
 	// default return
@@ -97,41 +97,41 @@ const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientatio
 	Q.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
 
 	// get offset of face
-	if (type == rsLinkbot::BRIDGE)
+	if (type == Connectors::Bridge)
 		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
-	else if (type == rsLinkbot::CUBE) {
-		if (side == SIDE2)
+	else if (type == Connectors::Cube) {
+		if (side == Connectors::Side2)
 			return Q.multiply(0, 0, sin(0.785398), cos(0.785398));
-		else if (side == SIDE3)
+		else if (side == Connectors::Side3)
 			return Q;
-		else if (side == SIDE4)
+		else if (side == Connectors::Side4)
 			return Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
-		else if (side == SIDE5) {
+		else if (side == Connectors::Side5) {
 			Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
 			return Q.multiply(sin(-0.785398), 0, 0, cos(-0.785398));
 		}
 	}
-	else if (type == rsLinkbot::DOUBLEBRIDGE) {
-		if (side == SIDE2)
+	else if (type == Connectors::DoubleBridge) {
+		if (side == Connectors::Side2)
 			return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
-		else if (side == SIDE3)
+		else if (side == Connectors::Side3)
 			return Q;
-		else if (side == SIDE4)
+		else if (side == Connectors::Side4)
 			return Q;
 	}
-	else if (type == rsLinkbot::EL) {
-		if (side == SIDE2)
+	else if (type == Connectors::El) {
+		if (side == Connectors::Side2)
 			return Q.multiply(0, 0, sin(0.785398), cos(0.785398));
-		else if (side == SIDE3)
+		else if (side == Connectors::Side3)
 			return Q.multiply(0, sin(0.785398), 0, cos(0.785398));
-		else if (side == SIDE4) {
+		else if (side == Connectors::Side4) {
 			Q.multiply(0, sin(2.356194), 0, cos(2.356194));
 			return Q.multiply(sin(1.570796), 0, 0, cos(1.570796));
 		}
 	}
-	else if (type == rsLinkbot::OMNIPLATE)
+	else if (type == Connectors::Omniplate)
 		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
-	else if (type == rsLinkbot::SIMPLE)
+	else if (type == Connectors::Simple)
 		return Q;
 
 	// default return
@@ -146,33 +146,33 @@ const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::
 	rs::Quat Q(this->getConnBodyQuaternion(type, orientation, q));
 
 	// get offset of body
-	if (type == rsLinkbot::BIGWHEEL)
+	if (type == Connectors::BigWheel)
 		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
-	else if (type == rsLinkbot::BRIDGE)
+	else if (type == Connectors::Bridge)
 		return P.add(Q.multiply(_conn_depth/2, _bridge_length/2 - _face_radius, 0));
-	else if (type == rsLinkbot::CASTER)
+	else if (type == Connectors::Caster)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
-	else if (type == rsLinkbot::CUBE)
+	else if (type == Connectors::Cube)
 		return P.add(Q.multiply(_cubic_length/2, 0, 0));
-	else if (type == rsLinkbot::DOUBLEBRIDGE)
+	else if (type == Connectors::DoubleBridge)
 		return P.add(Q.multiply(_conn_depth, _bridge_length/2 - _face_radius, 0));
-	else if (type == rsLinkbot::EL)
+	else if (type == Connectors::El)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
-	else if (type == rsLinkbot::FACEPLATE)
+	else if (type == Connectors::Faceplate)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
-	else if (type == rsLinkbot::FOOT)
+	else if (type == Connectors::Foot)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
-	else if (type == rsLinkbot::GRIPPER)
+	else if (type == Connectors::Gripper)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
-	else if (type == rsLinkbot::OMNIPLATE)
+	else if (type == Connectors::Omniplate)
 		return P.add(Q.multiply(_conn_depth/2, _omni_length/2 - _face_radius, -_omni_length/2 + _face_radius));
-	else if (type == rsLinkbot::SIMPLE)
+	else if (type == Connectors::Simple)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
-	else if (type == rsLinkbot::SMALLWHEEL)
+	else if (type == Connectors::SmallWheel)
 		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
-	else if (type == rsLinkbot::TINYWHEEL)
+	else if (type == Connectors::TinyWheel)
 		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
-	else if (type == rsLinkbot::WHEEL)
+	else if (type == Connectors::Wheel)
 		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
 
 	// default return
@@ -192,9 +192,9 @@ const rs::Quat Linkbot::getRobotBodyQuaternion(int body, double theta, const rs:
 	rs::Quat Q(q);
 
 	// offset quaternion
-	if (body == FACE1)
+	if (body == Bodies::Cap1)
 		Q.multiply(0, 0, sin(1.570796), cos(1.570796));
-	else if (body == FACE2)
+	else if (body == Bodies::Cap2)
 		Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
 
 	// face rotation
@@ -209,11 +209,11 @@ const rs::Pos Linkbot::getRobotCenterPosition(int face, const rs::Pos &p, const 
 	rs::Pos P(p);
 
 	// get position of robot
-	if (face == FACE1)
+	if (face == Bodies::Face1)
 		return P.add(q.multiply(_body_width/2 + _face_depth, 0, 0));
-	else if (face == FACE2)
+	else if (face == Bodies::Face2)
 		return P.add(q.multiply(_face_depth + _body_length, 0, 0));
-	else if (face == FACE3)
+	else if (face == Bodies::Face3)
 		return P.add(q.multiply(_body_width/2 + _face_depth, 0, 0));
 
 	// default return
@@ -228,13 +228,13 @@ const rs::Quat Linkbot::getRobotCenterQuaternion(int face, int orientation, doub
 	Q.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
 
 	// get quaternion of robot
-	if (face == FACE1)
+	if (face == Bodies::Face1)
 		Q.multiply(sin(0.5*angle), 0, 0, cos(0.5*angle));
-	else if (face == FACE2) {
+	else if (face == Bodies::Face2) {
 		Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
 		Q.multiply(sin(0.5*angle), 0, 0, cos(0.5*angle));
 	}
-	else if (face == FACE3) {
+	else if (face == Bodies::Face3) {
 		Q.multiply(0, 0, sin(1.570796), cos(1.570796));
 		Q.multiply(sin(-0.5*angle), 0, 0, cos(-0.5*angle));
 	}
@@ -248,11 +248,11 @@ const rs::Pos Linkbot::getRobotFacePosition(int face, const rs::Pos &p, const rs
 	rs::Pos P(p);
 
 	// calculate offset position
-	if (face == FACE1)
+	if (face == Bodies::Face1)
 		return P.add(q.multiply(_offset[face].x() - _face_depth/2, _offset[face].y(), _offset[face].z()));
-	else if (face == FACE2)
+	else if (face == Bodies::Face2)
 		return P.add(q.multiply(_offset[face].x(), _offset[face].y() - _face_depth/2, _offset[face].z()));
-	else if (face == FACE3)
+	else if (face == Bodies::Face3)
 		return P.add(q.multiply(_offset[face].x() + _face_depth/2, _offset[face].y(), _offset[face].z()));
 
 	// default return
@@ -261,11 +261,11 @@ const rs::Pos Linkbot::getRobotFacePosition(int face, const rs::Pos &p, const rs
 
 double Linkbot::getWheelRatio(int standard) {
 	switch (standard) {
-		case rsLinkbot::BIGWHEEL:
+		case Connectors::BigWheel:
 			return _wheel_radius/_bigwheel_radius;
-		case rsLinkbot::SMALLWHEEL:
+		case Connectors::SmallWheel:
 			return _wheel_radius/_smallwheel_radius;
-		case rsLinkbot::TINYWHEEL:
+		case Connectors::TinyWheel:
 			return _wheel_radius/_tinywheel_radius;
 	}
 	return 0;
@@ -281,63 +281,63 @@ const rs::Quat Linkbot::tiltForWheels(int type1, int type2, double &p2) {
 	_wheels[1] = type2;
 
 	// tilt
-	if (type1 == NONE && type2 == TINYWHEEL) {
+	if (type1 == Connectors::None && type2 == Connectors::TinyWheel) {
 		p2 = 0.002117;
 		return rs::Quat(-0.042648, -0.028636, 0.001300, 0.998679);
 	}
-	else if (type1 == NONE && type2 == SMALLWHEEL) {
+	else if (type1 == Connectors::None && type2 == Connectors::SmallWheel) {
 		p2 = 0.003400;
 		return rs::Quat(-0.034840, -0.046668, 0.001485, 0.9);
 	}
-	else if (type1 == NONE && type2 == BIGWHEEL) {
+	else if (type1 == Connectors::None && type2 == Connectors::BigWheel) {
 		p2 = 0.005581;
 		return rs::Quat(0, -0.082108, 0, 0.996400);
 	}
-	else if (type1 == TINYWHEEL && type2 == NONE) {
+	else if (type1 == Connectors::TinyWheel && type2 == Connectors::None) {
 		p2 = 0.002117;
 		return rs::Quat(-0.042648, 0.028636, -0.001300, 0.998679);
 	}
-	else if (type1 == TINYWHEEL && type2 == TINYWHEEL) {
+	else if (type1 == Connectors::TinyWheel && type2 == Connectors::TinyWheel) {
 		p2 = 0.004909;
 		return rs::Quat(-0.0277827, 0, 0, 0.999614);
 	}
-	else if (type1 == TINYWHEEL && type2 == SMALLWHEEL) {
+	else if (type1 == Connectors::TinyWheel && type2 == Connectors::SmallWheel) {
 		p2 = 0.006137;
 		return rs::Quat(-0.021193, -0.017343, 0.000250, 0.999625);
 	}
-	else if (type1 == TINYWHEEL && type2 == BIGWHEEL) {
+	else if (type1 == Connectors::TinyWheel && type2 == Connectors::BigWheel) {
 		p2 = 0.009423;
 		return rs::Quat(-0.002151, -0.047644, 0, 0.998862);
 	}
-	else if (type1 == SMALLWHEEL && type2 == NONE) {
+	else if (type1 == Connectors::SmallWheel && type2 == Connectors::None) {
 		p2 = 0.003400;
 		return rs::Quat(-0.034840, 0.046668, -0.001485, 0.9);
 	}
-	else if (type1 == SMALLWHEEL && type2 == TINYWHEEL) {
+	else if (type1 == Connectors::SmallWheel && type2 == Connectors::TinyWheel) {
 		p2 = 0.006137;
 		return rs::Quat(-0.021193, 0.017343, -0.00025, 0.999625);
 	}
-	else if (type1 == SMALLWHEEL && type2 == SMALLWHEEL) {
+	else if (type1 == Connectors::SmallWheel && type2 == Connectors::SmallWheel) {
 		p2 = 0.007781;
 		return rs::Quat(-0.012152, 0, 0, 0.999926);
 	}
-	else if (type1 == SMALLWHEEL && type2 == BIGWHEEL) {
+	else if (type1 == Connectors::SmallWheel && type2 == Connectors::BigWheel) {
 		p2 = 0.011222;
 		return rs::Quat(0.007552, -0.031155, -0.000203, 0.999486);
 	}
-	else if (type1 == BIGWHEEL && type2 == NONE) {
+	else if (type1 == Connectors::BigWheel && type2 == Connectors::None) {
 		p2 = 0.005581;
 		return rs::Quat(0, 0.082108, 0, 0.996400);
 	}
-	else if (type1 == BIGWHEEL && type2 == TINYWHEEL) {
+	else if (type1 == Connectors::BigWheel && type2 == Connectors::TinyWheel) {
 		p2 = 0.009423;
 		return rs::Quat(-0.002151, 0.04764, 0, 0.998862);
 	}
-	else if (type1 == BIGWHEEL && type2 == SMALLWHEEL) {
+	else if (type1 == Connectors::BigWheel && type2 == Connectors::SmallWheel) {
 		p2 = 0.011222;
 		return rs::Quat(0.007552, 0.031155, 0.000203, 0.9);
 	}
-	else if (type1 == BIGWHEEL && type2 == BIGWHEEL) {
+	else if (type1 == Connectors::BigWheel && type2 == Connectors::BigWheel) {
 		p2 = 0.014469;
 		return rs::Quat(0.025255, 0, 0, 0.999681);
 	}

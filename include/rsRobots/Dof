@@ -6,21 +6,21 @@
 namespace rsDof {
 
 	namespace Bodies {
-		// bodies
-		enum Parts {
+		// parts
+		enum Part {
 			Body,
 			Cap,
 			Num_Parts
 		};
 
 		// joints
-		enum Joints {
+		enum Joint {
 			Joint,
 			Num_Joints
 		};
 
 		// faces
-		enum Faces {
+		enum Face {
 			Face1 = 1,
 			Face2,
 			Face3,
@@ -29,8 +29,8 @@ namespace rsDof {
 	} // namespace Bodies
 
 	namespace Connectors {
-		// names
-		enum Types {
+		// types
+		enum Type {
 			None,
 			El,
 			Foot,
@@ -38,7 +38,7 @@ namespace rsDof {
 		};
 
 		// sides
-		enum Sides {
+		enum Side {
 			Side1 = 1,
 			Side2,
 			Side3,

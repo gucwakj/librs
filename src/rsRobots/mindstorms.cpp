@@ -32,10 +32,10 @@ const rs::Quat Mindstorms::getRobotBodyQuaternion(int body, double theta, const 
 
 double Mindstorms::getWheelRatio(int type) {
 	switch (type) {
-		case rsMindstorms::SMALL:
-			return 1.0;
-		case rsMindstorms::BIG:
+		case Connectors::Big:
 			return _bigwheel_radius/_smallwheel_radius;
+		case Connectors::Small:
+			return 1.0;
 	}
 	return 0;
 }
@@ -46,23 +46,23 @@ const rs::Quat Mindstorms::tiltForWheels(int type1, int type2, double &p2) {
 	_wheels[1] = type2;
 
 	// tilt
-	if (type1 == NONE && type2 == NONE) {
+	if (type1 == Connectors::None && type2 == Connectors::None) {
 		p2 = 0.024417;
 		return rs::Quat(-0.0514625, 0, 0, 0.998675);
 	}
-	else if (type1 == SMALL && type2 == SMALL) {
+	else if (type1 == Connectors::Small && type2 == Connectors::Small) {
 		p2 = 0.027943;
 		return rs::Quat(-0.022158, 0, 0, 0.999754);
 	}
-	else if (type1 == SMALL && type2 == BIG) {
+	else if (type1 == Connectors::Small && type2 == Connectors::Big) {
 		p2 = 0.035519;
 		return rs::Quat(0.027529, -0.053935, 0.033079, 0.997616);
 	}
-	else if (type1 == BIG && type2 == SMALL) {
+	else if (type1 == Connectors::Big && type2 == Connectors::Small) {
 		p2 = 0.035519;
 		return rs::Quat(0.027529, 0.053935, -0.033079, 0.997616);
 	}
-	else if (type1 == BIG && type2 == BIG) {
+	else if (type1 == Connectors::Big && type2 == Connectors::Big) {
 		p2 = 0.040384;
 		return rs::Quat(0.048244, 0, 0, 0.998836);
 	}

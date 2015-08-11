@@ -73,7 +73,7 @@ void Dof::moveJointOnce(double *values) {
 	MUTEX_UNLOCK(&_theta_mutex);
 
 	// set array
-	_loc = 0;
+	_index = 0;
 	_values = values;
 
 	// unsuccessful
@@ -345,7 +345,7 @@ void Dof::simPreCollisionThread(void) {
 			dBodyEnable(_body[0]);
 
 			// set new omega
-			_motor[Bodies::Joint].goal = _values[_loc++];
+			_motor[Bodies::Joint].goal = _values[_index++];
 			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
 			_motor[Bodies::Joint].state = NEUTRAL;
 

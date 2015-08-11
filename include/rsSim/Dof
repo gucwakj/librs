@@ -42,7 +42,7 @@ namespace rsSim {
 		// private variables
 		private:
 			double *_values;
-			int _loc;
+			int _index;
 	};
 
 } // namespace rsSim

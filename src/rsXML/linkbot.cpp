@@ -1,8 +1,8 @@
 #include <rs/Macros>
 #include <rsXML/Linkbot>
 
-using namespace rsLinkbot;
 using namespace rsXML;
+using namespace rsLinkbot;
 
 Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsRobots::Linkbot(form), rsXML::Robot(trace) {
 	_a.allocate(Bodies::Num_Joints);

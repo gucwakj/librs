@@ -1,8 +1,8 @@
 #include <rs/Macros>
 #include <rsXML/Mindstorms>
 
-using namespace rsMindstorms;
 using namespace rsXML;
+using namespace rsMindstorms;
 
 Mindstorms::Mindstorms(int form, bool trace) : rsRobots::Robot(form), rsRobots::Mindstorms(form), rsXML::Robot(trace) {
 	_a.allocate(Bodies::Num_Joints);

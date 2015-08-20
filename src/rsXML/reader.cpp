@@ -34,7 +34,7 @@ Reader::Reader(const char *name, bool process) {
 
 	// read XML file
 	tinyxml2::XMLDocument doc;
-	this->load_file("", &doc);
+	this->load_file(name, &doc);
 	this->read_config(&doc);
 	this->read_obstacles(&doc);
 	this->read_graphics(&doc);

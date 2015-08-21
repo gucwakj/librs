@@ -1361,7 +1361,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 		case rsLinkbot::Connectors::DoubleBridge:
 			node = osgDB::readNodeFile(_model_path + "linkbot/doublebridge.3ds");
 			break;
-		case rsLinkbot::Connectors::El:
+		case rsLinkbot::Connectors::Ell:
 			node = osgDB::readNodeFile(_model_path + "linkbot/el.3ds");
 			break;
 		case rsLinkbot::Connectors::Faceplate:

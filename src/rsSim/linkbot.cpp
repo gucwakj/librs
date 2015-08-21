@@ -104,7 +104,7 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		case Connectors::DoubleBridge:
 			this->build_doublebridge(_conn.back());
 			break;
-		case Connectors::El:
+		case Connectors::Ell:
 			this->build_el(_conn.back());
 			break;
 		case Connectors::Faceplate:

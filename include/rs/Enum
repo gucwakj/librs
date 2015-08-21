@@ -95,7 +95,7 @@ namespace rsLinkbot {
 			Caster,
 			Cube,
 			DoubleBridge,
-			El,
+			Ell,
 			Faceplate,
 			Foot,
 			Gripper,

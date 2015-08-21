@@ -66,7 +66,7 @@ const rs::Pos Linkbot::getConnFacePosition(int type, int side, int orientation, 
 		else if (side == Connectors::Side4)
 			return P.add(Q.multiply(2*_conn_depth, _bridge_length - 2*_face_radius, 0));
 	}
-	else if (type == Connectors::El) {
+	else if (type == Connectors::Ell) {
 		if (side == Connectors::Side2)
 			return P.add(Q.multiply(_el_length/4, -_body_width/2 - _face_depth, 0));
 		else if (side == Connectors::Side3)
@@ -119,7 +119,7 @@ const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientatio
 		else if (side == Connectors::Side4)
 			return Q;
 	}
-	else if (type == Connectors::El) {
+	else if (type == Connectors::Ell) {
 		if (side == Connectors::Side2)
 			return Q.multiply(0, 0, sin(0.785398), cos(0.785398));
 		else if (side == Connectors::Side3)
@@ -156,7 +156,7 @@ const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::
 		return P.add(Q.multiply(_cubic_length/2, 0, 0));
 	else if (type == Connectors::DoubleBridge)
 		return P.add(Q.multiply(_conn_depth, _bridge_length/2 - _face_radius, 0));
-	else if (type == Connectors::El)
+	else if (type == Connectors::Ell)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == Connectors::Faceplate)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));

@@ -57,7 +57,7 @@ void Vec::allocate(int size) {
 	}
 }
 
-void Vec::print(char *name) {
+void Vec::print(const char *name) {
 	std::cerr << name << ": ";
 	for (unsigned int i = 0; i < _v.size(); i++) {
 		std::cerr << _v[i] << " ";
@@ -65,7 +65,7 @@ void Vec::print(char *name) {
 	std::cerr << std::endl;
 }
 
-void Vec::print(char *name) const {
+void Vec::print(const char *name) const {
 	std::cerr << name << ": ";
 	for (unsigned int i = 0; i < _v.size(); i++) {
 		std::cerr << _v[i] << " ";

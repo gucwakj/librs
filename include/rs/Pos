@@ -16,8 +16,8 @@ namespace rs {
 			const Pos add(const Pos&);
 
 			// output
-			void print(char* = "P");
-			void print(char* = "P") const;
+			void print(const char* = "P");
+			void print(const char* = "P") const;
 
 			// access operators
 			inline double& operator[](int i) { return _v[i]; }

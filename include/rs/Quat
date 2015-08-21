@@ -24,8 +24,8 @@ namespace rs {
 			const Quat multiply(double, double, double, double);
 
 			// output
-			void print(char* = "Q");
-			void print(char* = "Q") const;
+			void print(const char* = "Q");
+			void print(const char* = "Q") const;
 
 			// access operators
 			inline double& operator[](int i) { return _v[i]; }

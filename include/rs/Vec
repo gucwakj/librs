@@ -21,8 +21,8 @@ namespace rs {
 
 			void add(double);
 			void allocate(int);
-			void print(char* = "V");
-			void print(char* = "V") const;
+			void print(const char* = "V");
+			void print(const char* = "V") const;
 			unsigned int size(void) const;
 
 			// access operators

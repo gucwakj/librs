@@ -240,7 +240,7 @@ bool Reader::getUnits(void) {
  **********************************************************/
 void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 	// get file
-	if ( strcmp(name, "") ) {
+	if (name != NULL) {
 #ifdef _WIN32
 		char base[512];
 		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {

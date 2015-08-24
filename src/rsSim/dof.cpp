@@ -7,10 +7,10 @@ using namespace rsSim;
 using namespace rsDof;
 
 Dof::Dof(int joint) : rsRobots::Robot(rs::DOF), rsRobots::Dof(joint) {
-	// degrees of freedom
+	// number of degrees of freedom
 	_dof = Bodies::Num_Joints;
 
-	// create arrays
+	// create arrays of proper size
 	_motor.resize(_dof);
 
 	// fill with default data
@@ -37,18 +37,10 @@ Dof::Dof(int joint) : rsRobots::Robot(rs::DOF), rsRobots::Dof(joint) {
 	_motor[Bodies::Joint].tau_max = 2;
 	_motor[Bodies::Joint].timeout = 0;
 	_motor[Bodies::Joint].theta = 0;
+
+	// init threading
 	MUTEX_INIT(&_motor[Bodies::Joint].success_mutex);
 	COND_INIT(&_motor[Bodies::Joint].success_cond);
-	_connected = 0;
-	_distOffset = 0;
-	_id = -1;
-	_motion = false;
-	_rgb[0] = 0;
-	_rgb[1] = 0;
-	_rgb[2] = 1;
-	_sim = NULL;
-	_speed = 2;
-	_trace = 1;
 }
 
 Dof::~Dof(void) {
@@ -280,8 +272,6 @@ const rs::Pos Dof::getCoM(double &mass) {
 const rs::Vec Dof::getJoints(void) {
 	return rs::Vec(_motor[Bodies::Joint].theta);
 }
-
-void Dof::init_params(void) { }
 
 void Dof::simPreCollisionThread(void) {
 	// lock angle and goal

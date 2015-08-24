@@ -13,16 +13,27 @@
 using namespace rsSim;
 
 Robot::Robot(void) : rsRobots::Robot(rs::ROBOT) {
+	// protected variables
+	_connected = 0;
+	_distOffset = 0;
+	_id = -1;
+	_motion = false;
+	_rgb[0] = 0;
+	_rgb[1] = 0;
+	_rgb[2] = 1;
+	_sim = NULL;
+	_speed = 2;
+	_trace = 1;
+
+	// private variables
+	_seed = time(NULL);
+
+	// threading
 	MUTEX_INIT(&_goal_mutex);
 	MUTEX_INIT(&_success_mutex);
 	COND_INIT(&_success_cond);
 	MUTEX_INIT(&_theta_mutex);
 
-	_connected = 1;
-	_rgb[0] = 0;
-	_rgb[1] = 1;
-	_rgb[2] = 0;
-	_seed = time(NULL);
 }
 
 Robot::~Robot(void) {

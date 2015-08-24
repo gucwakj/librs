@@ -8,8 +8,40 @@ using namespace rsSim;
 using namespace rsMindstorms;
 
 Mindstorms::Mindstorms(int form) : rsRobots::Robot(form), rsRobots::Mindstorms(form) {
-	// initialize parameters
-	this->init_params();
+	// number of degrees of freedom
+	_dof = Bodies::Num_Joints;
+
+	// create arrays of proper size
+	_motor.resize(_dof);
+
+	// fill with default data
+	for (int i = 0; i < _dof; i++) {
+		_motor[i].accel.init = 0;
+		_motor[i].accel.run = 0;
+		_motor[i].accel.period = 0;
+		_motor[i].accel.start = 0;
+		_motor[i].alpha = 0;
+		_motor[i].encoder = rs::D2R(0.25);
+		_motor[i].goal = 0;
+		_motor[i].mode = CONTINUOUS;
+		_motor[i].offset = 0;
+		_motor[i].omega = 0.7854;			// 45 deg/sec
+		_motor[i].omega_max = 4.1888;		// 240 deg/sec
+		_motor[i].record = false;
+		_motor[i].record_active = false;
+		_motor[i].record_num = 0;
+		_motor[i].safety_angle = 10;
+		_motor[i].safety_timeout = 4;
+		_motor[i].starting = 0;
+		_motor[i].state = NEUTRAL;
+		_motor[i].stopping = 0;
+		_motor[i].success = true;
+		_motor[i].tau_max = 6;
+		_motor[i].timeout = 0;
+		_motor[i].theta = 0;
+		MUTEX_INIT(&_motor[i].success_mutex);
+		COND_INIT(&_motor[i].success_cond);
+	}
 }
 
 Mindstorms::~Mindstorms(void) {
@@ -103,52 +135,6 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 double Mindstorms::calculate_angle(int id) {
 	_motor[id].theta = mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
 	return _motor[id].theta;
-}
-
-void Mindstorms::init_params(void) {
-	_dof = Bodies::Num_Joints;
-
-	// create arrays for linkbots
-	_motor.resize(_dof);
-
-	// fill with default data
-	for (int i = 0; i < _dof; i++) {
-		_motor[i].accel.init = 0;
-		_motor[i].accel.run = 0;
-		_motor[i].accel.period = 0;
-		_motor[i].accel.start = 0;
-		_motor[i].alpha = 0;
-		_motor[i].encoder = rs::D2R(0.25);
-		_motor[i].goal = 0;
-		_motor[i].mode = CONTINUOUS;
-		_motor[i].offset = 0;
-		_motor[i].omega = 0.7854;			// 45 deg/sec
-		_motor[i].omega_max = 4.1888;		// 240 deg/sec
-		_motor[i].record = false;
-		_motor[i].record_active = false;
-		_motor[i].record_num = 0;
-		_motor[i].safety_angle = 10;
-		_motor[i].safety_timeout = 4;
-		_motor[i].starting = 0;
-		_motor[i].state = NEUTRAL;
-		_motor[i].stopping = 0;
-		_motor[i].success = true;
-		_motor[i].tau_max = 6;
-		_motor[i].timeout = 0;
-		_motor[i].theta = 0;
-		MUTEX_INIT(&_motor[i].success_mutex);
-		COND_INIT(&_motor[i].success_cond);
-	}
-	_connected = 0;
-	_distOffset = 0;
-	_id = -1;
-	_motion = false;
-	_rgb[0] = 0;
-	_rgb[1] = 0;
-	_rgb[2] = 1;
-	_sim = NULL;
-	_speed = 2;
-	_trace = 1;
 }
 
 void Mindstorms::simPreCollisionThread(void) {

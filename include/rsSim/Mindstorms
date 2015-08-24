@@ -18,7 +18,6 @@ namespace rsSim {
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int);
 			virtual int buildIndividual(const rs::Pos&, const rs::Quat&, const rs::Vec&);
 			virtual double calculate_angle(int);
-			virtual void init_params(void);
 			virtual void simPreCollisionThread(void);
 			virtual void simPostCollisionThread(void);
 

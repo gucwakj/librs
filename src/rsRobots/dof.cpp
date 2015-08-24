@@ -17,12 +17,12 @@ Dof::Dof(int joint) : Robot(rs::DOF) {
 
 	// body position offsets
 	_offset.push_back(rs::Pos(0, 0, 0));								// body
-	double depth = 0; if (_enabled == Bodies::Face1) depth = _cap_depth;
-	_offset.push_back(rs::Pos(-_body_width/2 - depth/2, 0, 0));			// face1
-	depth = 0; if (_enabled == Bodies::Face2) depth = _cap_depth;
-	_offset.push_back(rs::Pos(0, -_body_length - depth/2, 0));			// face2
-	depth = 0; if (_enabled == Bodies::Face3) depth = _cap_depth;
-	_offset.push_back(rs::Pos(_body_width/2 + depth/2, 0, 0));			// face3
+	double depth = 0; if (_enabled == Bodies::Face1) depth = _cap_depth/2;
+	_offset.push_back(rs::Pos(-_body_width/2 - depth, 0, 0));			// face1
+	depth = 0; if (_enabled == Bodies::Face2) depth = _cap_depth/2;
+	_offset.push_back(rs::Pos(0, -_body_length - depth, 0));			// face2
+	depth = 0; if (_enabled == Bodies::Face3) depth = _cap_depth/2;
+	_offset.push_back(rs::Pos(_body_width/2 + depth, 0, 0));			// face3
 
 	// connectors
 	_conn_depth = 0.00570;
@@ -124,8 +124,8 @@ const rs::Pos Dof::getRobotCenterPosition(int face, const rs::Pos &p, const rs::
 	rs::Pos P(p);
 
 	// face depth
-	int depth = 0;
-	if (face == _enabled) depth = _cap_depth;
+	double depth = 0;
+	if (_enabled == face) depth = _cap_depth;
 
 	// get position of robot
 	if (face == Bodies::Face1)
@@ -166,13 +166,17 @@ const rs::Pos Dof::getRobotFacePosition(int face, const rs::Pos &p, const rs::Qu
 	// new position
 	rs::Pos P(p);
 
+	// face depth
+	double depth = 0;
+	if (_enabled == face) depth = _cap_depth/2;
+
 	// calculate offset position
 	if (face == Bodies::Face1)
-		return P.add(q.multiply(_offset[face].x() - _cap_depth/2, _offset[face].y(), _offset[face].z()));
+		return P.add(q.multiply(_offset[face].x() - depth, _offset[face].y(), _offset[face].z()));
 	else if (face == Bodies::Face2)
-		return P.add(q.multiply(_offset[face].x(), _offset[face].y() - _cap_depth/2, _offset[face].z()));
+		return P.add(q.multiply(_offset[face].x(), _offset[face].y() - depth, _offset[face].z()));
 	else if (face == Bodies::Face3)
-		return P.add(q.multiply(_offset[face].x() + _cap_depth/2, _offset[face].y(), _offset[face].z()));
+		return P.add(q.multiply(_offset[face].x() + depth, _offset[face].y(), _offset[face].z()));
 
 	// default return
 	return P;

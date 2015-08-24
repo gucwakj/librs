@@ -498,14 +498,15 @@ void Linkbot::simPreCollisionThread(void) {
 			case SEEK:
 				if ((_motor[i].goal - 6*_motor[i].encoder - _motor[i].theta) > rs::Epsilon) {
 					_motor[i].state = POSITIVE;
-					if (_motor[i].starting++ < 25)
+					if (_motor[i].starting < 25)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].starting*fabs(_motor[i].omega)/50);
-					else if (_motor[i].starting++ < 50)
+					else if (_motor[i].starting < 50)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].starting*fabs(_motor[i].omega)/150 + 0.3*fabs(_motor[i].omega));
-					else if (_motor[i].starting++ < 100)
+					else if (_motor[i].starting < 100)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].starting*fabs(_motor[i].omega)/150 + fabs(_motor[i].omega)/3);
 					else
 						dJointSetAMotorParam(_motor[i].id, dParamVel, fabs(_motor[i].omega));
+					_motor[i].starting++;
 				}
 				else if ((_motor[i].goal - 3*_motor[i].encoder - _motor[i].theta) > rs::Epsilon) {
 					_motor[i].state = POSITIVE;
@@ -517,14 +518,15 @@ void Linkbot::simPreCollisionThread(void) {
 				}
 				else if ((_motor[i].theta - _motor[i].goal - 6*_motor[i].encoder) > rs::Epsilon) {
 					_motor[i].state = NEGATIVE;
-					if (_motor[i].starting++ < 25)
+					if (_motor[i].starting < 25)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, -_motor[i].starting*fabs(_motor[i].omega)/50);
-					else if (_motor[i].starting++ < 50)
+					else if (_motor[i].starting < 50)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, -_motor[i].starting*fabs(_motor[i].omega)/150 - 0.3*fabs(_motor[i].omega));
-					else if (_motor[i].starting++ < 100)
+					else if (_motor[i].starting < 100)
 						dJointSetAMotorParam(_motor[i].id, dParamVel, -_motor[i].starting*fabs(_motor[i].omega)/150 - fabs(_motor[i].omega)/3);
 					else
 						dJointSetAMotorParam(_motor[i].id, dParamVel, -fabs(_motor[i].omega));
+					_motor[i].starting++;
 				}
 				else if ((_motor[i].theta - _motor[i].goal - 3*_motor[i].encoder) > rs::Epsilon) {
 					_motor[i].state = NEGATIVE;
@@ -542,7 +544,6 @@ void Linkbot::simPreCollisionThread(void) {
 				break;
 			case SINGULAR: {
 				// reenable body on start
-				dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);
 				dBodyEnable(_body[0]);
 
 				// set new omega

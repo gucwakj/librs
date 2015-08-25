@@ -335,6 +335,10 @@ void Dof::simPreCollisionThread(void) {
 			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
 			_motor[Bodies::Joint].state = NEUTRAL;
 
+			// limit omega to prevent crazy flying robots
+			if (_motor[Bodies::Joint].omega > 5) _motor[Bodies::Joint].omega = 6.28;		// 2*pi
+			if (_motor[Bodies::Joint].omega < -5) _motor[Bodies::Joint].omega = -6.28;		// -2*pi
+
 			// move forever
 			dJointEnable(_motor[Bodies::Joint].id);
 			dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].omega);

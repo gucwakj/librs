@@ -547,11 +547,14 @@ void Linkbot::simPreCollisionThread(void) {
 				dBodyEnable(_body[0]);
 
 				// set new omega
-				double angle = _values[i][_loc[i]];
-				_motor[i].omega = (angle - _motor[i].theta)/step;
-				_motor[i].goal = angle;
+				_motor[i].goal = _values[i][_loc[i]];
+				_motor[i].omega = (_motor[i].goal - _motor[i].theta)/step;
 				_motor[i].state = NEUTRAL;
 				_loc[i]++;
+
+				// limit omega to prevent crazy flying robots
+				if (_motor[i].omega > 5) _motor[i].omega = 6.28;		// 2*pi
+				if (_motor[i].omega < -5) _motor[i].omega = -6.28;		// -2*pi
 
 				// move forever
 				dJointEnable(_motor[i].id);

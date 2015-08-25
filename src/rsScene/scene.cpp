@@ -1162,6 +1162,7 @@ void Scene::draw_robot_dof(rsRobots::Dof *robot, Robot *group, const rs::Pos &p,
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		body[i]->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 		body[i]->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+		body[i]->computeBound();
 		body[i]->setCullingActive(false);
 		pat[i]->addChild(body[i]);
 	}
@@ -1206,6 +1207,7 @@ void Scene::draw_robot_dof_conn(rsRobots::Dof *robot, Robot *group, int type, in
 			node = osgDB::readNodeFile(_model_path + "dof/foot.3ds");
 			break;
 	}
+	node->computeBound();
 	node->setCullingActive(false);
 
 	// set rendering properties
@@ -1300,6 +1302,7 @@ void Scene::draw_robot_linkbot(rsRobots::Linkbot *robot, Robot *group, const rs:
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		body[i]->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 		body[i]->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+		body[i]->computeBound();
 		body[i]->setCullingActive(false);
 		pat[i]->addChild(body[i]);
 	}
@@ -1388,6 +1391,7 @@ void Scene::draw_robot_linkbot_conn(rsRobots::Linkbot *robot, Robot *group, int 
 			transform->setScale(osg::Vec3d(1, robot->getWheelRatio(rsLinkbot::Connectors::TinyWheel), robot->getWheelRatio(rsLinkbot::Connectors::TinyWheel)));
 			break;
 	}
+	node->computeBound();
 	node->setCullingActive(false);
 
 	// set rendering properties
@@ -1422,6 +1426,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	body->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	body->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	body->computeBound();
 	body->setCullingActive(false);
 
 	// draw 'led'
@@ -1434,6 +1439,7 @@ void Scene::draw_robot_mindstorms(rsRobots::Mindstorms *robot, Robot *group, con
 	bodyled->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	bodyled->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	bodyled->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	bodyled->computeBound();
 	bodyled->setCullingActive(false);
 
 	// add body to transform
@@ -1471,6 +1477,7 @@ void Scene::draw_robot_mindstorms_wheel(rsRobots::Mindstorms *robot, Robot *grou
 	node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	node->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	node->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+	node->computeBound();
 	node->setCullingActive(false);
 
 	// add node to transform
@@ -1611,7 +1618,7 @@ void* Scene::graphics_thread(void *arg) {
 	Scene *p = (Scene *)arg;
 
 	// initialize variables
-	unsigned int width, height;
+	unsigned int width = 0, height = 0;
 
 	// window interface
 	osg::GraphicsContext::WindowingSystemInterface *wsi = osg::GraphicsContext::getWindowingSystemInterface();

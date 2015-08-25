@@ -20,7 +20,7 @@ void Dof::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group && _robot && &_bodies && &_conn) {
 		// child 0: hud
-		std::string text;
+		std::string text("");
 		double x = _robot->getCenter(0);
 		double y = _robot->getCenter(1);
 		double z = _robot->getCenter(2) + (_robot->getID() % 2 ? 0.08 : 0) + 0.08;
@@ -34,7 +34,7 @@ void Dof::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			text.append("\n\n(" + std::to_string(y*39.37) + ", " + std::to_string(y*39.37) + ") [in]");
 		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
 		label->setText(text);
-		label->setPosition(osg::Vec3(x, y, z));
+		label->setPosition(osg::Vec3f(x, y, z));
 		// child 1: tracking line
 		if (_robot->getTrace()) {
 			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));

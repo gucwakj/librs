@@ -94,8 +94,6 @@ int Scene::addAndRemoveChildren(void) {
 
 	// remove robots from scene
 	while (_staging[1]->getNumChildren()) {
-		if (_staging[1]->getChild(0)->getUpdateCallback() != NULL)
-			_staging[1]->getChild(0)->removeUpdateCallback(_staging[1]->getChild(0)->getUpdateCallback());
 		_scene->removeChild(_staging[1]->getChild(0));
 		_staging[1]->removeChild(0, 1);
 	}

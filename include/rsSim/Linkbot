@@ -17,6 +17,7 @@ namespace rsSim {
 			virtual const rs::Pos getCoM(double&);
 			const rs::Vec getJoints(void);
 			void moveJointOnce(int, double*);		// research
+			void moveJointSingular(int);		// research: move one step at a time
 
 		// inherited functions from ModularRobot class
 		protected:
@@ -48,8 +49,8 @@ namespace rsSim {
 
 		// private variables
 		private:
-			std::vector<double *> _values;										// research: values of integrated array
-			int _loc[3];
+			std::vector<double *> _values;		// research: values of integrated array
+			int _loc[3];						// research
 	};
 
 } // namespace rsSim

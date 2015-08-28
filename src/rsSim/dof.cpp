@@ -54,7 +54,7 @@ void Dof::moveJointOnce(double *values) {
 	MUTEX_LOCK(&_goal_mutex);
 
 	// set motion parameters
-	_motor[Bodies::Joint].mode = SINGULAR;
+	_motor[Bodies::Joint].mode = ONCE;
 	_motor[Bodies::Joint].state = POSITIVE;
 
 	// enable motor
@@ -75,6 +75,24 @@ void Dof::moveJointOnce(double *values) {
 
 	// unlock goal
 	MUTEX_UNLOCK(&_goal_mutex);
+}
+
+void Dof::moveJointSingular(void) {
+	// set motion parameters
+	_motor[Bodies::Joint].mode = SINGULAR;
+	_motor[Bodies::Joint].state = POSITIVE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[Bodies::Joint].id);
+	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
+	_motor[Bodies::Joint].success = false;
+	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
 }
 
 /**********************************************************
@@ -279,6 +297,21 @@ void Dof::simPreCollisionThread(void) {
 	// engage motor depending upon motor mode
 	double step = _sim->getStep();
 	switch (_motor[Bodies::Joint].mode) {
+		case ONCE:
+			// reenable body on start
+			dBodyEnable(_body[0]);
+
+			// set new omega
+			_motor[Bodies::Joint].goal = _values[_index++];
+			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
+			_motor[Bodies::Joint].state = NEUTRAL;
+
+			// move forever
+			dJointEnable(_motor[Bodies::Joint].id);
+			dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].omega);
+
+			// end
+			break;
 		case SEEK:
 			if ((_motor[Bodies::Joint].goal - 6*_motor[Bodies::Joint].encoder - _motor[Bodies::Joint].theta) > rs::Epsilon) {
 				_motor[Bodies::Joint].state = POSITIVE;
@@ -331,13 +364,10 @@ void Dof::simPreCollisionThread(void) {
 			dBodyEnable(_body[0]);
 
 			// set new omega
-			_motor[Bodies::Joint].goal = _values[_index++];
+			_motor[Bodies::Joint].goal = _next_goal;
 			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
 			_motor[Bodies::Joint].state = NEUTRAL;
-
-			// limit omega to prevent crazy flying robots
-			if (_motor[Bodies::Joint].omega > 5) _motor[Bodies::Joint].omega = 6.28;		// 2*pi
-			if (_motor[Bodies::Joint].omega < -5) _motor[Bodies::Joint].omega = -6.28;		// -2*pi
+if (_id == 1) std::cerr << _sim->getClock() << " " << _motor[Bodies::Joint].goal << " " << _motor[Bodies::Joint].theta << " " << _motor[Bodies::Joint].omega << std::endl;
 
 			// move forever
 			dJointEnable(_motor[Bodies::Joint].id);

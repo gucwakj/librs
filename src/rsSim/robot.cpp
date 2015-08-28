@@ -34,6 +34,8 @@ Robot::Robot(void) : rsRobots::Robot(rs::ROBOT) {
 	COND_INIT(&_success_cond);
 	MUTEX_INIT(&_theta_mutex);
 
+	// research
+	_next_goal = 0;
 }
 
 Robot::~Robot(void) {
@@ -176,6 +178,10 @@ int Robot::moveWait(void) {
 
 	// success
 	return 0;
+}
+
+void Robot::setCPGGoal(double value) {
+	_next_goal = value;
 }
 
 /**********************************************************

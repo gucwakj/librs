@@ -17,7 +17,8 @@ namespace rsSim {
 			virtual dBodyID getBodyID(int);
 			virtual const rs::Pos getCoM(double&);
 			const rs::Vec getJoints(void);
-			void moveJointOnce(double*);
+			void moveJointOnce(double*);		// research: move one value each timestep
+			void moveJointSingular(void);		// research: move one step at a time
 
 		// inherited functions from ModularRobot class
 		protected:
@@ -40,8 +41,8 @@ namespace rsSim {
 
 		// private variables
 		private:
-			double *_values;
-			int _index;
+			double *_values;		// research
+			int _index;				// research
 	};
 
 } // namespace rsSim

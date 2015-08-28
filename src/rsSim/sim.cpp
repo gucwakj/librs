@@ -37,6 +37,7 @@ Sim::Sim(bool pause, bool rt) {
 	_clock = 0;											// start clock
 	_collision = true;									// perform inter-robot collisions
 	_pause = pause;										// start paused
+	_res = 0;											// research: am i doing research?
 	_rt = rt;											// real time
 	_running = true;									// is simulation running
 	_step = 0.004;										// initial time step
@@ -74,6 +75,11 @@ Sim::~Sim(void) {
 	// remove robots
 	for (unsigned int i = 0; i < _robot.size(); i++) {
 		_robot.erase(_robot.begin() + i);
+	}
+
+	// research: remove cpg
+	if (_res) {
+		gsl_odeiv2_driver_free(_cpg_driver);
 	}
 }
 
@@ -364,6 +370,20 @@ int Sim::setCOR(double robot, double ground) {
 	return 0;
 }
 
+int Sim::setCPG(int (*function)(double, const double[], double[], void*), int variables) {
+	_res = true;
+	_cpg_sys = {function, NULL, static_cast<size_t>(variables), NULL};
+	_cpg_driver = gsl_odeiv2_driver_alloc_y_new(&_cpg_sys, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
+	_cpg_array.resize(variables);
+	_cpg_time = 0;
+	_cpg_vars = variables;
+	for (int i = 0; i < variables; i+=6) {
+		_cpg_array[i] = 1;
+		_cpg_array[i+3] = -1;
+	}
+	return 0;
+}
+
 int Sim::setMu(double robot, double ground) {
 	_friction[0] = robot;
 	_friction[1] = ground;
@@ -459,6 +479,27 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 	}
 }
 
+const rs::Vec Sim::run_cpg_step(void) {
+	// return vector
+	int size = _robot.size() - 1;
+	rs::Vec V(size);
+
+	// integrate
+	int status = gsl_odeiv2_driver_apply(_cpg_driver, &_cpg_time, _clock + _step, _cpg_array.data());
+
+	// die if integration step fails and return empty vector
+	if (status != GSL_SUCCESS) {
+		std::cerr << "ERROR: return value = " << status << std::endl;
+		return V;
+	}
+
+	// save output array
+	for (int j = 0, k = 0; j < _cpg_vars; j+=6, k++) {
+		V[k] = _cpg_array[j+1] + _cpg_array[j+1]*cos(_cpg_array[j]) - _cpg_array[j+4] - _cpg_array[j+4]*cos(_cpg_array[j+3]);
+	}
+	return V;
+}
+
 void* Sim::simulation_thread(void *arg) {
 	// cast to type sim
 	Sim *sim = (Sim *)arg;
@@ -503,6 +544,14 @@ void* Sim::simulation_thread(void *arg) {
 				clock_gettime(CLOCK_REALTIME, &s_time);
 				start_time = s_time.tv_sec*1000 + s_time.tv_nsec/1000000;
 #endif
+			}
+
+			// research: cpg calculation
+			if (sim->_res) {
+				rs::Vec v = sim->run_cpg_step();
+				for (unsigned int j = 1; j < sim->_robot.size(); j++) {
+					sim->_robot[j].robot->setCPGGoal(v[j-1]);
+				}
 			}
 
 			// perform pre-collision updates

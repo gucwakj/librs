@@ -8,6 +8,11 @@
 #include <rsSim/ModularRobot>
 #include <rsSim/Robot>
 
+// gsl - integration
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv2.h>
+
 namespace rsSim {
 
 	// typedefs
@@ -42,6 +47,7 @@ namespace rsSim {
 			void run(int, void (*output)(void) = NULL, int interval = 0);
 			int setCollisions(int);
 			int setCOR(double, double);
+			int setCPG(int(*)(double, const double*, double*, void*), int);		// research
 			int setMu(double, double);
 			void start(void);
 			void stop(void);
@@ -78,6 +84,16 @@ namespace rsSim {
 		private:
 			static void collision(void*, dGeomID, dGeomID);	// wrapper function for nearCallback to work in class
 			static void* simulation_thread(void*);			// simulation thread function
+			const rs::Vec run_cpg_step(void);				// research: run cpg integration step
+
+		// private variables
+		private:
+			bool _res;										// research: research code is on
+			double _cpg_time;								// research: time of integration
+			int _cpg_vars;									// research: number of variables
+			std::vector<double> _cpg_array;					// research: array of values from cpg integration
+			gsl_odeiv2_driver *_cpg_driver;					// research: driver of cpg integration
+			gsl_odeiv2_system _cpg_sys;						// research: system of ode equations
 	};
 
 } // namespace rsSim

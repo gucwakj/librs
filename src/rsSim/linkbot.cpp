@@ -58,7 +58,7 @@ void Linkbot::moveJointOnce(int id, double *values) {
 	MUTEX_LOCK(&_goal_mutex);
 
 	// set motion parameters
-	_motor[id].mode = SINGULAR;
+	_motor[id].mode = ONCE;
 	_motor[id].state = POSITIVE;
 
 	// enable motor
@@ -79,6 +79,24 @@ void Linkbot::moveJointOnce(int id, double *values) {
 
 	// unlock goal
 	MUTEX_UNLOCK(&_goal_mutex);
+}
+
+void Linkbot::moveJointSingular(int id) {
+	// set motion parameters
+	_motor[id].mode = SINGULAR;
+	_motor[id].state = POSITIVE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[id].id);
+	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[id].success_mutex);
+	_motor[id].success = false;
+	MUTEX_UNLOCK(&_motor[id].success_mutex);
 }
 
 /**********************************************************
@@ -495,6 +513,21 @@ void Linkbot::simPreCollisionThread(void) {
 						break;
 				}
 				break;
+			case ONCE:
+				// reenable body on start
+				dBodyEnable(_body[0]);
+
+				// set new omega
+				_motor[i].goal = _values[i][_loc[i]++];
+				_motor[i].omega = (_motor[i].goal - _motor[i].theta)/step;
+				_motor[i].state = NEUTRAL;
+
+				// move forever
+				dJointEnable(_motor[i].id);
+				dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
+
+				// end
+				break;
 			case SEEK:
 				if ((_motor[i].goal - 6*_motor[i].encoder - _motor[i].theta) > rs::Epsilon) {
 					_motor[i].state = POSITIVE;
@@ -542,19 +575,15 @@ void Linkbot::simPreCollisionThread(void) {
 					dJointSetAMotorParam(_motor[i].id, dParamVel, 0);
 				}
 				break;
-			case SINGULAR: {
+			case SINGULAR:
 				// reenable body on start
 				dBodyEnable(_body[0]);
 
 				// set new omega
-				_motor[i].goal = _values[i][_loc[i]];
+				_motor[i].goal = _next_goal;
 				_motor[i].omega = (_motor[i].goal - _motor[i].theta)/step;
 				_motor[i].state = NEUTRAL;
-				_loc[i]++;
-
-				// limit omega to prevent crazy flying robots
-				if (_motor[i].omega > 5) _motor[i].omega = 6.28;		// 2*pi
-				if (_motor[i].omega < -5) _motor[i].omega = -6.28;		// -2*pi
+if (_id == 1) std::cerr << "robot " << _id << ": " << _sim->getClock() << " " << _sim->getStep() << " " << _motor[i].goal << " " << _motor[i].theta << " " << _motor[i].omega << std::endl;
 
 				// move forever
 				dJointEnable(_motor[i].id);
@@ -562,7 +591,6 @@ void Linkbot::simPreCollisionThread(void) {
 
 				// end
 				break;
-			}
 		}
 	}
 

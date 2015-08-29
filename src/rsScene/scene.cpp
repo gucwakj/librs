@@ -1,6 +1,6 @@
 #include <osg/ComputeBoundsVisitor>
 #include <osgDB/FileUtils>
-#include <osgFX/Scribe>
+#include <osgFX/Outline>
 
 #include <rs/Enum>
 #include <rs/Macros>
@@ -116,17 +116,17 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 			test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 			// get robot node
 			if (test && (!test->getName().compare(0, 5, "robot"))) {
-				if (dynamic_cast<osgFX::Scribe *>(test->getChild(2)->asTransform()->getChild(0)))
+				if (dynamic_cast<osgFX::Outline *>(test->getChild(2)->asTransform()->getChild(0)))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)), c);
 			}
 			// get obstacle node
 			else if (test && !test->getName().compare(0, 8, "obstacle")) {
-				if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0)))
+				if (dynamic_cast<osgFX::Outline *>(test->getChild(0)->asTransform()->getChild(0)))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
 			}
 			// get marker node
 			else if (test && !test->getName().compare(0, 6, "marker")) {
-				if (dynamic_cast<osgFX::Scribe *>(test->getChild(0)->asTransform()->getChild(0)))
+				if (dynamic_cast<osgFX::Outline *>(test->getChild(0)->asTransform()->getChild(0)))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
 			}
 		}
@@ -588,6 +588,12 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	_viewer->setCameraManipulator(cameraManipulator);
 	_viewer->getCameraManipulator()->setHomePosition(osg::Vec3f(0.6, -0.8, 0.5), osg::Vec3f(0.1, 0.3, 0), osg::Vec3f(0, 0, 1));
 
+	// outlining setup
+	osg::DisplaySettings::instance()->setMinimumNumStencilBits(1);
+	unsigned int clearMask = _camera->getClearMask();
+	_camera->setClearMask(clearMask | GL_STENCIL_BUFFER_BIT);
+	_camera->setClearStencil(0);
+
 	// success
 	return 0;
 }
@@ -684,40 +690,40 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 
 	if (!parent->getName().compare(0, 5, "robot")) {
 		// not highlighted yet, do that now
-		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
+		if (!(dynamic_cast<osgFX::Outline *>(child))) {
 			for (unsigned int i = 2; i < parent->getNumChildren(); i++) {
-				osgFX::Scribe *scribe = new osgFX::Scribe();
-				scribe->setWireframeColor(osg::Vec4(c[0], c[1], c[2], 0.1));
-				scribe->setWireframeLineWidth(1);
-				scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-				scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-				scribe->addChild(parent->getChild(i)->asTransform()->getChild(0));
-				parent->getChild(i)->asTransform()->replaceChild(parent->getChild(i)->asTransform()->getChild(0), scribe);
+				osgFX::Outline *outline = new osgFX::Outline();
+				outline->setWidth(80);
+				outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
+				outline->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+				outline->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+				outline->addChild(parent->getChild(i)->asTransform()->getChild(0));
+				parent->getChild(i)->asTransform()->replaceChild(parent->getChild(i)->asTransform()->getChild(0), outline);
 			}
 		}
 		// already highlighted, take it away
 		else if (!on) {
 			for (unsigned int i = 2; i < parent->getNumChildren(); i++) {
-				osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(i)->asTransform()->getChild(0));
-				parent->getChild(i)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
+				osgFX::Outline *parentOutline = dynamic_cast<osgFX::Outline *>(parent->getChild(i)->asTransform()->getChild(0));
+				parent->getChild(i)->asTransform()->replaceChild(parentOutline, parentOutline->getChild(0));
 			}
 		}
 	}
 	else if (!parent->getName().compare(0, 8, "obstacle") || !parent->getName().compare(0, 6, "marker")) {
 		// not highlighted yet, do that now
-		if (!(dynamic_cast<osgFX::Scribe *>(child))) {
-			osgFX::Scribe *scribe = new osgFX::Scribe();
-			scribe->setWireframeColor(osg::Vec4(c[0], c[1], c[2], 0.1));
-			scribe->setWireframeLineWidth(1);
-			scribe->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-			scribe->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-			scribe->addChild(parent->getChild(0)->asTransform()->getChild(0));
-			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), scribe);
+		if (!(dynamic_cast<osgFX::Outline *>(child))) {
+			osgFX::Outline *outline = new osgFX::Outline();
+			outline->setWidth(8);
+			outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
+			outline->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			outline->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+			outline->addChild(parent->getChild(0)->asTransform()->getChild(0));
+			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), outline);
 		}
 		// already highlighted, take it away
 		else if (!on) {
-			osgFX::Scribe *parentScribe = dynamic_cast<osgFX::Scribe *>(parent->getChild(0)->asTransform()->getChild(0));
-			parent->getChild(0)->asTransform()->replaceChild(parentScribe, parentScribe->getChild(0));
+			osgFX::Outline *parentOutline = dynamic_cast<osgFX::Outline *>(parent->getChild(0)->asTransform()->getChild(0));
+			parent->getChild(0)->asTransform()->replaceChild(parentOutline, parentOutline->getChild(0));
 		}
 	}
 }
@@ -1520,6 +1526,8 @@ void Scene::draw_scene_outdoors(void) {
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
+	geom->getOrCreateStateSet()->setRenderBinDetails(-1, "RenderBin");
+	geom->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 	// add
 	_background->addChild(geode);
 

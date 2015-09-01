@@ -49,6 +49,11 @@ Dof::~Dof(void) {
 	COND_DESTROY(&_motor[Bodies::Joint].success_cond);
 }
 
+double Dof::getAngle(int id) {
+	if (id == _enabled) return _motor[Bodies::Joint].theta;
+	return 0;
+}
+
 void Dof::moveJointOnce(double *values) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
@@ -367,7 +372,6 @@ void Dof::simPreCollisionThread(void) {
 			_motor[Bodies::Joint].goal = _next_goal;
 			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
 			_motor[Bodies::Joint].state = NEUTRAL;
-if (_id == 1) std::cerr << _sim->getClock() << " " << _motor[Bodies::Joint].goal << " " << _motor[Bodies::Joint].theta << " " << _motor[Bodies::Joint].omega << std::endl;
 
 			// move forever
 			dJointEnable(_motor[Bodies::Joint].id);

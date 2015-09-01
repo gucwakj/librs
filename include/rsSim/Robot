@@ -24,7 +24,7 @@ namespace rsSim {
 			Robot(void);
 			virtual ~Robot(void);
 
-			double getAngle(int);
+			virtual double getAngle(int);
 			int holdJoint(int);
 			int holdJoints(void);
 			int moveJoint(int, double);

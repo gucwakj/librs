@@ -583,7 +583,6 @@ void Linkbot::simPreCollisionThread(void) {
 				_motor[i].goal = _next_goal;
 				_motor[i].omega = (_motor[i].goal - _motor[i].theta)/step;
 				_motor[i].state = NEUTRAL;
-if (_id == 1) std::cerr << "robot " << _id << ": " << _sim->getClock() << " " << _sim->getStep() << " " << _motor[i].goal << " " << _motor[i].theta << " " << _motor[i].omega << std::endl;
 
 				// move forever
 				dJointEnable(_motor[i].id);

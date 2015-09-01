@@ -370,17 +370,33 @@ int Sim::setCOR(double robot, double ground) {
 	return 0;
 }
 
-int Sim::setCPG(int (*function)(double, const double[], double[], void*), int variables) {
+int Sim::setCPG(int (*function)(double, const double[], double[], void*), int robots, int variables) {
+	// set cpg variables
 	_res = true;
 	_cpg_sys = {function, NULL, static_cast<size_t>(variables), NULL};
 	_cpg_driver = gsl_odeiv2_driver_alloc_y_new(&_cpg_sys, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
 	_cpg_array.resize(variables);
-	_cpg_time = 0;
-	_cpg_vars = variables;
 	for (int i = 0; i < variables; i+=6) {
 		_cpg_array[i] = 1;
 		_cpg_array[i+3] = -1;
 	}
+	_cpg_offset = 0;
+	_cpg_time = 0;
+	_cpg_robots = robots;
+	_cpg_vars = variables;
+
+	// run cpg until steady state
+	rs::Vec v;
+	for (int i = 0; i < 0.3/_step; i++) {
+		v = this->run_cpg_step();
+		_cpg_offset += _step;
+	}
+	while (v[0] < 0 && v[1] < 0) {
+		v = this->run_cpg_step();
+		_cpg_offset += _step;
+	}
+
+	// done
 	return 0;
 }
 
@@ -485,7 +501,7 @@ const rs::Vec Sim::run_cpg_step(void) {
 	rs::Vec V(size);
 
 	// integrate
-	int status = gsl_odeiv2_driver_apply(_cpg_driver, &_cpg_time, _clock + _step, _cpg_array.data());
+	int status = gsl_odeiv2_driver_apply(_cpg_driver, &_cpg_time, _clock + _step + _cpg_offset, _cpg_array.data());
 
 	// die if integration step fails and return empty vector
 	if (status != GSL_SUCCESS) {

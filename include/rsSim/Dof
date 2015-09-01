@@ -14,6 +14,7 @@ namespace rsSim {
 			virtual ~Dof(void);
 
 			virtual int addConnector(int, int, int = rs::RIGHT, double = 0, int = 1, int = -1);
+			virtual double getAngle(int);
 			virtual dBodyID getBodyID(int);
 			virtual const rs::Pos getCoM(double&);
 			const rs::Vec getJoints(void);

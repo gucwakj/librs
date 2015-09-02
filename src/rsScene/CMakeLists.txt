@@ -43,7 +43,17 @@ set (SRCS ${SRCS}
 	mouseHandler.cpp
 	skyTransform.cpp
 	scene.cpp
+	robot.cpp
 )
+if (ENABLE_DOF)
+	set (SRCS ${SRCS} dof.cpp)
+endif ()
+if (ENABLE_LINKBOT)
+	set (SRCS ${SRCS} linkbot.cpp)
+endif ()
+if (ENABLE_MINDSTORMS)
+	set (SRCS ${SRCS} mindstorms.cpp)
+endif ()
 
 # add the library
 add_library (rsScene SHARED ${SRCS})

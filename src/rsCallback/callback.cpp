@@ -14,7 +14,7 @@ void Callback::attachCallback(rsScene::Obstacle *scene, rsSim::Obstacle *sim) {
 	scene->setUpdateCallback(new Obstacle(sim));
 }
 
-void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::BodyList &bodies) {
+void Callback::attachCallback(rsScene::Group *scene, rsSim::Robot *sim, rsSim::BodyList &bodies) {
 	switch (sim->getForm()) {
 		case rs::EV3: case rs::NXT:
 			scene->setUpdateCallback(new Mindstorms(dynamic_cast<rsSim::Mindstorms *>(sim), bodies, _units));
@@ -22,7 +22,7 @@ void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::B
 	}
 }
 
-void Callback::attachCallback(rsScene::Robot *scene, rsSim::Robot *sim, rsSim::BodyList &bodies, rsSim::ConnectorList &conn) {
+void Callback::attachCallback(rsScene::Group *scene, rsSim::Robot *sim, rsSim::BodyList &bodies, rsSim::ConnectorList &conn) {
 	switch (sim->getForm()) {
 		case rs::DOF:
 			scene->setUpdateCallback(new Dof(dynamic_cast<rsSim::Dof *>(sim), bodies, conn, _units));

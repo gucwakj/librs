@@ -14,8 +14,8 @@ namespace rsCallback {
 			virtual ~Callback(void) {};
 
 			void attachCallback(rsScene::Obstacle*, rsSim::Obstacle*);
-			void attachCallback(rsScene::Robot*, rsSim::Robot*, rsSim::BodyList&);
-			void attachCallback(rsScene::Robot*, rsSim::Robot*, rsSim::BodyList&, rsSim::ConnectorList&);
+			void attachCallback(rsScene::Group*, rsSim::Robot*, rsSim::BodyList&);
+			void attachCallback(rsScene::Group*, rsSim::Robot*, rsSim::BodyList&, rsSim::ConnectorList&);
 
 			void setUnits(bool);
 

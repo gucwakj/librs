@@ -1,0 +1,26 @@
+#ifndef RSSCENE_DOF_
+#define RSSCENE_DOF_
+
+#include <rsRobots/Dof>
+#include <rsScene/ModularRobot>
+
+extern osg::Node::NodeMask NOT_VISIBLE_MASK;
+extern osg::Node::NodeMask VISIBLE_MASK;
+
+namespace rsScene {
+
+	// class
+	class LIBRSEXPORT Dof : virtual public rsRobots::Dof, virtual public ModularRobot {
+		// public api
+		public:
+			Dof(int);
+			virtual ~Dof(void);
+
+			virtual void draw(Group*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
+			virtual void drawConnector(Group*, int, int, int, double, int, int);
+	};
+
+} // namespace rsScene
+
+#endif // RSSCENE_DOF_
+

@@ -1,0 +1,26 @@
+#ifndef RSSCENE_MINDSTORMS_
+#define RSSCENE_MINDSTORMS_
+
+#include <rsRobots/Mindstorms>
+#include <rsScene/Robot>
+
+extern osg::Node::NodeMask NOT_VISIBLE_MASK;
+extern osg::Node::NodeMask VISIBLE_MASK;
+
+namespace rsScene {
+
+	// class
+	class LIBRSEXPORT Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
+		// public api
+		public:
+			Mindstorms(int);
+			virtual ~Mindstorms(void);
+
+			virtual void draw(Group*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
+			virtual void drawWheel(Group*, int, int);
+	};
+
+} // namespace rsScene
+
+#endif // RSSCENE_MINDSTORMS_
+

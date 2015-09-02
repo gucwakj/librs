@@ -1,5 +1,6 @@
 #include <osg/Group>
 #include <osg/PositionAttitudeTransform>
+#include <osg/ShapeDrawable>
 #include <osgText/Text>
 
 #include <rsScene/Scene>

@@ -12,7 +12,6 @@ namespace rsRobots {
 			Linkbot(int);
 			virtual ~Linkbot(void) { };
 
-			double getWheelRatio(int);
 			double getCasterScale(void);
 			const rs::Quat tiltForWheels(int, int, double&);
 
@@ -27,6 +26,8 @@ namespace rsRobots {
 			virtual const rs::Quat getConnFaceQuaternion(int, int, int, const rs::Quat&);
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
 			virtual const rs::Quat getRobotCenterQuaternion(int, int, double, const rs::Quat&);
+
+			virtual double getWheelRatio(int);
 
 		// data
 		protected:

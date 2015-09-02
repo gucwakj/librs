@@ -1,3 +1,5 @@
+#include <osgText/Text>
+
 #include <rsScene/MouseHandler>
 #include <rsScene/Scene>
 

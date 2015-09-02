@@ -3,31 +3,17 @@
 
 #include <OpenThreads/Thread>
 
-#include <osg/BoundingBox>
-#include <osg/Depth>
-#include <osg/LineWidth>
+#include <osg/Camera>
+#include <osg/Group>
 #include <osg/Material>
-#include <osg/MatrixTransform>
-#include <osg/Point>
-#include <osg/ShapeDrawable>
-#include <osg/TextureCubeMap>
-#include <osgDB/ReadFile>
-#include <osgGA/OrbitManipulator>
-#include <osgGA/StateSetManipulator>
-#include <osgShadow/ShadowMap>
 #include <osgShadow/ShadowedScene>
 #include <osgText/Text>
-#include <osgUtil/SmoothingVisitor>
-#include <osgUtil/Optimizer>
 #include <osgViewer/Viewer>
-#include <osgViewer/ViewerEventHandlers>
 
 #include <rs/Threads>
-#include <rsRobots/Dof>
-#include <rsRobots/Linkbot>
-#include <rsRobots/Mindstorms>
 #include <rsScene/KeyboardHandler>
 #include <rsScene/MouseHandler>
+#include <rsScene/Robot>
 
 extern osg::Node::NodeMask NOT_VISIBLE_MASK;
 extern osg::Node::NodeMask RECEIVES_SHADOW_MASK;
@@ -36,9 +22,9 @@ extern osg::Node::NodeMask IS_PICKABLE_MASK;
 extern osg::Node::NodeMask VISIBLE_MASK;
 
 namespace rsScene {
+
 	// typedefs
 	typedef osg::Group Obstacle;
-	typedef osg::Group Robot;
 
 	// class
 	class LIBRSEXPORT Scene : public KeyboardHandler {
@@ -50,14 +36,12 @@ namespace rsScene {
 			int addAndRemoveChildren(void);
 			void addChildrenToBackground(void);
 			void addHighlight(int, bool = true, bool = true, const rs::Vec& = rs::Vec(1, 1, 0));
+			Group* createRobot(rsScene::Robot*);
 			int deleteMarker(int);
 			int deleteObstacle(int);
 			int deleteRobot(int);
-			void drawConnector(rsRobots::ModularRobot*, Robot*, int, int, int, double, int, int);
 			int drawMarker(int, int, const rs::Pos&, const rs::Pos&, const rs::Vec&, int, std::string);
 			Obstacle* drawObstacle(int, int, const rs::Pos&, const rs::Vec&, const rs::Vec&, const rs::Quat&);
-			Robot* drawRobot(rsRobots::Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
-			void drawWheel(rsRobots::Robot*, Robot*, int, int);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			void setBackgroundImage(int, std::string);
@@ -86,12 +70,6 @@ namespace rsScene {
 			osg::Material* create_material(osg::Vec4);
 			void draw_grid(double, double, double, double, double, double, double);
 			void draw_global_hud(double, double, bool);
-			void draw_robot_dof(rsRobots::Dof*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
-			void draw_robot_dof_conn(rsRobots::Dof*, Robot*, int, int, int, double, int, int);
-			void draw_robot_linkbot(rsRobots::Linkbot*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
-			void draw_robot_linkbot_conn(rsRobots::Linkbot*, Robot*, int, int, int, double, int, int);
-			void draw_robot_mindstorms(rsRobots::Mindstorms*, Robot*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
-			void draw_robot_mindstorms_wheel(rsRobots::Mindstorms*, Robot*, int, int);
 			void draw_scene_outdoors(void);
 			void draw_scene_board(void);
 			void draw_skybox(void);
@@ -113,7 +91,6 @@ namespace rsScene {
 			osg::Group *_staging[2];			// temp variable for adding objects
 			osgViewer::Viewer *_viewer;			// viewer
 			osgShadow::ShadowedScene *_scene;	// shadow root of scene
-			std::string _model_path;			// path for 3ds models
 			std::vector<double> _grid;			// grid
 			std::vector<std::string> _path;		// image paths
 			COND_T _graphics_cond;				// condition: graphics setup waiting

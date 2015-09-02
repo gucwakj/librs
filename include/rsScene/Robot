@@ -1,0 +1,41 @@
+#ifndef RSSCENE_ROBOT_
+#define RSSCENE_ROBOT_
+
+#include <osg/Group>
+#include <osg/Material>
+
+#include <rs/Pos>
+#include <rs/Quat>
+#include <rs/Threads>
+#include <rs/Vec>
+#include <rsRobots/Robot>
+
+namespace rsScene {
+
+	// typedefs
+	typedef osg::Group Group;
+
+	// class
+	class LIBRSEXPORT Robot : virtual public rsRobots::Robot {
+		// public functions
+		public:
+			Robot(void);
+			virtual ~Robot(void);
+
+			virtual void draw(rsScene::Group*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool) { return; }
+			virtual void drawWheel(Group*, int, int) { return; }
+			void setModelPath(std::string);
+			void setUnits(bool);
+
+		protected:
+			osg::Material* create_material(osg::Vec4);
+
+		protected:
+			bool _units;						// flag: SI (true) or customary (false)
+			std::string _model_path;			// path for 3ds models
+	};
+
+} // namespace rsScene
+
+#endif // RSSCENE_ROBOT_
+

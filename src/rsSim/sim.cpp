@@ -196,7 +196,7 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l
 	return body;
 }
 
-Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Vec&l, double mass) {
+Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Vec &l, double mass) {
 	// create body
 	dMass m;
 	dBodyID *body = new dBodyID();

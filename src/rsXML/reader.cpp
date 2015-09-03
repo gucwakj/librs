@@ -638,8 +638,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
-			i = 0;
 			if (!node->QueryIntAttribute("orientation", &i)) {
+				_robot.back()->setOrientation(i);
 				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
 				else if (i == rs::UP)
@@ -701,7 +701,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
-			int i = 0;
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				_robot.back()->setOrientation(i);
 				if (i == rs::RIGHT)
@@ -783,8 +782,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
-			i = 0;
 			if (!node->QueryIntAttribute("orientation", &i)) {
+				_robot.back()->setOrientation(i);
 				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
 				else if (i == rs::UP)
@@ -846,8 +845,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				std::string str(n ? n : "");
 				_robot.back()->setName(str);
 			}
-			i = 0;
 			if (!node->QueryIntAttribute("orientation", &i)) {
+				_robot.back()->setOrientation(i);
 				if (i == rs::RIGHT)
 					_robot.back()->setPsi(0);
 				else if (i == rs::UP)

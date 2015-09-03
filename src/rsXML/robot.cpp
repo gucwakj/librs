@@ -14,6 +14,7 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::ROBOT) {
 	_c[3] = 1;
 	_ground = -1;
 	_id = -1;
+	_orientation = 0;
 	_trace = trace;
 	_wheels.allocate(2);
 	_wheels[0] = 0;

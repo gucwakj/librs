@@ -38,10 +38,10 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
 
 # add source files to library
 set (SRCS ${SRCS}
-	textureCallback.cpp
-	keyboardHandler.cpp
-	mouseHandler.cpp
-	skyTransform.cpp
+	texturecallback.cpp
+	keyboardhandler.cpp
+	mousehandler.cpp
+	skytransform.cpp
 	scene.cpp
 	robot.cpp
 )

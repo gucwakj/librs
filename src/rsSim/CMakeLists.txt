@@ -41,7 +41,7 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
 # add source files to library
 set (SRCS ${SRCS}
 	robot.cpp
-	modularRobot.cpp
+	modularrobot.cpp
 	sim.cpp
 )
 if (ENABLE_DOF)

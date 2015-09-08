@@ -119,6 +119,7 @@ void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, const
 	tinyxml2::XMLElement *size = getOrCreateChild(obstacle, "size");
 	switch (obstacle->IntAttribute("form")) {
 		case rs::BOX:
+		case rs::WOODBLOCK:
 			size->SetAttribute("x", l[0]);
 			size->SetAttribute("y", l[1]);
 			size->SetAttribute("z", l[2]);
@@ -402,8 +403,14 @@ tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
 		case rs::CYLINDER:
 			node = _doc.NewElement("cylinder");
 			break;
+		case rs::HACKYSACK:
+			node = _doc.NewElement("hackysack");
+			break;
 		case rs::SPHERE:
 			node = _doc.NewElement("sphere");
+			break;
+		case rs::WOODBLOCK:
+			node = _doc.NewElement("woodblock");
 			break;
 	}
 	node->SetAttribute("id", id);

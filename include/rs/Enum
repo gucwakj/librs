@@ -20,9 +20,11 @@ namespace rs {
 		BOX,
 		CYLINDER,
 		DOT,
+		HACKYSACK,
 		LINE,
 		SPHERE,
-		TEXT
+		TEXT,
+		WOODBLOCK
 	};
 
 	// orientation

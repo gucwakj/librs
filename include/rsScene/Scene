@@ -91,6 +91,7 @@ namespace rsScene {
 			osg::Group *_staging[2];			// temp variable for adding objects
 			osgViewer::Viewer *_viewer;			// viewer
 			osgShadow::ShadowedScene *_scene;	// shadow root of scene
+			std::string _tex_path;				// path to texture objects
 			std::vector<double> _grid;			// grid
 			std::vector<std::string> _path;		// image paths
 			COND_T _graphics_cond;				// condition: graphics setup waiting

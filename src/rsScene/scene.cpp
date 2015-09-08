@@ -58,15 +58,15 @@ Scene::Scene(void) : KeyboardHandler() {
 	_osgThread = 0;
 
 	// set texture path
-	std::string model_path = this->getTexturePath();
+	_tex_path = this->getTexturePath();
 	_path.resize(rs::NUM_IMAGES);
-	_path[rs::GROUND].append(model_path).append("background/outdoors/terrain.png");
-	_path[rs::FRONT].append(model_path).append("background/outdoors/sky/front.png");
-	_path[rs::LEFTSIDE].append(model_path).append("background/outdoors/sky/left.png");
-	_path[rs::BACK].append(model_path).append("background/outdoors/sky/back.png");
-	_path[rs::RIGHTSIDE].append(model_path).append("background/outdoors/sky/right.png");
-	_path[rs::TOP].append(model_path).append("background/outdoors/sky/top.png");
-	_path[rs::BOTTOM].append(model_path).append("background/outdoors/sky/bottom.png");
+	_path[rs::GROUND].append(_tex_path).append("background/outdoors/terrain.png");
+	_path[rs::FRONT].append(_tex_path).append("background/outdoors/sky/front.png");
+	_path[rs::LEFTSIDE].append(_tex_path).append("background/outdoors/sky/left.png");
+	_path[rs::BACK].append(_tex_path).append("background/outdoors/sky/back.png");
+	_path[rs::RIGHTSIDE].append(_tex_path).append("background/outdoors/sky/right.png");
+	_path[rs::TOP].append(_tex_path).append("background/outdoors/sky/top.png");
+	_path[rs::BOTTOM].append(_tex_path).append("background/outdoors/sky/bottom.png");
 
 	// flags for graphical output options
 	_highlight = false;
@@ -310,9 +310,45 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 		case rs::CYLINDER:
 			body->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[0], l[1])));
 			break;
+		case rs::HACKYSACK: {
+			// create body
+			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0])));
+			// create texture object
+			osg::ref_ptr<osg::Texture2D> tex(new osg::Texture2D);
+			tex->setImage(osgDB::readImageFile(_tex_path + "obstacles/hackysack.png"));
+			tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+			tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+			tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+			tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+			tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+			tex->setDataVariance(osg::Object::STATIC);
+			// state set
+			body->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
+			body->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+			body->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
+			break;
+		}
 		case rs::SPHERE:
 			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0])));
 			break;
+		case rs::WOODBLOCK: {
+			// create body
+			body->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2])));
+			// create texture object
+			osg::ref_ptr<osg::Texture2D> tex(new osg::Texture2D);
+			tex->setImage(osgDB::readImageFile(_tex_path + "obstacles/wood.png"));
+			tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+			tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+			tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+			tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+			tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+			tex->setDataVariance(osg::Object::STATIC);
+			// state set
+			body->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
+			body->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+			body->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
+			break;
+		}
 	}
 
 	// set rendering properties

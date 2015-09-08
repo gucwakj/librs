@@ -554,6 +554,25 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
+		else if ( !strcmp(node->Value(), "hackysack") ) {
+			// create object
+			_obstacle.push_back(new Obstacle(rs::HACKYSACK));
+			// id
+			i = 0;
+			node->QueryIntAttribute("id", &i);
+			_obstacle.back()->setID(i);
+			// dimensions
+			_obstacle.back()->setDimensions(0.0275, 0, 0);	// measured 5.5cm diameter
+			// mass
+			_obstacle.back()->setMass(0.060);		// 60 grams is average hacky sack weight
+			// position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				_obstacle.back()->setPosition(a, b, 0.0275);
+			}
+		}
 		else if ( !strcmp(node->Value(), "sphere") ) {
 			// create object
 			_obstacle.push_back(new Obstacle(rs::SPHERE));
@@ -588,6 +607,40 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				ele->QueryDoubleAttribute("y", &b);
 				ele->QueryDoubleAttribute("z", &c);
 				_obstacle.back()->setPosition(a, b, c);
+			}
+		}
+		else if ( !strcmp(node->Value(), "woodblock") ) {
+			// create object
+			_obstacle.push_back(new Obstacle(rs::WOODBLOCK));
+			// id
+			i = 0;
+			node->QueryIntAttribute("id", &i);
+			_obstacle.back()->setID(i);
+			// dimensions
+			if ( (ele = node->FirstChildElement("size")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_obstacle.back()->setDimensions(a, b, c);
+			}
+			// mass
+			_obstacle.back()->setMass(0.5*a*b*c);	// mass = density * l * w * h
+			// position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_obstacle.back()->setPosition(a, b, c);
+			}
+			// rotation
+			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryDoubleAttribute("psi", &a);
+				ele->QueryDoubleAttribute("theta", &b);
+				ele->QueryDoubleAttribute("phi", &c);
+				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
 

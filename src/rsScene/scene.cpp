@@ -8,8 +8,8 @@
 #include <osgDB/ReadFile>
 #include <osgFX/Outline>
 #include <osgGA/OrbitManipulator>
-#include <osgUtil/SmoothingVisitor>
 #include <osgUtil/Optimizer>
+#include <osgUtil/SmoothingVisitor>
 #include <osgViewer/ViewerEventHandlers>
 
 #include <rs/Enum>
@@ -91,7 +91,7 @@ Scene::~Scene(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-int Scene::addAndRemoveChildren(void) {
+void Scene::addAndRemoveChildren(void) {
 	// add new robots to scene
 	while (_staging[0]->getNumChildren()) {
 		_scene->addChild(_staging[0]->getChild(0));
@@ -107,7 +107,10 @@ int Scene::addAndRemoveChildren(void) {
 		_scene->removeChild(_staging[1]->getChild(0));
 		_staging[1]->removeChild(0, 1);
 	}
-	return 0;
+
+	// optimize the scene graph, remove redundancies
+	osgUtil::Optimizer optimizer;
+	optimizer.optimize(_root);
 }
 
 void Scene::addChildrenToBackground(void) {
@@ -276,7 +279,6 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 
 	// set rendering properties
 	geode->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
@@ -353,7 +355,6 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 
 	// set rendering properties
 	body->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-	body->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	body->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	body->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
 	body->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
@@ -653,10 +654,9 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 		if (!(dynamic_cast<osgFX::Outline *>(child))) {
 			for (unsigned int i = 2; i < parent->getNumChildren(); i++) {
 				osgFX::Outline *outline = new osgFX::Outline();
-				outline->setWidth(80);
+				outline->setWidth(200);
 				outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
-				outline->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-				outline->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+				outline->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 				outline->addChild(parent->getChild(i)->asTransform()->getChild(0));
 				parent->getChild(i)->asTransform()->replaceChild(parent->getChild(i)->asTransform()->getChild(0), outline);
 			}
@@ -673,10 +673,9 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Outline *>(child))) {
 			osgFX::Outline *outline = new osgFX::Outline();
-			outline->setWidth(8);
+			outline->setWidth(200);
 			outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
-			outline->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-			outline->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+			outline->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 			outline->addChild(parent->getChild(0)->asTransform()->getChild(0));
 			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), outline);
 		}
@@ -718,98 +717,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 	if ((maxx - minx < -rs::Epsilon) || (maxy - miny < -rs::Epsilon))
 		return;
 
-	if ( (int)(enabled) ) {
-		// grid lines for each sub-foot
-		double minx1 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.001 : 0.999)*minx/tics))*tics;
-		double miny1 = static_cast<int>(ceil(((miny < -rs::Epsilon) ? 1.001 : 0.999)*miny/tics))*tics;
-		double maxx1 = static_cast<int>(floor(((maxx < -rs::Epsilon) ? 0.999 : 1.001)*maxx/tics))*tics;
-		double maxy1 = static_cast<int>(floor(((maxy < -rs::Epsilon) ? 0.999 : 1.001)*maxy/tics))*tics;
-		int numx1 = static_cast<int>(ceil(1.001*(maxx1 - minx1)/tics));
-		int numy1 = static_cast<int>(ceil(1.001*(maxy1 - miny1)/tics));
-		int numVertices = 2*numx1 + 2*numy1;
-		osg::Geode *gridGeode = new osg::Geode();
-		osg::Geometry *gridLines = new osg::Geometry();
-		osg::Vec3 *myCoords = new osg::Vec3[numVertices]();
-		// draw x lines
-		for (int i = 0, j = 0; i < numx1; i++) {
-			myCoords[j++] = osg::Vec3(minx1 + i*tics, miny, 0.0);
-			myCoords[j++] = osg::Vec3(minx1 + i*tics, maxy, 0.0);
-		}
-		// draw y lines
-		for (int i = 0, j = 2*numx1; i < numy1; i++) {
-			myCoords[j++] = osg::Vec3(minx, miny1 + i*tics, 0.0);
-			myCoords[j++] = osg::Vec3(maxx, miny1 + i*tics, 0.0);
-		}
-		// add vertices
-		osg::Vec3Array *vertices = new osg::Vec3Array(numVertices, myCoords);
-		gridLines->setVertexArray(vertices);
-		gridLines->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices));
-		// set color
-		osg::Vec4Array *colors = new osg::Vec4Array;
-		colors->push_back(osg::Vec4(1, 1, 1, 1));
-		gridLines->setColorArray(colors);
-		gridLines->setColorBinding(osg::Geometry::BIND_OVERALL);
-		// set line width
-		osg::LineWidth *linewidth = new osg::LineWidth();
-		linewidth->setWidth(1.0f);
-		gridGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
-		// set rendering properties
-		gridGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		gridGeode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-		gridGeode->getOrCreateStateSet()->setRenderBinDetails(-1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-		gridGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-		// enable shadowing
-		//gridGeode->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
-		// add to scene
-		gridGeode->addDrawable(gridLines);
-		gridGeode->setName("tics");
-		_background->addChild(gridGeode);
-
-		// grid lines for each foot
-		double minx2 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.01 : 0.99)*minx/hash))*hash;
-		double miny2 = static_cast<int>(ceil(((miny < -rs::Epsilon) ? 1.01 : 0.99)*miny/hash))*hash;
-		double maxx2 = static_cast<int>(floor(((maxx < -rs::Epsilon) ? 0.99 : 1.01)*maxx/hash))*hash;
-		double maxy2 = static_cast<int>(floor(((maxy < -rs::Epsilon) ? 0.99 : 1.01)*maxy/hash))*hash;
-		int numx2 = static_cast<int>(ceil(1.01*(maxx2 - minx2)/hash));
-		int numy2 = static_cast<int>(ceil(1.01*(maxy2 - miny2)/hash));
-		int numVertices2 = 2*numx2 + 2*numy2;
-		osg::Geode *gridGeode2 = new osg::Geode();
-		osg::Geometry *gridLines2 = new osg::Geometry();
-		osg::Vec3 *myCoords2 = new osg::Vec3[numVertices2]();
-		// draw x lines
-		for (int i = 0, j = 0; i < numx2; i++) {
-			myCoords2[j++] = osg::Vec3(minx2 + i*hash, miny, 0.0);
-			myCoords2[j++] = osg::Vec3(minx2 + i*hash, maxy, 0.0);
-		}
-		// draw y lines
-		for (int i = 0, j = 2*numx2; i < numy2; i++) {
-			myCoords2[j++] = osg::Vec3(minx, miny2 + i*hash, 0.0);
-			myCoords2[j++] = osg::Vec3(maxx, miny2 + i*hash, 0.0);
-		}
-		// add vertices
-		osg::Vec3Array *vertices2 = new osg::Vec3Array(numVertices2, myCoords2);
-		gridLines2->setVertexArray(vertices2);
-		gridLines2->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices2));
-		// set color
-		osg::Vec4Array *colors2 = new osg::Vec4Array;
-		colors2->push_back(osg::Vec4(1, 0, 0, 1));
-		gridLines2->setColorArray(colors2);
-		gridLines2->setColorBinding(osg::Geometry::BIND_OVERALL);
-		// set line width
-		osg::LineWidth *linewidth2 = new osg::LineWidth();
-		linewidth2->setWidth(2.0f);
-		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(linewidth2, osg::StateAttribute::ON);
-		// set rendering properties
-		gridGeode2->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		gridGeode2->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-		gridGeode2->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-		gridGeode2->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-		// enable shadowing
-		//gridGeode2->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
-		// add to scene
-		gridGeode2->addDrawable(gridLines2);
-		gridGeode2->setName("hash");
-		_background->addChild(gridGeode2);
+	if (static_cast<int>(enabled)) {
 
 		// x- and y-axis lines
 		osg::Geode *gridGeode3 = new osg::Geode();
@@ -858,15 +766,104 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		gridGeode3->getOrCreateStateSet()->setAttributeAndModes(linewidth3, osg::StateAttribute::ON);
 		// set rendering properties
 		gridGeode3->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		gridGeode3->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-		gridGeode3->getOrCreateStateSet()->setRenderBinDetails(-1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-		gridGeode3->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		gridGeode3->getOrCreateStateSet()->setRenderBinDetails(5, "RenderBin");
+		gridGeode3->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		// enable shadowing
 		//gridGeode3->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
 		gridGeode3->addDrawable(gridLines3);
 		gridGeode3->setName("axes");
 		_background->addChild(gridGeode3);
+
+		// grid lines for each foot
+		double minx2 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.01 : 0.99)*minx/hash))*hash;
+		double miny2 = static_cast<int>(ceil(((miny < -rs::Epsilon) ? 1.01 : 0.99)*miny/hash))*hash;
+		double maxx2 = static_cast<int>(floor(((maxx < -rs::Epsilon) ? 0.99 : 1.01)*maxx/hash))*hash;
+		double maxy2 = static_cast<int>(floor(((maxy < -rs::Epsilon) ? 0.99 : 1.01)*maxy/hash))*hash;
+		int numx2 = static_cast<int>(ceil(1.01*(maxx2 - minx2)/hash));
+		int numy2 = static_cast<int>(ceil(1.01*(maxy2 - miny2)/hash));
+		int numVertices2 = 2*numx2 + 2*numy2;
+		osg::Geode *gridGeode2 = new osg::Geode();
+		osg::Geometry *gridLines2 = new osg::Geometry();
+		osg::Vec3 *myCoords2 = new osg::Vec3[numVertices2]();
+		// draw x lines
+		for (int i = 0, j = 0; i < numx2; i++) {
+			myCoords2[j++] = osg::Vec3(minx2 + i*hash, miny, 0.0);
+			myCoords2[j++] = osg::Vec3(minx2 + i*hash, maxy, 0.0);
+		}
+		// draw y lines
+		for (int i = 0, j = 2*numx2; i < numy2; i++) {
+			myCoords2[j++] = osg::Vec3(minx, miny2 + i*hash, 0.0);
+			myCoords2[j++] = osg::Vec3(maxx, miny2 + i*hash, 0.0);
+		}
+		// add vertices
+		osg::Vec3Array *vertices2 = new osg::Vec3Array(numVertices2, myCoords2);
+		gridLines2->setVertexArray(vertices2);
+		gridLines2->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices2));
+		// set color
+		osg::Vec4Array *colors2 = new osg::Vec4Array;
+		colors2->push_back(osg::Vec4(1, 0, 0, 1));
+		gridLines2->setColorArray(colors2);
+		gridLines2->setColorBinding(osg::Geometry::BIND_OVERALL);
+		// set line width
+		osg::LineWidth *linewidth2 = new osg::LineWidth();
+		linewidth2->setWidth(2.0f);
+		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(linewidth2, osg::StateAttribute::ON);
+		// set rendering properties
+		gridGeode2->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		gridGeode2->getOrCreateStateSet()->setRenderBinDetails(3, "RenderBin");
+		gridGeode2->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		// enable shadowing
+		//gridGeode2->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
+		// add to scene
+		gridGeode2->addDrawable(gridLines2);
+		gridGeode2->setName("hash");
+		_background->addChild(gridGeode2);
+
+		// grid lines for each sub-foot
+		double minx1 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.001 : 0.999)*minx/tics))*tics;
+		double miny1 = static_cast<int>(ceil(((miny < -rs::Epsilon) ? 1.001 : 0.999)*miny/tics))*tics;
+		double maxx1 = static_cast<int>(floor(((maxx < -rs::Epsilon) ? 0.999 : 1.001)*maxx/tics))*tics;
+		double maxy1 = static_cast<int>(floor(((maxy < -rs::Epsilon) ? 0.999 : 1.001)*maxy/tics))*tics;
+		int numx1 = static_cast<int>(ceil(1.001*(maxx1 - minx1)/tics));
+		int numy1 = static_cast<int>(ceil(1.001*(maxy1 - miny1)/tics));
+		int numVertices = 2*numx1 + 2*numy1;
+		osg::Geode *gridGeode = new osg::Geode();
+		osg::Geometry *gridLines = new osg::Geometry();
+		osg::Vec3 *myCoords = new osg::Vec3[numVertices]();
+		// draw x lines
+		for (int i = 0, j = 0; i < numx1; i++) {
+			myCoords[j++] = osg::Vec3(minx1 + i*tics, miny, 0);
+			myCoords[j++] = osg::Vec3(minx1 + i*tics, maxy, 0);
+		}
+		// draw y lines
+		for (int i = 0, j = 2*numx1; i < numy1; i++) {
+			myCoords[j++] = osg::Vec3(minx, miny1 + i*tics, 0);
+			myCoords[j++] = osg::Vec3(maxx, miny1 + i*tics, 0);
+		}
+		// add vertices
+		osg::Vec3Array *vertices = new osg::Vec3Array(numVertices, myCoords);
+		gridLines->setVertexArray(vertices);
+		gridLines->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices));
+		// set color
+		osg::Vec4Array *colors = new osg::Vec4Array;
+		colors->push_back(osg::Vec4(1, 1, 1, 1));
+		gridLines->setColorArray(colors);
+		gridLines->setColorBinding(osg::Geometry::BIND_OVERALL);
+		// set line width
+		osg::LineWidth *linewidth = new osg::LineWidth();
+		linewidth->setWidth(1.0f);
+		gridGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+		// set rendering properties
+		gridGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		gridGeode->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin");
+		gridGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		// enable shadowing
+		//gridGeode->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
+		// add to scene
+		gridGeode->addDrawable(gridLines);
+		gridGeode->setName("tics");
+		_background->addChild(gridGeode);
 
 		// x-axis label
 		osg::ref_ptr<osg::Billboard> xbillboard = new osg::Billboard();
@@ -894,6 +891,9 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xbillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
 		xbillboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		xbillboard->setNodeMask(~IS_PICKABLE_MASK);
+		xbillboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		xbillboard->getOrCreateStateSet()->setRenderBinDetails(2, "RenderBin");
+		xbillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		xbillboard->setName("xlabel");
 		_background->addChild(xbillboard);
 
@@ -922,6 +922,9 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ybillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
 		ybillboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		ybillboard->setNodeMask(~IS_PICKABLE_MASK);
+		ybillboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		ybillboard->getOrCreateStateSet()->setRenderBinDetails(2, "RenderBin");
+		ybillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		ybillboard->setName("xlabel");
 		_background->addChild(ybillboard);
 
@@ -971,9 +974,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xnum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		xnum_billboard->setNodeMask(~IS_PICKABLE_MASK);
 		xnum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		xnum_billboard->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-		xnum_billboard->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-		xnum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		xnum_billboard->getOrCreateStateSet()->setRenderBinDetails(2, "RenderBin");
+		xnum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		xnum_billboard->setName("xnumbering");
 		_background->addChild(xnum_billboard);
 
@@ -1014,9 +1016,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ynum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		ynum_billboard->setNodeMask(~IS_PICKABLE_MASK);
 		ynum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		ynum_billboard->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-		ynum_billboard->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		ynum_billboard->getOrCreateStateSet()->setRenderBinDetails(2, "RenderBin");
+		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		ynum_billboard->setName("ynumbering");
 		_background->addChild(ynum_billboard);
 	}
@@ -1085,17 +1086,17 @@ void Scene::draw_scene_outdoors(void) {
 	// draw skybox
 	this->draw_skybox();
 
+	// draw grid
+	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
+
 	// square geometry
-	osg::Geode *geode = new osg::Geode;
 	osg::Geometry *geom = new osg::Geometry;
-	geode->addDrawable(geom);
-	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
 	// extents of geom
 	osg::Vec3Array *coords = new osg::Vec3Array;
-	coords->push_back(osg::Vec3(-10000, -10000, 0));
-	coords->push_back(osg::Vec3( 10000, -10000, 0));
-	coords->push_back(osg::Vec3( 10000,  10000, 0));
-	coords->push_back(osg::Vec3(-10000,  10000, 0));
+	coords->push_back(osg::Vec3(-10000, -10000, -0.001));
+	coords->push_back(osg::Vec3( 10000, -10000, -0.001));
+	coords->push_back(osg::Vec3( 10000,  10000, -0.001));
+	coords->push_back(osg::Vec3(-10000,  10000, -0.001));
 	geom->setVertexArray(coords);
 	// texture coordinates
 	osg::Vec2Array *tcoords = new osg::Vec2Array;
@@ -1107,17 +1108,22 @@ void Scene::draw_scene_outdoors(void) {
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
 	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::GROUND]));
+	tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+	tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+	// state set properties
 	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	geom->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
-	geom->getOrCreateStateSet()->setRenderBinDetails(-1, "RenderBin");
-	geom->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-	// add
+	geom->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin");
+	// create geode
+	osg::Geode *geode = new osg::Geode;
+	geode->addDrawable(geom);
+	// add to scene
 	_background->addChild(geode);
-
-	// draw grid
-	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 }
 
 void Scene::draw_scene_board(double x, double y) {
@@ -1175,18 +1181,18 @@ void Scene::draw_skybox(void) {
 		skymap->setImage(osg::TextureCubeMap::NEGATIVE_Y, imageNegY);
 		skymap->setImage(osg::TextureCubeMap::POSITIVE_Z, imagePosZ);
 		skymap->setImage(osg::TextureCubeMap::NEGATIVE_Z, imageNegZ);
+		skymap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
 		skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 		skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-		skymap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
-		skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
 		skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+		skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
 	}
 	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
 	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 	stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
 	depth->setFunction(osg::Depth::ALWAYS);
-	depth->setRange(1.0,1.0);
+	depth->setRange(1.0, 1.0);
 	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON);
 	stateset->setRenderBinDetails(-1, "RenderBin");
 	stateset->setRenderingHint(osg::StateSet::OPAQUE_BIN);
@@ -1195,15 +1201,11 @@ void Scene::draw_skybox(void) {
 	geode->setCullingActive(false);
 	geode->setStateSet(stateset);
 	geode->addDrawable(drawable);
+	geode->setCullCallback(new TextureCallback(*tm));
 	osg::ref_ptr<osg::Transform> transform = new SkyTransform;
 	transform->setCullingActive(false);
 	transform->addChild(geode);
-	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
-	clearNode->setRequiresClear(false);
-	clearNode->setCullCallback(new TextureCallback(*tm));
-	clearNode->addChild(transform);
-	clearNode->setNodeMask(~IS_PICKABLE_MASK);
-	_background->addChild(clearNode);
+	_background->addChild(transform);
 }
 
 void* Scene::graphics_thread(void *arg) {

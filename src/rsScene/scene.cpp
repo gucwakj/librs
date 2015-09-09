@@ -479,11 +479,14 @@ void Scene::setLevel(int level) {
 
 	// draw new level
 	switch (level) {
-		case rs::Level::Outdoors:
-			this->draw_scene_outdoors();
+		case rs::Level::ActivityMat:
+			this->draw_scene_board(0.68, 0.37);
 			break;
 		case rs::Level::Board:
 			this->draw_scene_board();
+			break;
+		case rs::Level::Outdoors:
+			this->draw_scene_outdoors();
 			break;
 	}
 }
@@ -1117,7 +1120,7 @@ void Scene::draw_scene_outdoors(void) {
 	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 }
 
-void Scene::draw_scene_board(void) {
+void Scene::draw_scene_board(double x, double y) {
 	// square geometry
 	osg::Geode *geode = new osg::Geode;
 	osg::Geometry *geom = new osg::Geometry;
@@ -1125,10 +1128,10 @@ void Scene::draw_scene_board(void) {
 	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 	// extents of geom
 	osg::Vec3Array *coords = new osg::Vec3Array;
-	coords->push_back(osg::Vec3(-1.219, -0.610, 0));
-	coords->push_back(osg::Vec3( 1.219, -0.610, 0));
-	coords->push_back(osg::Vec3( 1.219,  0.610, 0));
-	coords->push_back(osg::Vec3(-1.219,  0.610, 0));
+	coords->push_back(osg::Vec3(-x, -y, 0));
+	coords->push_back(osg::Vec3(x, -y, 0));
+	coords->push_back(osg::Vec3(x,  y, 0));
+	coords->push_back(osg::Vec3(-x, y, 0));
 	geom->setVertexArray(coords);
 	// texture coordinates
 	osg::Vec2Array *tcoords = new osg::Vec2Array;

@@ -39,8 +39,9 @@ namespace rs {
 	namespace Level {
 		enum Levels {
 			None,
-			Outdoors,
+			ActivityMat,
 			Board,
+			Outdoors,
 			Num_Levels
 		};
 	} // namespace Level

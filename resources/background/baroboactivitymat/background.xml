@@ -1,0 +1,11 @@
+<?RoboSim Background XML?>
+
+<level>activitymat</level>
+
+<name>Barobo Activity Mat</name>
+
+<screenshot>screenshot.png</screenshot>
+
+<background>
+	<ground>activitymat.png</ground>
+</background>

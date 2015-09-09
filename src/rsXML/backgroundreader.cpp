@@ -24,6 +24,8 @@ BackgroundReader::BackgroundReader(std::string dir) {
 	if ((node = doc.FirstChildElement("level"))) {
 		if (!strcmp(node->GetText(), "none"))
 			_level = rs::Level::None;
+		else if ( !strcmp(node->GetText(), "activitymat") )
+			_level = rs::Level::ActivityMat;
 		else if ( !strcmp(node->GetText(), "board") )
 			_level = rs::Level::Board;
 		else if ( !strcmp(node->GetText(), "outdoors") )

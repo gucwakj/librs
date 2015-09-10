@@ -253,7 +253,7 @@ bool Reader::getUnits(void) {
 void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 	// get file
 	if (name != NULL) {
-#ifdef _WIN32
+#ifdef RS_WIN32
 		char base[512];
 		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
 			_path.append(base);
@@ -1218,7 +1218,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 std::string rsXML::getDefaultPath(void) {
 	std::string path;
 
-#ifdef _WIN32
+#ifdef RS_WIN32
 	char base[512];
 	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
 		path = base;

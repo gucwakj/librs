@@ -392,10 +392,10 @@ osgText::Text* Scene::getHUDText(void) {
 
 std::string Scene::getTexturePath(void) {
 	std::string path;
-#ifdef _WIN32
+#ifdef RS_WIN32
 	DWORD size = 128;
 	HKEY key;
-#if defined(_WIN64)
+#if defined(RS_WIN64)
 	RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\Wow6432Node\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
 #else
 	RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
@@ -1287,7 +1287,7 @@ void* Scene::graphics_thread(void *arg) {
 
 	// clean up viewer & root
 	p->_viewer->setSceneData(NULL);
-#ifdef _WIN32_
+#ifdef RS_WIN32
 	delete p->_viewer;
 #endif
 

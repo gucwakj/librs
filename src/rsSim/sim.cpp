@@ -1,9 +1,3 @@
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
-
 #include <iostream>
 
 #include <rs/Macros>
@@ -322,7 +316,7 @@ void Sim::run(int milliseconds, void (*output)(void), int interval) {
 	if (_rt) {
 		// sleep and run output
 		for (int i = 0; i < milliseconds/interval; i++) {
-			#ifdef _WIN32
+			#ifdef RS_WIN32
 				Sleep(interval);
 			#else
 				usleep(interval*1000);
@@ -526,7 +520,7 @@ void* Sim::simulation_thread(void *arg) {
 	int i, num = 20;
 	unsigned int sum = 0, clock = 0, restart = 0;
 	unsigned int *dt = new unsigned int[num]();
-#ifdef _WIN32
+#ifdef RS_WIN32
 	DWORD start_time = 0, start = 0, end = 0;
 #else
 	struct timespec s_time;
@@ -542,7 +536,7 @@ void* Sim::simulation_thread(void *arg) {
 
 		if (sim->_rt) {
 			// get starting times
-#ifdef _WIN32
+#ifdef RS_WIN32
 			start = GetTickCount();
 #else
 			clock_gettime(CLOCK_REALTIME, &s_time);
@@ -556,7 +550,7 @@ void* Sim::simulation_thread(void *arg) {
 
 			if (sim->_rt) {
 				// get start time of execution in milliseconds
-#ifdef _WIN32
+#ifdef RS_WIN32
 				start_time = GetTickCount();
 #else
 				clock_gettime(CLOCK_REALTIME, &s_time);
@@ -600,7 +594,7 @@ void* Sim::simulation_thread(void *arg) {
 
 			// get ending time
 			if (sim->_rt) {
-#ifdef _WIN32
+#ifdef RS_WIN32
 				end = GetTickCount();
 #else
 				clock_gettime(CLOCK_REALTIME, &s_time);
@@ -632,7 +626,7 @@ void* Sim::simulation_thread(void *arg) {
 				// sleep until clock time equals step time
 				else {
 					sim->_step = sum/1000.0;
-#ifdef _WIN32
+#ifdef RS_WIN32
 					Sleep((unsigned int)(sim->_clock*1000) - (end - start) - clock/1000);
 #else
 					usleep(sim->_clock*1000000 - ((end - start)*1000) - clock);

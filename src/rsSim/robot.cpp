@@ -1,6 +1,6 @@
 #include <cstring>
 #include <ctime>
-#ifdef _WIN32
+#ifdef RS_WIN32
 #include <windows.h>
 #else
 #include <unistd.h>
@@ -198,7 +198,7 @@ int Robot::addToSim(dWorldID &world, dSpaceID &space, int id, Sim *sim) {
 }
 
 int Robot::doze(double ms) {
-#ifdef _WIN32
+#ifdef RS_WIN32
 	Sleep(ms);
 #else
 	usleep(ms*1000);

@@ -401,7 +401,7 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 
 std::string rsXML::getDefaultBackgroundPath(void) {
 	std::string path;
-#ifdef _WIN32
+#ifdef RS_WIN32
 	DWORD size = 128;
 	HKEY key;
 #if defined(_WIN64)

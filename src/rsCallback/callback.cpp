@@ -1,3 +1,4 @@
+#include <config.h>
 #include <rsCallback/Callback>
 #include <rsCallback/Obstacle>
 #ifdef RS_DOF

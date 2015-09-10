@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <config.h>
 #include <rsXML/Writer>
 #ifdef RS_LINKBOT
 #include <rsXML/Linkbot>

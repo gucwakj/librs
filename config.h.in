@@ -9,11 +9,6 @@
 #cmakedefine RS_LINKBOT
 #cmakedefine RS_MINDSTORMS
 
-// modules defines
-#cmakedefine RS_GRAPHICS
-#cmakedefine RS_SIM
-#cmakedefine RS_XML
-
 // research defines
 #cmakedefine DO_RESEARCH
 

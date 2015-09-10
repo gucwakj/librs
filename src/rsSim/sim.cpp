@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <config.h>
 #include <rs/Macros>
 #include <rsSim/Sim>
 

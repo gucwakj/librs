@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iostream>
 
+#include <config.h>
 #include <rs/Enum>
 #include <rsXML/Reader>
 #ifdef RS_DOF

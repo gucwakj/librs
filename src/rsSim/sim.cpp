@@ -37,7 +37,9 @@ Sim::Sim(bool pause, bool rt) {
 	_clock = 0;											// start clock
 	_collision = true;									// perform inter-robot collisions
 	_pause = pause;										// start paused
+#if (RESEARCH)
 	_res = 0;											// research: am i doing research?
+#endif
 	_rt = rt;											// real time
 	_running = true;									// is simulation running
 	_step = 0.004;										// initial time step
@@ -77,10 +79,12 @@ Sim::~Sim(void) {
 		_robot.erase(_robot.begin() + i);
 	}
 
+#if (RESEARCH)
 	// research: remove cpg
 	if (_res) {
 		gsl_odeiv2_driver_free(_cpg_driver);
 	}
+#endif
 }
 
 /**********************************************************
@@ -370,6 +374,7 @@ int Sim::setCOR(double robot, double ground) {
 	return 0;
 }
 
+#if (RESEARCH)
 int Sim::setCPG(int (*function)(double, const double[], double[], void*), int robots, int variables) {
 	// set cpg variables
 	_res = true;
@@ -399,6 +404,7 @@ int Sim::setCPG(int (*function)(double, const double[], double[], void*), int ro
 	// done
 	return 0;
 }
+#endif
 
 int Sim::setMu(double robot, double ground) {
 	_friction[0] = robot;
@@ -495,6 +501,7 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 	}
 }
 
+#if (RESEARCH)
 const rs::Vec Sim::run_cpg_step(void) {
 	// return vector
 	int size = _robot.size() - 1;
@@ -515,6 +522,7 @@ const rs::Vec Sim::run_cpg_step(void) {
 	}
 	return V;
 }
+#endif
 
 void* Sim::simulation_thread(void *arg) {
 	// cast to type sim
@@ -562,6 +570,7 @@ void* Sim::simulation_thread(void *arg) {
 #endif
 			}
 
+#if (RESEARCH)
 			// research: cpg calculation
 			if (sim->_res) {
 				rs::Vec v = sim->run_cpg_step();
@@ -569,6 +578,7 @@ void* Sim::simulation_thread(void *arg) {
 					sim->_robot[j].robot->setCPGGoal(v[j-1]);
 				}
 			}
+#endif
 
 			// perform pre-collision updates
 			MUTEX_LOCK(&(sim->_robot_mutex));

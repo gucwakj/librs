@@ -1,5 +1,9 @@
 #include <iostream>
+
 #include <rsXML/Writer>
+#ifdef RS_LINKBOT
+#include <rsXML/Linkbot>
+#endif
 
 using namespace rsXML;
 
@@ -337,9 +341,11 @@ tinyxml2::XMLElement* Writer::getOrCreateConnector(int form, int orientation) {
 	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
 	tinyxml2::XMLElement *node = sim->FirstChildElement();
 	switch (form) {
+#ifdef RS_LINKBOT
 		case rsLinkbot::Connectors::Simple:
 			node = _doc.NewElement("simple");
 			break;
+#endif
 	}
 	node->SetAttribute("orientation", orientation);
 	sim->InsertEndChild(node);

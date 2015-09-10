@@ -3,6 +3,37 @@
 
 #include <rsRobots/Robot>
 
+namespace rsMindstorms {
+
+	namespace Bodies {
+		// parts
+		enum Part {
+			Body,
+			Wheel1,
+			Wheel2,
+			Num_Parts
+		};
+
+		// joints
+		enum Joint {
+			Joint1,
+			Joint2,
+			Num_Joints
+		};
+	} // namespace Bodies
+
+	namespace Connectors {
+		// types
+		enum Type {
+			None,
+			Big,
+			Small,
+			Num_Connectors
+		};
+	} // namespace Connectors
+
+} // namespace rsMindstorms
+
 namespace rsRobots {
 
 	// class

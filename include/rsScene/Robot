@@ -1,6 +1,7 @@
 #ifndef RSSCENE_ROBOT_
 #define RSSCENE_ROBOT_
 
+#include <osg/Geode>
 #include <osg/Group>
 #include <osg/Material>
 
@@ -29,6 +30,8 @@ namespace rsScene {
 
 		protected:
 			osg::Material* create_material(osg::Vec4);
+			osg::Geode* create_hud(const rs::Pos&);
+			osg::Geode* create_tracking_line(const rs::Pos&, const rs::Vec&, bool);
 
 		protected:
 			bool _units;						// flag: SI (true) or customary (false)

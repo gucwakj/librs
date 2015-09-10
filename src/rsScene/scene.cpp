@@ -714,11 +714,9 @@ osg::Material* Scene::create_material(osg::Vec4 color) {
 }
 
 void Scene::draw_grid(double tics, double hash, double minx, double maxx, double miny, double maxy, double enabled) {
-	if ((maxx - minx < -rs::Epsilon) || (maxy - miny < -rs::Epsilon))
-		return;
+	if ((maxx - minx < -rs::Epsilon) || (maxy - miny < -rs::Epsilon)) return;
 
 	if (static_cast<int>(enabled)) {
-
 		// x- and y-axis lines
 		osg::Geode *gridGeode3 = new osg::Geode();
 		osg::Geometry *gridLines3 = new osg::Geometry();

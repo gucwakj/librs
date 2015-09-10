@@ -8,8 +8,7 @@
 #include <rsSim/ModularRobot>
 #include <rsSim/Robot>
 
-#define RESEARCH 0
-#if (RESEARCH)
+#ifdef DO_RESEARCH
 // gsl - integration
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
@@ -50,12 +49,12 @@ namespace rsSim {
 			void run(int, void (*output)(void) = NULL, int interval = 0);
 			int setCollisions(int);
 			int setCOR(double, double);
-#if (RESEARCH)
-			int setCPG(int(*)(double, const double*, double*, void*), int, int);		// research
-#endif
 			int setMu(double, double);
 			void start(void);
 			void stop(void);
+#ifdef DO_RESEARCH
+			int setCPG(int(*)(double, const double*, double*, void*), int, int);		// research
+#endif
 
 		// protected data
 		protected:
@@ -89,14 +88,13 @@ namespace rsSim {
 		private:
 			static void collision(void*, dGeomID, dGeomID);	// wrapper function for nearCallback to work in class
 			static void* simulation_thread(void*);			// simulation thread function
-#if (RESEARCH)
+#ifdef DO_RESEARCH
 			const rs::Vec run_cpg_step(void);				// research: run cpg integration step
 #endif
 
-#if (RESEARCH)
 		// private variables
 		private:
-			bool _res;										// research: research code is on
+#ifdef DO_RESEARCH
 			double _cpg_offset;								// research: initial time offset
 			double _cpg_time;								// research: time of integration
 			int _cpg_robots;								// research: number of robots

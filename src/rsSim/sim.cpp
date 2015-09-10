@@ -37,9 +37,6 @@ Sim::Sim(bool pause, bool rt) {
 	_clock = 0;											// start clock
 	_collision = true;									// perform inter-robot collisions
 	_pause = pause;										// start paused
-#if (RESEARCH)
-	_res = 0;											// research: am i doing research?
-#endif
 	_rt = rt;											// real time
 	_running = true;									// is simulation running
 	_step = 0.004;										// initial time step
@@ -74,17 +71,15 @@ Sim::~Sim(void) {
 	dWorldDestroy(_world);
 	dCloseODE();
 
+#ifdef DO_RESEARCH
+	// research: remove cpg
+	gsl_odeiv2_driver_free(_cpg_driver);
+#endif
+
 	// remove robots
 	for (unsigned int i = 0; i < _robot.size(); i++) {
 		_robot.erase(_robot.begin() + i);
 	}
-
-#if (RESEARCH)
-	// research: remove cpg
-	if (_res) {
-		gsl_odeiv2_driver_free(_cpg_driver);
-	}
-#endif
 }
 
 /**********************************************************
@@ -374,10 +369,9 @@ int Sim::setCOR(double robot, double ground) {
 	return 0;
 }
 
-#if (RESEARCH)
+#ifdef DO_RESEARCH
 int Sim::setCPG(int (*function)(double, const double[], double[], void*), int robots, int variables) {
 	// set cpg variables
-	_res = true;
 	_cpg_sys = {function, NULL, static_cast<size_t>(variables), NULL};
 	_cpg_driver = gsl_odeiv2_driver_alloc_y_new(&_cpg_sys, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
 	_cpg_array.resize(variables);
@@ -501,7 +495,7 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 	}
 }
 
-#if (RESEARCH)
+#ifdef DO_RESEARCH
 const rs::Vec Sim::run_cpg_step(void) {
 	// return vector
 	int size = _robot.size() - 1;
@@ -570,13 +564,11 @@ void* Sim::simulation_thread(void *arg) {
 #endif
 			}
 
-#if (RESEARCH)
+#ifdef DO_RESEARCH
 			// research: cpg calculation
-			if (sim->_res) {
-				rs::Vec v = sim->run_cpg_step();
-				for (unsigned int j = 1; j < sim->_robot.size(); j++) {
-					sim->_robot[j].robot->setCPGGoal(v[j-1]);
-				}
+			rs::Vec v = sim->run_cpg_step();
+			for (unsigned int j = 1; j < sim->_robot.size(); j++) {
+				sim->_robot[j].robot->setCPGGoal(v[j-1]);
 			}
 #endif
 

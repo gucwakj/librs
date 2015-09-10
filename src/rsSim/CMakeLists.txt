@@ -30,7 +30,7 @@ set (EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${LibRS_SOURCE_DIR}/resources")
 
 # add gsl
-if (UNIX)
+if (DO_RESEARCH)
 	find_package (GSL REQUIRED)
 	include_directories (${GSL_INCLUDE_DIRS} ${GSLCBLAS_INCLUDE_DIRS})
 	set (EXTRA_LIBS ${EXTRA_LIBS} ${GSL_LIBRARIES} ${GSLCBLAS_LIBRARIES})
@@ -46,13 +46,13 @@ set (SRCS ${SRCS}
 	modularrobot.cpp
 	sim.cpp
 )
-if (ENABLE_DOF)
+if (RS_DOF)
 	set (SRCS ${SRCS} dof.cpp)
 endif ()
-if (ENABLE_LINKBOT)
+if (RS_LINKBOT)
 	set (SRCS ${SRCS} linkbot.cpp)
 endif ()
-if (ENABLE_MINDSTORMS)
+if (RS_MINDSTORMS)
 	set (SRCS ${SRCS} mindstorms.cpp)
 endif ()
 

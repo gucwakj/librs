@@ -1,0 +1,21 @@
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
+#define LibRS_VERSION_MAJOR @LibRS_VERSION_MAJOR@
+#define LibRS_VERSION_MINOR @LibRS_VERSION_MINOR@
+
+// robot defines
+#cmakedefine RS_DOF
+#cmakedefine RS_LINKBOT
+#cmakedefine RS_MINDSTORMS
+
+// modules defines
+#cmakedefine RS_GRAPHICS
+#cmakedefine RS_SIM
+#cmakedefine RS_XML
+
+// research defines
+#cmakedefine DO_RESEARCH
+
+#endif
+

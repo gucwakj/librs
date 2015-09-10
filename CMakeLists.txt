@@ -36,10 +36,16 @@ else ()
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-write-strings")
 endif ()
 
+# set up a configure file
+configure_file (
+	"${LibRS_SOURCE_DIR}/config.h.in"
+	"${LibRS_BINARY_DIR}/config.h"
+)
+
 # include directory
 include_directories (
-	"${PROJECT_SOURCE_DIR}/include"
-	"${PROJECT_BINARY_DIR}"
+	"${LibRS_SOURCE_DIR}/include"
+	"${LibRS_BINARY_DIR}"
 )
 
 # link directory
@@ -65,25 +71,36 @@ endif ()
 make_directory (${OUTPUT_LIBDIR})
 
 # options for individual robot compilation
-option (ENABLE_DOF "Enable dof compilation" OFF)
-option (ENABLE_LINKBOT "Enable linkbot compilation" ON)
-option (ENABLE_MINDSTORMS "Enable mindstorms compilation" ON)
+option (RS_DOF "Enable dof compilation" OFF)
+option (RS_LINKBOT "Enable linkbot compilation" ON)
+option (RS_MINDSTORMS "Enable mindstorms compilation" ON)
 
 # options for building pieces of whole library
-option (ENABLE_GRAPHICS "Enable graphical library" ON)
-option (ENABLE_SIM "Enable simulation library" ON)
-option (ENABLE_XML "Enable xml library" ON)
+option (RS_GRAPHICS "Enable graphical library" ON)
+option (RS_SIM "Enable simulation library" ON)
+option (RS_XML "Enable xml library" ON)
+
+# research option
+option (DO_RESEARCH "Build librs for research" OFF)
+if (DO_RESEARCH)
+	set (RS_DOF ON)
+	set (RS_LINKBOT OFF)
+	set (RS_MINDSTORMS OFF)
+	set (RS_GRAPHICS ON)
+	set (RS_SIM ON)
+	set (RS_XML ON)
+endif ()
 
 # add libraries
 add_subdirectory ("${LibRS_SOURCE_DIR}/src/rs")
 add_subdirectory ("${LibRS_SOURCE_DIR}/src/rsRobots")
 set (MODULES ${MODULES} "rs")
 set (MODULES ${MODULES} "rsRobots")
-if (ENABLE_SIM)
+if (RS_SIM)
 	add_subdirectory ("${LibRS_SOURCE_DIR}/src/rsSim")
 	set (MODULES ${MODULES} "rsSim")
 endif ()
-if (ENABLE_GRAPHICS)
+if (RS_GRAPHICS)
 	find_package(OpenGL)
 	if (OPENGL_FOUND)
 		add_subdirectory ("${LibRS_SOURCE_DIR}/src/rsScene")
@@ -92,7 +109,7 @@ if (ENABLE_GRAPHICS)
 		set (MODULES ${MODULES} "rsCallback")
 	endif ()
 endif ()
-if (ENABLE_XML)
+if (RS_XML)
 	add_subdirectory ("${LibRS_SOURCE_DIR}/src/rsXML")
 	set (MODULES ${MODULES} "rsXML")
 endif ()

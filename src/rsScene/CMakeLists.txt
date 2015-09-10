@@ -45,13 +45,13 @@ set (SRCS ${SRCS}
 	scene.cpp
 	robot.cpp
 )
-if (ENABLE_DOF)
+if (RS_DOF)
 	set (SRCS ${SRCS} dof.cpp)
 endif ()
-if (ENABLE_LINKBOT)
+if (RS_LINKBOT)
 	set (SRCS ${SRCS} linkbot.cpp)
 endif ()
-if (ENABLE_MINDSTORMS)
+if (RS_MINDSTORMS)
 	set (SRCS ${SRCS} mindstorms.cpp)
 endif ()
 

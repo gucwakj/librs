@@ -3,9 +3,15 @@
 
 #include <rs/Enum>
 #include <rsXML/Reader>
+#ifdef RS_DOF
 #include <rsXML/Dof>
+#endif
+#ifdef RS_LINKBOT
 #include <rsXML/Linkbot>
+#endif
+#ifdef RS_MINDSTORMS
 #include <rsXML/Mindstorms>
+#endif
 
 using namespace rsXML;
 
@@ -153,9 +159,12 @@ Robot* Reader::getNextRobot(int form) {
 	// no robot found
 	if (form != -1 && (i == _robot.size() || _robot[i]->getForm() != form)) {
 		switch (form) {
+#ifdef RS_DOF
 			case rs::DOF:
 				std::cerr << "Error: Could not find a Dof in the RoboSim GUI robot list." << std::endl;
 				break;
+#endif
+#ifdef RS_LINKBOT
 			case rs::LINKBOTI:
 				std::cerr << "Error: Could not find a Linkbot-I in the RoboSim GUI robot list." << std::endl;
 				break;
@@ -165,9 +174,12 @@ Robot* Reader::getNextRobot(int form) {
 			case rs::LINKBOTT:
 				std::cerr << "Error: Could not find a Linkbot-T in the RoboSim GUI robot list." << std::endl;
 				break;
+#endif
+#ifdef RS_MINDSTORMS
 			case rs::EV3: case rs::NXT:
 				std::cerr << "Error: Could not find a Mindstorms EV3 or NXT in the RoboSim GUI robot list." << std::endl;
 				break;
+#endif
 		}
 		if (_preconfig) {
 			fprintf(stderr, "\tPreconfigured Robot Configuration selected.\n");
@@ -661,6 +673,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 	// loop over all nodes
 	while (node) {
 		if (node->ToComment()) {}
+#ifdef RS_DOF
 		else if ( !strcmp(node->Value(), "dof") ) {
 			_robot.push_back(new Dof());
 			node->QueryIntAttribute("id", &i);
@@ -722,6 +735,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
+#endif
+#ifdef RS_LINKBOT
 		else if ( !strcmp(node->Value(), "linkboti") ) {
 			_robot.push_back(new Linkbot(rs::LINKBOTI, _trace));
 			node->QueryIntAttribute("id", &i);
@@ -929,6 +944,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
+#endif
+#ifdef RS_MINDSTORMS
 		else if ( !strcmp(node->Value(), "ev3") ) {
 			_robot.push_back(new Mindstorms(rs::EV3, _trace));
 			node->QueryIntAttribute("id", &i);
@@ -1043,7 +1060,20 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);
 		}
+#endif
 		else {
+#ifdef RS_DOF
+			if ( !strcmp(node->Value(), "el") ) {
+				ctype = rsDof::Connectors::El;
+				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
+			}
+			else if ( !strcmp(node->Value(), "foot") ) {
+				ctype = rsDof::Connectors::Foot;
+				cnum = 1;
+			}
+#endif
+#ifdef RS_LINKBOT
 			if ( !strcmp(node->Value(), "bigwheel") ) {
 				ctype = rsLinkbot::Connectors::BigWheel;
 				cnum = 1;
@@ -1069,11 +1099,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				cnum = 4;
 				node->QueryIntAttribute("orientation", &orientation);
 			}
-			else if ( !strcmp(node->Value(), "el") ) {
-				ctype = rsDof::Connectors::El;
-				cnum = 2;
-				node->QueryIntAttribute("orientation", &orientation);
-			}
 			else if ( !strcmp(node->Value(), "ell") ) {
 				ctype = rsLinkbot::Connectors::Ell;
 				cnum = 2;
@@ -1081,10 +1106,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			else if ( !strcmp(node->Value(), "faceplate") ) {
 				ctype = rsLinkbot::Connectors::Faceplate;
-				cnum = 1;
-			}
-			else if ( !strcmp(node->Value(), "foot") ) {
-				ctype = rsDof::Connectors::Foot;
 				cnum = 1;
 			}
 			else if ( !strcmp(node->Value(), "gripper") ) {
@@ -1105,14 +1126,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ctype = rsLinkbot::Connectors::SmallWheel;
 				cnum = 1;
 			}
-			/*else if ( !strcmp(node->Value(), "square") ) {
-				ctype = rsLinkbot::Connectors::Square;
-				cnum = 4;
-			}
-			else if ( !strcmp(node->Value(), "tank") ) {
-				ctype = rsLinkbot::Connectors::Tank;
-				cnum = 3;
-			}*/
 			else if ( !strcmp(node->Value(), "tinywheel") ) {
 				ctype = rsLinkbot::Connectors::TinyWheel;
 				cnum = 1;
@@ -1122,6 +1135,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				cnum = 1;
 				node->QueryDoubleAttribute("radius", &size);
 			}
+#endif
 			rtmp = new int[cnum];
 			ftmp = new int[cnum];
 			ntmp = new int[cnum];
@@ -1148,10 +1162,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 					else {
 						ftmp[i] = ntmp[i];
 						side->QueryIntAttribute("conn", &atmp[i]);
+#ifdef RS_LINKBOT
 						if (atmp[i] == rsLinkbot::Connectors::Caster)
 							side->QueryDoubleAttribute("custom", &size);
 						else if (atmp[i] == rsLinkbot::Connectors::Wheel)
 							side->QueryDoubleAttribute("radius", &size);
+#endif
 					}
 					i++;
 					side = side->NextSiblingElement();

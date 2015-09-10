@@ -654,7 +654,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 		if (!(dynamic_cast<osgFX::Outline *>(child))) {
 			for (unsigned int i = 2; i < parent->getNumChildren(); i++) {
 				osgFX::Outline *outline = new osgFX::Outline();
-				outline->setWidth(200);
+				outline->setWidth(20);
 				outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
 				outline->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 				outline->addChild(parent->getChild(i)->asTransform()->getChild(0));
@@ -673,7 +673,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Outline *>(child))) {
 			osgFX::Outline *outline = new osgFX::Outline();
-			outline->setWidth(200);
+			outline->setWidth(20);
 			outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
 			outline->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 			outline->addChild(parent->getChild(0)->asTransform()->getChild(0));

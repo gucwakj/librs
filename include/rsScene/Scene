@@ -57,6 +57,7 @@ namespace rsScene {
 			int setupCamera(osg::GraphicsContext*, double, double);
 			int setupScene(double, double, bool);
 			int setupViewer(osgViewer::Viewer*);
+			void stageChild(osg::Group*);
 			void start(int);
 			void toggleHighlight(osg::Group*, osg::Node*, const rs::Vec& = rs::Vec(1, 1, 0), bool = false);
 			void toggleLabel(osg::Group*, osg::Node*);

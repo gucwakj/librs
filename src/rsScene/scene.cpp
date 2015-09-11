@@ -193,9 +193,7 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 Group* Scene::createRobot(rsScene::Robot *robot) {
 	// create new robot
 	osg::ref_ptr<osg::Group> group = new osg::Group();
-
-	// add to scenegraph
-	_staging[0]->addChild(group);
+	group->ref();
 
 	// send data to robot
 	robot->setModelPath(this->getTexturePath());
@@ -629,6 +627,10 @@ int Scene::setupViewer(osgViewer::Viewer *viewer) {
 
 	// success
 	return 0;
+}
+
+void Scene::stageChild(osg::Group *group) {
+	_staging[0]->addChild(group);
 }
 
 void Scene::start(int pause) {

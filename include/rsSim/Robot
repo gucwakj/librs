@@ -33,7 +33,9 @@ namespace rsSim {
 			int moveJointToNB(int, double);
 			int moveJointWait(int);
 			int moveWait(void);
+#ifdef DO_RESEARCH
 			void setCPGGoal(double);		// research: set next goal value
+#endif
 			int addToSim(dWorldID&, dSpaceID&, int, rsSim::Sim*);
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int) { return 0; };
 			BodyList& getBodyList(void);
@@ -72,9 +74,13 @@ namespace rsSim {
 				ACCEL_CYCLOIDAL,		// follow a cycloidal accel curve
 				ACCEL_HARMONIC,			// follow a harmonic accel curve
 				CONTINUOUS,				// turn on and stay on
+#ifdef DO_RESEARCH
 				ONCE,					// research: follow array of values
+#endif
 				SEEK,					// seek a new joint angle
+#ifdef DO_RESEARCH
 				SINGULAR,				// research: move one value each timestep
+#endif
 			} motorMode_t;
 
 			// motor accelerations
@@ -122,7 +128,9 @@ namespace rsSim {
 			double _accel[3];			// accelerometer data
 			double _center[3];			// offset of body from initial (x,y,z)
 			double _distOffset;			// offset for recorded distance
+#ifdef DO_RESEARCH
 			double _next_goal;			// research: next value to hit
+#endif
 			double _speed;				// linear velocity of the robot
 			double _trackwidth;			// trackwidth of robot
 			int _connected;				// connected to controller

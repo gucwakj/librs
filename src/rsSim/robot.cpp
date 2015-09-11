@@ -1,10 +1,5 @@
 #include <cstring>
 #include <ctime>
-#ifdef RS_WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
 
 #include <rs/Macros>
 #include <rsSim/Sim>
@@ -34,8 +29,9 @@ Robot::Robot(void) : rsRobots::Robot(rs::ROBOT) {
 	COND_INIT(&_success_cond);
 	MUTEX_INIT(&_theta_mutex);
 
-	// research
-	_next_goal = 0;
+#ifdef DO_RESEARCH
+	_next_goal = 0;		// research: next cpg values to hit
+#endif
 }
 
 Robot::~Robot(void) {
@@ -180,9 +176,11 @@ int Robot::moveWait(void) {
 	return 0;
 }
 
+#ifdef DO_RESEARCH
 void Robot::setCPGGoal(double value) {
 	_next_goal = value;
 }
+#endif
 
 /**********************************************************
 	protected functions for inherited classes

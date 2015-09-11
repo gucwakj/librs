@@ -24,7 +24,7 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 
 	// create transforms
 	for (int i = 0; i < rsLinkbot::Bodies::Num_Parts; i++) {
-		pat[i] = new osg::PositionAttitudeTransform;
+		pat[i] = new osg::PositionAttitudeTransform();
 		group->addChild(pat[i]);
 	}
 
@@ -35,10 +35,10 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 	pat[rsLinkbot::Bodies::Body]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// draw 'led'
-	osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, -0.02, 0.0308), 0.01, 0.01);
-	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
+	osg::ref_ptr<osg::Cylinder> cyl = new osg::Cylinder(osg::Vec3d(0, -0.02, 0.0308), 0.01, 0.01);
+	osg::ref_ptr<osg::ShapeDrawable> led = new osg::ShapeDrawable(cyl);
 	led->setColor(osg::Vec4(c[0], c[1], c[2], 1));
-	osg::Geode *bodyled = new osg::Geode();
+	osg::ref_ptr<osg::Geode> bodyled = new osg::Geode();
 	bodyled->addDrawable(led);
 	bodyled->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	bodyled->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);

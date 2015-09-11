@@ -42,7 +42,7 @@ int MouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *view
 
 	// run intersector from mouse through scene graph
 	double x = ea.getXnormalized(), y = ea.getYnormalized();
-	osgUtil::LineSegmentIntersector *picker;
+	osg::ref_ptr<osgUtil::LineSegmentIntersector> picker;
 	picker = new osgUtil::LineSegmentIntersector(osgUtil::Intersector::PROJECTION, x, y);
 	picker->setIntersectionLimit(osgUtil::Intersector::LIMIT_ONE_PER_DRAWABLE);
 	osgUtil::IntersectionVisitor iv(picker);

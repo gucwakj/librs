@@ -19,7 +19,7 @@ Mindstorms::~Mindstorms(void) { }
  **********************************************************/
 void Mindstorms::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
 	// create transform
-	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform();
 	group->addChild(pat.get());
 
 	// body
@@ -33,10 +33,10 @@ void Mindstorms::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const r
 	body->setCullingActive(false);
 
 	// draw 'led'
-	osg::Cylinder *cyl = new osg::Cylinder(osg::Vec3d(0, 0.02, 0), 0.01, 0.01);
-	osg::ShapeDrawable *led = new osg::ShapeDrawable(cyl);
+	osg::ref_ptr<osg::Cylinder> cyl = new osg::Cylinder(osg::Vec3d(0, 0.02, 0), 0.01, 0.01);
+	osg::ref_ptr<osg::ShapeDrawable> led = new osg::ShapeDrawable(cyl);
 	led->setColor(osg::Vec4(c[0], c[1], c[2], 1));
-	osg::Geode *bodyled = new osg::Geode();
+	osg::ref_ptr<osg::Geode> bodyled = new osg::Geode();
 	bodyled->addDrawable(led);
 	bodyled->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	bodyled->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);

@@ -241,7 +241,7 @@ int Scene::deleteRobot(int id) {
 int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, int size, std::string s) {
 	// create geode
 	osg::ref_ptr<osg::Group> marker = new osg::Group();
-	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 
 	// draw specific marker
 	switch (type) {
@@ -250,20 +250,20 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::LINE: {
-			osg::Geometry *geom = new osg::Geometry();
-			osg::Vec3Array *vert = new osg::Vec3Array();
+			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			vert->push_back(osg::Vec3(0, 0, 0));
 			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]));
 			geom->setVertexArray(vert);
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
-			osg::LineWidth *width = new osg::LineWidth();
+			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
 			width->setWidth(3*size);
 			geode->addDrawable(geom);
 			geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
 			break;
 		}
 		case rs::TEXT: {
-			osgText::Text *label = new osgText::Text();
+			osg::ref_ptr<osgText::Text> label = new osgText::Text();
 			label->setAlignment(osgText::Text::CENTER_CENTER);
 			label->setAxisAlignment(osgText::Text::SCREEN);
 			label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
@@ -285,7 +285,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	geode->setCullingActive(false);
 
 	// add positioning capability
-	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform();
 	pat->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
 	pat->setAttitude(osg::Quat(0, 0, 0, 1));
 	pat->addChild(geode.get());
@@ -303,7 +303,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec &c, const rs::Vec &l, const rs::Quat &q) {
 	// create obstacle objects
 	osg::ref_ptr<osg::Group> obstacle = new osg::Group();
-	osg::ref_ptr<osg::Geode> body = new osg::Geode;
+	osg::ref_ptr<osg::Geode> body = new osg::Geode();
 
 	switch (type) {
 		case rs::BOX:
@@ -361,7 +361,7 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 	body->setCullingActive(false);
 
 	// add positioning capability
-	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform;
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform();
 	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 	pat->addChild(body.get());
@@ -573,8 +573,8 @@ int Scene::setupScene(double w, double h, bool pause) {
 	//_scene->setShadowTechnique(sm.get());
 
 	// add 'sun' light source
-	osg::ref_ptr<osg::LightSource> ls = new osg::LightSource;
-	osg::ref_ptr<osg::Light> myLight = new osg::Light;
+	osg::ref_ptr<osg::LightSource> ls = new osg::LightSource();
+	osg::ref_ptr<osg::Light> myLight = new osg::Light();
 	myLight->setLightNum(0);
 	myLight->setAmbient(osg::Vec4(0.1, 0.1, 0.1, 1));
 	myLight->setDiffuse(osg::Vec4(1, 1, 1, 0.1));		// sun color: bright white
@@ -653,7 +653,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Outline *>(child))) {
 			for (unsigned int i = 2; i < parent->getNumChildren(); i++) {
-				osgFX::Outline *outline = new osgFX::Outline();
+				osg::ref_ptr<osgFX::Outline> outline = new osgFX::Outline();
 				outline->setWidth(20);
 				outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
 				outline->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
@@ -672,7 +672,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 	else if (!parent->getName().compare(0, 8, "obstacle") || !parent->getName().compare(0, 6, "marker")) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Outline *>(child))) {
-			osgFX::Outline *outline = new osgFX::Outline();
+			osg::ref_ptr<osgFX::Outline> outline = new osgFX::Outline();
 			outline->setWidth(20);
 			outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
 			outline->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
@@ -704,7 +704,7 @@ void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
 	private functions
  **********************************************************/
 osg::Material* Scene::create_material(osg::Vec4 color) {
-	osg::Material *material = new osg::Material();
+	osg::ref_ptr<osg::Material> material = new osg::Material();
 	material->setAmbient(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	material->setDiffuse(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	material->setEmission(osg::Material::FRONT, color);
@@ -718,8 +718,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 
 	if (static_cast<int>(enabled)) {
 		// x- and y-axis lines
-		osg::Geode *gridGeode3 = new osg::Geode();
-		osg::Geometry *gridLines3 = new osg::Geometry();
+		osg::ref_ptr<osg::Geode> gridGeode3 = new osg::Geode();
+		osg::ref_ptr<osg::Geometry> gridLines3 = new osg::Geometry();
 		osg::Vec3 myCoords3[4];
 		if ( fabs(maxx) > fabs(minx) ) {
 			if (minx < -rs::Epsilon)
@@ -750,16 +750,16 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 			myCoords3[2] = osg::Vec3(0, miny, 0);
 		}
 		// add vertices
-		osg::Vec3Array *vertices3 = new osg::Vec3Array(4, myCoords3);
+		osg::ref_ptr<osg::Vec3Array> vertices3 = new osg::Vec3Array(4, myCoords3);
 		gridLines3->setVertexArray(vertices3);
 		gridLines3->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 4));
 		// set color
-		osg::Vec4Array *colors3 = new osg::Vec4Array;
+		osg::ref_ptr<osg::Vec4Array> colors3 = new osg::Vec4Array();
 		colors3->push_back(osg::Vec4(0, 0, 0, 1));
 		gridLines3->setColorArray(colors3);
 		gridLines3->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
-		osg::LineWidth *linewidth3 = new osg::LineWidth();
+		osg::ref_ptr<osg::LineWidth> linewidth3 = new osg::LineWidth();
 		linewidth3->setWidth(3.0f);
 		gridGeode3->getOrCreateStateSet()->setAttributeAndModes(linewidth3, osg::StateAttribute::ON);
 		// set rendering properties
@@ -781,8 +781,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		int numx2 = static_cast<int>(ceil(1.01*(maxx2 - minx2)/hash));
 		int numy2 = static_cast<int>(ceil(1.01*(maxy2 - miny2)/hash));
 		int numVertices2 = 2*numx2 + 2*numy2;
-		osg::Geode *gridGeode2 = new osg::Geode();
-		osg::Geometry *gridLines2 = new osg::Geometry();
+		osg::ref_ptr<osg::Geode> gridGeode2 = new osg::Geode();
+		osg::ref_ptr<osg::Geometry> gridLines2 = new osg::Geometry();
 		osg::Vec3 *myCoords2 = new osg::Vec3[numVertices2]();
 		// draw x lines
 		for (int i = 0, j = 0; i < numx2; i++) {
@@ -795,16 +795,16 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 			myCoords2[j++] = osg::Vec3(maxx, miny2 + i*hash, 0.0);
 		}
 		// add vertices
-		osg::Vec3Array *vertices2 = new osg::Vec3Array(numVertices2, myCoords2);
+		osg::ref_ptr<osg::Vec3Array> vertices2 = new osg::Vec3Array(numVertices2, myCoords2);
 		gridLines2->setVertexArray(vertices2);
 		gridLines2->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices2));
 		// set color
-		osg::Vec4Array *colors2 = new osg::Vec4Array;
+		osg::ref_ptr<osg::Vec4Array> colors2 = new osg::Vec4Array();
 		colors2->push_back(osg::Vec4(1, 0, 0, 1));
 		gridLines2->setColorArray(colors2);
 		gridLines2->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
-		osg::LineWidth *linewidth2 = new osg::LineWidth();
+		osg::ref_ptr<osg::LineWidth> linewidth2 = new osg::LineWidth();
 		linewidth2->setWidth(2.0f);
 		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(linewidth2, osg::StateAttribute::ON);
 		// set rendering properties
@@ -826,8 +826,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		int numx1 = static_cast<int>(ceil(1.001*(maxx1 - minx1)/tics));
 		int numy1 = static_cast<int>(ceil(1.001*(maxy1 - miny1)/tics));
 		int numVertices = 2*numx1 + 2*numy1;
-		osg::Geode *gridGeode = new osg::Geode();
-		osg::Geometry *gridLines = new osg::Geometry();
+		osg::ref_ptr<osg::Geode> gridGeode = new osg::Geode();
+		osg::ref_ptr<osg::Geometry> gridLines = new osg::Geometry();
 		osg::Vec3 *myCoords = new osg::Vec3[numVertices]();
 		// draw x lines
 		for (int i = 0, j = 0; i < numx1; i++) {
@@ -840,16 +840,16 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 			myCoords[j++] = osg::Vec3(maxx, miny1 + i*tics, 0);
 		}
 		// add vertices
-		osg::Vec3Array *vertices = new osg::Vec3Array(numVertices, myCoords);
+		osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array(numVertices, myCoords);
 		gridLines->setVertexArray(vertices);
 		gridLines->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices));
 		// set color
-		osg::Vec4Array *colors = new osg::Vec4Array;
+		osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
 		colors->push_back(osg::Vec4(1, 1, 1, 1));
 		gridLines->setColorArray(colors);
 		gridLines->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
-		osg::LineWidth *linewidth = new osg::LineWidth();
+		osg::ref_ptr<osg::LineWidth> linewidth = new osg::LineWidth();
 		linewidth->setWidth(1.0f);
 		gridGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 		// set rendering properties
@@ -928,8 +928,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 
 		// x grid numbering
 		osg::ref_ptr<osg::Billboard> xnum_billboard = new osg::Billboard();
-		char text[50];
 		osg::ref_ptr<osgText::Text> xzero_text = new osgText::Text();
+		char text[50];
 		xzero_text->setText("0");
 		xzero_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 		xzero_text->setAlignment(osgText::Text::CENTER_CENTER);
@@ -1024,11 +1024,11 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 void Scene::draw_global_hud(double w, double h, bool paused) {
 	// init variables
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-	osg::ref_ptr<osg::Projection> projection = new osg::Projection;
+	osg::ref_ptr<osg::Projection> projection = new osg::Projection();
 	projection->setName("HUDProjection");
-	osg::ref_ptr<osg::MatrixTransform> transform = new osg::MatrixTransform;
+	osg::ref_ptr<osg::MatrixTransform> transform = new osg::MatrixTransform();
 	osg::ref_ptr<osgText::Text> text = new osgText::Text();
-	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry;
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	double p = 0.1;
 
 	// set projection matrix
@@ -1063,13 +1063,13 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 	text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 
 	// background rectangle
-	osg::Vec3Array *vertices = new osg::Vec3Array;
+	osg::Vec3Array *vertices = new osg::Vec3Array();
 	vertices->push_back(osg::Vec3(0, 0, -0.1));
 	vertices->push_back(osg::Vec3(w, 0, -0.1));
 	vertices->push_back(osg::Vec3(w, p*h, -0.1));
 	vertices->push_back(osg::Vec3(0, p*h, -0.1));
 	geom->setVertexArray(vertices);
-	osg::Vec4Array *colors = new osg::Vec4Array;
+	osg::Vec4Array *colors = new osg::Vec4Array();
 	colors->push_back(osg::Vec4(0, 0, 0, 0.6));
 	geom->setColorArray(colors, osg::Array::BIND_OVERALL);
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
@@ -1088,16 +1088,16 @@ void Scene::draw_scene_outdoors(void) {
 	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 
 	// square geometry
-	osg::Geometry *geom = new osg::Geometry;
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	// extents of geom
-	osg::Vec3Array *coords = new osg::Vec3Array;
+	osg::ref_ptr<osg::Vec3Array> coords = new osg::Vec3Array();
 	coords->push_back(osg::Vec3(-10000, -10000, -0.001));
 	coords->push_back(osg::Vec3( 10000, -10000, -0.001));
 	coords->push_back(osg::Vec3( 10000,  10000, -0.001));
 	coords->push_back(osg::Vec3(-10000,  10000, -0.001));
 	geom->setVertexArray(coords);
 	// texture coordinates
-	osg::Vec2Array *tcoords = new osg::Vec2Array;
+	osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();
 	tcoords->push_back(osg::Vec2(0, 0));
 	tcoords->push_back(osg::Vec2(1, 0));
 	tcoords->push_back(osg::Vec2(1, 1));
@@ -1119,7 +1119,7 @@ void Scene::draw_scene_outdoors(void) {
 	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin");
 	// create geode
-	osg::Geode *geode = new osg::Geode;
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 	geode->addDrawable(geom);
 	// add to scene
 	_background->addChild(geode);
@@ -1127,19 +1127,19 @@ void Scene::draw_scene_outdoors(void) {
 
 void Scene::draw_scene_board(double x, double y) {
 	// square geometry
-	osg::Geode *geode = new osg::Geode;
-	osg::Geometry *geom = new osg::Geometry;
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	geode->addDrawable(geom);
 	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 	// extents of geom
-	osg::Vec3Array *coords = new osg::Vec3Array;
+	osg::ref_ptr<osg::Vec3Array> coords = new osg::Vec3Array();
 	coords->push_back(osg::Vec3(-x, -y, 0));
 	coords->push_back(osg::Vec3(x, -y, 0));
 	coords->push_back(osg::Vec3(x,  y, 0));
 	coords->push_back(osg::Vec3(-x, y, 0));
 	geom->setVertexArray(coords);
 	// texture coordinates
-	osg::Vec2Array *tcoords = new osg::Vec2Array;
+	osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();
 	tcoords->push_back(osg::Vec2(0, 0));
 	tcoords->push_back(osg::Vec2(1, 0));
 	tcoords->push_back(osg::Vec2(1, 1));
@@ -1162,15 +1162,15 @@ void Scene::draw_scene_board(double x, double y) {
 
 void Scene::draw_skybox(void) {
 	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
-	osg::ref_ptr<osg::TexEnv> te = new osg::TexEnv;
+	osg::ref_ptr<osg::TexEnv> te = new osg::TexEnv();
 	te->setMode(osg::TexEnv::REPLACE);
 	stateset->setTextureAttributeAndModes(0, te, osg::StateAttribute::ON);
-	osg::ref_ptr<osg::TexGen> tg = new osg::TexGen;
+	osg::ref_ptr<osg::TexGen> tg = new osg::TexGen();
 	tg->setMode(osg::TexGen::NORMAL_MAP);
 	stateset->setTextureAttributeAndModes(0, tg, osg::StateAttribute::ON);
-	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat;
+	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat();
 	stateset->setTextureAttribute(0, tm);
-	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap;
+	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap();
 	osg::Image *imagePosX = osgDB::readImageFile(_path[rs::RIGHTSIDE]);
 	osg::Image *imageNegX = osgDB::readImageFile(_path[rs::LEFTSIDE]);
 	osg::Image *imagePosY = osgDB::readImageFile(_path[rs::TOP]);
@@ -1194,19 +1194,19 @@ void Scene::draw_skybox(void) {
 	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
 	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 	stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
-	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth();
 	depth->setFunction(osg::Depth::ALWAYS);
 	depth->setRange(1.0, 1.0);
 	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON);
 	stateset->setRenderBinDetails(-1, "RenderBin");
 	stateset->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-	osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f),1));
-	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+	osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0, 0, 0), 1));
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 	geode->setCullingActive(false);
 	geode->setStateSet(stateset);
 	geode->addDrawable(drawable);
 	geode->setCullCallback(new TextureCallback(*tm));
-	osg::ref_ptr<osg::Transform> transform = new SkyTransform;
+	osg::ref_ptr<osg::Transform> transform = new SkyTransform();
 	transform->setCullingActive(false);
 	transform->addChild(geode);
 	_background->addChild(transform);
@@ -1262,7 +1262,7 @@ void* Scene::graphics_thread(void *arg) {
 	p->_thread = true;
 
 	// viewer event handlers
-	p->_viewer->addEventHandler(new osgViewer::WindowSizeHandler);
+	p->_viewer->addEventHandler(new osgViewer::WindowSizeHandler());
 
 	// signal calling function that setup is done
 	COND_ACTION(&(p->_graphics_cond), &(p->_graphics_mutex), p->_graphics = true);

@@ -55,7 +55,6 @@ namespace rsSim {
 			double getRotation(int, int);
 			double mod_angle(double, double, double);
 			int noisy(double*, int, double);
-			virtual int buildIndividual(const rs::Pos&, const rs::Quat&, const rs::Vec&) { return 0; };
 			virtual void simPreCollisionThread(void) { return; };
 			virtual void simPostCollisionThread(void) { return; };
 

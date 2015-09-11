@@ -275,7 +275,7 @@ void Linkbot::moveJointSingular(int id) {
  **********************************************************/
 int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
 	// build
-	this->buildIndividual(p, q, a);
+	this->build_robot(p, q, a);
 
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);
@@ -290,107 +290,13 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyI
 	rs::Quat Q = this->getRobotCenterQuaternion(face, orientation, rs::D2R(a[face-1]), q);
 
 	// build new module
-	this->buildIndividual(P, Q, a);
+	this->build_robot(P, Q, a);
 
 	// add fixed joint to attach two modules
 	this->fix_body_to_connector(base, face);
 
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);
-
-	// success
-	return 0;
-}
-
-int Linkbot::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
-	// init body parts
-	for (int i = 0; i < Bodies::Num_Parts; i++) {
-		_body.push_back(dBodyCreate(_world));
-	}
-
-	// convert input angles to radians
-	for (int i = 0; i < _dof; i++) {
-		_motor[i].goal = _motor[i].theta = rs::D2R(a[i]);
-	}
-	_motor[_disabled].goal = _motor[_disabled].theta = 0;
-
-	// build robot bodies
-	this->build_body(p, q);
-	this->build_cap(Bodies::Cap1, this->getRobotBodyPosition(Bodies::Cap1, p, q), this->getRobotBodyQuaternion(Bodies::Cap1, 0, q));
-	this->build_cap(Bodies::Cap2, this->getRobotBodyPosition(Bodies::Cap2, p, q), this->getRobotBodyQuaternion(Bodies::Cap2, 0, q));
-	this->build_cap(Bodies::Cap3, this->getRobotBodyPosition(Bodies::Cap3, p, q), this->getRobotBodyQuaternion(Bodies::Cap3, 0, q));
-
-	// joint variable
-	rs::Pos o;
-
-	// joint for body to cap 1
-	_motor[Bodies::Joint1].joint = dJointCreateHinge(_world, 0);
-	dJointAttach(_motor[Bodies::Joint1].joint, _body[Bodies::Body], _body[Bodies::Cap1]);
-	o = q.multiply(-_body_width/2, 0, 0);
-	dJointSetHingeAnchor(_motor[Bodies::Joint1].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-	o = q.multiply(1, 0, 0);
-	dJointSetHingeAxis(_motor[Bodies::Joint1].joint, o[0], o[1], o[2]);
-	dBodySetFiniteRotationAxis(_body[Bodies::Cap1], o[0], o[1], o[2]);
-
-	// joint for body to cap 2
-	if (_disabled == Bodies::Joint2) {
-		_motor[Bodies::Joint2].joint = dJointCreateFixed(_world, 0);
-		dJointAttach(_motor[Bodies::Joint2].joint, _body[Bodies::Body], _body[Bodies::Cap2]);
-		dJointSetFixed(_motor[Bodies::Joint2].joint);
-	}
-	else {
-		_motor[Bodies::Joint2].joint = dJointCreateHinge(_world, 0);
-		dJointAttach(_motor[Bodies::Joint2].joint, _body[Bodies::Body], _body[Bodies::Cap2]);
-		o = q.multiply(0, -_body_length, 0);
-		dJointSetHingeAnchor(_motor[Bodies::Joint2].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-		o = q.multiply(0, 1, 0);
-		dJointSetHingeAxis(_motor[Bodies::Joint2].joint, o[0], o[1], o[2]);
-		dBodySetFiniteRotationAxis(_body[Bodies::Cap2], o[0], o[1], o[2]);
-	}
-
-	// joint for body to cap 3
-	if (_disabled == Bodies::Joint3) {
-		_motor[Bodies::Joint3].joint = dJointCreateFixed(_world, 0);
-		dJointAttach(_motor[Bodies::Joint3].joint, _body[Bodies::Body], _body[Bodies::Cap3]);
-		dJointSetFixed(_motor[Bodies::Joint3].joint);
-	}
-	else {
-		_motor[Bodies::Joint3].joint = dJointCreateHinge(_world, 0);
-		dJointAttach(_motor[Bodies::Joint3].joint, _body[Bodies::Body], _body[Bodies::Cap3]);
-		o = q.multiply(_body_width/2, 0, 0);
-		dJointSetHingeAnchor(_motor[Bodies::Joint3].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
-		o = q.multiply(-1, 0, 0);
-		dJointSetHingeAxis(_motor[Bodies::Joint3].joint, o[0], o[1], o[2]);
-		dBodySetFiniteRotationAxis(_body[Bodies::Cap3], o[0], o[1], o[2]);
-	}
-
-	// build rotated joints
-	if (_motor[Bodies::Joint1].theta != 0)
-		this->build_cap(Bodies::Cap1, this->getRobotBodyPosition(Bodies::Cap1, p, q), this->getRobotBodyQuaternion(Bodies::Cap1, _motor[Bodies::Joint1].theta, q));
-	if (_motor[Bodies::Joint2].theta != 0)
-		this->build_cap(Bodies::Cap2, this->getRobotBodyPosition(Bodies::Cap2, p, q), this->getRobotBodyQuaternion(Bodies::Cap2, _motor[Bodies::Joint2].theta, q));
-	if (_motor[Bodies::Joint3].theta != 0)
-		this->build_cap(Bodies::Cap3, this->getRobotBodyPosition(Bodies::Cap3, p, q), this->getRobotBodyQuaternion(Bodies::Cap3, _motor[Bodies::Joint3].theta, q));
-
-	// build motors
-	for (int i = 0; i < _dof; i++) {
-		_motor[i].id = dJointCreateAMotor(_world, 0);
-		dJointAttach(_motor[i].id, _body[Bodies::Body], _body[Bodies::Cap1 + i]);
-		dJointSetAMotorMode(_motor[i].id, dAMotorUser);
-		dJointSetAMotorNumAxes(_motor[i].id, 1);
-		dJointSetAMotorAngle(_motor[i].id, 0, 0);
-		dJointSetAMotorParam(_motor[i].id, dParamFMax, _motor[i].tau_max);
-		dJointSetAMotorParam(_motor[i].id, dParamFudgeFactor, 0.3);
-	}
-	o = q.multiply(1, 0, 0);
-	dJointSetAMotorAxis(_motor[Bodies::Joint1].id, 0, 1, o[0], o[1], o[2]);
-	o = q.multiply(0, 1, 0);
-	dJointSetAMotorAxis(_motor[Bodies::Joint2].id, 0, 1, o[0], o[1], o[2]);
-	o = q.multiply(-1, 0, 0);
-	dJointSetAMotorAxis(_motor[Bodies::Joint3].id, 0, 1, o[0], o[1], o[2]);
-
-	// set damping on all bodies to 0.1
-	for (int i = 0; i < Bodies::Num_Parts; i++) dBodySetDamping(_body[i], 0.1, 0.1);
 
 	// success
 	return 0;
@@ -873,6 +779,97 @@ void Linkbot::build_omnidrive(Connector &conn) {
 	// set geometry
 	dGeomID geom = dCreateBox(_space, _conn_depth, _omni_length, _omni_length);
 	dGeomSetBody(geom, conn.body);
+}
+
+void Linkbot::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
+	// init body parts
+	for (int i = 0; i < Bodies::Num_Parts; i++) {
+		_body.push_back(dBodyCreate(_world));
+	}
+
+	// convert input angles to radians
+	for (int i = 0; i < _dof; i++) {
+		_motor[i].goal = _motor[i].theta = rs::D2R(a[i]);
+	}
+	_motor[_disabled].goal = _motor[_disabled].theta = 0;
+
+	// build robot bodies
+	this->build_body(p, q);
+	this->build_cap(Bodies::Cap1, this->getRobotBodyPosition(Bodies::Cap1, p, q), this->getRobotBodyQuaternion(Bodies::Cap1, 0, q));
+	this->build_cap(Bodies::Cap2, this->getRobotBodyPosition(Bodies::Cap2, p, q), this->getRobotBodyQuaternion(Bodies::Cap2, 0, q));
+	this->build_cap(Bodies::Cap3, this->getRobotBodyPosition(Bodies::Cap3, p, q), this->getRobotBodyQuaternion(Bodies::Cap3, 0, q));
+
+	// joint variable
+	rs::Pos o;
+
+	// joint for body to cap 1
+	_motor[Bodies::Joint1].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[Bodies::Joint1].joint, _body[Bodies::Body], _body[Bodies::Cap1]);
+	o = q.multiply(-_body_width/2, 0, 0);
+	dJointSetHingeAnchor(_motor[Bodies::Joint1].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+	o = q.multiply(1, 0, 0);
+	dJointSetHingeAxis(_motor[Bodies::Joint1].joint, o[0], o[1], o[2]);
+	dBodySetFiniteRotationAxis(_body[Bodies::Cap1], o[0], o[1], o[2]);
+
+	// joint for body to cap 2
+	if (_disabled == Bodies::Joint2) {
+		_motor[Bodies::Joint2].joint = dJointCreateFixed(_world, 0);
+		dJointAttach(_motor[Bodies::Joint2].joint, _body[Bodies::Body], _body[Bodies::Cap2]);
+		dJointSetFixed(_motor[Bodies::Joint2].joint);
+	}
+	else {
+		_motor[Bodies::Joint2].joint = dJointCreateHinge(_world, 0);
+		dJointAttach(_motor[Bodies::Joint2].joint, _body[Bodies::Body], _body[Bodies::Cap2]);
+		o = q.multiply(0, -_body_length, 0);
+		dJointSetHingeAnchor(_motor[Bodies::Joint2].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		o = q.multiply(0, 1, 0);
+		dJointSetHingeAxis(_motor[Bodies::Joint2].joint, o[0], o[1], o[2]);
+		dBodySetFiniteRotationAxis(_body[Bodies::Cap2], o[0], o[1], o[2]);
+	}
+
+	// joint for body to cap 3
+	if (_disabled == Bodies::Joint3) {
+		_motor[Bodies::Joint3].joint = dJointCreateFixed(_world, 0);
+		dJointAttach(_motor[Bodies::Joint3].joint, _body[Bodies::Body], _body[Bodies::Cap3]);
+		dJointSetFixed(_motor[Bodies::Joint3].joint);
+	}
+	else {
+		_motor[Bodies::Joint3].joint = dJointCreateHinge(_world, 0);
+		dJointAttach(_motor[Bodies::Joint3].joint, _body[Bodies::Body], _body[Bodies::Cap3]);
+		o = q.multiply(_body_width/2, 0, 0);
+		dJointSetHingeAnchor(_motor[Bodies::Joint3].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
+		o = q.multiply(-1, 0, 0);
+		dJointSetHingeAxis(_motor[Bodies::Joint3].joint, o[0], o[1], o[2]);
+		dBodySetFiniteRotationAxis(_body[Bodies::Cap3], o[0], o[1], o[2]);
+	}
+
+	// build rotated joints
+	if (_motor[Bodies::Joint1].theta != 0)
+		this->build_cap(Bodies::Cap1, this->getRobotBodyPosition(Bodies::Cap1, p, q), this->getRobotBodyQuaternion(Bodies::Cap1, _motor[Bodies::Joint1].theta, q));
+	if (_motor[Bodies::Joint2].theta != 0)
+		this->build_cap(Bodies::Cap2, this->getRobotBodyPosition(Bodies::Cap2, p, q), this->getRobotBodyQuaternion(Bodies::Cap2, _motor[Bodies::Joint2].theta, q));
+	if (_motor[Bodies::Joint3].theta != 0)
+		this->build_cap(Bodies::Cap3, this->getRobotBodyPosition(Bodies::Cap3, p, q), this->getRobotBodyQuaternion(Bodies::Cap3, _motor[Bodies::Joint3].theta, q));
+
+	// build motors
+	for (int i = 0; i < _dof; i++) {
+		_motor[i].id = dJointCreateAMotor(_world, 0);
+		dJointAttach(_motor[i].id, _body[Bodies::Body], _body[Bodies::Cap1 + i]);
+		dJointSetAMotorMode(_motor[i].id, dAMotorUser);
+		dJointSetAMotorNumAxes(_motor[i].id, 1);
+		dJointSetAMotorAngle(_motor[i].id, 0, 0);
+		dJointSetAMotorParam(_motor[i].id, dParamFMax, _motor[i].tau_max);
+		dJointSetAMotorParam(_motor[i].id, dParamFudgeFactor, 0.3);
+	}
+	o = q.multiply(1, 0, 0);
+	dJointSetAMotorAxis(_motor[Bodies::Joint1].id, 0, 1, o[0], o[1], o[2]);
+	o = q.multiply(0, 1, 0);
+	dJointSetAMotorAxis(_motor[Bodies::Joint2].id, 0, 1, o[0], o[1], o[2]);
+	o = q.multiply(-1, 0, 0);
+	dJointSetAMotorAxis(_motor[Bodies::Joint3].id, 0, 1, o[0], o[1], o[2]);
+
+	// set damping on all bodies to 0.1
+	for (int i = 0; i < Bodies::Num_Parts; i++) dBodySetDamping(_body[i], 0.1, 0.1);
 }
 
 void Linkbot::build_simple(Connector &conn) {

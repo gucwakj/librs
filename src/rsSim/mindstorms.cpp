@@ -56,28 +56,14 @@ Mindstorms::~Mindstorms(void) {
 	protected functions
  **********************************************************/
 int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
-	// set wheels
-	_wheels[0] = w[0];
-	_wheels[1] = w[1];
-
-	// build
-	this->buildIndividual(p, q, a);
-
-	// set trackwidth
-	const double *pos1, *pos2;
-	pos1 = dBodyGetPosition(_body[Bodies::Wheel1]);
-	pos2 = dBodyGetPosition(_body[Bodies::Wheel2]);
-	_trackwidth = sqrt(pow(pos2[0] - pos1[0], 2) + pow(pos2[1] - pos1[1], 2));
-
-	// success
-	return 0;
-}
-
-int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
 	// init body parts
 	for (int i = 0; i < Bodies::Num_Parts; i++) {
 		_body.push_back(dBodyCreate(_world));
 	}
+
+	// set wheels
+	_wheels[0] = w[0];
+	_wheels[1] = w[1];
 
 	// convert input angles to radians
 	for (int i = 0; i < _dof; i++) {
@@ -127,6 +113,12 @@ int Mindstorms::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::V
 
 	// set damping on all bodies to 0.1
 	for (int i = 0; i < Bodies::Num_Parts; i++) dBodySetDamping(_body[i], 0.1, 0.1);
+
+	// set trackwidth
+	const double *pos1, *pos2;
+	pos1 = dBodyGetPosition(_body[Bodies::Wheel1]);
+	pos2 = dBodyGetPosition(_body[Bodies::Wheel2]);
+	_trackwidth = sqrt(pow(pos2[0] - pos1[0], 2) + pow(pos2[1] - pos1[1], 2));
 
 	// success
 	return 0;

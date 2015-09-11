@@ -316,14 +316,14 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			// create body
 			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0])));
 			// create texture object
-			osg::ref_ptr<osg::Texture2D> tex(new osg::Texture2D);
-			tex->setImage(osgDB::readImageFile(_tex_path + "obstacles/hackysack.png"));
+			osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "obstacles/hackysack.png"));
+			tex->setDataVariance(osg::Object::STATIC);
 			tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 			tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+			tex->setUnRefImageDataAfterApply(true);
 			tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
 			tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 			tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-			tex->setDataVariance(osg::Object::STATIC);
 			// state set
 			body->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
 			body->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
@@ -337,14 +337,14 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			// create body
 			body->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2])));
 			// create texture object
-			osg::ref_ptr<osg::Texture2D> tex(new osg::Texture2D);
-			tex->setImage(osgDB::readImageFile(_tex_path + "obstacles/wood.png"));
+			osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "obstacles/wood.png"));
+			tex->setDataVariance(osg::Object::STATIC);
 			tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 			tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+			tex->setUnRefImageDataAfterApply(true);
 			tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
 			tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 			tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-			tex->setDataVariance(osg::Object::STATIC);
 			// state set
 			body->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
 			body->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
@@ -1106,11 +1106,12 @@ void Scene::draw_scene_outdoors(void) {
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
 	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::GROUND]));
+	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+	tex->setUnRefImageDataAfterApply(true);
 	tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
 	tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 	// state set properties
 	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
@@ -1147,8 +1148,12 @@ void Scene::draw_scene_board(double x, double y) {
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
 	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::GROUND]));
-	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+	tex->setUnRefImageDataAfterApply(true);
+	tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+	tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
 	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
 	// add
@@ -1173,17 +1178,18 @@ void Scene::draw_skybox(void) {
 	osg::Image *imagePosZ = osgDB::readImageFile(_path[rs::FRONT]);
 	osg::Image *imageNegZ = osgDB::readImageFile(_path[rs::BACK]);
 	if (imagePosX && imageNegX && imagePosY && imageNegY && imagePosZ && imageNegZ) {
+		skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+		skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
 		skymap->setImage(osg::TextureCubeMap::POSITIVE_X, imagePosX);
 		skymap->setImage(osg::TextureCubeMap::NEGATIVE_X, imageNegX);
 		skymap->setImage(osg::TextureCubeMap::POSITIVE_Y, imagePosY);
 		skymap->setImage(osg::TextureCubeMap::NEGATIVE_Y, imageNegY);
 		skymap->setImage(osg::TextureCubeMap::POSITIVE_Z, imagePosZ);
 		skymap->setImage(osg::TextureCubeMap::NEGATIVE_Z, imageNegZ);
+		skymap->setUnRefImageDataAfterApply(true);
 		skymap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
 		skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 		skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-		skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-		skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
 	}
 	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
 	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);

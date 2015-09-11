@@ -53,55 +53,6 @@ Linkbot::~Linkbot(void) {
 	}
 }
 
-void Linkbot::moveJointOnce(int id, double *values) {
-	// lock goal
-	MUTEX_LOCK(&_goal_mutex);
-
-	// set motion parameters
-	_motor[id].mode = ONCE;
-	_motor[id].state = POSITIVE;
-
-	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
-	dJointEnable(_motor[id].id);
-	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
-	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
-
-	// set array
-	_loc[id] = 0;
-	_values[id] = values;
-
-	// unsuccessful
-	MUTEX_LOCK(&_motor[id].success_mutex);
-	_motor[id].success = false;
-	MUTEX_UNLOCK(&_motor[id].success_mutex);
-
-	// unlock goal
-	MUTEX_UNLOCK(&_goal_mutex);
-}
-
-void Linkbot::moveJointSingular(int id) {
-	// set motion parameters
-	_motor[id].mode = SINGULAR;
-	_motor[id].state = POSITIVE;
-
-	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
-	dJointEnable(_motor[id].id);
-	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
-	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
-
-	// unsuccessful
-	MUTEX_LOCK(&_motor[id].success_mutex);
-	_motor[id].success = false;
-	MUTEX_UNLOCK(&_motor[id].success_mutex);
-}
-
-/**********************************************************
-	inherited functions
- **********************************************************/
 int Linkbot::addConnector(int type, int face, int orientation, double size, int side, int conn) {
 	// get connector body position
 	rs::Pos P1 = this->getRobotFacePosition(face, this->getPosition(), this->getQuaternion());
@@ -207,21 +158,17 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 	return 0;
 }
 
-int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
-	// build
-	this->buildIndividual(p, q, a);
-
-	// set trackwidth
-	/*double wheel[4] = {0};
+void Linkbot::calculateTrackwidth(void) {
+	double wheel[4] = {0};
 	const double *pos;
 	int j = 0;
-	for (int i = 0; i < _conn.size(); i++) {
-		switch (_conn[i]->type) {
-			case Connectors::BIGWHEEL:
-			case Connectors::SMALLWHEEL:
-			case Connectors::TINYWHEEL:
-			case Connectors::WHEEL:
-				pos = dBodyGetPosition(_conn[i]->body);
+	for (unsigned int i = 0; i < _conn.size(); i++) {
+		switch (_conn[i].type) {
+			case Connectors::BigWheel:
+			case Connectors::SmallWheel:
+			case Connectors::TinyWheel:
+			case Connectors::Wheel:
+				pos = dBodyGetPosition(_conn[i].body);
 				wheel[j++] = pos[0];
 				wheel[j++] = pos[1];
 				break;
@@ -229,8 +176,93 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const 
 				break;
 		}
 	}
-	_trackwidth = sqrt(pow(wheel[0] - wheel[2], 2) + pow(wheel[1] - wheel[3], 2));*/
-	_trackwidth = 0.094;
+	_trackwidth = sqrt(pow(wheel[0] - wheel[2], 2) + pow(wheel[1] - wheel[3], 2));
+	if (fabs(_trackwidth) < rs::Epsilon) _trackwidth = 0.094;
+}
+
+const rs::Pos Linkbot::getCoM(double &mass) {
+	double total = 0;
+	double x = 0, y = 0, z = 0;
+	// body parts
+	for (int i = 0; i < Bodies::Num_Parts; i++) {
+		dMass m;
+		dBodyGetMass(_body[i], &m);
+		const double *p = dBodyGetPosition(_body[i]);
+		x += m.mass*p[0];
+		y += m.mass*p[1];
+		z += m.mass*p[2];
+		total += m.mass;
+	}
+	// connectors
+	for (unsigned int i = 0; i < _conn.size(); i++) {
+		dMass m;
+		dBodyGetMass(_conn[i].body, &m);
+		const double *p = dBodyGetPosition(_conn[i].body);
+		x += m.mass*p[0];
+		y += m.mass*p[1];
+		z += m.mass*p[2];
+		total += m.mass;
+	}
+	x /= total;
+	y /= total;
+	z /= total;
+
+	mass = total;
+	return rs::Pos(x, y, z);
+}
+
+void Linkbot::moveJointOnce(int id, double *values) {
+	// lock goal
+	MUTEX_LOCK(&_goal_mutex);
+
+	// set motion parameters
+	_motor[id].mode = ONCE;
+	_motor[id].state = POSITIVE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[id].id);
+	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// set array
+	_loc[id] = 0;
+	_values[id] = values;
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[id].success_mutex);
+	_motor[id].success = false;
+	MUTEX_UNLOCK(&_motor[id].success_mutex);
+
+	// unlock goal
+	MUTEX_UNLOCK(&_goal_mutex);
+}
+
+void Linkbot::moveJointSingular(int id) {
+	// set motion parameters
+	_motor[id].mode = SINGULAR;
+	_motor[id].state = POSITIVE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[id].id);
+	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[id].success_mutex);
+	_motor[id].success = false;
+	MUTEX_UNLOCK(&_motor[id].success_mutex);
+}
+
+/**********************************************************
+	inherited functions
+ **********************************************************/
+int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
+	// build
+	this->buildIndividual(p, q, a);
 
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);
@@ -356,37 +388,6 @@ double Linkbot::calculate_angle(int id) {
 		return 0;
 
 	return mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
-}
-
-const rs::Pos Linkbot::getCoM(double &mass) {
-	double total = 0;
-	double x = 0, y = 0, z = 0;
-	// body parts
-	for (int i = 0; i < Bodies::Num_Parts; i++) {
-		dMass m;
-		dBodyGetMass(_body[i], &m);
-		const double *p = dBodyGetPosition(_body[i]);
-		x += m.mass*p[0];
-		y += m.mass*p[1];
-		z += m.mass*p[2];
-		total += m.mass;
-	}
-	// connectors
-	for (unsigned int i = 0; i < _conn.size(); i++) {
-		dMass m;
-		dBodyGetMass(_conn[i].body, &m);
-		const double *p = dBodyGetPosition(_conn[i].body);
-		x += m.mass*p[0];
-		y += m.mass*p[1];
-		z += m.mass*p[2];
-		total += m.mass;
-	}
-	x /= total;
-	y /= total;
-	z /= total;
-
-	mass = total;
-	return rs::Pos(x, y, z);
 }
 
 const rs::Vec Linkbot::getJoints(void) {

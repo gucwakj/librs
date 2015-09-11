@@ -14,6 +14,7 @@ namespace rsSim {
 			virtual ~Linkbot(void);
 
 			virtual int addConnector(int, int, int = rs::RIGHT, double = 0, int = 1, int = -1);
+			virtual void calculateTrackwidth(void);
 			virtual const rs::Pos getCoM(double&);
 			const rs::Vec getJoints(void);
 			void moveJointOnce(int, double*);		// research

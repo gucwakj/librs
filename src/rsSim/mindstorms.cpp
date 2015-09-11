@@ -53,7 +53,7 @@ Mindstorms::~Mindstorms(void) {
 }
 
 /**********************************************************
-	inherited functions
+	protected functions
  **********************************************************/
 int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
 	// set wheels

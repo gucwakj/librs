@@ -14,7 +14,7 @@ namespace rsSim {
 			virtual ~Mindstorms(void);
 
 		// inherited functions from Robot class
-		private:
+		protected:
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int);
 			virtual int buildIndividual(const rs::Pos&, const rs::Quat&, const rs::Vec&);
 			virtual double calculate_angle(int);

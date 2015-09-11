@@ -53,6 +53,9 @@ Linkbot::~Linkbot(void) {
 	}
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 int Linkbot::addConnector(int type, int face, int orientation, double size, int side, int conn) {
 	// get connector body position
 	rs::Pos P1 = this->getRobotFacePosition(face, this->getPosition(), this->getQuaternion());
@@ -211,6 +214,10 @@ const rs::Pos Linkbot::getCoM(double &mass) {
 	return rs::Pos(x, y, z);
 }
 
+const rs::Vec Linkbot::getJoints(void) {
+	return rs::Vec(_motor[Bodies::Joint1].theta, _motor[Bodies::Joint2].theta, _motor[Bodies::Joint3].theta);
+}
+
 void Linkbot::moveJointOnce(int id, double *values) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
@@ -258,7 +265,7 @@ void Linkbot::moveJointSingular(int id) {
 }
 
 /**********************************************************
-	inherited functions
+	protected functions
  **********************************************************/
 int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
 	// build
@@ -388,10 +395,6 @@ double Linkbot::calculate_angle(int id) {
 		return 0;
 
 	return mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
-}
-
-const rs::Vec Linkbot::getJoints(void) {
-	return rs::Vec(_motor[Bodies::Joint1].theta, _motor[Bodies::Joint2].theta, _motor[Bodies::Joint3].theta);
 }
 
 void Linkbot::simPreCollisionThread(void) {

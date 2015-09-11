@@ -49,59 +49,8 @@ Dof::~Dof(void) {
 	COND_DESTROY(&_motor[Bodies::Joint].success_cond);
 }
 
-double Dof::getAngle(int id) {
-	if (id == _enabled) return _motor[Bodies::Joint].theta;
-	return 0;
-}
-
-void Dof::moveJointOnce(double *values) {
-	// lock goal
-	MUTEX_LOCK(&_goal_mutex);
-
-	// set motion parameters
-	_motor[Bodies::Joint].mode = ONCE;
-	_motor[Bodies::Joint].state = POSITIVE;
-
-	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
-	dJointEnable(_motor[Bodies::Joint].id);
-	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
-	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
-
-	// set array
-	_index = 0;
-	_values = values;
-
-	// unsuccessful
-	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
-	_motor[Bodies::Joint].success = false;
-	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
-
-	// unlock goal
-	MUTEX_UNLOCK(&_goal_mutex);
-}
-
-void Dof::moveJointSingular(void) {
-	// set motion parameters
-	_motor[Bodies::Joint].mode = SINGULAR;
-	_motor[Bodies::Joint].state = POSITIVE;
-
-	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
-	dJointEnable(_motor[Bodies::Joint].id);
-	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
-	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
-
-	// unsuccessful
-	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
-	_motor[Bodies::Joint].success = false;
-	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
-}
-
 /**********************************************************
-	inherited functions
+	public functions
  **********************************************************/
 int Dof::addConnector(int type, int face, int orientation, double size, int side, int conn) {
 	// get connector body position
@@ -162,6 +111,100 @@ int Dof::addConnector(int type, int face, int orientation, double size, int side
 	return 0;
 }
 
+double Dof::getAngle(int id) {
+	if (id == _enabled) return _motor[Bodies::Joint].theta;
+	return 0;
+}
+
+dBodyID Dof::getBodyID(int face) {
+	if (face == _enabled) return _body[Bodies::Cap];
+	return _body[Bodies::Body];
+}
+
+const rs::Pos Dof::getCoM(double &mass) {
+	double total = 0;
+	double x = 0, y = 0, z = 0;
+	// body parts
+	for (unsigned int i = 0; i < _body.size(); i++) {
+		dMass m;
+		dBodyGetMass(_body[i], &m);
+		const double *p = dBodyGetPosition(_body[i]);
+		x += m.mass*p[0];
+		y += m.mass*p[1];
+		z += m.mass*p[2];
+		total += m.mass;
+	}
+	// connectors
+	for (unsigned int i = 0; i < _conn.size(); i++) {
+		dMass m;
+		dBodyGetMass(_conn[i].body, &m);
+		const double *p = dBodyGetPosition(_conn[i].body);
+		x += m.mass*p[0];
+		y += m.mass*p[1];
+		z += m.mass*p[2];
+		total += m.mass;
+	}
+	x /= total;
+	y /= total;
+	z /= total;
+
+	mass = total;
+	return rs::Pos(x, y, z);
+}
+
+const rs::Vec Dof::getJoints(void) {
+	return rs::Vec(_motor[Bodies::Joint].theta);
+}
+
+void Dof::moveJointOnce(double *values) {
+	// lock goal
+	MUTEX_LOCK(&_goal_mutex);
+
+	// set motion parameters
+	_motor[Bodies::Joint].mode = ONCE;
+	_motor[Bodies::Joint].state = POSITIVE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[Bodies::Joint].id);
+	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// set array
+	_index = 0;
+	_values = values;
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
+	_motor[Bodies::Joint].success = false;
+	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
+
+	// unlock goal
+	MUTEX_UNLOCK(&_goal_mutex);
+}
+
+void Dof::moveJointSingular(void) {
+	// set motion parameters
+	_motor[Bodies::Joint].mode = SINGULAR;
+	_motor[Bodies::Joint].state = POSITIVE;
+
+	// enable motor
+	MUTEX_LOCK(&_theta_mutex);
+	dJointEnable(_motor[Bodies::Joint].id);
+	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
+	dBodyEnable(_body[0]);
+	MUTEX_UNLOCK(&_theta_mutex);
+
+	// unsuccessful
+	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
+	_motor[Bodies::Joint].success = false;
+	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
+}
+
+/**********************************************************
+	protected functions
+ **********************************************************/
 int Dof::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
 	// build
 	this->buildIndividual(p, q, a);
@@ -248,46 +291,6 @@ int Dof::buildIndividual(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) 
 
 double Dof::calculate_angle(int id) {
 	return mod_angle(_motor[Bodies::Joint].theta, dJointGetHingeAngle(_motor[Bodies::Joint].joint), dJointGetHingeAngleRate(_motor[Bodies::Joint].joint)) - _motor[Bodies::Joint].offset;
-}
-
-dBodyID Dof::getBodyID(int face) {
-	if (face == _enabled) return _body[Bodies::Cap];
-	return _body[Bodies::Body];
-}
-
-const rs::Pos Dof::getCoM(double &mass) {
-	double total = 0;
-	double x = 0, y = 0, z = 0;
-	// body parts
-	for (unsigned int i = 0; i < _body.size(); i++) {
-		dMass m;
-		dBodyGetMass(_body[i], &m);
-		const double *p = dBodyGetPosition(_body[i]);
-		x += m.mass*p[0];
-		y += m.mass*p[1];
-		z += m.mass*p[2];
-		total += m.mass;
-	}
-	// connectors
-	for (unsigned int i = 0; i < _conn.size(); i++) {
-		dMass m;
-		dBodyGetMass(_conn[i].body, &m);
-		const double *p = dBodyGetPosition(_conn[i].body);
-		x += m.mass*p[0];
-		y += m.mass*p[1];
-		z += m.mass*p[2];
-		total += m.mass;
-	}
-	x /= total;
-	y /= total;
-	z /= total;
-
-	mass = total;
-	return rs::Pos(x, y, z);
-}
-
-const rs::Vec Dof::getJoints(void) {
-	return rs::Vec(_motor[Bodies::Joint].theta);
 }
 
 void Dof::simPreCollisionThread(void) {

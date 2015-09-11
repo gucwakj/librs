@@ -48,7 +48,6 @@ namespace rsSim {
 
 		// utility functions
 		protected:
-			virtual double calculate_angle(int) { return 0; };
 			int doze(double);
 			int fixBodyToGround(dBodyID);
 			virtual dBodyID getBodyID(int);

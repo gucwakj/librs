@@ -233,17 +233,13 @@ int Dof::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyID ba
 	return 0;
 }
 
-double Dof::calculate_angle(int id) {
-	return mod_angle(_motor[Bodies::Joint].theta, dJointGetHingeAngle(_motor[Bodies::Joint].joint), dJointGetHingeAngleRate(_motor[Bodies::Joint].joint)) - _motor[Bodies::Joint].offset;
-}
-
 void Dof::simPreCollisionThread(void) {
 	// lock angle and goal
 	MUTEX_LOCK(&_goal_mutex);
 	MUTEX_LOCK(&_theta_mutex);
 
 	// store current angle
-	_motor[Bodies::Joint].theta = calculate_angle(_enabled);
+	_motor[Bodies::Joint].theta = this->mod_angle(_motor[Bodies::Joint].theta, dJointGetHingeAngle(_motor[Bodies::Joint].joint), dJointGetHingeAngleRate(_motor[Bodies::Joint].joint)) - _motor[Bodies::Joint].offset;
 	// set motor angle to current angle
 	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
 	// engage motor depending upon motor mode

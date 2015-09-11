@@ -124,11 +124,6 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 	return 0;
 }
 
-double Mindstorms::calculate_angle(int id) {
-	_motor[id].theta = mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
-	return _motor[id].theta;
-}
-
 void Mindstorms::simPreCollisionThread(void) {
 	// lock angle and goal
 	MUTEX_LOCK(&_goal_mutex);
@@ -146,7 +141,7 @@ void Mindstorms::simPreCollisionThread(void) {
 	// update angle values for each degree of freedom
 	for (int i = 0; i < _dof; i++) {
 		// store current angle
-		_motor[i].theta = calculate_angle(i);
+		_motor[i].theta = this->mod_angle(_motor[i].theta, dJointGetHingeAngle(_motor[i].joint), dJointGetHingeAngleRate(_motor[i].joint)) - _motor[i].offset;
 		// set rotation axis
 		dVector3 axis;
 		dJointGetHingeAxis(_motor[i].joint, axis);

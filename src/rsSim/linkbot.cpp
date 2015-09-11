@@ -302,13 +302,6 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyI
 	return 0;
 }
 
-double Linkbot::calculate_angle(int id) {
-	if (id == _disabled)
-		return 0;
-
-	return mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
-}
-
 void Linkbot::simPreCollisionThread(void) {
 	// lock angle and goal
 	MUTEX_LOCK(&_goal_mutex);
@@ -899,5 +892,11 @@ void Linkbot::build_wheel(Connector &conn, double size) {
 	dGeomSetBody(geom, conn.body);
 	dQuaternion Q = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom, Q);
+}
+
+double Linkbot::calculate_angle(int id) {
+	if (id == _disabled) return 0;
+
+	return mod_angle(_motor[id].theta, dJointGetHingeAngle(_motor[id].joint), dJointGetHingeAngleRate(_motor[id].joint)) - _motor[id].offset;
 }
 

@@ -12,12 +12,12 @@ Robot::Robot(void) : rsRobots::Robot(rs::ROBOT) {
 	_connected = 0;
 	_distOffset = 0;
 	_id = -1;
-	_motion = false;
 	_rgb[0] = 0;
 	_rgb[1] = 0;
 	_rgb[2] = 1;
 	_sim = NULL;
 	_speed = 2;
+	_success = false;
 	_trace = 1;
 
 	// private variables
@@ -146,31 +146,6 @@ int Robot::moveJointWait(int id) {
 	MUTEX_LOCK(&_motor[id].success_mutex);
 	while ( !_motor[id].success ) { COND_WAIT(&_motor[id].success_cond, &_motor[id].success_mutex); }
 	MUTEX_UNLOCK(&_motor[id].success_mutex);
-
-	// success
-	return 0;
-}
-
-int Robot::moveWait(void) {
-	// lock
-	MUTEX_LOCK(&_success_mutex);
-	// get number of successes
-	int success = 0;
-	for (int i = 0; i < _dof; i++) {
-		success += _motor[i].success;
-	}
-	// wait
-	while (success != _dof) {
-		COND_WAIT(&_success_cond, &_success_mutex);
-		success = 0;
-		for (int i = 0; i < _dof; i++) { success += _motor[i].success; }
-	}
-	// reset motor states
-	for (int i = 0; i < _dof; i++) {
-		_motor[i].mode = CONTINUOUS;
-	}
-	// unlock
-	MUTEX_UNLOCK(&_success_mutex);
 
 	// success
 	return 0;

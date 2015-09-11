@@ -334,23 +334,21 @@ void Dof::simPostCollisionThread(void) {
 	MUTEX_LOCK(&_goal_mutex);
 	MUTEX_LOCK(&_theta_mutex);
 	MUTEX_LOCK(&_success_mutex);
-
-	// lock mutex
 	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
+
 	// zero velocity == stopped
 	_motor[Bodies::Joint].stopping += (!(int)(dJointGetAMotorParam(_motor[Bodies::Joint].id, dParamVel)*1000) );
 	// once motor has been stopped for 10 steps
 	if (_motor[Bodies::Joint].stopping == 50) {
 		_motor[Bodies::Joint].stopping = 0;
 		_motor[Bodies::Joint].success = 1;
-	}
-	// signal success
-	if (_motor[Bodies::Joint].success)
 		COND_SIGNAL(&_motor[Bodies::Joint].success_cond);
+		_success = true;
+		COND_SIGNAL(&_success_cond);
+	}
+
 	// unlock mutex
 	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
-
-	// unlock angle and goal
 	MUTEX_UNLOCK(&_success_mutex);
 	MUTEX_UNLOCK(&_theta_mutex);
 	MUTEX_UNLOCK(&_goal_mutex);

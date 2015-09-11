@@ -32,7 +32,6 @@ namespace rsSim {
 			int moveJointTo(int, double);
 			int moveJointToNB(int, double);
 			int moveJointWait(int);
-			int moveWait(void);
 #ifdef DO_RESEARCH
 			void setCPGGoal(double);		// research: set next goal value
 #endif
@@ -122,7 +121,7 @@ namespace rsSim {
 			rsSim::Sim *_sim;			// simulation instance
 			std::vector<Motor> _motor;	// motors
 			BodyList _body;				// body parts
-			bool _motion;				// motion in progress
+			bool _success;				// all joints are done
 			double _accel[3];			// accelerometer data
 			double _center[3];			// offset of body from initial (x,y,z)
 			double _distOffset;			// offset for recorded distance

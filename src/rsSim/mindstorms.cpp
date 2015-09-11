@@ -298,7 +298,6 @@ void Mindstorms::simPostCollisionThread(void) {
 	// lock angle and goal
 	MUTEX_LOCK(&_goal_mutex);
 	MUTEX_LOCK(&_theta_mutex);
-	MUTEX_LOCK(&_success_mutex);
 
 	// check if joint speed is zero -> joint has completed step
 	for (int i = 0; i < _dof; i++) {
@@ -310,20 +309,21 @@ void Mindstorms::simPostCollisionThread(void) {
 		if (_motor[i].stopping == 50) {
 			_motor[i].stopping = 0;
 			_motor[i].success = 1;
-		}
-		// signal success
-		if (_motor[i].success)
 			COND_SIGNAL(&_motor[i].success_cond);
+		}
 		// unlock mutex
 		MUTEX_UNLOCK(&_motor[i].success_mutex);
 	}
 
 	// all joints have completed their motions
-	if (_motor[Bodies::Joint1].success && _motor[Bodies::Joint2].success)
+	MUTEX_LOCK(&_success_mutex);
+	if (_motor[Bodies::Joint1].success && _motor[Bodies::Joint2].success) {
+		_success = true;
 		COND_SIGNAL(&_success_cond);
+	}
+	MUTEX_UNLOCK(&_success_mutex);
 
 	// unlock angle and goal
-	MUTEX_UNLOCK(&_success_mutex);
 	MUTEX_UNLOCK(&_theta_mutex);
 	MUTEX_UNLOCK(&_goal_mutex);
 }

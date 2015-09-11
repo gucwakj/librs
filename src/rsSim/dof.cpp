@@ -114,8 +114,8 @@ int Dof::addConnector(int type, int face, int orientation, double size, int side
 	else {
 		P1 = this->getConnFacePosition(type, side, orientation, P1, Q1);
 		Q1 = this->getConnFaceQuaternion(type, side, orientation, Q1);
-		P1 = this->getConnBodyPosition(type, orientation, P1, Q1);
-		Q1 = this->getConnBodyQuaternion(type, orientation, Q1);
+		P1 = this->getConnBodyPosition(conn, orientation, P1, Q1);
+		Q1 = this->getConnBodyQuaternion(conn, orientation, Q1);
 	}
 
 	// create new connector

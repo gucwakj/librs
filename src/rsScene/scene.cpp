@@ -436,6 +436,8 @@ void Scene::setGrid(std::vector<double> grid, bool draw) {
 	// draw grid if there is a background on which to draw
 	if (_level && draw) {
 		// remove old grid
+		// background[0] -> skybox
+		// background[1] -> ground
 		_background->removeChildren(2, _background->getNumChildren());
 
 		// draw new grid
@@ -1084,9 +1086,6 @@ void Scene::draw_scene_outdoors(void) {
 	// draw skybox
 	this->draw_skybox();
 
-	// draw grid
-	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
-
 	// square geometry
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	// extents of geom
@@ -1121,8 +1120,12 @@ void Scene::draw_scene_outdoors(void) {
 	// create geode
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 	geode->addDrawable(geom);
+	geode->setName("ground");
 	// add to scene
 	_background->addChild(geode);
+
+	// draw grid
+	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 }
 
 void Scene::draw_scene_board(double x, double y) {
@@ -1209,6 +1212,7 @@ void Scene::draw_skybox(void) {
 	osg::ref_ptr<osg::Transform> transform = new SkyTransform();
 	transform->setCullingActive(false);
 	transform->addChild(geode);
+	transform->setName("skybox");
 	_background->addChild(transform);
 }
 

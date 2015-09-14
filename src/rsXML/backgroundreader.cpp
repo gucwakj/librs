@@ -119,19 +119,19 @@ void BackgroundReader::read_background(tinyxml2::XMLDocument *doc, std::string p
 	_path.resize(7);
 	tinyxml2::XMLElement *ele = NULL;
 	ele = node->FirstChildElement("ground");
-	if (ele) _path[rs::GROUND].append(path).append(ele->GetText());
+	if (ele) _path[rs::Ground].append(path).append(ele->GetText());
 	ele = node->FirstChildElement("front");
-	if (ele) _path[rs::FRONT].append(path).append(ele->GetText());
+	if (ele) _path[rs::Front].append(path).append(ele->GetText());
 	ele = node->FirstChildElement("left");
-	if (ele) _path[rs::LEFTSIDE].append(path).append(ele->GetText());
+	if (ele) _path[rs::LeftSide].append(path).append(ele->GetText());
 	ele = node->FirstChildElement("back");
-	if (ele) _path[rs::BACK].append(path).append(ele->GetText());
+	if (ele) _path[rs::Back].append(path).append(ele->GetText());
 	ele = node->FirstChildElement("right");
-	if (ele) _path[rs::RIGHTSIDE].append(path).append(ele->GetText());
+	if (ele) _path[rs::RightSide].append(path).append(ele->GetText());
 	ele = node->FirstChildElement("top");
-	if (ele) _path[rs::TOP].append(path).append(ele->GetText());
+	if (ele) _path[rs::Top].append(path).append(ele->GetText());
 	ele = node->FirstChildElement("bottom");
-	if (ele) _path[rs::BOTTOM].append(path).append(ele->GetText());
+	if (ele) _path[rs::Bottom].append(path).append(ele->GetText());
 }
 
 void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
@@ -150,7 +150,7 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 	while (node) {
 		if ( !strcmp(node->Value(), "line") ) {
 			// create object
-			_marker.push_back(new Marker(rs::LINE));
+			_marker.push_back(new Marker(rs::Line));
 			// id
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
@@ -187,7 +187,7 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "dot") ) {
 			// create object
-			_marker.push_back(new Marker(rs::DOT));
+			_marker.push_back(new Marker(rs::Dot));
 			// id
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
@@ -216,7 +216,7 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "text") ) {
 			// create object
-			_marker.push_back(new Marker(rs::TEXT));
+			_marker.push_back(new Marker(rs::Text));
 			// id
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
@@ -266,7 +266,7 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 	while (node) {
 		if ( !strcmp(node->Value(), "box") ) {
 			// create object
-			_obstacle.push_back(new Obstacle(rs::BOX));
+			_obstacle.push_back(new Obstacle(rs::Box));
 			// id
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
@@ -311,7 +311,7 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "cylinder") ) {
 			// create object
-			_obstacle.push_back(new Obstacle(rs::CYLINDER));
+			_obstacle.push_back(new Obstacle(rs::Cylinder));
 			// id
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
@@ -360,7 +360,7 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "sphere") ) {
 			// create object
-			_obstacle.push_back(new Obstacle(rs::SPHERE));
+			_obstacle.push_back(new Obstacle(rs::Sphere));
 			// id
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);

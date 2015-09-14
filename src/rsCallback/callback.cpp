@@ -34,12 +34,12 @@ void Callback::attachCallback(rsScene::Group *scene, rsSim::Robot *sim, rsSim::B
 void Callback::attachCallback(rsScene::Group *scene, rsSim::Robot *sim, rsSim::BodyList &bodies, rsSim::ConnectorList &conn) {
 	switch (sim->getForm()) {
 #ifdef RS_DOF
-		case rs::DOF:
+		case rs::Dof:
 			scene->setUpdateCallback(new Dof(dynamic_cast<rsSim::Dof *>(sim), bodies, conn, _units));
 			break;
 #endif
 #ifdef RS_LINKBOT
-		case rs::LINKBOTI: case rs::LINKBOTL: case rs::LINKBOTT:
+		case rs::LinkbotI: case rs::LinkbotL: case rs::LinkbotT:
 			scene->setUpdateCallback(new Linkbot(dynamic_cast<rsSim::Linkbot *>(sim), bodies, conn, _units));
 			break;
 #endif

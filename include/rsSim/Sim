@@ -29,7 +29,7 @@ namespace rsSim {
 
 			int addRobot(Robot*, int, const rs::Pos&, const rs::Quat&, const rs::Vec&, int = -1);
 			int addRobot(Robot*, int, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int = -1);
-			int addRobot(ModularRobot*, int, Robot*, const rs::Vec&, int, int, int, int, int = rs::RIGHT, int = -1);
+			int addRobot(ModularRobot*, int, Robot*, const rs::Vec&, int, int, int, int, int = rs::Right, int = -1);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double, int);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Vec&, double);

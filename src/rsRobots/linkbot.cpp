@@ -6,8 +6,8 @@ using namespace rsLinkbot;
 Linkbot::Linkbot(int form) : Robot(form) {
 	// disabled joint
 	_disabled = -1;
-	if (form == rs::LINKBOTI) _disabled = Bodies::Joint2;
-	else if (form == rs::LINKBOTL) _disabled = Bodies::Joint3;
+	if (form == rs::LinkbotI) _disabled = Bodies::Joint2;
+	else if (form == rs::LinkbotL) _disabled = Bodies::Joint3;
 
 	// body parts
 	_body_length = 0.03935;

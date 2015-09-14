@@ -57,7 +57,7 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 	// draw cap 2
 	q1 = this->getRobotBodyQuaternion(rsLinkbot::Bodies::Cap2, rs::D2R(a[rsLinkbot::Bodies::Joint2]), q);
 	p1 = this->getRobotBodyPosition(rsLinkbot::Bodies::Cap2, p, q);
-	if (this->getForm() == rs::LINKBOTI) {
+	if (this->getForm() == rs::LinkbotI) {
 		body[rsLinkbot::Bodies::Cap2] = osgDB::readNodeFile(_model_path + "linkbot/face_fixed.3ds");
 		body[rsLinkbot::Bodies::Cap2]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	}
@@ -71,7 +71,7 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 	// draw cap 3
 	q1 = this->getRobotBodyQuaternion(rsLinkbot::Bodies::Cap3, rs::D2R(a[rsLinkbot::Bodies::Joint3]), q);
 	p1 = this->getRobotBodyPosition(rsLinkbot::Bodies::Cap3, p, q);
-	if (this->getForm() == rs::LINKBOTL) {
+	if (this->getForm() == rs::LinkbotL) {
 		body[rsLinkbot::Bodies::Cap3] = osgDB::readNodeFile(_model_path + "linkbot/face_fixed.3ds");
 		body[rsLinkbot::Bodies::Cap3]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	}

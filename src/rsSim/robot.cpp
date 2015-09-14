@@ -7,7 +7,7 @@
 
 using namespace rsSim;
 
-Robot::Robot(void) : rsRobots::Robot(rs::ROBOT) {
+Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	// protected variables
 	_connected = 0;
 	_distOffset = 0;

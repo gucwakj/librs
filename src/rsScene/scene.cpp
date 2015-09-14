@@ -59,14 +59,14 @@ Scene::Scene(void) : KeyboardHandler() {
 
 	// set texture path
 	_tex_path = this->getTexturePath();
-	_path.resize(rs::NUM_IMAGES);
-	_path[rs::GROUND].append(_tex_path).append("background/outdoors/terrain.png");
-	_path[rs::FRONT].append(_tex_path).append("background/outdoors/sky/front.png");
-	_path[rs::LEFTSIDE].append(_tex_path).append("background/outdoors/sky/left.png");
-	_path[rs::BACK].append(_tex_path).append("background/outdoors/sky/back.png");
-	_path[rs::RIGHTSIDE].append(_tex_path).append("background/outdoors/sky/right.png");
-	_path[rs::TOP].append(_tex_path).append("background/outdoors/sky/top.png");
-	_path[rs::BOTTOM].append(_tex_path).append("background/outdoors/sky/bottom.png");
+	_path.resize(rs::Num_Images);
+	_path[rs::Ground].append(_tex_path).append("background/outdoors/terrain.png");
+	_path[rs::Front].append(_tex_path).append("background/outdoors/sky/front.png");
+	_path[rs::LeftSide].append(_tex_path).append("background/outdoors/sky/left.png");
+	_path[rs::Back].append(_tex_path).append("background/outdoors/sky/back.png");
+	_path[rs::RightSide].append(_tex_path).append("background/outdoors/sky/right.png");
+	_path[rs::Top].append(_tex_path).append("background/outdoors/sky/top.png");
+	_path[rs::Bottom].append(_tex_path).append("background/outdoors/sky/bottom.png");
 
 	// flags for graphical output options
 	_highlight = false;
@@ -243,11 +243,11 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 
 	// draw specific marker
 	switch (type) {
-		case rs::DOT: {
+		case rs::Dot: {
 			geode->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), size/500.0)));
 			break;
 		}
-		case rs::LINE: {
+		case rs::Line: {
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			vert->push_back(osg::Vec3(0, 0, 0));
@@ -260,7 +260,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
 			break;
 		}
-		case rs::TEXT: {
+		case rs::Text: {
 			osg::ref_ptr<osgText::Text> label = new osgText::Text();
 			label->setAlignment(osgText::Text::CENTER_CENTER);
 			label->setAxisAlignment(osgText::Text::SCREEN);
@@ -304,13 +304,13 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 	osg::ref_ptr<osg::Geode> body = new osg::Geode();
 
 	switch (type) {
-		case rs::BOX:
+		case rs::Box:
 			body->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2])));
 			break;
-		case rs::CYLINDER:
+		case rs::Cylinder:
 			body->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[0], l[1])));
 			break;
-		case rs::HACKYSACK: {
+		case rs::HackySack: {
 			// create body
 			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0])));
 			// create texture object
@@ -328,10 +328,10 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			body->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
 			break;
 		}
-		case rs::SPHERE:
+		case rs::Sphere:
 			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0])));
 			break;
-		case rs::WOODBLOCK: {
+		case rs::WoodBlock: {
 			// create body
 			body->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2])));
 			// create texture object
@@ -1106,7 +1106,7 @@ void Scene::draw_scene_outdoors(void) {
 	geom->setTexCoordArray(0, tcoords);
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
-	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::GROUND]));
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::Ground]));
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setUnRefImageDataAfterApply(true);
@@ -1152,7 +1152,7 @@ void Scene::draw_scene_board(double x, double y) {
 	geom->setTexCoordArray(0, tcoords);
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// texture image
-	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::GROUND]));
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::Ground]));
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setUnRefImageDataAfterApply(true);
@@ -1176,12 +1176,12 @@ void Scene::draw_skybox(void) {
 	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat();
 	stateset->setTextureAttribute(0, tm);
 	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap();
-	osg::Image *imagePosX = osgDB::readImageFile(_path[rs::RIGHTSIDE]);
-	osg::Image *imageNegX = osgDB::readImageFile(_path[rs::LEFTSIDE]);
-	osg::Image *imagePosY = osgDB::readImageFile(_path[rs::TOP]);
-	osg::Image *imageNegY = osgDB::readImageFile(_path[rs::TOP]);
-	osg::Image *imagePosZ = osgDB::readImageFile(_path[rs::FRONT]);
-	osg::Image *imageNegZ = osgDB::readImageFile(_path[rs::BACK]);
+	osg::Image *imagePosX = osgDB::readImageFile(_path[rs::RightSide]);
+	osg::Image *imageNegX = osgDB::readImageFile(_path[rs::LeftSide]);
+	osg::Image *imagePosY = osgDB::readImageFile(_path[rs::Top]);
+	osg::Image *imageNegY = osgDB::readImageFile(_path[rs::Top]);
+	osg::Image *imagePosZ = osgDB::readImageFile(_path[rs::Front]);
+	osg::Image *imageNegZ = osgDB::readImageFile(_path[rs::Back]);
 	if (imagePosX && imageNegX && imagePosY && imageNegY && imagePosZ && imageNegZ) {
 		skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 		skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);

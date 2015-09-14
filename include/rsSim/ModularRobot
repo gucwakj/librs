@@ -25,7 +25,7 @@ namespace rsSim {
 			ModularRobot(void);
 			virtual ~ModularRobot(void);
 
-			virtual int addConnector(int, int, int = rs::RIGHT, double = 0, int = 1, int = -1) { return 0; };
+			virtual int addConnector(int, int, int = rs::Right, double = 0, int = 1, int = -1) { return 0; };
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, dBodyID, int, int, int) { return 0; };
 			virtual void calculateTrackwidth(void) { return; }
 			dBodyID getConnectorBodyID(int);

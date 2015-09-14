@@ -8,7 +8,7 @@
 
 using namespace rsScene;
 
-Robot::Robot(void) : rsRobots::Robot(rs::ROBOT) {
+Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	_units = false;			// customary
 }
 

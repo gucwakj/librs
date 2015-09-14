@@ -3,7 +3,7 @@
 using namespace rsRobots;
 using namespace rsDof;
 
-Dof::Dof(int joint) : Robot(rs::DOF) {
+Dof::Dof(int joint) : Robot(rs::Dof) {
 	// enabled joint
 	_enabled = joint;
 

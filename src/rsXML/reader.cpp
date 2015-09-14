@@ -161,18 +161,18 @@ Robot* Reader::getNextRobot(int form) {
 	if (form != -1 && (i == _robot.size() || _robot[i]->getForm() != form)) {
 		switch (form) {
 #ifdef RS_DOF
-			case rs::DOF:
+			case rs::Dof:
 				std::cerr << "Error: Could not find a Dof in the RoboSim GUI robot list." << std::endl;
 				break;
 #endif
 #ifdef RS_LINKBOT
-			case rs::LINKBOTI:
+			case rs::LinkbotI:
 				std::cerr << "Error: Could not find a Linkbot-I in the RoboSim GUI robot list." << std::endl;
 				break;
-			case rs::LINKBOTL:
+			case rs::LinkbotL:
 				std::cerr << "Error: Could not find a Linkbot-L in the RoboSim GUI robot list." << std::endl;
 				break;
-			case rs::LINKBOTT:
+			case rs::LinkbotT:
 				std::cerr << "Error: Could not find a Linkbot-T in the RoboSim GUI robot list." << std::endl;
 				break;
 #endif
@@ -341,7 +341,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 	while (node) {
 		if ( !strcmp(node->Value(), "line") ) {
 			// create object
-			_marker.push_back(new Marker(rs::LINE));
+			_marker.push_back(new Marker(rs::Line));
 			// id
 			i = 0;
 			node->QueryIntAttribute("id", &i);
@@ -379,7 +379,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "dot") ) {
 			// create object
-			_marker.push_back(new Marker(rs::DOT));
+			_marker.push_back(new Marker(rs::Dot));
 			// id
 			i = 0;
 			node->QueryIntAttribute("id", &i);
@@ -421,7 +421,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "text") ) {
 			// create object
-			_marker.push_back(new Marker(rs::TEXT));
+			_marker.push_back(new Marker(rs::Text));
 			// id
 			i = 0;
 			node->QueryIntAttribute("id", &i);
@@ -473,7 +473,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 	while (node) {
 		if ( !strcmp(node->Value(), "box") ) {
 			// create object
-			_obstacle.push_back(new Obstacle(rs::BOX));
+			_obstacle.push_back(new Obstacle(rs::Box));
 			// id
 			i = 0;
 			node->QueryIntAttribute("id", &i);
@@ -519,7 +519,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "cylinder") ) {
 			// create object
-			_obstacle.push_back(new Obstacle(rs::CYLINDER));
+			_obstacle.push_back(new Obstacle(rs::Cylinder));
 			// id
 			i = 0;
 			node->QueryIntAttribute("id", &i);
@@ -569,7 +569,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "hackysack") ) {
 			// create object
-			_obstacle.push_back(new Obstacle(rs::HACKYSACK));
+			_obstacle.push_back(new Obstacle(rs::HackySack));
 			// id
 			i = 0;
 			node->QueryIntAttribute("id", &i);
@@ -588,7 +588,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "sphere") ) {
 			// create object
-			_obstacle.push_back(new Obstacle(rs::SPHERE));
+			_obstacle.push_back(new Obstacle(rs::Sphere));
 			// id
 			i = 0;
 			node->QueryIntAttribute("id", &i);
@@ -624,7 +624,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 		}
 		else if ( !strcmp(node->Value(), "woodblock") ) {
 			// create object
-			_obstacle.push_back(new Obstacle(rs::WOODBLOCK));
+			_obstacle.push_back(new Obstacle(rs::WoodBlock));
 			// id
 			i = 0;
 			node->QueryIntAttribute("id", &i);
@@ -699,13 +699,13 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				_robot.back()->setOrientation(i);
-				if (i == rs::RIGHT)
+				if (i == rs::Right)
 					_robot.back()->setPsi(0);
-				else if (i == rs::UP)
+				else if (i == rs::Up)
 					_robot.back()->setPsi(rs::Pi/2);
-				else if (i == rs::LEFT)
+				else if (i == rs::Left)
 					_robot.back()->setPsi(rs::Pi);
-				else if (i == rs::DOWN)
+				else if (i == rs::Down)
 					_robot.back()->setPsi(3*rs::Pi/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -739,7 +739,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 #endif
 #ifdef RS_LINKBOT
 		else if ( !strcmp(node->Value(), "linkboti") ) {
-			_robot.push_back(new Linkbot(rs::LINKBOTI, _trace));
+			_robot.push_back(new Linkbot(rs::LinkbotI, _trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
@@ -764,13 +764,13 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				_robot.back()->setOrientation(i);
-				if (i == rs::RIGHT)
+				if (i == rs::Right)
 					_robot.back()->setPsi(0);
-				else if (i == rs::UP)
+				else if (i == rs::Up)
 					_robot.back()->setPsi(rs::Pi/2);
-				else if (i == rs::LEFT)
+				else if (i == rs::Left)
 					_robot.back()->setPsi(rs::Pi);
-				else if (i == rs::DOWN)
+				else if (i == rs::Down)
 					_robot.back()->setPsi(3*rs::Pi/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -820,7 +820,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot.back()->setGround(i);
 		}
 		else if ( !strcmp(node->Value(), "linkbotl") ) {
-			_robot.push_back(new Linkbot(rs::LINKBOTL, _trace));
+			_robot.push_back(new Linkbot(rs::LinkbotL, _trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
@@ -845,13 +845,13 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				_robot.back()->setOrientation(i);
-				if (i == rs::RIGHT)
+				if (i == rs::Right)
 					_robot.back()->setPsi(0);
-				else if (i == rs::UP)
+				else if (i == rs::Up)
 					_robot.back()->setPsi(rs::Pi/2);
-				else if (i == rs::LEFT)
+				else if (i == rs::Left)
 					_robot.back()->setPsi(rs::Pi);
-				else if (i == rs::DOWN)
+				else if (i == rs::Down)
 					_robot.back()->setPsi(3*rs::Pi/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
@@ -883,7 +883,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot.back()->setGround(i);
 		}
 		else if ( !strcmp(node->Value(), "linkbott") ) {
-			_robot.push_back(new Linkbot(rs::LINKBOTT, _trace));
+			_robot.push_back(new Linkbot(rs::LinkbotT, _trace));
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
@@ -908,13 +908,13 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if (!node->QueryIntAttribute("orientation", &i)) {
 				_robot.back()->setOrientation(i);
-				if (i == rs::RIGHT)
+				if (i == rs::Right)
 					_robot.back()->setPsi(0);
-				else if (i == rs::UP)
+				else if (i == rs::Up)
 					_robot.back()->setPsi(rs::Pi/2);
-				else if (i == rs::LEFT)
+				else if (i == rs::Left)
 					_robot.back()->setPsi(rs::Pi);
-				else if (i == rs::DOWN)
+				else if (i == rs::Down)
 					_robot.back()->setPsi(3*rs::Pi/2);
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {

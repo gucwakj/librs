@@ -80,13 +80,13 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs:
 
 	// set individual pieces
 	switch (marker->IntAttribute("form")) {
-		case rs::DOT:
+		case rs::Dot:
 			marker->SetAttribute("radius", size);
 			break;
-		case rs::LINE:
+		case rs::Line:
 			marker->SetAttribute("width", size);
 			break;
-		case rs::TEXT:
+		case rs::Text:
 			this->getOrCreateChild(marker, "name")->DeleteChildren();
 			this->getOrCreateChild(marker, "name")->InsertFirstChild(this->toText(name));
 			break;
@@ -123,18 +123,18 @@ void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, const
 	// set size
 	tinyxml2::XMLElement *size = getOrCreateChild(obstacle, "size");
 	switch (obstacle->IntAttribute("form")) {
-		case rs::BOX:
-		case rs::WOODBLOCK:
+		case rs::Box:
+		case rs::WoodBlock:
 			size->SetAttribute("x", l[0]);
 			size->SetAttribute("y", l[1]);
 			size->SetAttribute("z", l[2]);
 			break;
-		case rs::CYLINDER:
+		case rs::Cylinder:
 			size->SetAttribute("length", l[0]);
 			size->SetAttribute("radius", l[1]);
 			obstacle->SetAttribute("axis", l[2]);
 			break;
-		case rs::SPHERE:
+		case rs::Sphere:
 			size->SetAttribute("radius", l[0]);
 			break;
 	}
@@ -167,9 +167,9 @@ void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, const rs::P
 	// set joints
 	tinyxml2::XMLElement *joint = getOrCreateChild(robot, "joint");
 	switch (robot->IntAttribute("form")) {
-		case rs::LINKBOTI:
-		case rs::LINKBOTL:
-		case rs::LINKBOTT:
+		case rs::LinkbotI:
+		case rs::LinkbotL:
+		case rs::LinkbotT:
 			joint->DeleteAttribute("w1");
 			joint->DeleteAttribute("w2");
 			joint->SetAttribute("f1", r[0]);
@@ -375,13 +375,13 @@ tinyxml2::XMLElement* Writer::getOrCreateMarker(int form, int id) {
 		node = node->NextSiblingElement();
 	}
 	switch (form) {
-		case rs::DOT:
+		case rs::Dot:
 			node = _doc.NewElement("dot");
 			break;
-		case rs::LINE:
+		case rs::Line:
 			node = _doc.NewElement("line");
 			break;
-		case rs::TEXT:
+		case rs::Text:
 			node = _doc.NewElement("text");
 			break;
 	}
@@ -404,19 +404,19 @@ tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
 		node = node->NextSiblingElement();
 	}
 	switch (form) {
-		case rs::BOX:
+		case rs::Box:
 			node = _doc.NewElement("box");
 			break;
-		case rs::CYLINDER:
+		case rs::Cylinder:
 			node = _doc.NewElement("cylinder");
 			break;
-		case rs::HACKYSACK:
+		case rs::HackySack:
 			node = _doc.NewElement("hackysack");
 			break;
-		case rs::SPHERE:
+		case rs::Sphere:
 			node = _doc.NewElement("sphere");
 			break;
-		case rs::WOODBLOCK:
+		case rs::WoodBlock:
 			node = _doc.NewElement("woodblock");
 			break;
 	}
@@ -438,10 +438,10 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 		if (i == id) {
 			node->SetAttribute("form", form);
 			switch (form) {
-				case rs::LINKBOTI:
+				case rs::LinkbotI:
 					node->SetValue("linkboti");
 					break;
-				case rs::LINKBOTL:
+				case rs::LinkbotL:
 					node->SetValue("linkbotl");
 					break;
 				case rs::EV3:
@@ -458,17 +458,17 @@ tinyxml2::XMLElement* Writer::getOrCreateRobot(int form, int id) {
 
 	// create new node if one matching 'id' is not found
 	switch (form) {
-		case rs::LINKBOTI:
+		case rs::LinkbotI:
 			node = _doc.NewElement("linkboti");
-			node->SetAttribute("form", rs::LINKBOTI);
+			node->SetAttribute("form", rs::LinkbotI);
 			break;
-		case rs::LINKBOTL:
+		case rs::LinkbotL:
 			node = _doc.NewElement("linkbotl");
-			node->SetAttribute("form", rs::LINKBOTL);
+			node->SetAttribute("form", rs::LinkbotL);
 			break;
-		case rs::LINKBOTT:
+		case rs::LinkbotT:
 			node = _doc.NewElement("linkbott");
-			node->SetAttribute("form", rs::LINKBOTT);
+			node->SetAttribute("form", rs::LinkbotT);
 			break;
 		case rs::EV3:
 			node = _doc.NewElement("ev3");

@@ -5,7 +5,7 @@
 using namespace rsXML;
 using namespace rsDof;
 
-Dof::Dof(int joint) : rsRobots::Robot(rs::DOF), rsRobots::Dof(joint), rsXML::Robot(0) {
+Dof::Dof(int joint) : rsRobots::Robot(rs::Dof), rsRobots::Dof(joint), rsXML::Robot(0) {
 	_a.allocate(Bodies::Num_Joints);
 	for (unsigned int i = 0; i < _a.size(); i++) {
 		_a[i] = 0;

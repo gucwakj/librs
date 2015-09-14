@@ -5,34 +5,34 @@ namespace rs {
 
 	// robot forms
 	enum Form {
-		DOF,
-		LINKBOTI,
-		LINKBOTL,
-		LINKBOTT,
+		Dof,
+		LinkbotI,
+		LinkbotL,
+		LinkbotT,
 		NXT,
 		EV3,
-		ROBOT,
-		NUM_TYPES
+		Robot,
+		Num_Types
 	};
 
 	// drawing objects (ground and graphic)
 	enum Drawing {
-		BOX,
-		CYLINDER,
-		DOT,
-		HACKYSACK,
-		LINE,
-		SPHERE,
-		TEXT,
-		WOODBLOCK
+		Box,
+		Cylinder,
+		Dot,
+		HackySack,
+		Line,
+		Sphere,
+		Text,
+		WoodBlock
 	};
 
 	// orientation
 	enum Orientation {
-		RIGHT,
-		UP,
-		LEFT,
-		DOWN
+		Right,
+		Up,
+		Left,
+		Down
 	};
 
 	// levels for simulation
@@ -48,14 +48,14 @@ namespace rs {
 
 	// all images to load for each level
 	enum Images {
-		FRONT,
-		LEFTSIDE,
-		BACK,
-		RIGHTSIDE,
-		TOP,
-		BOTTOM,
-		GROUND,
-		NUM_IMAGES
+		Front,
+		LeftSide,
+		Back,
+		RightSide,
+		Top,
+		Bottom,
+		Ground,
+		Num_Images
 	};
 
 } // namespace rs

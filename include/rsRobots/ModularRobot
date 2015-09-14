@@ -9,8 +9,8 @@ namespace rsRobots {
 	class LIBRSEXPORT ModularRobot : virtual public Robot {
 		// public functions
 		public:
-			ModularRobot(void) : Robot(rs::Robot) { };
-			virtual ~ModularRobot(void) { };
+			ModularRobot(void) : Robot(rs::Robot) {};
+			virtual ~ModularRobot(void) {};
 
 		// for inherited classes
 		public:

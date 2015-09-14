@@ -10,7 +10,7 @@ namespace rsXML {
 	class LIBRSEXPORT Dof : virtual public rsRobots::Dof, virtual public Robot {
 		public:
 			Dof(int = -1);
-			virtual ~Dof(void) { };
+			virtual ~Dof(void) {};
 
 			virtual void postProcess(void);
 	};

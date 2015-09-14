@@ -55,7 +55,7 @@ namespace rsRobots {
 		// public functions
 		public:
 			Dof(int);
-			virtual ~Dof(void) { };
+			virtual ~Dof(void) {};
 
 			int getEnabled(void);
 

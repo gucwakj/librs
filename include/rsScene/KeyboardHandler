@@ -23,8 +23,8 @@ namespace rsScene {
 	class LIBRSEXPORT KeyboardHandler : public osgGA::GUIEventHandler {
 		// public functions
 		public:
-			KeyboardHandler(void) { };
-			virtual ~KeyboardHandler(void) { };
+			KeyboardHandler(void) {};
+			virtual ~KeyboardHandler(void) {};
 
 			virtual bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
 			virtual void accept(osgGA::GUIEventHandlerVisitor&);

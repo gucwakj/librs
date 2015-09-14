@@ -10,8 +10,8 @@ namespace rsScene {
 	class LIBRSEXPORT ModularRobot : virtual public rsRobots::ModularRobot, virtual public rsScene::Robot {
 		// public functions
 		public:
-			ModularRobot(void) : rsRobots::Robot(rs::Robot) { };
-			virtual ~ModularRobot(void) { };
+			ModularRobot(void) : rsRobots::Robot(rs::Robot) {};
+			virtual ~ModularRobot(void) {};
 
 			virtual void drawConnector(Group*, int, int, int, double, int, int) { return; };
 	};

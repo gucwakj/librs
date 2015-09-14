@@ -91,7 +91,7 @@ namespace rsRobots {
 		// public functions
 		public:
 			Linkbot(int);
-			virtual ~Linkbot(void) { };
+			virtual ~Linkbot(void) {};
 
 			double getCasterScale(void);
 			const rs::Quat tiltForWheels(int, int, double&);

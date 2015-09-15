@@ -3,8 +3,8 @@
 #include <osg/ShapeDrawable>
 #include <osgText/Text>
 
-#include <rsScene/Scene>
 #include <rsCallback/Linkbot>
+#include <rsScene/Scene>
 
 osg::Node::NodeMask NOT_VISIBLE_MASK = 0x0;
 osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
@@ -12,11 +12,10 @@ osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
 using namespace rsCallback;
 using namespace rsLinkbot;
 
-Linkbot::Linkbot(rsSim::Linkbot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
+void Linkbot::setCallbackParams(rsSim::ModularRobot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
 	_bodies = bodies;
 	_conn = conn;
-	_count = 1;
-	_robot = robot;
+	_robot = dynamic_cast<rsSim::Linkbot *>(robot);
 	_units = units;
 }
 

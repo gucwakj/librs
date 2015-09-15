@@ -1,0 +1,31 @@
+#ifndef RSCALLBACK_ROBOT_
+#define RSCALLBACK_ROBOT_
+
+#include <osg/Node>
+#include <osg/NodeVisitor>
+
+#include <rsSim/Linkbot>
+
+namespace rsCallback {
+
+	// class
+	class LIBRSEXPORT Robot : public osg::NodeCallback {
+		// public functions
+		public:
+			Robot(void) : _units(false), _count(1) {};
+			virtual ~Robot(void) {};
+
+			virtual void setCallbackParams(rsSim::Robot*, rsSim::BodyList&, bool) { return; };
+			virtual void operator()(osg::Node*, osg::NodeVisitor*) { return; };
+
+		// protected data
+		protected:
+			bool _units;
+			int _count;
+			rsSim::BodyList _bodies;
+	};
+
+} // namespace rsCallback
+
+#endif // RSCALLBACK_ROBOT_
+

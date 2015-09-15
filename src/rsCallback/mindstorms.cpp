@@ -9,10 +9,9 @@
 using namespace rsCallback;
 using namespace rsMindstorms;
 
-Mindstorms::Mindstorms(rsSim::Mindstorms *robot, rsSim::BodyList &bodies, bool units) {
+void Mindstorms::setCallbackParams(rsSim::Robot *robot, rsSim::BodyList &bodies, bool units) {
 	_bodies = bodies;
-	_count = 1;
-	_robot = robot;
+	_robot = dynamic_cast<rsSim::Mindstorms *>(robot);
 	_units = units;
 }
 

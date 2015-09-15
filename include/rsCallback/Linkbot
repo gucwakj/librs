@@ -1,29 +1,24 @@
 #ifndef RSCALLBACK_LINKBOT_
 #define RSCALLBACK_LINKBOT_
 
-#include <osg/Node>
-#include <osg/NodeVisitor>
-
+#include <rsCallback/ModularRobot>
 #include <rsSim/Linkbot>
 
 namespace rsCallback {
 
 	// class
-	class LIBRSEXPORT Linkbot: public osg::NodeCallback {
+	class LIBRSEXPORT Linkbot : public rsCallback::ModularRobot {
 		// public functions
 		public:
-			Linkbot(rsSim::Linkbot*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
+			Linkbot(void) {};
 			virtual ~Linkbot(void) {};
 
+			virtual void setCallbackParams(rsSim::ModularRobot*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 
 		// private data
 		private:
-			bool _units;
-			int _count;
 			rsSim::Linkbot *_robot;
-			rsSim::BodyList _bodies;
-			rsSim::ConnectorList _conn;
 	};
 
 } // namespace rsCallback

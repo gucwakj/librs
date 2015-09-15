@@ -1,29 +1,24 @@
 #ifndef RSCALLBACK_DOF_
 #define RSCALLBACK_DOF_
 
-#include <osg/Node>
-#include <osg/NodeVisitor>
-
+#include <rsCallback/ModularRobot>
 #include <rsSim/Dof>
 
 namespace rsCallback {
 
 	// class
-	class LIBRSEXPORT Dof: public osg::NodeCallback {
+	class LIBRSEXPORT Dof : public rsCallback::ModularRobot {
 		// public functions
 		public:
-			Dof(rsSim::Dof*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
+			Dof(void) {};
 			virtual ~Dof(void) {};
 
+			virtual void setCallbackParams(rsSim::ModularRobot*, rsSim::BodyList&, rsSim::ConnectorList&, bool);
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 
 		// private data
 		private:
-			bool _units;
-			int _count;
 			rsSim::Dof *_robot;
-			rsSim::BodyList _bodies;
-			rsSim::ConnectorList _conn;
 	};
 
 } // namespace rsCallback

@@ -1,28 +1,24 @@
 #ifndef RSCALLBACK_MINDSTORMS_
 #define RSCALLBACK_MINDSTORMS_
 
-#include <osg/Node>
-#include <osg/NodeVisitor>
-
+#include <rsCallback/Robot>
 #include <rsSim/Mindstorms>
 
 namespace rsCallback {
 
 	// class
-	class LIBRSEXPORT Mindstorms: public osg::NodeCallback {
+	class LIBRSEXPORT Mindstorms : public rsCallback::Robot {
 		// public functions
 		public:
-			Mindstorms(rsSim::Mindstorms*, rsSim::BodyList&, bool);
+			Mindstorms(void) {};
 			virtual ~Mindstorms(void) {};
 
+			virtual void setCallbackParams(rsSim::Robot*, rsSim::BodyList&, bool);
 			virtual void operator()(osg::Node*, osg::NodeVisitor*);
 
 		// private data
 		private:
-			bool _units;
-			int _count;
 			rsSim::Mindstorms *_robot;
-			rsSim::BodyList _bodies;
 	};
 
 } // namespace rsCallback

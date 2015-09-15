@@ -10,18 +10,10 @@ namespace rsCallback {
 	class LIBRSEXPORT Callback {
 		// public functions
 		public:
-			Callback(void);
+			Callback(void) {};
 			virtual ~Callback(void) {};
 
 			void attachCallback(rsScene::Obstacle*, rsSim::Obstacle*);
-			void attachCallback(rsScene::Group*, rsSim::Robot*, rsSim::BodyList&);
-			void attachCallback(rsScene::Group*, rsSim::Robot*, rsSim::BodyList&, rsSim::ConnectorList&);
-
-			void setUnits(bool);
-
-		// private data
-		private:
-			bool _units;
 	};
 
 } // namespace rsCallback

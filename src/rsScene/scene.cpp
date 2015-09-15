@@ -520,6 +520,10 @@ void Scene::setPauseText(int pause) {
 	}
 }
 
+void Scene::setRobotCallback(osg::Group *robot, osg::NodeCallback *nc) {
+	robot->setUpdateCallback(nc);
+}
+
 void Scene::setUnits(bool units) {
 	_units = units;
 }

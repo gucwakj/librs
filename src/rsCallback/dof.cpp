@@ -3,17 +3,16 @@
 #include <osg/ShapeDrawable>
 #include <osgText/Text>
 
-#include <rsScene/Scene>
 #include <rsCallback/Dof>
+#include <rsScene/Scene>
 
 using namespace rsCallback;
 using namespace rsDof;
 
-Dof::Dof(rsSim::Dof *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
+void Dof::setCallbackParams(rsSim::ModularRobot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
 	_bodies = bodies;
 	_conn = conn;
-	_count = 1;
-	_robot = robot;
+	_robot = dynamic_cast<rsSim::Dof *>(robot);
 	_units = units;
 }
 

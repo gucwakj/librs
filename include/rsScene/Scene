@@ -53,6 +53,7 @@ namespace rsScene {
 			void setLevel(int);
 			void setMouseHandler(rsScene::MouseHandler*);
 			void setPauseText(int);
+			void setRobotCallback(osg::Group*, osg::NodeCallback*);
 			void setUnits(bool);
 			int setupCamera(osg::GraphicsContext*, double, double);
 			int setupScene(double, double, bool);

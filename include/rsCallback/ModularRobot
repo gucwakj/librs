@@ -1,0 +1,26 @@
+#ifndef RSCALLBACK_MODULARROBOT_
+#define RSCALLBACK_MODULARROBOT_
+
+#include <rsCallback/Robot>
+#include <rsSim/ModularRobot>
+
+namespace rsCallback {
+
+	// class
+	class LIBRSEXPORT ModularRobot : public rsCallback::Robot {
+		// public functions
+		public:
+			ModularRobot(void) {};
+			virtual ~ModularRobot(void) {};
+
+			virtual void setCallbackParams(rsSim::ModularRobot*, rsSim::BodyList&, rsSim::ConnectorList&, bool) { return; };
+
+		// protected data
+		protected:
+			rsSim::ConnectorList _conn;
+	};
+
+} // namespace rsCallback
+
+#endif // RSCALLBACK_MODULARROBOT_
+

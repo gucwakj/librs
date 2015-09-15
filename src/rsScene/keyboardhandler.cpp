@@ -4,10 +4,6 @@
 
 using namespace rsScene;
 
-void KeyboardHandler::accept(osgGA::GUIEventHandlerVisitor &v) {
-	v.visit(*this);
-}
-
 bool KeyboardHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
 	osgViewer::Viewer *viewer = dynamic_cast<osgViewer::Viewer *>(&aa);
 	if (!viewer) return false;

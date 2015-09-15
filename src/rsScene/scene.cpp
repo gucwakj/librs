@@ -1,3 +1,4 @@
+#include <osg/BlendFunc>
 #include <osg/ComputeBoundsVisitor>
 #include <osg/Depth>
 #include <osg/LineWidth>
@@ -407,7 +408,7 @@ std::string Scene::getTexturePath(void) {
 		path = base;
 	path += "/package/chrobosim/data/";
 #else
-	osgDB::setLibraryFilePathList("/home/kgucwa/projects/librs/deps/osg3.2.1/build/lib/");
+	osgDB::setLibraryFilePathList("/home/kgucwa/projects/librs/deps/osg3.4.0/build/lib/");
 	path = "/home/kgucwa/projects/librs/resources/";
 #endif
 	return path;
@@ -530,7 +531,7 @@ void Scene::setUnits(bool units) {
 
 int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	// camera properties
-	osg::ref_ptr<osg::Camera> _camera = new osg::Camera();
+	_camera = new osg::Camera();
 	_camera->setGraphicsContext(gc);
 	_camera->setClearColor(osg::Vec4(0, 0, 0, 1));
 	_camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -541,7 +542,8 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	_camera->setComputeNearFarMode(osgUtil::CullVisitor::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
 	_camera->setCullingMode(osgUtil::CullVisitor::NO_CULLING);
 	_camera->setNearFarRatio(0.00001);
-	_viewer->addSlave(_camera.get());
+	_camera->getOrCreateStateSet()->setGlobalDefaults();
+	_viewer->addSlave(_camera);
 
 	// viewer camera properties
 	osg::ref_ptr<osgGA::OrbitManipulator> cameraManipulator = new osgGA::OrbitManipulator();
@@ -858,16 +860,18 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		gridLines->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
 		osg::ref_ptr<osg::LineWidth> linewidth = new osg::LineWidth();
-		linewidth->setWidth(1.0f);
+		linewidth->setWidth(1);
 		gridGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 		// set rendering properties
-		gridGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		gridGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::OFF);
+		gridGeode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
 		gridGeode->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin");
 		gridGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		// enable shadowing
 		//gridGeode->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
 		gridGeode->addDrawable(gridLines);
+		gridGeode->setDataVariance(osg::Object::DYNAMIC);
 		gridGeode->setName("tics");
 		_background->addChild(gridGeode);
 
@@ -1029,6 +1033,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 	}
 }
 
+
 void Scene::draw_global_hud(double w, double h, bool paused) {
 	// init variables
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
@@ -1114,11 +1119,13 @@ void Scene::draw_scene_outdoors(void) {
 	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
 	tex->setUnRefImageDataAfterApply(true);
+	tex->setDataVariance(osg::Object::DYNAMIC);
 	tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
 	tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
 	// state set properties
 	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+	geom->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::OFF);
 	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
@@ -1126,7 +1133,9 @@ void Scene::draw_scene_outdoors(void) {
 	// create geode
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 	geode->addDrawable(geom);
+	//geode->setCullingActive(false);
 	geode->setName("ground");
+	geode->setDataVariance(osg::Object::DYNAMIC);
 	// add to scene
 	_background->addChild(geode);
 

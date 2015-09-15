@@ -23,9 +23,9 @@ add_definitions (-DdDOUBLE)
 add_definitions (-DdNODEBUG)
 
 # add OpenSceneGraph library
-include_directories ("${LibRS_SOURCE_DIR}/deps/osg3.2.1/build/include")
-include_directories ("${LibRS_SOURCE_DIR}/deps/osg3.2.1/include")
-link_directories ("${LibRS_SOURCE_DIR}/deps/osg3.2.1/build/lib")
+include_directories ("${LibRS_SOURCE_DIR}/deps/osg3.4.0/build/include")
+include_directories ("${LibRS_SOURCE_DIR}/deps/osg3.4.0/include")
+link_directories ("${LibRS_SOURCE_DIR}/deps/osg3.4.0/build/lib")
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized osg debug osgd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgText debug osgTextd)
 

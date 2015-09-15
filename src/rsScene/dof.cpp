@@ -19,21 +19,21 @@ Dof::~Dof(void) { }
  **********************************************************/
 void Dof::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &c, bool trace) {
 	// initialize variables
-	osg::ref_ptr<osg::Node> body[rsDof::Bodies::Num_Parts];
-	osg::ref_ptr<osg::PositionAttitudeTransform> pat[rsDof::Bodies::Num_Parts];
+	osg::ref_ptr<osg::Node> body[Bodies::Num_Parts];
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat[Bodies::Num_Parts];
 	int enabled = dynamic_cast<rsRobots::Dof *>(this)->getEnabled();
 
 	// create transforms
-	for (int i = 0; i < rsDof::Bodies::Num_Parts; i++) {
+	for (int i = 0; i < Bodies::Num_Parts; i++) {
 		pat[i] = new osg::PositionAttitudeTransform();
 		group->addChild(pat[i]);
 	}
 
 	// draw body
-	body[rsDof::Bodies::Body] = osgDB::readNodeFile(_model_path + "dof/body.3ds");
-	body[rsDof::Bodies::Body]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
-	pat[rsDof::Bodies::Body]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-	pat[rsDof::Bodies::Body]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+	body[Bodies::Body] = osgDB::readNodeFile(_model_path + "dof/body.3ds");
+	body[Bodies::Body]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
+	pat[Bodies::Body]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+	pat[Bodies::Body]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 
 	// draw 'led'
 	osg::ref_ptr<osg::Cylinder> cyl = new osg::Cylinder(osg::Vec3d(0, -0.02, 0.0308), 0.01, 0.01);
@@ -50,13 +50,13 @@ void Dof::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	// draw face
 	rs::Quat q1 = this->getRobotBodyQuaternion(enabled, rs::D2R(a[0]), q);
 	rs::Pos p1 = this->getRobotBodyPosition(enabled, p, q);
-	body[rsDof::Bodies::Cap] = osgDB::readNodeFile(_model_path + "dof/cap.3ds");
-	body[rsDof::Bodies::Cap]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
-	pat[rsDof::Bodies::Cap]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
-	pat[rsDof::Bodies::Cap]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
+	body[Bodies::Cap] = osgDB::readNodeFile(_model_path + "dof/cap.3ds");
+	body[Bodies::Cap]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
+	pat[Bodies::Cap]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	pat[Bodies::Cap]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 
 	// set rendering
-	for (int i = 0; i < rsDof::Bodies::Num_Parts; i++) {
+	for (int i = 0; i < Bodies::Num_Parts; i++) {
 		// set rendering properties
 		body[i]->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 		body[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
@@ -67,7 +67,7 @@ void Dof::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 		pat[i]->addChild(body[i]);
 	}
 	// add 'led' as second child of body
-	pat[rsDof::Bodies::Body]->addChild(bodyled);
+	pat[Bodies::Body]->addChild(bodyled);
 
 	// set masks
 	//robot->setNodeMask(CASTS_SHADOW_MASK);
@@ -86,7 +86,7 @@ void Dof::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 void Dof::drawConnector(Group *group, int type, int face, int orientation, double size, int side, int conn) {
 	// get robot p&q
 	osg::PositionAttitudeTransform *pat;
-	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsDof::Bodies::Body));
+	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + Bodies::Body));
 	osg::Vec3d p = pat->getPosition();
 	osg::Quat q = pat->getAttitude();
 
@@ -113,10 +113,10 @@ void Dof::drawConnector(Group *group, int type, int face, int orientation, doubl
 	// create node to hold mesh
 	osg::ref_ptr<osg::Node> node;
 	switch (type) {
-		case rsDof::Connectors::El:
+		case Connectors::El:
 			node = osgDB::readNodeFile(_model_path + "dof/el.3ds");
 			break;
-		case rsDof::Connectors::Foot:
+		case Connectors::Foot:
 			node = osgDB::readNodeFile(_model_path + "dof/foot.3ds");
 			break;
 	}

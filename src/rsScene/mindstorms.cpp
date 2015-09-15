@@ -70,7 +70,7 @@ void Mindstorms::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const r
 void Mindstorms::drawWheel(Group *group, int type, int face) {
 	// get robot p&q
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat;
-	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + rsMindstorms::Bodies::Body));
+	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + Bodies::Body));
 	osg::Vec3d p = pat->getPosition();
 	osg::Quat q = pat->getAttitude();
 

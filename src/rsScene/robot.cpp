@@ -36,9 +36,9 @@ osg::Geode* Robot::create_hud(const rs::Pos &p) {
 	else
 		text.append("Robot " + std::to_string(this->getID()+1));
 	if (_units)
-		text.append("\n\n(" + std::to_string(p[0]*100) + ", " + std::to_string(p[1]*100) + ") [cm]");
+		text.append("\n\n(" + std::to_string(rs::M2CM(p[0])) + ", " + std::to_string(rs::M2CM(p[1])) + ") [cm]");
 	else
-		text.append("\n\n(" + std::to_string(p[0]*39.37) + ", " + std::to_string(p[1]*39.37) + ") [in]");
+		text.append("\n\n(" + std::to_string(rs::M2IN(p[0])) + ", " + std::to_string(rs::M2IN(p[1])) + ") [in]");
 
 	// osg label for the text
 	osg::ref_ptr<osgText::Text> label = new osgText::Text();
@@ -52,7 +52,7 @@ osg::Geode* Robot::create_hud(const rs::Pos &p) {
 	label->setColor(osg::Vec4(1, 1, 1, 1));
 	label->setDrawMode(osgText::Text::TEXT | osgText::Text::FILLEDBOUNDINGBOX);
 	label->setPosition(osg::Vec3(p[0], p[1], p[2] + (this->getID() % 2 ? 0.08 : 0) + 0.08));
-	
+
 	// set rendering properties
 	osg::Geode *geode = new osg::Geode();
 	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);

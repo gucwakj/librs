@@ -21,17 +21,20 @@ void Dof::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	if (group && _robot && &_bodies && &_conn) {
 		// child 0: hud
 		std::string text("");
+		// get position
 		double x = _robot->getCenter(0);
 		double y = _robot->getCenter(1);
 		double z = _robot->getCenter(2) + (_robot->getID() % 2 ? 0.08 : 0) + 0.08;
+		// set name or robot+id
 		if (_robot->getName().size())
 			text.append(_robot->getName());
 		else
 			text.append("Robot " + std::to_string(_robot->getID()+1));
+		// position
 		if (_units)
-			text.append("\n\n(" + std::to_string(x*100) + ", " + std::to_string(y*100) + ") [cm]");
+			text.append("\n\n(" + std::to_string(rs::M2CM(x)) + ", " + std::to_string(rs::M2CM(y)) + ") [cm]");
 		else
-			text.append("\n\n(" + std::to_string(y*39.37) + ", " + std::to_string(y*39.37) + ") [in]");
+			text.append("\n\n(" + std::to_string(rs::IN2M(y)) + ", " + std::to_string(rs::IN2M(y)) + ") [in]");
 		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
 		label->setText(text);
 		label->setPosition(osg::Vec3f(x, y, z));

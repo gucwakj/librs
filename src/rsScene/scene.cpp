@@ -40,18 +40,14 @@ Scene::Scene(void) : KeyboardHandler() {
 	_level = -1;
 
 	// set default grid options
-	_units = false;			// customary
-	_grid.push_back(1);		// 1 inch per tic
-	_grid.push_back(12);	// 12 inches per hash
-	_grid.push_back(-24);	// min x
-	_grid.push_back(24);	// max x
-	_grid.push_back(-24);	// min y
-	_grid.push_back(24);	// max y
-	_grid.push_back(1);		// enabled?
-	for (int i = 0; i < 6; i++) {
-		if (_units) _grid[i] /= 100;
-		else _grid[i] /= 39.37;
-	}
+	_units = false;					// customary
+	_grid.push_back(rs::IN2M(1));	// 1 inch per tic
+	_grid.push_back(rs::IN2M(12));	// 12 inches per hash
+	_grid.push_back(rs::IN2M(-48));	// min x
+	_grid.push_back(rs::IN2M(48));	// max x
+	_grid.push_back(rs::IN2M(-48));	// min y
+	_grid.push_back(rs::IN2M(48));	// max y
+	_grid.push_back(1);				// enabled?
 
 	// set thread mutex
 	MUTEX_INIT(&_thread_mutex);
@@ -953,8 +949,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		if (maxx > rs::Epsilon) {
 			for (int i = 1; i < static_cast<int>(1.01*maxx/hash + 1); i++) {
 				osg::ref_ptr<osgText::Text> xnumpos_text = new osgText::Text();
-				if (_units) sprintf(text, "   %.0lf ", 100*i*hash);
-				else sprintf(text, "   %.0lf ", 39.37*i*hash);
+				if (_units) sprintf(text, "   %.0lf ", rs::M2CM(i*hash));
+				else sprintf(text, "   %.0lf ", rs::M2IN(i*hash));
 				xnumpos_text->setText(text);
 				xnumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 				xnumpos_text->setAlignment(osgText::Text::CENTER_TOP);
@@ -968,8 +964,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		if (minx < -rs::Epsilon) {
 			for (int i = 1; i < static_cast<int>(fabs(1.01*minx)/hash + 1); i++) {
 				osg::ref_ptr<osgText::Text> xnumneg_text = new osgText::Text();
-				if (_units) sprintf(text, "%.0lf    ", -100*i*hash);
-				else sprintf(text, "%.0lf    ", -39.37*i*hash);
+				if (_units) sprintf(text, "%.0lf    ", rs::M2CM(-i*hash));
+				else sprintf(text, "%.0lf    ", rs::M2IN(-i*hash));
 				xnumneg_text->setText(text);
 				xnumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 				xnumneg_text->setAlignment(osgText::Text::CENTER_TOP);
@@ -995,8 +991,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		if (maxy > rs::Epsilon) {
 			for (int i = 1; i < static_cast<int>(1.01*maxy/hash + 1); i++) {
 				osg::ref_ptr<osgText::Text> ynumpos_text = new osgText::Text();
-				if (_units) sprintf(text, "    %.0lf", 100*i*hash);
-				else sprintf(text, "    %.0lf", 39.37*i*hash);
+				if (_units) sprintf(text, "    %.0lf", rs::M2CM(i*hash));
+				else sprintf(text, "    %.0lf", rs::M2IN(i*hash));
 				ynumpos_text->setText(text);
 				ynumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 				ynumpos_text->setAlignment(osgText::Text::CENTER_TOP);
@@ -1010,8 +1006,8 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		if (miny < -rs::Epsilon) {
 			for (int i = 1; i < static_cast<int>(fabs(1.01*miny)/hash + 1); i++) {
 				osg::ref_ptr<osgText::Text> ynumneg_text = new osgText::Text();
-				if (_units) sprintf(text, "%.0lf    ", -100*i*hash);
-				else sprintf(text, "%.0lf    ", -39.37*i*hash);
+				if (_units) sprintf(text, "%.0lf    ", rs::M2CM(-i*hash));
+				else sprintf(text, "%.0lf    ", rs::M2IN(-i*hash));
 				ynumneg_text->setText(text);
 				ynumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
 				ynumneg_text->setAlignment(osgText::Text::CENTER_TOP);
@@ -1032,7 +1028,6 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		_background->addChild(ynum_billboard);
 	}
 }
-
 
 void Scene::draw_global_hud(double w, double h, bool paused) {
 	// init variables
@@ -1101,10 +1096,10 @@ void Scene::draw_scene_outdoors(void) {
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	// extents of geom
 	osg::ref_ptr<osg::Vec3Array> coords = new osg::Vec3Array();
-	coords->push_back(osg::Vec3(-10000, -10000, -0.001));
-	coords->push_back(osg::Vec3( 10000, -10000, -0.001));
-	coords->push_back(osg::Vec3( 10000,  10000, -0.001));
-	coords->push_back(osg::Vec3(-10000,  10000, -0.001));
+	coords->push_back(osg::Vec3(-10000, -10000, 0));
+	coords->push_back(osg::Vec3( 10000, -10000, 0));
+	coords->push_back(osg::Vec3( 10000,  10000, 0));
+	coords->push_back(osg::Vec3(-10000,  10000, 0));
 	geom->setVertexArray(coords);
 	// texture coordinates
 	osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();

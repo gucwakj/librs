@@ -210,8 +210,7 @@ std::vector<double> Reader::getFriction(void) {
 
 std::vector<double> Reader::getGrid(void) {
 	for (int i = 0; i < 6; i++) {
-		if (_units) _grid[i] /= 100;
-		else _grid[i] /= 39.37;
+		_grid[i] = (_units) ? rs::CM2M(_grid[i]) : rs::IN2M(_grid[i]);
 	}
 	return _grid;
 }

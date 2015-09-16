@@ -5,6 +5,10 @@ namespace rs {
 
 	inline double D2R(double x) { return (x * 0.0174532925199433); }
 	inline double R2D(double x) { return (x * 57.295779513082321); }
+	inline double M2IN(double x) { return (x * 39.370); }
+	inline double IN2M(double x) { return (x / 39.370); }
+	inline double M2CM(double x) { return (x * 100.0); }
+	inline double CM2M(double x) { return (x / 100.0); }
 
 	const double Epsilon = 0.0000001;
 	const double Pi = 3.14159265358979323846;

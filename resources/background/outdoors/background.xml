@@ -7,7 +7,7 @@
 <screenshot>screenshot.png</screenshot>
 
 <background>
-	<ground>terrain.png</ground>
+	<ground>ground.3ds</ground>
 	<front>sky/front.png</front>
 	<left>sky/left.png</left>
 	<back>sky/back.png</back>

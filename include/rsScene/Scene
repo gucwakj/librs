@@ -71,9 +71,9 @@ namespace rsScene {
 		private:
 			osg::Material* create_material(osg::Vec4);
 			void draw_grid(double, double, double, double, double, double, double);
-			void draw_global_hud(double, double, bool);
-			void draw_scene_board(double = 1.219, double = 0.610);
-			void draw_scene_outdoors(void);
+			void draw_board(double, double);
+			void draw_ground(void);
+			void draw_hud(double, double, bool);
 			void draw_skybox(void);
 			static void* graphics_thread(void*);
 			bool intersect_new_item(int id, const osg::BoundingBox&);

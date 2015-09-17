@@ -57,7 +57,7 @@ Scene::Scene(void) : KeyboardHandler() {
 	// set texture path
 	_tex_path = this->getTexturePath();
 	_path.resize(rs::Num_Images);
-	_path[rs::Ground].append(_tex_path).append("background/outdoors/terrain.png");
+	_path[rs::Ground].append(_tex_path).append("background/outdoors/ground.3ds");
 	_path[rs::Front].append(_tex_path).append("background/outdoors/sky/front.png");
 	_path[rs::LeftSide].append(_tex_path).append("background/outdoors/sky/left.png");
 	_path[rs::Back].append(_tex_path).append("background/outdoors/sky/back.png");
@@ -478,13 +478,15 @@ void Scene::setLevel(int level) {
 	// draw new level
 	switch (level) {
 		case rs::Level::ActivityMat:
-			this->draw_scene_board(0.68, 0.37);
+			this->draw_board(0.68, 0.37);
 			break;
 		case rs::Level::Board:
-			this->draw_scene_board();
+			this->draw_board(1.219, 0.610);
 			break;
 		case rs::Level::Outdoors:
-			this->draw_scene_outdoors();
+			this->draw_skybox();
+			this->draw_ground();
+			this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 			break;
 	}
 }
@@ -589,7 +591,7 @@ int Scene::setupScene(double w, double h, bool pause) {
 	_root->addChild(ls.get());
 
 	// draw global HUD
-	this->draw_global_hud(w, h, pause);
+	this->draw_hud(w, h, pause);
 
 	// draw background pieces for levels
 	_background = new osg::Group();
@@ -710,13 +712,56 @@ void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
 	private functions
  **********************************************************/
 osg::Material* Scene::create_material(osg::Vec4 color) {
-	osg::ref_ptr<osg::Material> material = new osg::Material();
+	osg::Material *material = new osg::Material();
 	material->setAmbient(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	material->setDiffuse(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	material->setEmission(osg::Material::FRONT, color);
 	material->setShininess(osg::Material::FRONT, 2);
 	material->setSpecular(osg::Material::FRONT, osg::Vec4(1, 1, 1, 1));
 	return material;
+}
+
+void Scene::draw_board(double xsize, double ysize) {
+	// square geometry
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+	// extents of geom
+	osg::ref_ptr<osg::Vec3Array> coords = new osg::Vec3Array();
+	coords->push_back(osg::Vec3(-xsize, -ysize, 0));
+	coords->push_back(osg::Vec3( xsize, -ysize, 0));
+	coords->push_back(osg::Vec3( xsize,  ysize, 0));
+	coords->push_back(osg::Vec3(-xsize,  ysize, 0));
+	geom->setVertexArray(coords);
+	// texture coordinates
+	osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();
+	tcoords->push_back(osg::Vec2(0, 0));
+	tcoords->push_back(osg::Vec2(1, 0));
+	tcoords->push_back(osg::Vec2(1, 1));
+	tcoords->push_back(osg::Vec2(0, 1));
+	geom->setTexCoordArray(0, tcoords);
+	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+	// depth
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth();
+	depth->setFunction(osg::Depth::LEQUAL);
+	depth->setRange(1.0, 1.0);
+	// texture image
+	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::Ground]));
+	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+	tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+	tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+	// create geode
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
+	geode->addDrawable(geom);
+	geode->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	geode->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin");
+	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+	geode->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+	geode->setName("board");
+	// add to scene
+	_background->addChild(geode);
 }
 
 void Scene::draw_grid(double tics, double hash, double minx, double maxx, double miny, double maxy, double enabled) {
@@ -931,7 +976,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ybillboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 		ybillboard->getOrCreateStateSet()->setRenderBinDetails(2, "RenderBin");
 		ybillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-		ybillboard->setName("xlabel");
+		ybillboard->setName("ylabel");
 		_background->addChild(ybillboard);
 
 		// x grid numbering
@@ -1029,7 +1074,24 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 	}
 }
 
-void Scene::draw_global_hud(double w, double h, bool paused) {
+void Scene::draw_ground(void) {
+	// depth
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth();
+	depth->setFunction(osg::Depth::LEQUAL);
+	depth->setRange(1.0, 1.0);
+	// geode
+	osg::ref_ptr<osg::Node> geode = osgDB::readNodeFile(_path[rs::Ground]);
+	// rendering properties
+	geode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin");
+	geode->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.298, 0.424, 0.200, 1)), osg::StateAttribute::OVERRIDE);
+	geode->setName("ground");
+	// add to scene
+	_background->addChild(geode);
+}
+
+void Scene::draw_hud(double w, double h, bool paused) {
 	// init variables
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 	osg::ref_ptr<osg::Projection> projection = new osg::Projection();
@@ -1086,91 +1148,6 @@ void Scene::draw_global_hud(double w, double h, bool paused) {
 
 	// add to scene
 	_root->addChild(projection);
-}
-
-void Scene::draw_scene_outdoors(void) {
-	// draw skybox
-	this->draw_skybox();
-
-	// square geometry
-	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
-	// extents of geom
-	osg::ref_ptr<osg::Vec3Array> coords = new osg::Vec3Array();
-	coords->push_back(osg::Vec3(-10000, -10000, 0));
-	coords->push_back(osg::Vec3( 10000, -10000, 0));
-	coords->push_back(osg::Vec3( 10000,  10000, 0));
-	coords->push_back(osg::Vec3(-10000,  10000, 0));
-	geom->setVertexArray(coords);
-	// texture coordinates
-	osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();
-	tcoords->push_back(osg::Vec2(0, 0));
-	tcoords->push_back(osg::Vec2(1, 0));
-	tcoords->push_back(osg::Vec2(1, 1));
-	tcoords->push_back(osg::Vec2(0, 1));
-	geom->setTexCoordArray(0, tcoords);
-	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
-	// texture image
-	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::Ground]));
-	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-	tex->setUnRefImageDataAfterApply(true);
-	tex->setDataVariance(osg::Object::DYNAMIC);
-	tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
-	tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-	// state set properties
-	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
-	geom->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::OFF);
-	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-	geom->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
-	geom->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin");
-	// create geode
-	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-	geode->addDrawable(geom);
-	//geode->setCullingActive(false);
-	geode->setName("ground");
-	geode->setDataVariance(osg::Object::DYNAMIC);
-	// add to scene
-	_background->addChild(geode);
-
-	// draw grid
-	this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
-}
-
-void Scene::draw_scene_board(double x, double y) {
-	// square geometry
-	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
-	geode->addDrawable(geom);
-	geom->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
-	// extents of geom
-	osg::ref_ptr<osg::Vec3Array> coords = new osg::Vec3Array();
-	coords->push_back(osg::Vec3(-x, -y, 0));
-	coords->push_back(osg::Vec3(x, -y, 0));
-	coords->push_back(osg::Vec3(x,  y, 0));
-	coords->push_back(osg::Vec3(-x, y, 0));
-	geom->setVertexArray(coords);
-	// texture coordinates
-	osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();
-	tcoords->push_back(osg::Vec2(0, 0));
-	tcoords->push_back(osg::Vec2(1, 0));
-	tcoords->push_back(osg::Vec2(1, 1));
-	tcoords->push_back(osg::Vec2(0, 1));
-	geom->setTexCoordArray(0, tcoords);
-	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
-	// texture image
-	osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_path[rs::Ground]));
-	tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-	tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-	tex->setUnRefImageDataAfterApply(true);
-	tex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
-	tex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
-	geom->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
-	// add
-	_background->addChild(geode);
 }
 
 void Scene::draw_skybox(void) {

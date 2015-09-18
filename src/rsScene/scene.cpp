@@ -824,6 +824,99 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		gridGeode3->setName("axes");
 		_background->addChild(gridGeode3);
 
+		// x grid numbering
+		osg::ref_ptr<osg::Billboard> xnum_billboard = new osg::Billboard();
+		osg::ref_ptr<osgText::Text> xzero_text = new osgText::Text();
+		char text[50];
+		xzero_text->setText("0");
+		xzero_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+		xzero_text->setAlignment(osgText::Text::CENTER_CENTER);
+		xzero_text->setCharacterSize(30);
+		xzero_text->setColor(osg::Vec4(0, 0, 0, 1));
+		xzero_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+		xnum_billboard->addDrawable(xzero_text, osg::Vec3d(-0.5*tics, -0.5*tics, 0.0));
+		// positive
+		if (maxx > rs::Epsilon) {
+			for (int i = 1; i < static_cast<int>(1.01*maxx / hash + 1); i++) {
+				osg::ref_ptr<osgText::Text> xnumpos_text = new osgText::Text();
+				if (_units) sprintf(text, "   %.0lf ", rs::M2CM(i*hash));
+				else sprintf(text, "   %.0lf ", rs::M2IN(i*hash));
+				xnumpos_text->setText(text);
+				xnumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+				xnumpos_text->setAlignment(osgText::Text::CENTER_TOP);
+				xnumpos_text->setCharacterSize(30);
+				xnumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
+				xnumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+				xnum_billboard->addDrawable(xnumpos_text, osg::Vec3d(i*hash, 0, 0));
+			}
+		}
+		// negative
+		if (minx < -rs::Epsilon) {
+			for (int i = 1; i < static_cast<int>(fabs(1.01*minx) / hash + 1); i++) {
+				osg::ref_ptr<osgText::Text> xnumneg_text = new osgText::Text();
+				if (_units) sprintf(text, "%.0lf    ", rs::M2CM(-i*hash));
+				else sprintf(text, "%.0lf    ", rs::M2IN(-i*hash));
+				xnumneg_text->setText(text);
+				xnumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+				xnumneg_text->setAlignment(osgText::Text::CENTER_TOP);
+				xnumneg_text->setCharacterSize(30);
+				xnumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
+				xnumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+				xnum_billboard->addDrawable(xnumneg_text, osg::Vec3d(-i*hash, 0, 0));
+			}
+		}
+		xnum_billboard->setMode(osg::Billboard::AXIAL_ROT);
+		xnum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
+		xnum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
+		xnum_billboard->setNodeMask(~IS_PICKABLE_MASK);
+		xnum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		xnum_billboard->getOrCreateStateSet()->setRenderBinDetails(5, "RenderBin");
+		xnum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		xnum_billboard->setName("xnumbering");
+		_background->addChild(xnum_billboard);
+
+		// y grid numbering
+		osg::ref_ptr<osg::Billboard> ynum_billboard = new osg::Billboard();
+		// positive
+		if (maxy > rs::Epsilon) {
+			for (int i = 1; i < static_cast<int>(1.01*maxy / hash + 1); i++) {
+				osg::ref_ptr<osgText::Text> ynumpos_text = new osgText::Text();
+				if (_units) sprintf(text, "    %.0lf", rs::M2CM(i*hash));
+				else sprintf(text, "    %.0lf", rs::M2IN(i*hash));
+				ynumpos_text->setText(text);
+				ynumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+				ynumpos_text->setAlignment(osgText::Text::CENTER_TOP);
+				ynumpos_text->setCharacterSize(30);
+				ynumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
+				ynumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+				ynum_billboard->addDrawable(ynumpos_text, osg::Vec3d(0, i*hash, 0));
+			}
+		}
+		// negative
+		if (miny < -rs::Epsilon) {
+			for (int i = 1; i < static_cast<int>(fabs(1.01*miny) / hash + 1); i++) {
+				osg::ref_ptr<osgText::Text> ynumneg_text = new osgText::Text();
+				if (_units) sprintf(text, "%.0lf    ", rs::M2CM(-i*hash));
+				else sprintf(text, "%.0lf    ", rs::M2IN(-i*hash));
+				ynumneg_text->setText(text);
+				ynumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+				ynumneg_text->setAlignment(osgText::Text::CENTER_TOP);
+				ynumneg_text->setCharacterSize(30);
+				ynumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
+				ynumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+				ynum_billboard->addDrawable(ynumneg_text, osg::Vec3d(0, -i*hash, 0));
+			}
+		}
+		ynum_billboard->setMode(osg::Billboard::AXIAL_ROT);
+		ynum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
+		ynum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
+		ynum_billboard->setNodeMask(~IS_PICKABLE_MASK);
+		ynum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		ynum_billboard->getOrCreateStateSet()->setRenderBinDetails(5, "RenderBin");
+		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		ynum_billboard->setName("ynumbering");
+		_background->addChild(ynum_billboard);
+
 		// grid lines for each foot
 		double minx2 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.01 : 0.99)*minx/hash))*hash;
 		double miny2 = static_cast<int>(ceil(((miny < -rs::Epsilon) ? 1.01 : 0.99)*miny/hash))*hash;
@@ -979,98 +1072,6 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ybillboard->setName("ylabel");
 		_background->addChild(ybillboard);
 
-		// x grid numbering
-		osg::ref_ptr<osg::Billboard> xnum_billboard = new osg::Billboard();
-		osg::ref_ptr<osgText::Text> xzero_text = new osgText::Text();
-		char text[50];
-		xzero_text->setText("0");
-		xzero_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-		xzero_text->setAlignment(osgText::Text::CENTER_CENTER);
-		xzero_text->setCharacterSize(30);
-		xzero_text->setColor(osg::Vec4(0, 0, 0, 1));
-		xzero_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-		xnum_billboard->addDrawable(xzero_text, osg::Vec3d(-0.5*tics, -0.5*tics, 0.0));
-		// positive
-		if (maxx > rs::Epsilon) {
-			for (int i = 1; i < static_cast<int>(1.01*maxx/hash + 1); i++) {
-				osg::ref_ptr<osgText::Text> xnumpos_text = new osgText::Text();
-				if (_units) sprintf(text, "   %.0lf ", rs::M2CM(i*hash));
-				else sprintf(text, "   %.0lf ", rs::M2IN(i*hash));
-				xnumpos_text->setText(text);
-				xnumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-				xnumpos_text->setAlignment(osgText::Text::CENTER_TOP);
-				xnumpos_text->setCharacterSize(30);
-				xnumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
-				xnumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-				xnum_billboard->addDrawable(xnumpos_text, osg::Vec3d(i*hash, 0, 0));
-			}
-		}
-		// negative
-		if (minx < -rs::Epsilon) {
-			for (int i = 1; i < static_cast<int>(fabs(1.01*minx)/hash + 1); i++) {
-				osg::ref_ptr<osgText::Text> xnumneg_text = new osgText::Text();
-				if (_units) sprintf(text, "%.0lf    ", rs::M2CM(-i*hash));
-				else sprintf(text, "%.0lf    ", rs::M2IN(-i*hash));
-				xnumneg_text->setText(text);
-				xnumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-				xnumneg_text->setAlignment(osgText::Text::CENTER_TOP);
-				xnumneg_text->setCharacterSize(30);
-				xnumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
-				xnumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-				xnum_billboard->addDrawable(xnumneg_text, osg::Vec3d(-i*hash, 0, 0));
-			}
-		}
-		xnum_billboard->setMode(osg::Billboard::AXIAL_ROT);
-		xnum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
-		xnum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
-		xnum_billboard->setNodeMask(~IS_PICKABLE_MASK);
-		xnum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		xnum_billboard->getOrCreateStateSet()->setRenderBinDetails(2, "RenderBin");
-		xnum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-		xnum_billboard->setName("xnumbering");
-		_background->addChild(xnum_billboard);
-
-		// y grid numbering
-		osg::ref_ptr<osg::Billboard> ynum_billboard = new osg::Billboard();
-		// positive
-		if (maxy > rs::Epsilon) {
-			for (int i = 1; i < static_cast<int>(1.01*maxy/hash + 1); i++) {
-				osg::ref_ptr<osgText::Text> ynumpos_text = new osgText::Text();
-				if (_units) sprintf(text, "    %.0lf", rs::M2CM(i*hash));
-				else sprintf(text, "    %.0lf", rs::M2IN(i*hash));
-				ynumpos_text->setText(text);
-				ynumpos_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-				ynumpos_text->setAlignment(osgText::Text::CENTER_TOP);
-				ynumpos_text->setCharacterSize(30);
-				ynumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
-				ynumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-				ynum_billboard->addDrawable(ynumpos_text, osg::Vec3d(0, i*hash, 0));
-			}
-		}
-		// negative
-		if (miny < -rs::Epsilon) {
-			for (int i = 1; i < static_cast<int>(fabs(1.01*miny)/hash + 1); i++) {
-				osg::ref_ptr<osgText::Text> ynumneg_text = new osgText::Text();
-				if (_units) sprintf(text, "%.0lf    ", rs::M2CM(-i*hash));
-				else sprintf(text, "%.0lf    ", rs::M2IN(-i*hash));
-				ynumneg_text->setText(text);
-				ynumneg_text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-				ynumneg_text->setAlignment(osgText::Text::CENTER_TOP);
-				ynumneg_text->setCharacterSize(30);
-				ynumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
-				ynumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-				ynum_billboard->addDrawable(ynumneg_text, osg::Vec3d(0, -i*hash, 0));
-			}
-		}
-		ynum_billboard->setMode(osg::Billboard::AXIAL_ROT);
-		ynum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
-		ynum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
-		ynum_billboard->setNodeMask(~IS_PICKABLE_MASK);
-		ynum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		ynum_billboard->getOrCreateStateSet()->setRenderBinDetails(2, "RenderBin");
-		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-		ynum_billboard->setName("ynumbering");
-		_background->addChild(ynum_billboard);
 	}
 }
 

@@ -79,10 +79,9 @@ Scene::~Scene(void) {
 		THREAD_JOIN(_osgThread);
 		COND_DESTROY(&_graphics_cond);
 		MUTEX_DESTROY(&_graphics_mutex);
+		// clean mutexes
+		MUTEX_DESTROY(&_thread_mutex);
 	}
-
-	// clean mutexes
-	MUTEX_DESTROY(&_thread_mutex);
 }
 
 /**********************************************************
@@ -1283,9 +1282,6 @@ void* Scene::graphics_thread(void *arg) {
 
 	// clean up viewer & root
 	p->_viewer->setSceneData(NULL);
-#ifdef RS_WIN32
-	delete p->_viewer;
-#endif
 
 	// return
 	return arg;

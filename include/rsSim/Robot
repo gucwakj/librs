@@ -3,6 +3,7 @@
 
 #include <ode/ode.h>
 
+#include <config.h>
 #include <rs/Threads>
 #include <rs/Pos>
 #include <rs/Quat>

@@ -70,16 +70,6 @@ if (WIN32)
 endif ()
 make_directory (${OUTPUT_LIBDIR})
 
-# options for individual robot compilation
-option (RS_DOF "Enable dof compilation" OFF)
-option (RS_LINKBOT "Enable linkbot compilation" ON)
-option (RS_MINDSTORMS "Enable mindstorms compilation" ON)
-
-# options for building pieces of whole library
-option (RS_GRAPHICS "Enable graphical library" ON)
-option (RS_SIM "Enable simulation library" ON)
-option (RS_XML "Enable xml library" ON)
-
 # research option
 option (DO_RESEARCH "Build librs for research" OFF)
 if (DO_RESEARCH)
@@ -90,6 +80,16 @@ if (DO_RESEARCH)
 	set (RS_SIM ON)
 	set (RS_XML ON)
 endif ()
+
+# options for individual robot compilation
+option (RS_DOF "Enable dof compilation" OFF)
+option (RS_LINKBOT "Enable linkbot compilation" ON)
+option (RS_MINDSTORMS "Enable mindstorms compilation" ON)
+
+# options for building pieces of whole library
+option (RS_GRAPHICS "Enable graphical library" ON)
+option (RS_SIM "Enable simulation library" ON)
+option (RS_XML "Enable xml library" ON)
 
 # add libraries
 add_subdirectory ("${LibRS_SOURCE_DIR}/src/rs")

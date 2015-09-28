@@ -72,9 +72,9 @@ void Obstacle::setConnect(int a) {
 }
 
 void Obstacle::setDimensions(double a, double b, double c) {
-	_l[0] = a;
-	_l[1] = b;
-	_l[2] = c;
+	if (fabs(a) > rs::Epsilon) _l[0] = a;
+	if (fabs(b) > rs::Epsilon) _l[1] = b;
+	if (fabs(c) > rs::Epsilon) _l[2] = c;
 }
 
 void Obstacle::setID(int a) {

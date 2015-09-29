@@ -801,6 +801,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				i = 0; j = 0;
 				ele->QueryIntAttribute("left", &i);
 				ele->QueryIntAttribute("right", &j);
+				if (i == rsLinkbot::Connectors::Wheel || j == rsLinkbot::Connectors::Wheel) {
+					std::cerr << "RoboSim currently only supports the default wheel sizes." << std::endl;
+					std::cerr << "Defaulting to small Linkbot wheels." << std::endl;
+					i = rsLinkbot::Connectors::SmallWheel;
+					j = rsLinkbot::Connectors::SmallWheel;
+				}
 				if (i) {
 					_robot.back()->addConnector(new Conn(0, 0, -1, 1, 1, _robot.back()->getID(), 1, rsLinkbot::Connectors::Simple));
 					_robot.back()->addConnector(new Conn(0, 0, i, 1, 1, _robot.back()->getID(), 2, rsLinkbot::Connectors::Simple));

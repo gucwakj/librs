@@ -3,7 +3,7 @@
 Library for robot simulation engines.  It is split into five separate libraries
 which each provide parts of the functionality of the system.
 
-rs		base mathematics classes: position, quaternion, vectors
+rs			base mathematics classes: position, quaternion, vectors
 rsRobots	base robot classes which have dimensions and basic information
 			about the robots
 rsSim		simulation engine based upon ODE
@@ -27,9 +27,9 @@ These are built separately and linked to by the LibRS libraries.  Be default
 all modules are built but can be turned off with cmake variables on the command
 line.
 ```
--DENABLE_GRAPHICS=no
--DENABLE_SIM=no
--DENABLE_XML=no
+-DRS_GRAPHICS=no
+-DRS_SIM=no
+-DRS_XML=no
 ```
 These disable support for each of the major components of LibRS.
 
@@ -38,9 +38,16 @@ purpose for learning or researching.  These can also be enabled/disabled
 individually to simplify the library for a specific purpose.  By default the
 Linkbots and Mindstorms are enabled and the Dof is not.
 ```
--DENABLE_DOF=no
--DENABLE_LINKBOT=no
--DENABLE_MINDSTORMS=no
+-DRS_DOF=no
+-DRS_LINKBOT=no
+-DRS_MINDSTORMS=no
+```
+
+There are research functions built into LibRS which rely upon the GNU
+Scientific Library.  The research pieces of the Dof and Linkbot modules can be
+enabled or disabled with a CMake definition.
+```
+-DDO_RESEARCH=yes
 ```
 
 ### Linux

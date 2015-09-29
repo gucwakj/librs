@@ -155,6 +155,7 @@ const rs::Vec Dof::getJoints(void) {
 	return rs::Vec(_motor[Bodies::Joint].theta);
 }
 
+#ifdef DO_RESEARCH
 void Dof::moveJointOnce(double *values) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
@@ -200,6 +201,7 @@ void Dof::moveJointSingular(void) {
 	_motor[Bodies::Joint].success = false;
 	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
 }
+#endif
 
 /**********************************************************
 	protected functions
@@ -245,6 +247,7 @@ void Dof::simPreCollisionThread(void) {
 	// engage motor depending upon motor mode
 	double step = _sim->getStep();
 	switch (_motor[Bodies::Joint].mode) {
+#ifdef DO_RESEARCH
 		case ONCE:
 			// reenable body on start
 			dBodyEnable(_body[0]);
@@ -260,6 +263,7 @@ void Dof::simPreCollisionThread(void) {
 
 			// end
 			break;
+#endif
 		case SEEK:
 			if ((_motor[Bodies::Joint].goal - 6*_motor[Bodies::Joint].encoder - _motor[Bodies::Joint].theta) > rs::Epsilon) {
 				_motor[Bodies::Joint].state = POSITIVE;
@@ -307,6 +311,7 @@ void Dof::simPreCollisionThread(void) {
 				dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, 0);
 			}
 			break;
+#ifdef DO_RESEARCH
 		case SINGULAR:
 			// reenable body on start
 			dBodyEnable(_body[0]);
@@ -322,6 +327,7 @@ void Dof::simPreCollisionThread(void) {
 
 			// end
 			break;
+#endif
 	}
 
 	// unlock angle and goal

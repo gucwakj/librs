@@ -72,14 +72,6 @@ make_directory (${OUTPUT_LIBDIR})
 
 # research option
 option (DO_RESEARCH "Build librs for research" OFF)
-if (DO_RESEARCH)
-	set (RS_DOF ON)
-	set (RS_LINKBOT OFF)
-	set (RS_MINDSTORMS OFF)
-	set (RS_GRAPHICS ON)
-	set (RS_SIM ON)
-	set (RS_XML ON)
-endif ()
 
 # options for individual robot compilation
 option (RS_DOF "Enable dof compilation" OFF)

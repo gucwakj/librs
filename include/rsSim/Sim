@@ -53,7 +53,7 @@ namespace rsSim {
 			void start(void);
 			void stop(void);
 #ifdef DO_RESEARCH
-			int setCPG(int(*)(double, const double*, double*, void*), int, int);		// research
+			int setCPG(int(*)(double, const double*, double*, void*), int, int, int, int);		// research
 #endif
 
 		// protected data
@@ -97,6 +97,8 @@ namespace rsSim {
 #ifdef DO_RESEARCH
 			double _cpg_offset;								// research: initial time offset
 			double _cpg_time;								// research: time of integration
+			int _body_length;								// research: length of robot body
+			int _cpg_form;									// research: form of robot shape
 			int _cpg_robots;								// research: number of robots
 			int _cpg_vars;									// research: number of variables
 			std::vector<double> _cpg_array;					// research: array of values from cpg integration

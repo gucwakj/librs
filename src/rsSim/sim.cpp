@@ -373,9 +373,16 @@ int Sim::setCPG(int (*function)(double, const double[], double[], void*), int bo
 	_cpg_sys = {function, NULL, static_cast<size_t>(variables), NULL};
 	_cpg_driver = gsl_odeiv2_driver_alloc_y_new(&_cpg_sys, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
 	_cpg_array.resize(variables);
-	for (int i = 0; i < variables; i+=6) {
-		_cpg_array[i] = 1;
-		_cpg_array[i+3] = -1;
+	if (form == rs::Research::Salamander) {
+		for (int i = 0; i < variables; i+=3) {
+			_cpg_array[i] = 1;
+		}
+	}
+	else if (form == rs::Research::Snake) {
+		for (int i = 0; i < variables; i+=6) {
+			_cpg_array[i] = 1;
+			_cpg_array[i+3] = -1;
+		}
 	}
 	_cpg_offset = 0;
 	_cpg_time = 0;

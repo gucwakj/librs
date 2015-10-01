@@ -295,6 +295,13 @@ Robot* Sim::getRobot(int id) {
 	return NULL;
 }
 
+bool Sim::getRunning(void) {
+	MUTEX_LOCK(&_running_mutex);
+	bool running = _running;
+	MUTEX_UNLOCK(&_running_mutex);
+	return running;
+}
+
 double Sim::getStep(void) {
 	MUTEX_LOCK(&_step_mutex);
 	double step = _step;
@@ -303,11 +310,31 @@ double Sim::getStep(void) {
 }
 
 void Sim::mutexLock(int type) {
-	MUTEX_LOCK(&_robot_mutex);
+	switch (type) {
+		case Sim::AddRobot:
+			MUTEX_LOCK(&_robot_mutex);
+			break;
+		case Sim::PauseSimulation:
+			MUTEX_LOCK(&_pause_mutex);
+			break;
+		case Sim::RunningSimulation:
+			MUTEX_LOCK(&_running_mutex);
+			break;
+	}
 }
 
 void Sim::mutexUnlock(int type) {
-	MUTEX_UNLOCK(&_robot_mutex);
+	switch (type) {
+		case Sim::AddRobot:
+			MUTEX_UNLOCK(&_robot_mutex);
+			break;
+		case Sim::PauseSimulation:
+			MUTEX_UNLOCK(&_pause_mutex);
+			break;
+		case Sim::RunningSimulation:
+			MUTEX_UNLOCK(&_running_mutex);
+			break;
+	}
 }
 
 void Sim::run(int milliseconds, void (*output)(void), int interval) {

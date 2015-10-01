@@ -42,6 +42,7 @@ namespace rsSim {
 			int getMu(double&, double&);
 			bool getPause(void);
 			Robot* getRobot(int);
+			bool getRunning(void);
 			double getStep(void);
 			void mutexLock(int);
 			void mutexUnlock(int);
@@ -49,15 +50,31 @@ namespace rsSim {
 			void run(int, void (*output)(void) = NULL, int interval = 0);
 			int setCollisions(int);
 			int setCOR(double, double);
-			int setMu(double, double);
-			void start(void);
-			void stop(void);
 #ifdef DO_RESEARCH
 			int setCPG(int(*)(double, const double*, double*, void*), int, int, int, int);		// research
 #endif
+			int setMu(double, double);
+			void start(void);
+			void stop(void);
 
-		// protected data
-		protected:
+		// public enumerations
+		public:
+			enum Mutexes {
+				AddRobot,
+				PauseSimulation,
+				RunningSimulation
+			};
+
+		// private functions
+		private:
+			static void collision(void*, dGeomID, dGeomID);	// wrapper function for nearCallback to work in class
+			static void* simulation_thread(void*);			// simulation thread function
+#ifdef DO_RESEARCH
+			const rs::Vec run_cpg_step(void);				// research: run cpg integration step
+#endif
+
+		// private variables
+		private:
 			struct RobotNode {
 				rsSim::Robot *robot;
 				THREAD_T thread;
@@ -83,27 +100,16 @@ namespace rsSim {
 			MUTEX_T _running_mutex;				// mutex: actively running program
 			MUTEX_T _step_mutex;				// mutex: getting the step value
 			THREAD_T _simulation;				// thread: simulation
-
-		// private functions
-		private:
-			static void collision(void*, dGeomID, dGeomID);	// wrapper function for nearCallback to work in class
-			static void* simulation_thread(void*);			// simulation thread function
 #ifdef DO_RESEARCH
-			const rs::Vec run_cpg_step(void);				// research: run cpg integration step
-#endif
-
-		// private variables
-		private:
-#ifdef DO_RESEARCH
-			double _cpg_offset;								// research: initial time offset
-			double _cpg_time;								// research: time of integration
-			int _body_length;								// research: length of robot body
-			int _cpg_form;									// research: form of robot shape
-			int _cpg_robots;								// research: number of robots
-			int _cpg_vars;									// research: number of variables
-			std::vector<double> _cpg_array;					// research: array of values from cpg integration
-			gsl_odeiv2_driver *_cpg_driver;					// research: driver of cpg integration
-			gsl_odeiv2_system _cpg_sys;						// research: system of ode equations
+			double _cpg_offset;					// research: initial time offset
+			double _cpg_time;					// research: time of integration
+			int _body_length;					// research: length of robot body
+			int _cpg_form;						// research: form of robot shape
+			int _cpg_robots;					// research: number of robots
+			int _cpg_vars;						// research: number of variables
+			std::vector<double> _cpg_array;		// research: array of values from cpg integration
+			gsl_odeiv2_driver *_cpg_driver;		// research: driver of cpg integration
+			gsl_odeiv2_system _cpg_sys;			// research: system of ode equations
 #endif
 	};
 

@@ -337,6 +337,30 @@ void Sim::mutexUnlock(int type) {
 	}
 }
 
+int Sim::pause(int mode) {
+	// lock pause
+	MUTEX_LOCK(&_pause_mutex);
+
+	// switch pause variable
+	switch (mode) {
+		case 0:
+			_pause = false;
+			break;
+		case 1:
+			_pause = true;
+			break;
+		case 2:
+			_pause = _pause ? false : true;
+			break;
+	}
+
+	// unlock pause
+	MUTEX_UNLOCK(&_pause_mutex);
+
+	// success
+	return 0;
+}
+
 void Sim::run(int milliseconds, void (*output)(void), int interval) {
 	// calculate sleep time
 	if (!interval) { interval = milliseconds; }
@@ -437,30 +461,6 @@ int Sim::setCPG(int (*function)(double, const double[], double[], void*), int bo
 int Sim::setMu(double robot, double ground) {
 	_friction[0] = robot;
 	_friction[1] = ground;
-
-	// success
-	return 0;
-}
-
-int Sim::pause(int mode) {
-	// lock pause
-	MUTEX_LOCK(&_pause_mutex);
-
-	// switch pause variable
-	switch (mode) {
-		case 0:
-			_pause = false;
-			break;
-		case 1:
-			_pause = true;
-			break;
-		case 2:
-			_pause = _pause ? false : true;
-			break;
-	}
-
-	// unlock pause
-	MUTEX_UNLOCK(&_pause_mutex);
 
 	// success
 	return 0;

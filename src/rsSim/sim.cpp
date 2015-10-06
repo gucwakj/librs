@@ -532,8 +532,7 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 #ifdef DO_RESEARCH
 const rs::Vec Sim::run_cpg_step(void) {
 	// return vector
-	int size = _robot.size() - 1;
-	rs::Vec V(size);
+	rs::Vec V(_cpg_robots);
 
 	// integrate
 	int status = gsl_odeiv2_driver_apply(_cpg_driver, &_cpg_time, _clock + _step + _cpg_offset, _cpg_array.data());

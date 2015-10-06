@@ -1080,7 +1080,6 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ybillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		ybillboard->setName("ylabel");
 		_background->addChild(ybillboard);
-
 	}
 }
 

@@ -1,0 +1,41 @@
+#ifndef RSRESEARCH_INTEGRATOR_
+#define RSRESEARCH_INTEGRATOR_
+
+#include <vector>
+
+#include <rs/Vec>
+
+// gsl - integration
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv2.h>
+
+namespace rsResearch {
+
+	// class
+	class LIBRSEXPORT Integrator {
+		// public functions
+		public:
+			Integrator(void);
+			virtual ~Integrator(void);
+
+			void setup(int(*)(double, const double*, double*, void*), int, int, int, int, double = 0.004);
+			const rs::Vec runStep(double);
+
+		// private variables
+		private:
+			double _time;							// time of integration
+			double _time_offset;					// initial time offset
+			int _body_length;						// length of robot body
+			int _form;								// form of robot shape
+			int _num_robots;						// number of robots
+			int _num_vars;							// number of variables
+			std::vector<double> _array;				// array of values from cpg integration
+			gsl_odeiv2_driver *_driver;				// driver of cpg integration
+			gsl_odeiv2_system _system;				// system of ode equations
+	};
+
+} // namespace rsResearch
+
+#endif // RSRESEARCH_INTEGRATOR_
+

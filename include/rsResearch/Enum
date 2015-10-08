@@ -1,0 +1,20 @@
+#ifndef RSRESEARCH_ENUM_
+#define RSRESEARCH_ENUM_
+
+namespace rsResearch {
+
+	namespace Forms {
+
+		// Forms
+		enum Form {
+			Individual,
+			Salamander,
+			Snake
+		};
+
+	} // namespace Forms
+
+} // namespace rsResearch
+
+#endif // RSRESEARCH_ENUM_
+

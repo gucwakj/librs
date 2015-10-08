@@ -3,9 +3,6 @@
 #include <config.h>
 #include <rs/Macros>
 #include <rsSim/Sim>
-#ifdef DO_RESEARCH
-#include <rs/Research>
-#endif
 
 using namespace rsSim;
 
@@ -68,11 +65,6 @@ Sim::~Sim(void) {
 	dSpaceDestroy(_space);
 	dWorldDestroy(_world);
 	dCloseODE();
-
-#ifdef DO_RESEARCH
-	// research: remove cpg
-	gsl_odeiv2_driver_free(_cpg_driver);
-#endif
 
 	// remove robots
 	for (unsigned int i = 0; i < _robot.size(); i++) {
@@ -419,42 +411,8 @@ int Sim::setCOR(double robot, double ground) {
 }
 
 #ifdef DO_RESEARCH
-int Sim::setCPG(int (*function)(double, const double[], double[], void*), int body, int robots, int variables, int form) {
-	// set cpg variables
-	_cpg_sys = {function, NULL, static_cast<size_t>(variables), NULL};
-	_cpg_driver = gsl_odeiv2_driver_alloc_y_new(&_cpg_sys, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
-	_cpg_array.resize(variables);
-	if (form == rs::Research::Salamander) {
-		for (int i = 0; i < variables; i+=3) {
-			_cpg_array[i] = 1;
-		}
-	}
-	else if (form == rs::Research::Snake) {
-		for (int i = 0; i < variables; i+=6) {
-			_cpg_array[i] = 1;
-			_cpg_array[i+3] = -1;
-		}
-	}
-	_cpg_offset = 0;
-	_cpg_time = 0;
-	_body_length = body;
-	_cpg_form = form;
-	_cpg_robots = robots;
-	_cpg_vars = variables;
-
-	// run cpg until steady state
-	rs::Vec v;
-	for (int i = 0; i < 0.3/_step; i++) {
-		v = this->run_cpg_step();
-		_cpg_offset += _step;
-	}
-	while (v[0] < 0 && v[1] < 0) {
-		v = this->run_cpg_step();
-		_cpg_offset += _step;
-	}
-
-	// done
-	return 0;
+void Sim::setCPG(int (*function)(double, const double[], double[], void*), int body, int robots, int variables, int form) {
+	_integ.setup(function, body, robots, variables, form, _step);
 }
 #endif
 
@@ -529,58 +487,6 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 	}
 }
 
-#ifdef DO_RESEARCH
-const rs::Vec Sim::run_cpg_step(void) {
-	// return vector
-	rs::Vec V(_cpg_robots);
-
-	// integrate
-	int status = gsl_odeiv2_driver_apply(_cpg_driver, &_cpg_time, _clock + _step + _cpg_offset, _cpg_array.data());
-
-	// die if integration step fails and return empty vector
-	if (status != GSL_SUCCESS) {
-		std::cerr << "ERROR: return value = " << status << std::endl;
-		return V;
-	}
-
-	// save output array
-	if (_cpg_form == rs::Research::Salamander) {
-		//double init[4] = {0};
-		double theta_up = -5*M_PI/6;
-		double theta_down = -M_PI/6;
-		double a = theta_up - M_PI;
-		double b = (2*M_PI - theta_down + theta_up)/(M_PI);
-		double c = (theta_down - theta_up)/M_PI;
-		for (int i = 0, j = 0; i < _cpg_vars; i+=3, j++) {
-			if (i < _body_length*3)
-				V[j] = _cpg_array[i+1]*cos(_cpg_array[i]);
-			else {
-				// get continuous output vectors
-				if (_cpg_array[i] < theta_up)
-					V[j] = theta_up + (_cpg_array[i] - theta_up)*b;
-				else if (_cpg_array[i] < a)
-					V[j] = theta_up + (_cpg_array[i] - theta_up)*c;
-				else
-					V[j] = theta_down + (_cpg_array[i] - a)*b;
-				// drop values to start at zero
-				//if (i == 1) init[k - _body_length] = x[k][i];
-				//V[k] -= init[k - _body_length];
-				// flip right side legs for linkbots
-				if ( !((j+1 - _body_length)%2) ) V[j] = -V[j];
-				// scale
-				V[j] *= 4;
-			}
-		}
-	}
-	else if (_cpg_form == rs::Research::Snake) {
-		for (int j = 0, k = 0; j < _cpg_vars; j+=6, k++) {
-			V[k] = _cpg_array[j+1] + _cpg_array[j+1]*cos(_cpg_array[j]) - _cpg_array[j+4] - _cpg_array[j+4]*cos(_cpg_array[j+3]);
-		}
-	}
-	return V;
-}
-#endif
-
 void* Sim::simulation_thread(void *arg) {
 	// cast to type sim
 	Sim *sim = (Sim *)arg;
@@ -629,7 +535,7 @@ void* Sim::simulation_thread(void *arg) {
 
 #ifdef DO_RESEARCH
 			// research: cpg calculation
-			rs::Vec v = sim->run_cpg_step();
+			rs::Vec v = sim->_integ.runStep(sim->_step);
 			for (unsigned int j = 1; j < sim->_robot.size(); j++) {
 				sim->_robot[j].robot->setCPGGoal(v[j-1]);
 			}

@@ -9,10 +9,7 @@
 #include <rsSim/Robot>
 
 #ifdef DO_RESEARCH
-// gsl - integration
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_odeiv2.h>
+#include <rsResearch/Integrator>
 #endif
 
 namespace rsSim {
@@ -51,7 +48,7 @@ namespace rsSim {
 			int setCollisions(int);
 			int setCOR(double, double);
 #ifdef DO_RESEARCH
-			int setCPG(int(*)(double, const double*, double*, void*), int, int, int, int);		// research
+			void setCPG(int(*)(double, const double*, double*, void*), int, int, int, int);		// research
 #endif
 			int setMu(double, double);
 			void start(void);
@@ -69,9 +66,6 @@ namespace rsSim {
 		private:
 			static void collision(void*, dGeomID, dGeomID);	// wrapper function for nearCallback to work in class
 			static void* simulation_thread(void*);			// simulation thread function
-#ifdef DO_RESEARCH
-			const rs::Vec run_cpg_step(void);				// research: run cpg integration step
-#endif
 
 		// private variables
 		private:
@@ -101,15 +95,7 @@ namespace rsSim {
 			MUTEX_T _step_mutex;				// mutex: getting the step value
 			THREAD_T _simulation;				// thread: simulation
 #ifdef DO_RESEARCH
-			double _cpg_offset;					// research: initial time offset
-			double _cpg_time;					// research: time of integration
-			int _body_length;					// research: length of robot body
-			int _cpg_form;						// research: form of robot shape
-			int _cpg_robots;					// research: number of robots
-			int _cpg_vars;						// research: number of variables
-			std::vector<double> _cpg_array;		// research: array of values from cpg integration
-			gsl_odeiv2_driver *_cpg_driver;		// research: driver of cpg integration
-			gsl_odeiv2_system _cpg_sys;			// research: system of ode equations
+			rsResearch::Integrator _integ;		// research: integrator class
 #endif
 	};
 

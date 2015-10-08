@@ -17,9 +17,6 @@ namespace rsSim {
 			virtual void calculateTrackwidth(void);
 			virtual const rs::Pos getCoM(double&);
 			const rs::Vec getJoints(void);
-#ifdef RS_RESEARCH
-			void moveJointSingular(int);			// research: move one step at a time
-#endif
 
 		// inherited functions from ModularRobot class
 		protected:

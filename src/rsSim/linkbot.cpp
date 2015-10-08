@@ -216,26 +216,6 @@ const rs::Vec Linkbot::getJoints(void) {
 	return rs::Vec(_motor[Bodies::Joint1].theta, _motor[Bodies::Joint2].theta, _motor[Bodies::Joint3].theta);
 }
 
-#ifdef RS_RESEARCH
-void Linkbot::moveJointSingular(int id) {
-	// set motion parameters
-	_motor[id].mode = SINGULAR;
-	_motor[id].state = POSITIVE;
-
-	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
-	dJointEnable(_motor[id].id);
-	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
-	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
-
-	// unsuccessful
-	MUTEX_LOCK(&_motor[id].success_mutex);
-	_motor[id].success = false;
-	MUTEX_UNLOCK(&_motor[id].success_mutex);
-}
-#endif
-
 /**********************************************************
 	protected functions
  **********************************************************/
@@ -435,23 +415,6 @@ void Linkbot::simPreCollisionThread(void) {
 					dJointSetAMotorParam(_motor[i].id, dParamVel, 0);
 				}
 				break;
-#ifdef RS_RESEARCH
-			case SINGULAR:
-				// reenable body on start
-				dBodyEnable(_body[0]);
-
-				// set new omega
-				_motor[i].goal = _next_goal;
-				_motor[i].omega = (_motor[i].goal - _motor[i].theta)/step;
-				_motor[i].state = NEUTRAL;
-
-				// move forever
-				dJointEnable(_motor[i].id);
-				dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
-
-				// end
-				break;
-#endif
 		}
 	}
 

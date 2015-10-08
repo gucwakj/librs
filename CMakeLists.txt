@@ -71,7 +71,7 @@ endif ()
 make_directory (${OUTPUT_LIBDIR})
 
 # research option
-option (DO_RESEARCH "Build librs for research" OFF)
+option (RS_RESEARCH "Build librs for research" OFF)
 
 # options for individual robot compilation
 option (RS_DOF "Enable dof compilation" OFF)
@@ -88,7 +88,7 @@ add_subdirectory ("${LibRS_SOURCE_DIR}/src/rs")
 add_subdirectory ("${LibRS_SOURCE_DIR}/src/rsRobots")
 set (MODULES ${MODULES} "rs")
 set (MODULES ${MODULES} "rsRobots")
-if (DO_RESEARCH)
+if (RS_RESEARCH)
 	add_subdirectory ("${LibRS_SOURCE_DIR}/src/rsResearch")
 	set (MODULES ${MODULES} "rsResearch")
 endif ()

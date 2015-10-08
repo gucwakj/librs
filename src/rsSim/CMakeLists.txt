@@ -29,7 +29,7 @@ set (EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 # add LibRS library
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized rs debug rsd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsRobots debug rsRobotsd)
-if (DO_RESEARCH)
+if (RS_RESEARCH)
 	set (EXTRA_LIBS ${EXTRA_LIBS} optimized rsResearch debug rsResearchd)
 endif ()
 

@@ -8,7 +8,7 @@
 #include <rsSim/ModularRobot>
 #include <rsSim/Robot>
 
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 #include <rsResearch/Integrator>
 #endif
 
@@ -47,7 +47,7 @@ namespace rsSim {
 			void run(int, void (*output)(void) = NULL, int interval = 0);
 			int setCollisions(int);
 			int setCOR(double, double);
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 			void setCPG(int(*)(double, const double*, double*, void*), int, int, int, int);		// research
 #endif
 			int setMu(double, double);
@@ -94,7 +94,7 @@ namespace rsSim {
 			MUTEX_T _running_mutex;				// mutex: actively running program
 			MUTEX_T _step_mutex;				// mutex: getting the step value
 			THREAD_T _simulation;				// thread: simulation
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 			rsResearch::Integrator _integ;		// research: integrator class
 #endif
 	};

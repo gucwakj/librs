@@ -17,7 +17,7 @@ namespace rsSim {
 			virtual void calculateTrackwidth(void);
 			virtual const rs::Pos getCoM(double&);
 			const rs::Vec getJoints(void);
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 			void moveJointOnce(int, double*);		// research: move from array of values
 			void moveJointSingular(int);			// research: move one step at a time
 #endif
@@ -50,7 +50,7 @@ namespace rsSim {
 			void build_wheel(Connector&, double);
 			double calculate_angle(int);
 
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 		// private variables
 		private:
 			std::vector<double *> _values;		// research: values of integrated array

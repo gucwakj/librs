@@ -155,7 +155,7 @@ const rs::Vec Dof::getJoints(void) {
 	return rs::Vec(_motor[Bodies::Joint].theta);
 }
 
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 void Dof::moveJointOnce(double *values) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
@@ -247,7 +247,7 @@ void Dof::simPreCollisionThread(void) {
 	// engage motor depending upon motor mode
 	double step = _sim->getStep();
 	switch (_motor[Bodies::Joint].mode) {
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 		case ONCE:
 			// reenable body on start
 			dBodyEnable(_body[0]);
@@ -311,7 +311,7 @@ void Dof::simPreCollisionThread(void) {
 				dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, 0);
 			}
 			break;
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 		case SINGULAR:
 			// reenable body on start
 			dBodyEnable(_body[0]);

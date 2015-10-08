@@ -410,7 +410,7 @@ int Sim::setCOR(double robot, double ground) {
 	return 0;
 }
 
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 void Sim::setCPG(int (*function)(double, const double[], double[], void*), int body, int robots, int variables, int form) {
 	_integ.setup(function, body, robots, variables, form, _step);
 }
@@ -533,7 +533,7 @@ void* Sim::simulation_thread(void *arg) {
 #endif
 			}
 
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 			// research: cpg calculation
 			rs::Vec v = sim->_integ.runStep(sim->_step);
 			for (unsigned int j = 1; j < sim->_robot.size(); j++) {

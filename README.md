@@ -47,7 +47,7 @@ There are research functions built into LibRS which rely upon the GNU
 Scientific Library.  The research pieces of the Dof and Linkbot modules can be
 enabled or disabled with a CMake definition.
 ```
--DDO_RESEARCH=yes
+-DRS_RESEARCH=yes
 ```
 
 ### Linux

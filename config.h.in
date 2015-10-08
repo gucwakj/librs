@@ -10,7 +10,7 @@
 #cmakedefine RS_MINDSTORMS
 
 // research defines
-#cmakedefine DO_RESEARCH
+#cmakedefine RS_RESEARCH
 
 #endif
 

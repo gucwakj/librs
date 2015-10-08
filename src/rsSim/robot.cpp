@@ -29,7 +29,7 @@ Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	COND_INIT(&_success_cond);
 	MUTEX_INIT(&_theta_mutex);
 
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 	_next_goal = 0;		// research: next cpg values to hit
 #endif
 }
@@ -151,7 +151,7 @@ int Robot::moveJointWait(int id) {
 	return 0;
 }
 
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 void Robot::setCPGGoal(double value) {
 	_next_goal = value;
 }

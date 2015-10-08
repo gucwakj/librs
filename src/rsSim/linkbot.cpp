@@ -12,7 +12,7 @@ Linkbot::Linkbot(int form) : rsRobots::Robot(form), rsRobots::Linkbot(form) {
 
 	// create arrays of proper size
 	_motor.resize(_dof);
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 	_values.resize(_dof);		// research: array of arrays of values
 	for (int i = 0; i < _dof; i++) {
 		_values[i] = NULL;		// research: array of values
@@ -222,7 +222,7 @@ const rs::Vec Linkbot::getJoints(void) {
 	return rs::Vec(_motor[Bodies::Joint1].theta, _motor[Bodies::Joint2].theta, _motor[Bodies::Joint3].theta);
 }
 
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 void Linkbot::moveJointOnce(int id, double *values) {
 	// lock goal
 	MUTEX_LOCK(&_goal_mutex);
@@ -422,7 +422,7 @@ void Linkbot::simPreCollisionThread(void) {
 						break;
 				}
 				break;
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 			case ONCE:
 				// reenable body on start
 				dBodyEnable(_body[0]);
@@ -486,7 +486,7 @@ void Linkbot::simPreCollisionThread(void) {
 					dJointSetAMotorParam(_motor[i].id, dParamVel, 0);
 				}
 				break;
-#ifdef DO_RESEARCH
+#ifdef RS_RESEARCH
 			case SINGULAR:
 				// reenable body on start
 				dBodyEnable(_body[0]);

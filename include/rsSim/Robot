@@ -72,13 +72,8 @@ namespace rsSim {
 				ACCEL_CYCLOIDAL,		// follow a cycloidal accel curve
 				ACCEL_HARMONIC,			// follow a harmonic accel curve
 				CONTINUOUS,				// turn on and stay on
-#ifdef RS_RESEARCH
-				ONCE,					// research: follow array of values
-#endif
 				SEEK,					// seek a new joint angle
-#ifdef RS_RESEARCH
 				SINGULAR,				// research: move one value each timestep
-#endif
 			} motorMode_t;
 
 			// motor accelerations

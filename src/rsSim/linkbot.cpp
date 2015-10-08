@@ -12,12 +12,6 @@ Linkbot::Linkbot(int form) : rsRobots::Robot(form), rsRobots::Linkbot(form) {
 
 	// create arrays of proper size
 	_motor.resize(_dof);
-#ifdef RS_RESEARCH
-	_values.resize(_dof);		// research: array of arrays of values
-	for (int i = 0; i < _dof; i++) {
-		_values[i] = NULL;		// research: array of values
-	}
-#endif
 
 	// fill with default data
 	for (int i = 0; i < _dof; i++) {
@@ -223,34 +217,6 @@ const rs::Vec Linkbot::getJoints(void) {
 }
 
 #ifdef RS_RESEARCH
-void Linkbot::moveJointOnce(int id, double *values) {
-	// lock goal
-	MUTEX_LOCK(&_goal_mutex);
-
-	// set motion parameters
-	_motor[id].mode = ONCE;
-	_motor[id].state = POSITIVE;
-
-	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
-	dJointEnable(_motor[id].id);
-	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
-	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
-
-	// set array
-	_loc[id] = 0;
-	_values[id] = values;
-
-	// unsuccessful
-	MUTEX_LOCK(&_motor[id].success_mutex);
-	_motor[id].success = false;
-	MUTEX_UNLOCK(&_motor[id].success_mutex);
-
-	// unlock goal
-	MUTEX_UNLOCK(&_goal_mutex);
-}
-
 void Linkbot::moveJointSingular(int id) {
 	// set motion parameters
 	_motor[id].mode = SINGULAR;
@@ -422,23 +388,6 @@ void Linkbot::simPreCollisionThread(void) {
 						break;
 				}
 				break;
-#ifdef RS_RESEARCH
-			case ONCE:
-				// reenable body on start
-				dBodyEnable(_body[0]);
-
-				// set new omega
-				_motor[i].goal = _values[i][_loc[i]++];
-				_motor[i].omega = (_motor[i].goal - _motor[i].theta)/step;
-				_motor[i].state = NEUTRAL;
-
-				// move forever
-				dJointEnable(_motor[i].id);
-				dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
-
-				// end
-				break;
-#endif
 			case SEEK:
 				if ((_motor[i].goal - 6*_motor[i].encoder - _motor[i].theta) > rs::Epsilon) {
 					_motor[i].state = POSITIVE;

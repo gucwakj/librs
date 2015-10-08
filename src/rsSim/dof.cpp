@@ -156,34 +156,6 @@ const rs::Vec Dof::getJoints(void) {
 }
 
 #ifdef RS_RESEARCH
-void Dof::moveJointOnce(double *values) {
-	// lock goal
-	MUTEX_LOCK(&_goal_mutex);
-
-	// set motion parameters
-	_motor[Bodies::Joint].mode = ONCE;
-	_motor[Bodies::Joint].state = POSITIVE;
-
-	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
-	dJointEnable(_motor[Bodies::Joint].id);
-	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
-	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
-
-	// set array
-	_index = 0;
-	_values = values;
-
-	// unsuccessful
-	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
-	_motor[Bodies::Joint].success = false;
-	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
-
-	// unlock goal
-	MUTEX_UNLOCK(&_goal_mutex);
-}
-
 void Dof::moveJointSingular(void) {
 	// set motion parameters
 	_motor[Bodies::Joint].mode = SINGULAR;
@@ -247,23 +219,6 @@ void Dof::simPreCollisionThread(void) {
 	// engage motor depending upon motor mode
 	double step = _sim->getStep();
 	switch (_motor[Bodies::Joint].mode) {
-#ifdef RS_RESEARCH
-		case ONCE:
-			// reenable body on start
-			dBodyEnable(_body[0]);
-
-			// set new omega
-			_motor[Bodies::Joint].goal = _values[_index++];
-			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
-			_motor[Bodies::Joint].state = NEUTRAL;
-
-			// move forever
-			dJointEnable(_motor[Bodies::Joint].id);
-			dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].omega);
-
-			// end
-			break;
-#endif
 		case SEEK:
 			if ((_motor[Bodies::Joint].goal - 6*_motor[Bodies::Joint].encoder - _motor[Bodies::Joint].theta) > rs::Epsilon) {
 				_motor[Bodies::Joint].state = POSITIVE;

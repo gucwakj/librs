@@ -18,7 +18,6 @@ namespace rsSim {
 			virtual const rs::Pos getCoM(double&);
 			const rs::Vec getJoints(void);
 #ifdef RS_RESEARCH
-			void moveJointOnce(int, double*);		// research: move from array of values
 			void moveJointSingular(int);			// research: move one step at a time
 #endif
 
@@ -49,13 +48,6 @@ namespace rsSim {
 			void build_simple(Connector&);
 			void build_wheel(Connector&, double);
 			double calculate_angle(int);
-
-#ifdef RS_RESEARCH
-		// private variables
-		private:
-			std::vector<double *> _values;		// research: values of integrated array
-			int _loc[3];						// research: location in array
-#endif
 	};
 
 } // namespace rsSim

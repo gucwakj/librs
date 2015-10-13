@@ -17,6 +17,9 @@ MouseHandler::MouseHandler(rsScene::Scene *scene) {
 	this->setName("mouse");
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 bool MouseHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) {
 	osgViewer::Viewer *viewer = dynamic_cast<osgViewer::Viewer *>(&aa);
 	if (!viewer) return false;

@@ -9,6 +9,9 @@ Obstacle::Obstacle(rsSim::Obstacle *obstacle) {
 	_obstacle = obstacle;
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 void Obstacle::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {

@@ -8,7 +8,7 @@ namespace rsSim {
 
 	// class
 	class LIBRSEXPORT Dof : virtual public rsRobots::Dof, virtual public ModularRobot {
-		// public api
+		// public functions
 		public:
 			Dof(int);
 			virtual ~Dof(void);
@@ -22,13 +22,10 @@ namespace rsSim {
 			void moveJointSingular(void);		// research: move one step at a time
 #endif
 
-		// inherited functions from ModularRobot class
-		protected:
-			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, dBodyID, int, int, int);
-
-		// inherited functions from Robot class
+		// inherited functions
 		protected:
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int);
+			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, dBodyID, int, int, int);
 			virtual void simPreCollisionThread(void);
 			virtual void simPostCollisionThread(void);
 

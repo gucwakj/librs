@@ -11,7 +11,7 @@ namespace rsScene {
 
 	// class
 	class LIBRSEXPORT Dof : virtual public rsRobots::Dof, virtual public ModularRobot {
-		// public api
+		// public functions
 		public:
 			Dof(int);
 			virtual ~Dof(void);

@@ -27,6 +27,9 @@ Robot::~Robot(void) {
 	}
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 int Robot::addConnector(Conn *conn) {
 	_conn.push_back(conn);
 

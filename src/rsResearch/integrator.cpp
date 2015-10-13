@@ -21,7 +21,7 @@ Integrator::~Integrator(void) {
 }
 
 /**********************************************************
-	public member functions
+	public functions
  **********************************************************/
 void Integrator::setup(int (*function)(double, const double[], double[], void*), int body, int robots, int variables, int form, double step) {
 	// set cpg variables

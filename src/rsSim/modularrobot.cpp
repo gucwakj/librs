@@ -10,6 +10,9 @@ ModularRobot::~ModularRobot(void) {
 	_conn.empty();
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 ConnectorList& ModularRobot::getConnectorList(void) {
 	return _conn;
 }
@@ -29,7 +32,7 @@ int ModularRobot::getConnectorOrientation(int face) {
 }
 
 /**********************************************************
-	protected functions for inherited classes
+	protected functions
  **********************************************************/
 int ModularRobot::fix_body_to_connector(dBodyID cBody, int face) {
 	// fixed joint

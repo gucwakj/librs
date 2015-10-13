@@ -23,7 +23,7 @@ Publisher::~Publisher(void) {
 }
 
 /**********************************************************
-	public member functions
+	public functions
  **********************************************************/
 int Publisher::send(int id, unsigned int time, double angle) {
 	char buffer[256];

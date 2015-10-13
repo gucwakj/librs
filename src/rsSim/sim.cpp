@@ -73,7 +73,7 @@ Sim::~Sim(void) {
 }
 
 /**********************************************************
-	Public member functions
+	public functions
  **********************************************************/
 int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int ground) {
 	return this->addRobot(robot, id, p, q, a, rs::Vec(0, 0), ground);
@@ -446,7 +446,7 @@ void Sim::stop(void) {
 }
 
 /**********************************************************
-	Private functions
+	private functions
  **********************************************************/
 void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 	// cast void pointer to pointer to class

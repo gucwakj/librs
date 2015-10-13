@@ -11,7 +11,7 @@ namespace rsScene {
 
 	// class
 	class LIBRSEXPORT Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
-		// public api
+		// public functions
 		public:
 			Mindstorms(int);
 			virtual ~Mindstorms(void);

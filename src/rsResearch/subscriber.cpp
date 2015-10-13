@@ -42,7 +42,7 @@ Subscriber::~Subscriber(void) {
 }
 
 /**********************************************************
-	public member functions
+	public functions
  **********************************************************/
 double Subscriber::getAngle(void) {
 	return _angle;

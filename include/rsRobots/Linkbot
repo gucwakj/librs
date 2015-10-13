@@ -110,7 +110,7 @@ namespace rsRobots {
 
 			virtual double getWheelRatio(int);
 
-		// data
+		// protected data
 		protected:
 			double _bigwheel_radius;
 			double _bridge_length;

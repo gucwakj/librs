@@ -64,7 +64,7 @@ namespace rsScene {
 			void toggleHighlight(osg::Group*, osg::Node*, const rs::Vec& = rs::Vec(1, 1, 0), bool = false);
 			void toggleLabel(osg::Group*, osg::Node*);
 
-		// virtual functions for inherited classes
+		// virtual functions
 		protected:
 			virtual void keyPressed(int) {};
 

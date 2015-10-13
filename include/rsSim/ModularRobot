@@ -32,12 +32,12 @@ namespace rsSim {
 			int getConnectorOrientation(int);
 			ConnectorList& getConnectorList(void);
 
-		// utility functions
+		// protected functions
 		protected:
 			int fix_body_to_connector(dBodyID, int);
 			int fix_connector_to_body(int, dBodyID, int = -1);
 
-		// data members
+		// protected data
 		protected:
 			ConnectorList _conn;				// connectors
 	};

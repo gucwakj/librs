@@ -18,7 +18,7 @@ namespace rsResearch {
 			unsigned int getTime(void);
 			void receive(void);
 
-		// private variables
+		// private data
 		private:
 			double _angle;			// angle for this robot
 			int _filter_size;		// size of filter string

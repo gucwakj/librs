@@ -9,6 +9,9 @@
 using namespace rsCallback;
 using namespace rsDof;
 
+/**********************************************************
+	public functions
+ **********************************************************/
 void Dof::setCallbackParams(rsSim::ModularRobot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
 	_bodies = bodies;
 	_conn = conn;

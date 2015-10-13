@@ -8,12 +8,12 @@ namespace rsSim {
 
 	// class
 	class LIBRSEXPORT Mindstorms : virtual public rsRobots::Mindstorms, virtual public Robot {
-		// public api
+		// public functions
 		public:
 			Mindstorms(int = rs::EV3);
 			virtual ~Mindstorms(void);
 
-		// inherited functions from Robot class
+		// inherited functions
 		protected:
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int);
 			virtual void simPreCollisionThread(void);

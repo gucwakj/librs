@@ -28,11 +28,13 @@ namespace rsScene {
 			void setModelPath(std::string);
 			void setUnits(bool);
 
+		// protected functions
 		protected:
 			osg::Material* create_material(osg::Vec4);
 			osg::Geode* create_hud(const rs::Pos&);
 			osg::Geode* create_tracking_line(const rs::Pos&, const rs::Vec&, bool);
 
+		// protected data
 		protected:
 			bool _units;						// flag: SI (true) or customary (false)
 			std::string _model_path;			// path for 3ds models

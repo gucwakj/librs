@@ -20,6 +20,9 @@ Obstacle::Obstacle(int type) {
 	_c[3] = 1;
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 int Obstacle::getAxis(void) {
 	return _axis;
 }

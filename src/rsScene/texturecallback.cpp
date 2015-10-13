@@ -2,6 +2,9 @@
 
 using namespace rsScene;
 
+/**********************************************************
+	public functions
+ **********************************************************/
 void TextureCallback::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor *>(nv);
 	if (cv) {

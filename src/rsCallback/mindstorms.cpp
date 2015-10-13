@@ -3,12 +3,15 @@
 #include <osg/ShapeDrawable>
 #include <osgText/Text>
 
-#include <rsScene/Scene>
 #include <rsCallback/Mindstorms>
+#include <rsScene/Scene>
 
 using namespace rsCallback;
 using namespace rsMindstorms;
 
+/**********************************************************
+	public functions
+ **********************************************************/
 void Mindstorms::setCallbackParams(rsSim::Robot *robot, rsSim::BodyList &bodies, bool units) {
 	_bodies = bodies;
 	_robot = dynamic_cast<rsSim::Mindstorms *>(robot);

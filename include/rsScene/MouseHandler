@@ -21,7 +21,7 @@ namespace rsScene {
 	// forward declare
 	class Scene;
 
-	// classes
+	// class
 	class LIBRSEXPORT MouseHandler : public osgGA::GUIEventHandler {
 		// public functions
 		public:

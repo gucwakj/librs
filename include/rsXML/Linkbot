@@ -8,6 +8,7 @@ namespace rsXML {
 
 	// class
 	class LIBRSEXPORT Linkbot : virtual public rsRobots::Linkbot, virtual public Robot {
+		// public functions
 		public:
 			Linkbot(int = rs::LinkbotT, bool = true);
 			virtual ~Linkbot(void) {};

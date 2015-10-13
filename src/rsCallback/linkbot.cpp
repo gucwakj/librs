@@ -12,6 +12,9 @@ osg::Node::NodeMask VISIBLE_MASK = 0xffffffff;
 using namespace rsCallback;
 using namespace rsLinkbot;
 
+/**********************************************************
+	public functions
+ **********************************************************/
 void Linkbot::setCallbackParams(rsSim::ModularRobot *robot, rsSim::BodyList &bodies, rsSim::ConnectorList &conn, bool units) {
 	_bodies = bodies;
 	_conn = conn;

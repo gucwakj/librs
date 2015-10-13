@@ -28,7 +28,7 @@ namespace rsScene {
 
 			virtual bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
 
-		// virtual functions for inherited classes
+		// protected functions
 		protected:
 			virtual void keyPressed(int) { return; };
 	};

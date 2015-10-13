@@ -11,6 +11,9 @@ Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsRobots::Linkbo
 	}
 };
 
+/**********************************************************
+	public functions
+ **********************************************************/
 void Linkbot::postProcess(void) {
 	// find if i am connected to another robot
 	for (unsigned int i = 0; i < _conn.size(); i++) {

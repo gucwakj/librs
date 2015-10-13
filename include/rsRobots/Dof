@@ -71,7 +71,7 @@ namespace rsRobots {
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
 			virtual const rs::Quat getRobotCenterQuaternion(int, int, double, const rs::Quat&);
 
-		// data
+		// protected data
 		protected:
 			double _body_radius;
 			double _cap_depth;

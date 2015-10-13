@@ -67,7 +67,7 @@ namespace rsSim {
 			static void collision(void*, dGeomID, dGeomID);	// wrapper function for nearCallback to work in class
 			static void* simulation_thread(void*);			// simulation thread function
 
-		// private variables
+		// private data
 		private:
 			struct RobotNode {
 				rsSim::Robot *robot;

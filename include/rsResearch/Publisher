@@ -14,7 +14,7 @@ namespace rsResearch {
 
 			int send(int, unsigned int, double);
 
-		// private variables
+		// private data
 		private:
 			void *_context;		// zmq context
 			void *_socket;		// zmq socket

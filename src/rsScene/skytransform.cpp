@@ -2,6 +2,9 @@
 
 using namespace rsScene;
 
+/**********************************************************
+	public functions
+ **********************************************************/
 bool SkyTransform::computeLocalToWorldMatrix(osg::Matrix &matrix, osg::NodeVisitor *nv) const {
 	osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor *>(nv);
 	if (cv) {

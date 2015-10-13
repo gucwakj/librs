@@ -11,6 +11,9 @@ Mindstorms::Mindstorms(int form, bool trace) : rsRobots::Robot(form), rsRobots::
 	}
 };
 
+/**********************************************************
+	public functions
+ **********************************************************/
 void Mindstorms::postProcess(void) {
 	// adjust height to be above zero
 	double p2;

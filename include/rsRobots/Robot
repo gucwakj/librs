@@ -34,7 +34,7 @@ namespace rsRobots {
 			void setTrace(bool);
 			void setWheelRadius(double);
 
-		// for inherited classes
+		// virtual functions
 		public:
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&) { return rs::Quat(); };
 			virtual double getWheelRatio(int) { return 1; }

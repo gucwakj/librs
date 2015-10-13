@@ -9,6 +9,9 @@ Marker::Marker(int type) {
 	_c.allocate(4);
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 const rs::Vec Marker::getColor(void) {
 	return _c;
 }

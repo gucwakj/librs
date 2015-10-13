@@ -24,7 +24,7 @@ namespace rs {
 				NanoSeconds
 			};
 
-		// private members
+		// private data
 		private:
 			int _units;
 			struct timespec _time;

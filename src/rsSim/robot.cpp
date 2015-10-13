@@ -45,6 +45,9 @@ Robot::~Robot(void) {
 	MUTEX_DESTROY(&_theta_mutex);
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 double Robot::getAngle(int id) {
 	return _motor[id].theta;
 }
@@ -158,7 +161,7 @@ void Robot::setCPGGoal(double value) {
 #endif
 
 /**********************************************************
-	protected functions for inherited classes
+	protected functions
  **********************************************************/
 int Robot::addToSim(dWorldID &world, dSpaceID &space, int id, Sim *sim) {
 	_world = world;

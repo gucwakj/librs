@@ -12,7 +12,7 @@ namespace rsRobots {
 			ModularRobot(void) : Robot(rs::Robot) {};
 			virtual ~ModularRobot(void) {};
 
-		// for inherited classes
+		// virtual functions
 		public:
 			virtual const rs::Pos getConnBodyPosition(int, int, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
 			virtual const rs::Pos getConnFacePosition(int, int, int, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
@@ -21,7 +21,7 @@ namespace rsRobots {
 			virtual const rs::Quat getConnBodyQuaternion(int, int, const rs::Quat&) { return rs::Quat(); };
 			virtual const rs::Quat getConnFaceQuaternion(int, int, int, const rs::Quat&) { return rs::Quat(); };
 
-		// data
+		// protected data
 		protected:
 			double _conn_depth;
 			double _conn_height;

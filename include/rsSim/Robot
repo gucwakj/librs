@@ -46,7 +46,7 @@ namespace rsSim {
 			static void* simPreCollisionThreadEntry(void*);
 			static void* simPostCollisionThreadEntry(void*);
 
-		// utility functions
+		// protected functions
 		protected:
 			int doze(double);
 			int fixBodyToGround(dBodyID);
@@ -57,7 +57,7 @@ namespace rsSim {
 			virtual void simPreCollisionThread(void) { return; };
 			virtual void simPostCollisionThread(void) { return; };
 
-		// data members
+		// protected data
 		protected:
 			// motor motion directions
 			typedef enum motor_state_e {
@@ -138,7 +138,7 @@ namespace rsSim {
 			double normal(double);
 			double uniform(void);
 
-		// private variables
+		// private data
 		private:
 			int _seed;					// seed for random number generation
 	};

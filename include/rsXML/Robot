@@ -53,7 +53,7 @@ namespace rsXML {
 			void setRotation(double, double, double, double);
 			void setWheels(int, int);
 
-		// data
+		// protected data
 		protected:
 			int _connected;
 			int _ground;

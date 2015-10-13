@@ -50,7 +50,7 @@ namespace rsRobots {
 			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
 			virtual double getWheelRatio(int);
 
-		// data
+		// protected data
 		protected:
 			double _bigwheel_radius;
 			double _smallwheel_radius;

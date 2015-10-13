@@ -21,7 +21,7 @@ namespace rsResearch {
 			void setup(int(*)(double, const double*, double*, void*), int, int, int, int, double = 0.004);
 			const rs::Vec runStep(double);
 
-		// private variables
+		// private data
 		private:
 			double _time;							// time of integration
 			double _time_offset;					// initial time offset

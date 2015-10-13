@@ -24,6 +24,9 @@ Conn::Conn(double size, int orientation, int conn, int face1, int face2, int rob
 	_type = type;
 }
 
+/**********************************************************
+	public functions
+ **********************************************************/
 double Conn::getSize(void) {
 	return _size;
 }

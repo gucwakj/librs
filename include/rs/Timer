@@ -1,6 +1,8 @@
 #ifndef RS_TIMER_
 #define RS_TIMER_
 
+#include <ctime>
+
 #include <rs/Macros>
 
 namespace rs {

@@ -11,6 +11,7 @@ include_directories (
 set (SRCS ${SRCS}
 	pos.cpp
 	quat.cpp
+	timer.cpp
 	vec.cpp
 )
 

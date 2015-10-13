@@ -1,0 +1,36 @@
+#ifndef RS_TIMER_
+#define RS_TIMER_
+
+#include <rs/Macros>
+
+namespace rs {
+
+	// class
+	class LIBRSEXPORT Timer {
+		// public functions
+		public:
+			Timer(int);
+			~Timer(void);
+
+			unsigned int now(void);
+			void sleep(unsigned int);
+
+		// public enumerations
+		public:
+			enum Units {
+				Seconds,
+				MilliSeconds,
+				MicroSeconds,
+				NanoSeconds
+			};
+
+		// private members
+		private:
+			int _units;
+			struct timespec _time;
+	};
+
+} // namespace rs
+
+#endif // RS_TIMER_
+

@@ -1,7 +1,6 @@
 #include <cmath>
 #include <iostream>
 
-#include <config.h>
 #include <rs/Macros>
 #include <rsResearch/Enum>
 #include <rsResearch/Integrator>

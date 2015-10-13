@@ -1,0 +1,26 @@
+#ifndef RSRESEARCH_PUBLISHER_
+#define RSRESEARCH_PUBLISHER_
+
+#include <rs/Macros>
+
+namespace rsResearch {
+
+	// class
+	class LIBRSEXPORT Publisher {
+		// public functions
+		public:
+			Publisher(int);
+			virtual ~Publisher(void);
+
+			int send(int, unsigned int, double);
+
+		// private variables
+		private:
+			void *_context;		// zmq context
+			void *_socket;		// zmq socket
+	};
+
+} // namespace rsResearch
+
+#endif // RSRESEARCH_PUBLISHER_
+

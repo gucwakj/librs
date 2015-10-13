@@ -1,0 +1,34 @@
+#ifndef RSRESEARCH_SUBSCRIBER_
+#define RSRESEARCH_SUBSCRIBER_
+
+#include <string>
+
+#include <rs/Macros>
+
+namespace rsResearch {
+
+	// class
+	class LIBRSEXPORT Subscriber {
+		// public functions
+		public:
+			Subscriber(std::string, int, int);
+			virtual ~Subscriber(void);
+
+			double getAngle(void);
+			unsigned int getTime(void);
+			void receive(void);
+
+		// private variables
+		private:
+			double _angle;			// angle for this robot
+			int _filter_size;		// size of filter string
+			int _id;				// id of this robot
+			void *_context;			// zmq context
+			void *_socket;			// zmq socket
+			unsigned int _time;		// timestamp for angle
+	};
+
+} // namespace rsResearch
+
+#endif // RSRESEARCH_SUBSCRIBER_
+

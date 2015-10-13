@@ -8,12 +8,17 @@ include_directories (
 )
 
 # set module search path
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${LibRS_SOURCE_DIR}/resources")
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${LibRS_SOURCE_DIR}/resources")
 
 # add gsl
 find_package (GSL REQUIRED)
 include_directories (${GSL_INCLUDE_DIRS} ${GSLCBLAS_INCLUDE_DIRS})
 set (EXTRA_LIBS ${EXTRA_LIBS} ${GSL_LIBRARIES} ${GSLCBLAS_LIBRARIES})
+
+# add zmq
+find_package (ZMQ REQUIRED)
+include_directories (${ZMQ_INCLUDE_DIRS})
+set (EXTRA_LIBS ${EXTRA_LIBS} ${ZMQ_LIBRARIES})
 
 # add LibRS library
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized rs debug rsd)
@@ -21,6 +26,8 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rs debug rsd)
 # add source files to library
 set (SRCS ${SRCS}
 	integrator.cpp
+	publisher.cpp
+	subscriber.cpp
 )
 
 # add the library

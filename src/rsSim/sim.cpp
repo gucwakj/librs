@@ -414,6 +414,9 @@ int Sim::setCOR(double robot, double ground) {
 void Sim::setCPG(int (*function)(double, const double[], double[], void*), int body, int robots, int variables, int form) {
 	_integ.setup(function, body, robots, variables, form, _step);
 }
+void Sim::setCPG(int (*function)(double, const double[], double[], void*), struct rsResearch::Params *params) {
+	_integ.setup(function, params, _step);
+}
 #endif
 
 int Sim::setMu(double robot, double ground) {

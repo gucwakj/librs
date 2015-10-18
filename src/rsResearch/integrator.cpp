@@ -56,6 +56,39 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	}
 }
 
+void Integrator::setup(int (*function)(double, const double[], double[], void*), struct Params *params, double step) {
+	// set cpg variables
+	_system = {function, NULL, static_cast<size_t>(params->num_vars), (void *)params};
+	_driver = gsl_odeiv2_driver_alloc_y_new(&_system, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
+	_array.resize(params->num_vars);
+	if (params->form == Forms::Salamander) {
+		for (int i = 0; i < params->num_vars; i+=3) {
+			_array[i] = 1;
+		}
+	}
+	else if (params->form == Forms::Snake) {
+		for (int i = 0; i < params->num_vars; i+=6) {
+			_array[i] = 1;
+			_array[i+3] = -1;
+		}
+	}
+	_body_length = params->num_body;
+	_form = params->form;
+	_num_robots = params->num_legs + params->num_body;
+	_num_vars = params->num_vars;
+
+	// run cpg until steady state
+	rs::Vec v;
+	for (int i = 0; i < 0.3/step; i++) {
+		v = this->runStep(step);
+		_time_offset += step;
+	}
+	while (v[0] < 0 && v[1] < 0) {
+		v = this->runStep(step);
+		_time_offset += step;
+	}
+}
+
 const rs::Vec Integrator::runStep(double newtime) {
 	// return vector
 	rs::Vec V(_num_robots);

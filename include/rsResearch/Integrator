@@ -11,6 +11,19 @@
 
 namespace rsResearch {
 
+	// integration struct
+	struct Params {
+		float w;
+		float a;
+		float v;
+		float R;
+		float phi;
+		short num_body;
+		short num_legs;
+		short num_vars;
+		int form;
+	};
+
 	// class
 	class LIBRSEXPORT Integrator {
 		// public functions
@@ -19,6 +32,7 @@ namespace rsResearch {
 			virtual ~Integrator(void);
 
 			void setup(int(*)(double, const double*, double*, void*), int, int, int, int, double = 0.004);
+			void setup(int(*)(double, const double*, double*, void*), struct Params*, double = 0.004);
 			const rs::Vec runStep(double);
 
 		// private data

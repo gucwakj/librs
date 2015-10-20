@@ -13,7 +13,8 @@ namespace rsResearch {
 
 	// integration struct
 	struct Params {
-		float w;
+		float w1;
+		float w2;
 		float a;
 		float v;
 		float R;

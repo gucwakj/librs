@@ -29,7 +29,6 @@ namespace rs {
 		// private data
 		private:
 			int _units;
-			struct timespec _time;
 	};
 
 } // namespace rs

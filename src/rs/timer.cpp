@@ -17,19 +17,37 @@ Timer::~Timer(void) {
  **********************************************************/
 unsigned int Timer::now(void) {
 	// get time
-	clock_gettime(CLOCK_REALTIME, &_time);
+#ifdef RS_WIN32
+	DWORD time = GetTickCount();
+#else
+	struct timespec time;
+	clock_gettime(CLOCK_REALTIME, &time);
+#endif
 
 	// report time in proper units
+#ifdef RS_WIN32
+	switch (_units) {
+	case rs::Timer::Seconds:
+		return time/1000;
+	case rs::Timer::MilliSeconds:
+		return time;
+	case rs::Timer::MicroSeconds:
+		return time*1000;
+	case rs::Timer::NanoSeconds:
+		return time*1000000;
+	}
+#else
 	switch (_units) {
 		case rs::Timer::Seconds:
-			return _time.tv_sec*1 + _time.tv_nsec/1000000000;
+			return time.tv_sec*1 + time.tv_nsec/1000000000;
 		case rs::Timer::MilliSeconds:
-			return _time.tv_sec*1000 + _time.tv_nsec/1000000;
+			return time.tv_sec*1000 + time.tv_nsec/1000000;
 		case rs::Timer::MicroSeconds:
-			return _time.tv_sec*1000000 + _time.tv_nsec/1000;
+			return time.tv_sec*1000000 + time.tv_nsec/1000;
 		case rs::Timer::NanoSeconds:
-			return _time.tv_sec*1000000000 + _time.tv_nsec/1;
+			return time.tv_sec*1000000000 + time.tv_nsec/1;
 	}
+#endif
 
 	return 0;
 }

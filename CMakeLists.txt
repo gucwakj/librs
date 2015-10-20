@@ -11,6 +11,9 @@ set (LibRS_SO_VERSION 0)
 # verbose output
 set (CMAKE_VERBOSE_MAKEFILE off)
 
+# default to release build
+set (CMAKE_BUILD_TYPE Release)
+
 # set the build postfix extension
 set (CMAKE_DEBUG_POSTFIX "d" CACHE STRING "add build postfix type")
 set (CMAKE_RELEASE_POSTFIX "" CACHE STRING "add build postfix type")

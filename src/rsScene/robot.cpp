@@ -1,5 +1,5 @@
 #include <osg/Geometry>
-#include <osg/LineWidth>
+#include <osg/Point>
 #include <osgText/Text>
 
 #include <rs/Macros>
@@ -84,7 +84,7 @@ osg::Geode* Robot::create_tracking_line(const rs::Pos &p, const rs::Vec &c, bool
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	geom->setDataVariance(osg::Object::DYNAMIC);
 	geom->setUseDisplayList(false);
-	geom->insertPrimitiveSet(0, new osg::DrawArrays(osg::PrimitiveSet::LINE_STRIP, 0, 1, 1));
+	geom->insertPrimitiveSet(0, new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, 1, 1));
 
 	// set vertices
 	osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array();
@@ -97,15 +97,10 @@ osg::Geode* Robot::create_tracking_line(const rs::Pos &p, const rs::Vec &c, bool
 	geom->setColorArray(colors);
 	geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-	// set line width
-	osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
-	width->setWidth(6);
-
 	// set rendering properties
 	osg::Geode *geode = new osg::Geode();
-	geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
-	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-	geode->getOrCreateStateSet()->setRenderBinDetails(7, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	geode->getOrCreateStateSet()->setAttribute(new osg::Point(3), osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setRenderBinDetails(20, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 
 	// set geode properties

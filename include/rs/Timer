@@ -14,6 +14,7 @@ namespace rs {
 			Timer(int);
 			~Timer(void);
 
+			unsigned int delta(void);
 			unsigned int now(void);
 			void sleep(unsigned int);
 
@@ -29,6 +30,8 @@ namespace rs {
 		// private data
 		private:
 			int _units;
+			unsigned int _last;
+			unsigned int _now;
 	};
 
 } // namespace rs

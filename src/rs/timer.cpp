@@ -6,6 +6,8 @@
 using namespace rs;
 
 Timer::Timer(int units) {
+	_last = 0;
+	_now = 0;
 	_units = units;
 }
 
@@ -15,7 +17,15 @@ Timer::~Timer(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+unsigned int Timer::delta(void) {
+	this->now();
+	return _now - _last;
+}
+
 unsigned int Timer::now(void) {
+	// store last time
+	_last = _now;
+
 	// get time
 #ifdef RS_WIN32
 	DWORD time = GetTickCount();
@@ -27,29 +37,29 @@ unsigned int Timer::now(void) {
 	// report time in proper units
 #ifdef RS_WIN32
 	switch (_units) {
-	case rs::Timer::Seconds:
-		return time/1000;
-	case rs::Timer::MilliSeconds:
-		return time;
-	case rs::Timer::MicroSeconds:
-		return time*1000;
-	case rs::Timer::NanoSeconds:
-		return time*1000000;
+		case rs::Timer::Seconds:
+			_now = time/1000;
+		case rs::Timer::MilliSeconds:
+			_now = time;
+		case rs::Timer::MicroSeconds:
+			_now = time*1000;
+		case rs::Timer::NanoSeconds:
+			_now = time*1000000;
 	}
 #else
 	switch (_units) {
 		case rs::Timer::Seconds:
-			return time.tv_sec*1 + time.tv_nsec/1000000000;
+			_now = time.tv_sec*1 + time.tv_nsec/1000000000;
 		case rs::Timer::MilliSeconds:
-			return time.tv_sec*1000 + time.tv_nsec/1000000;
+			_now = time.tv_sec*1000 + time.tv_nsec/1000000;
 		case rs::Timer::MicroSeconds:
-			return time.tv_sec*1000000 + time.tv_nsec/1000;
+			_now = time.tv_sec*1000000 + time.tv_nsec/1000;
 		case rs::Timer::NanoSeconds:
-			return time.tv_sec*1000000000 + time.tv_nsec/1;
+			_now = time.tv_sec*1000000000 + time.tv_nsec/1;
 	}
 #endif
 
-	return 0;
+	return _now;
 }
 
 void Timer::sleep(unsigned int length) {

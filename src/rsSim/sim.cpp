@@ -538,7 +538,7 @@ void* Sim::simulation_thread(void *arg) {
 
 #ifdef RS_RESEARCH
 			// research: cpg calculation
-			rs::Vec v = sim->_integ.runStep(sim->_step);
+			rs::Vec v = sim->_integ.runStep(sim->_clock + sim->_step);
 			for (unsigned int j = 1; j < sim->_robot.size(); j++) {
 				sim->_robot[j].robot->setCPGGoal(v[j-1]);
 			}

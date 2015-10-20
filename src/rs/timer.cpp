@@ -39,23 +39,31 @@ unsigned int Timer::now(void) {
 	switch (_units) {
 		case rs::Timer::Seconds:
 			_now = time/1000;
+			break;
 		case rs::Timer::MilliSeconds:
 			_now = time;
+			break;
 		case rs::Timer::MicroSeconds:
 			_now = time*1000;
+			break;
 		case rs::Timer::NanoSeconds:
 			_now = time*1000000;
+			break;
 	}
 #else
 	switch (_units) {
 		case rs::Timer::Seconds:
 			_now = time.tv_sec*1 + time.tv_nsec/1000000000;
+			break;
 		case rs::Timer::MilliSeconds:
 			_now = time.tv_sec*1000 + time.tv_nsec/1000000;
+			break;
 		case rs::Timer::MicroSeconds:
 			_now = time.tv_sec*1000000 + time.tv_nsec/1000;
+			break;
 		case rs::Timer::NanoSeconds:
 			_now = time.tv_sec*1000000000 + time.tv_nsec/1;
+			break;
 	}
 #endif
 

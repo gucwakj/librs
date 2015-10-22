@@ -281,6 +281,7 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 	if (output) {
 		std::cerr << "Error: Could not find RoboSim config file." << std::endl;
 		std::cerr << "Please run RoboSim GUI." << std::endl;
+		exit(-1);
 	}
 }
 

@@ -16,23 +16,23 @@ namespace rsRobots {
 	class LIBRSEXPORT Robot {
 		// public functions
 		public:
-			Robot(int);
+			Robot(short);
 			virtual ~Robot(void);
 
-			double getBodyHeight(void);
-			int getForm(void);
-			int getID(void);
+			float getBodyHeight(void);
+			short getForm(void);
+			short getID(void);
 			std::string getName(void);
-			double* getRGB(void);
-			const rs::Pos getRobotBodyPosition(int, const rs::Pos&, const rs::Quat&);
+			float* getRGB(void);
+			const rs::Pos getRobotBodyPosition(short, const rs::Pos&, const rs::Quat&);
 			bool getTrace(void);
-			double getWheelRadius(void);
-			void setID(int);
-			void setForm(int);
+			float getWheelRadius(void);
+			void setID(short);
+			void setForm(short);
 			void setLED(const rs::Vec&);
 			void setName(std::string);
 			void setTrace(bool);
-			void setWheelRadius(double);
+			void setWheelRadius(float);
 
 		// virtual functions
 		public:
@@ -42,15 +42,15 @@ namespace rsRobots {
 		// data
 		protected:
 			bool _trace;
-			double _body_length;
-			double _body_height;
-			double _body_width;
-			double _wheel_depth;
-			double _wheel_radius;
-			double _rgb[3];
-			int _form;
-			int _id;
-			int _wheels[2];
+			float _body_length;
+			float _body_height;
+			float _body_width;
+			float _wheel_depth;
+			float _wheel_radius;
+			float _rgb[3];
+			short _form;
+			short _id;
+			short _wheels[2];
 			std::string _name;
 			std::vector<rs::Pos> _offset;
 	};

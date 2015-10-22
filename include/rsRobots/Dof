@@ -54,10 +54,10 @@ namespace rsRobots {
 	class LIBRSEXPORT Dof : virtual public ModularRobot {
 		// public functions
 		public:
-			Dof(int);
+			Dof(short);
 			virtual ~Dof(void) {};
 
-			int getEnabled(void);
+			short getEnabled(void);
 
 		// inherited functions
 		public:
@@ -73,11 +73,11 @@ namespace rsRobots {
 
 		// protected data
 		protected:
-			double _body_radius;
-			double _cap_depth;
-			double _cap_radius;
-			double _el_length;
-			int _enabled;
+			float _body_radius;
+			float _cap_depth;
+			float _cap_radius;
+			float _el_length;
+			short _enabled;
 	};
 
 } // namespace rsRobots

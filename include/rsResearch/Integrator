@@ -32,21 +32,21 @@ namespace rsResearch {
 			Integrator(void);
 			virtual ~Integrator(void);
 
-			void setup(int(*)(double, const double*, double*, void*), int, int, int, int, double = 0.004);
-			void setup(int(*)(double, const double*, double*, void*), struct Params*, double = 0.004);
+			void setup(int(*)(double, const double*, double*, void*), short, short, short, short, float = 0.004);
+			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
 			const rs::Vec runStep(double);
 
 		// private data
 		private:
-			double _time;							// time of integration
-			double _time_offset;					// initial time offset
-			int _body_length;						// length of robot body
-			int _form;								// form of robot shape
-			int _num_robots;						// number of robots
-			int _num_vars;							// number of variables
-			std::vector<double> _array;				// array of values from cpg integration
-			gsl_odeiv2_driver *_driver;				// driver of cpg integration
-			gsl_odeiv2_system _system;				// system of ode equations
+			double _time;					// time of integration
+			float _time_offset;				// initial time offset
+			short _body_length;				// length of robot body
+			short _form;					// form of robot shape
+			short _num_robots;				// number of robots
+			short _num_vars;				// number of variables
+			std::vector<double> _array;		// array of values from cpg integration
+			gsl_odeiv2_driver *_driver;		// driver of cpg integration
+			gsl_odeiv2_system _system;		// system of ode equations
 	};
 
 } // namespace rsResearch

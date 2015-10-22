@@ -79,11 +79,11 @@ namespace rsSim {
 			bool _running;						// flag: simulation running
 			bool _rt;							// flag: run in real time
 			bool _pause;						// flag: paused
-			double _clock;						// clock time of simulation
-			double _friction[2];				// coefficient of friction [body/ground, body/body]
-			double _restitution[2];				// coefficient of restitution [body/ground, body/body]
-			double _step;						// time step of simulation
-			double _stop;						// time to stop simulation
+			float _clock;						// clock time of simulation
+			float _friction[2];					// coefficient of friction [body/ground, body/body]
+			float _restitution[2];				// coefficient of restitution [body/ground, body/body]
+			float _step;						// time step of simulation
+			float _stop;						// time to stop simulation
 			dWorldID _world;					// ode: world
 			dSpaceID _space;					// ode: space for robots
 			dJointGroupID _group;				// ode: joint group

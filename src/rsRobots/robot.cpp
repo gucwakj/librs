@@ -2,7 +2,7 @@
 
 using namespace rsRobots;
 
-Robot::Robot(int form) {
+Robot::Robot(short form) {
 	_form = form;
 	_id = 0;
 	_rgb[0] = 0;
@@ -20,15 +20,15 @@ Robot::~Robot(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-double Robot::getBodyHeight(void) {
+float Robot::getBodyHeight(void) {
 	return _body_height;
 }
 
-int Robot::getForm(void) {
+short Robot::getForm(void) {
 	return _form;
 }
 
-int Robot::getID(void) {
+short Robot::getID(void) {
 	return _id;
 }
 
@@ -36,11 +36,11 @@ std::string Robot::getName(void) {
 	return _name;
 }
 
-double* Robot::getRGB(void) {
+float* Robot::getRGB(void) {
 	return _rgb;
 }
 
-const rs::Pos Robot::getRobotBodyPosition(int body, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Robot::getRobotBodyPosition(short body, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 
@@ -52,15 +52,15 @@ bool Robot::getTrace(void) {
 	return _trace;
 }
 
-double Robot::getWheelRadius(void) {
+float Robot::getWheelRadius(void) {
 	return _wheel_radius;
 }
 
-void Robot::setID(int id) {
+void Robot::setID(short id) {
 	_id = id;
 }
 
-void Robot::setForm(int form) {
+void Robot::setForm(short form) {
 	_form = form;
 }
 
@@ -78,7 +78,7 @@ void Robot::setTrace(bool trace) {
 	_trace = trace;
 }
 
-void Robot::setWheelRadius(double radius) {
+void Robot::setWheelRadius(float radius) {
 	_wheel_radius = radius;
 }
 

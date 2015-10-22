@@ -23,7 +23,7 @@ Integrator::~Integrator(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Integrator::setup(int (*function)(double, const double[], double[], void*), int body, int robots, int variables, int form, double step) {
+void Integrator::setup(int (*function)(double, const double[], double[], void*), short body, short robots, short variables, short form, float step) {
 	// set cpg variables
 	_system = {function, NULL, static_cast<size_t>(variables), NULL};
 	_driver = gsl_odeiv2_driver_alloc_y_new(&_system, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
@@ -56,7 +56,7 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	}
 }
 
-void Integrator::setup(int (*function)(double, const double[], double[], void*), struct Params *params, double step) {
+void Integrator::setup(int (*function)(double, const double[], double[], void*), struct Params *params, float step) {
 	// set cpg variables
 	_system = {function, NULL, static_cast<size_t>(params->num_vars), (void *)params};
 	_driver = gsl_odeiv2_driver_alloc_y_new(&_system, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);

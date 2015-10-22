@@ -48,7 +48,7 @@ void Mindstorms::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 			osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode2->getDrawable(0)->asGeometry());
 			osg::Vec4Array *colors = dynamic_cast<osg::Vec4Array *>(draw->getColorArray());
 			colors->pop_back();
-			double *c = _robot->getRGB();
+			float *c = _robot->getRGB();
 			colors->push_back(osg::Vec4(c[0], c[1], c[2], 1));
 			osg::Vec3Array *vertices = dynamic_cast<osg::Vec3Array *>(draw->getVertexArray());
 			vertices->push_back(osg::Vec3(x, y, 0));
@@ -65,7 +65,7 @@ void Mindstorms::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		}
 		// child 2: bodies; drawable 2: led
 		osg::ShapeDrawable *led = dynamic_cast<osg::ShapeDrawable *>(group->getChild(2)->asTransform()->getChild(1)->asGeode()->getDrawable(0));
-		double *rgb = _robot->getRGB();
+		float *rgb = _robot->getRGB();
 		led->setColor(osg::Vec4(rgb[0], rgb[1], rgb[2], 1.0));
 	}
 	traverse(node, nv);

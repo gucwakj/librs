@@ -3,7 +3,7 @@
 using namespace rsRobots;
 using namespace rsDof;
 
-Dof::Dof(int joint) : Robot(rs::Dof) {
+Dof::Dof(short joint) : Robot(rs::Dof) {
 	// enabled joint
 	_enabled = joint;
 
@@ -17,7 +17,7 @@ Dof::Dof(int joint) : Robot(rs::Dof) {
 
 	// body position offsets
 	_offset.push_back(rs::Pos(0, 0, 0));								// body
-	double depth = 0; if (_enabled == Bodies::Face1) depth = _cap_depth/2;
+	float depth = 0; if (_enabled == Bodies::Face1) depth = _cap_depth/2;
 	_offset.push_back(rs::Pos(-_body_width/2 - depth, 0, 0));			// face1
 	depth = 0; if (_enabled == Bodies::Face2) depth = _cap_depth/2;
 	_offset.push_back(rs::Pos(0, -_body_length - depth, 0));			// face2
@@ -124,7 +124,7 @@ const rs::Pos Dof::getRobotCenterPosition(int face, const rs::Pos &p, const rs::
 	rs::Pos P(p);
 
 	// face depth
-	double depth = 0;
+	float depth = 0;
 	if (_enabled == face) depth = _cap_depth;
 
 	// get position of robot
@@ -167,7 +167,7 @@ const rs::Pos Dof::getRobotFacePosition(int face, const rs::Pos &p, const rs::Qu
 	rs::Pos P(p);
 
 	// face depth
-	double depth = 0;
+	float depth = 0;
 	if (_enabled == face) depth = _cap_depth/2;
 
 	// calculate offset position
@@ -182,7 +182,7 @@ const rs::Pos Dof::getRobotFacePosition(int face, const rs::Pos &p, const rs::Qu
 	return P;
 }
 
-int Dof::getEnabled(void) {
+short Dof::getEnabled(void) {
 	return _enabled;
 }
 

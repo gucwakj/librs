@@ -367,10 +367,7 @@ void Dof::build_cap(const rs::Pos &p, const rs::Quat &q) {
 
 	// destroy old geom when rotating joint on rebuild
 	dGeomID geom1 = dBodyGetFirstGeom(_body[Bodies::Cap]);
-	while (geom1) {
-		dGeomDestroy(geom1);
-		geom1 = dBodyGetNextGeom(geom1);
-	}
+	if (geom1) dGeomDestroy(geom1);
 
 	// set geometry
 	dGeomID geom = dCreateCylinder(_space, _cap_radius, _cap_depth);

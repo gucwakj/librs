@@ -12,7 +12,8 @@ namespace rsResearch {
 			Publisher(int);
 			virtual ~Publisher(void);
 
-			int send(int, unsigned int, double);
+			int send(short, unsigned int, float);
+			int send(short, float, float, float);
 
 		// private data
 		private:

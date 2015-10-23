@@ -11,21 +11,33 @@ namespace rsResearch {
 	class LIBRSEXPORT Subscriber {
 		// public functions
 		public:
-			Subscriber(std::string, int, int);
+			Subscriber(std::string, std::string, short, short);
 			virtual ~Subscriber(void);
 
-			double getAngle(void);
+			float getAngle(void);
 			unsigned int getTime(void);
+
+			float getV(void);
+			float getR(void);
+			float getPhi(void);
+			
 			void receive(void);
 
 		// private data
 		private:
-			double _angle;			// angle for this robot
-			int _filter_size;		// size of filter string
-			int _id;				// id of this robot
 			void *_context;			// zmq context
 			void *_socket;			// zmq socket
+
+			short _filter;			// filter id
+			short _filter_size;		// size of filter string
+			short _id;				// id of this robot
+
+			double _angle;			// angle for this robot
 			unsigned int _time;		// timestamp for angle
+
+			float _v;				// cpg body frequency
+			float _r;				// cpg body amplitude
+			float _phi;				// cpg phase shift
 	};
 
 } // namespace rsResearch

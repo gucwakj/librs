@@ -25,9 +25,15 @@ Publisher::~Publisher(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-int Publisher::send(int id, unsigned int time, double angle) {
+int Publisher::send(short id, unsigned int time, float angle) {
 	char buffer[256];
-	sprintf(buffer, "robot%02d: %u %lf", id, time, angle);
+	sprintf(buffer, "hard%02d: %u %f", id, time, angle);
+	return zmq_send(_socket, buffer, strlen(buffer), 0);
+}
+
+int Publisher::send(short id, float v, float r, float phi) {
+	char buffer[256];
+	sprintf(buffer, "cpg%02d: %f %f %f", id, v, r, phi);
 	return zmq_send(_socket, buffer, strlen(buffer), 0);
 }
 

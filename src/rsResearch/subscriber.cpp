@@ -8,7 +8,7 @@
 
 using namespace rsResearch;
 
-Subscriber::Subscriber(std::string ip, int port, int id) {
+Subscriber::Subscriber(std::string ip, std::string filter, short port, short id) {
 	// robot id
 	_id = id;
 
@@ -27,11 +27,12 @@ Subscriber::Subscriber(std::string ip, int port, int id) {
 		std::cerr << "rsResearch::Subscriber cannot connect to socket" << std::endl;
 
 	// set options
-	std::string sub("robot");
+	std::string sub(filter);
 	char str[4];
 	std::sprintf(str, "%02d", id);
 	sub.append(str);
 	sub.append(": ");
+	_filter = filter.compare("hard") ? 0 : 1;
 	_filter_size = sub.size();
 	zmq_setsockopt(_socket, ZMQ_SUBSCRIBE, sub.c_str(), _filter_size);
 }
@@ -44,12 +45,24 @@ Subscriber::~Subscriber(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-double Subscriber::getAngle(void) {
+float Subscriber::getAngle(void) {
 	return _angle;
 }
 
 unsigned int Subscriber::getTime(void) {
 	return _time;
+}
+
+float Subscriber::getV(void) {
+	return _v;
+}
+
+float Subscriber::getR(void) {
+	return _r;
+}
+
+float Subscriber::getPhi(void) {
+	return _phi;
 }
 
 void Subscriber::receive(void) {
@@ -59,8 +72,16 @@ void Subscriber::receive(void) {
 	string[size] = 0;
 
 	// read from string
-	_angle = 0;
-	_time = 0;
-	sscanf(&string[_filter_size], "%u %lf", &_time, &_angle);
+	if (_filter == 0) {
+		_v = 0;
+		_r = 0;
+		_phi = 0;
+		sscanf(&string[_filter_size], "%f %f %f", &_v, &_r, &_phi);
+	}
+	else if (_filter == 1) {
+		_angle = 0;
+		_time = 0;
+		sscanf(&string[_filter_size], "%u %lf", &_time, &_angle);
+	}
 }
 

@@ -240,12 +240,9 @@ double Sim::getClock(void) {
 	return clock;
 }
 
-int Sim::getCOR(double &robot, double &ground) {
+void Sim::getCOR(double &robot, double &ground) {
 	robot = _restitution[0];
 	ground = _restitution[1];
-
-	// success
-	return 0;
 }
 
 void Sim::getCoM(double &x, double &y, double &z) {
@@ -264,12 +261,9 @@ void Sim::getCoM(double &x, double &y, double &z) {
 	z /= total;
 }
 
-int Sim::getMu(double &robot, double &ground) {
+void Sim::getMu(double &robot, double &ground) {
 	robot = _friction[0];
 	ground = _friction[1];
-
-	// success
-	return 0;
 }
 
 bool Sim::getPause(void) {
@@ -329,28 +323,19 @@ void Sim::mutexUnlock(int type) {
 	}
 }
 
-int Sim::pause(int mode) {
+void Sim::pause(int mode) {
 	// lock pause
 	MUTEX_LOCK(&_pause_mutex);
 
-	// switch pause variable
-	switch (mode) {
-		case 0:
-			_pause = false;
-			break;
-		case 1:
-			_pause = true;
-			break;
-		case 2:
-			_pause = _pause ? false : true;
-			break;
-	}
+	if (mode == 0)
+		_pause = false;
+	else if (mode == 1)
+		_pause = true;
+	else if (mode == 2)
+		_pause = _pause ? false : true;
 
 	// unlock pause
 	MUTEX_UNLOCK(&_pause_mutex);
-
-	// success
-	return 0;
 }
 
 void Sim::run(int milliseconds, void (*output)(void), int interval) {
@@ -385,29 +370,18 @@ void Sim::run(int milliseconds, void (*output)(void), int interval) {
 	}
 }
 
-int Sim::setCollisions(int mode) {
-	switch (mode) {
-		case 0:
-			_collision = false;
-			break;
-		case 1:
-			_collision = true;
-			break;
-		case 2:
-			_collision = _collision ? false : true;
-			break;
-	}
-
-	// success
-	return 0;
+void Sim::setCollisions(int mode) {
+	if (mode == 0)
+		_collision = false;
+	else if (mode == 1)
+		_collision = true;
+	else if (mode == 2)
+		_collision = _collision ? false : true;
 }
 
-int Sim::setCOR(double robot, double ground) {
+void Sim::setCOR(double robot, double ground) {
 	_restitution[0] = robot;
 	_restitution[1] = ground;
-
-	// success
-	return 0;
 }
 
 #ifdef RS_RESEARCH
@@ -419,12 +393,9 @@ void Sim::setCPG(int (*function)(double, const double[], double[], void*), struc
 }
 #endif
 
-int Sim::setMu(double robot, double ground) {
+void Sim::setMu(double robot, double ground) {
 	_friction[0] = robot;
 	_friction[1] = ground;
-
-	// success
-	return 0;
 }
 
 void Sim::start(void) {

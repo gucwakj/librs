@@ -9,10 +9,10 @@ namespace rsSim {
 	// connector struct
 	struct Connector {
 		dBodyID body;
-		double o[3];
-		int face, type;
-		int d_side, d_type;
-		int orientation;
+		float o[3];
+		short face, type;
+		short d_side, d_type;
+		short orientation;
 	};
 
 	// typedefs

@@ -30,28 +30,27 @@ namespace rsSim {
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double, int);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Vec&, double);
-			void beginSimulation(void);
 			virtual int deleteRobot(int);
 			void done(void);
 			double getClock(void);
-			int getCOR(double&, double&);
+			void getCOR(double&, double&);
 			void getCoM(double&, double&, double&);
-			int getMu(double&, double&);
+			void getMu(double&, double&);
 			bool getPause(void);
 			Robot* getRobot(int);
 			bool getRunning(void);
 			double getStep(void);
 			void mutexLock(int);
 			void mutexUnlock(int);
-			int pause(int);
+			void pause(int);
 			void run(int, void (*output)(void) = NULL, int interval = 0);
-			int setCollisions(int);
-			int setCOR(double, double);
+			void setCollisions(int);
+			void setCOR(double, double);
 #ifdef RS_RESEARCH
 			void setCPG(int(*)(double, const double*, double*, void*), int, int, int, int);		// research
 			void setCPG(int(*)(double, const double*, double*, void*), struct rsResearch::Params*);		// research
 #endif
-			int setMu(double, double);
+			void setMu(double, double);
 			void start(void);
 			void stop(void);
 

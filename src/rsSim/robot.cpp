@@ -303,10 +303,10 @@ double Robot::mod_angle(double past_ang, double cur_ang, double ang_rate) {
 	return new_ang;
 }
 
-int Robot::noisy(double *a, int length, double sigma) {
+short Robot::noisy(float *a, short length, float sigma) {
 	// initialize variables
-	double *rand = new double[length];
-	double sum = 0;
+	float *rand = new float[length];
+	float sum = 0;
 
 	if (length == 1)
 		a[0] += this->normal(sigma);
@@ -316,10 +316,10 @@ int Robot::noisy(double *a, int length, double sigma) {
 			rand[i] = this->normal(sigma);
 			sum += (a[i] + rand[i]) * (a[i] + rand[i]);
 		}
-		double mag = sqrt(sum);
+		float mag = sqrt(sum);
 
 		// normalize vector
-		for (int i = 0; i < length; i++) {
+		for (short i = 0; i < length; i++) {
 			a[i] = (a[i] + rand[i])/mag;
 		}
 	}
@@ -346,20 +346,19 @@ void* Robot::simPostCollisionThreadEntry(void *arg) {
 /**********************************************************
 	private functions
  **********************************************************/
-double Robot::normal(double sigma) {
+float Robot::normal(float sigma) {
 	// compute pair of random uniform data
-	double u1 = this->uniform();
-	double u2 = this->uniform();
+	float u1 = this->uniform();
+	float u2 = this->uniform();
 
 	// box-muller transform to gaussian
 	return sigma*(sqrt(-2.0*log(u1))*cos(2*rs::Pi*u2));
 }
 
-double Robot::uniform(void) {
+float Robot::uniform(void) {
 	int k = _seed/127773;
 	_seed = 16807 * (_seed - k*127773) - k*2836;
-	if (_seed < 0)
-		_seed = _seed + 2147483647;
-	return ((double)(_seed) * 4.656612875E-10);
+	if (_seed < 0) _seed = _seed + 2147483647;
+	return ((float)(_seed) * 4.656612875E-10);
 }
 

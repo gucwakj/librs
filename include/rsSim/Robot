@@ -53,7 +53,7 @@ namespace rsSim {
 			virtual dBodyID getBodyID(int);
 			double getRotation(int, int);
 			double mod_angle(double, double, double);
-			int noisy(double*, int, double);
+			short noisy(float*, short, float);
 			virtual void simPreCollisionThread(void) { return; };
 			virtual void simPostCollisionThread(void) { return; };
 
@@ -78,33 +78,33 @@ namespace rsSim {
 
 			// motor accelerations
 			struct Accel {
-				double init;			// motion initial angle
-				double start;			// motion start time
-				double period;			// motion period
-				double run;				// number of motions
+				float init;				// motion initial angle
+				float start;			// motion start time
+				float period;			// motion period
+				short run;				// number of motions
 			};
 			// motor
 			struct Motor {
 				bool success;			// trigger for motion completion
 				bool record;			// recording in progress
 				bool record_active;		// actively recording a new point
-				double alpha;			// angular acceleration
-				double encoder;			// encoder resolution
-				double goal;			// goal theta value
-				double offset;			// offset from zero for resetting
-				double omega;			// angular rate
-				double omega_max;		// maximum rate
 				double **record_angle;	// recording angles from thread
-				double safety_angle;	// safety angle
-				double safety_timeout;	// safety timeout
-				double tau_max;			// maximum force
-				double theta;			// theta
-				int mode;				// modes
+				float alpha;			// angular acceleration
+				float encoder;			// encoder resolution
+				float goal;				// goal theta value
+				float offset;			// offset from zero for resetting
+				float omega;			// angular rate
+				float omega_max;		// maximum rate
+				float safety_angle;		// safety angle
+				float safety_timeout;	// safety timeout
+				float tau_max;			// maximum force
+				float theta;			// theta
 				int record_num;			// recording data points
-				int starting;			// starting movement
-				int state;				// state
-				int stopping;			// stopping movement
-				int timeout;			// mode timeout
+				short mode;				// modes
+				short starting;			// starting movement
+				short state;			// state
+				short stopping;			// stopping movement
+				short timeout;			// mode timeout
 				dJointID id;			// motor id
 				dJointID joint;			// joint of the motor
 				Accel accel;			// acceleration variables
@@ -134,8 +134,8 @@ namespace rsSim {
 
 		// private functions
 		private:
-			double normal(double);
-			double uniform(void);
+			float normal(float);
+			float uniform(void);
 
 		// private data
 		private:

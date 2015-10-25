@@ -5,7 +5,7 @@
 using namespace rsSim;
 using namespace rsDof;
 
-Dof::Dof(int joint) : rsRobots::Robot(rs::Dof), rsRobots::Dof(joint) {
+Dof::Dof(short joint) : rsRobots::Robot(rs::Dof), rsRobots::Dof(joint) {
 	// number of degrees of freedom
 	_dof = Bodies::Num_Joints;
 

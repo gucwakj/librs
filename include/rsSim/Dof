@@ -10,7 +10,7 @@ namespace rsSim {
 	class LIBRSEXPORT Dof : virtual public rsRobots::Dof, virtual public ModularRobot {
 		// public functions
 		public:
-			Dof(int);
+			Dof(short);
 			virtual ~Dof(void);
 
 			virtual int addConnector(int, int, int = rs::Right, double = 0, int = 1, int = -1);

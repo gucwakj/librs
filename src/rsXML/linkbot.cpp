@@ -27,8 +27,8 @@ void Linkbot::postProcess(void) {
 	// reposition robot in space
 	if (_base == NULL) {
 		// tilt for wheels
-		double p2;
-		_q.multiply(this->tiltForWheels(_wheels[0], _wheels[1], p2));
+		float p2;
+		_q.multiply(this->tiltForWheels((int)_wheels[0], (int)_wheels[1], p2));
 		_p[2] += p2;
 
 		// adjust height to be above zero

@@ -61,15 +61,15 @@ namespace rsRobots {
 
 		// inherited functions
 		public:
-			virtual const rs::Pos getConnBodyPosition(int, int, const rs::Pos&, const rs::Quat&);
-			virtual const rs::Pos getConnFacePosition(int, int, int, const rs::Pos&, const rs::Quat&);
-			virtual const rs::Pos getRobotCenterPosition(int, const rs::Pos&, const rs::Quat&);
-			virtual const rs::Pos getRobotFacePosition(int, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getConnBodyPosition(short, short, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getConnFacePosition(short, short, short, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getRobotCenterPosition(short, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getRobotFacePosition(short, const rs::Pos&, const rs::Quat&);
 
-			virtual const rs::Quat getConnBodyQuaternion(int, int, const rs::Quat&);
-			virtual const rs::Quat getConnFaceQuaternion(int, int, int, const rs::Quat&);
-			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
-			virtual const rs::Quat getRobotCenterQuaternion(int, int, double, const rs::Quat&);
+			virtual const rs::Quat getConnBodyQuaternion(short, short, const rs::Quat&);
+			virtual const rs::Quat getConnFaceQuaternion(short, short, short, const rs::Quat&);
+			virtual const rs::Quat getRobotBodyQuaternion(short, float, const rs::Quat&);
+			virtual const rs::Quat getRobotCenterQuaternion(short, short, float, const rs::Quat&);
 
 		// protected data
 		protected:

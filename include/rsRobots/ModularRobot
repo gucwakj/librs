@@ -14,18 +14,18 @@ namespace rsRobots {
 
 		// virtual functions
 		public:
-			virtual const rs::Pos getConnBodyPosition(int, int, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
-			virtual const rs::Pos getConnFacePosition(int, int, int, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
-			virtual const rs::Pos getRobotFacePosition(int, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
+			virtual const rs::Pos getConnBodyPosition(short, short, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
+			virtual const rs::Pos getConnFacePosition(short, short, short, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
+			virtual const rs::Pos getRobotFacePosition(short, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
 
-			virtual const rs::Quat getConnBodyQuaternion(int, int, const rs::Quat&) { return rs::Quat(); };
-			virtual const rs::Quat getConnFaceQuaternion(int, int, int, const rs::Quat&) { return rs::Quat(); };
+			virtual const rs::Quat getConnBodyQuaternion(short, short, const rs::Quat&) { return rs::Quat(); };
+			virtual const rs::Quat getConnFaceQuaternion(short, short, short, const rs::Quat&) { return rs::Quat(); };
 
 		// protected data
 		protected:
-			double _conn_depth;
-			double _conn_height;
-			double _conn_radius;
+			float _conn_depth;
+			float _conn_height;
+			float _conn_radius;
 	};
 
 } // namepsace rsRobots

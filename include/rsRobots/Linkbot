@@ -90,39 +90,39 @@ namespace rsRobots {
 	class LIBRSEXPORT Linkbot : virtual public ModularRobot {
 		// public functions
 		public:
-			Linkbot(int);
+			Linkbot(short);
 			virtual ~Linkbot(void) {};
 
-			double getCasterScale(void);
-			const rs::Quat tiltForWheels(int, int, double&);
+			float getCasterScale(void);
+			const rs::Quat tiltForWheels(short, short, float&);
 
 		// inherited functions
 		public:
-			virtual const rs::Pos getConnBodyPosition(int, int, const rs::Pos&, const rs::Quat&);
-			virtual const rs::Pos getConnFacePosition(int, int, int, const rs::Pos&, const rs::Quat&);
-			virtual const rs::Pos getRobotCenterPosition(int, const rs::Pos&, const rs::Quat&);
-			virtual const rs::Pos getRobotFacePosition(int, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getConnBodyPosition(short, short, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getConnFacePosition(short, short, short, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getRobotCenterPosition(short, const rs::Pos&, const rs::Quat&);
+			virtual const rs::Pos getRobotFacePosition(short, const rs::Pos&, const rs::Quat&);
 
-			virtual const rs::Quat getConnBodyQuaternion(int, int, const rs::Quat&);
-			virtual const rs::Quat getConnFaceQuaternion(int, int, int, const rs::Quat&);
-			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
-			virtual const rs::Quat getRobotCenterQuaternion(int, int, double, const rs::Quat&);
+			virtual const rs::Quat getConnBodyQuaternion(short, short, const rs::Quat&);
+			virtual const rs::Quat getConnFaceQuaternion(short, short, short, const rs::Quat&);
+			virtual const rs::Quat getRobotBodyQuaternion(short, float, const rs::Quat&);
+			virtual const rs::Quat getRobotCenterQuaternion(short, short, float, const rs::Quat&);
 
-			virtual double getWheelRatio(int);
+			virtual float getWheelRatio(short);
 
 		// protected data
 		protected:
-			double _bigwheel_radius;
-			double _bridge_length;
-			double _body_radius;
-			double _cubic_length;
-			double _el_length;
-			double _face_depth;
-			double _face_radius;
-			double _omni_length;
-			double _smallwheel_radius;
-			double _tinywheel_radius;
-			int _disabled;
+			float _bigwheel_radius;
+			float _bridge_length;
+			float _body_radius;
+			float _cubic_length;
+			float _el_length;
+			float _face_depth;
+			float _face_radius;
+			float _omni_length;
+			float _smallwheel_radius;
+			float _tinywheel_radius;
+			short _disabled;
 	};
 
 } // namespace rsRobots

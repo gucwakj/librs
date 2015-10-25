@@ -36,8 +36,8 @@ namespace rsRobots {
 
 		// virtual functions
 		public:
-			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&) { return rs::Quat(); };
-			virtual double getWheelRatio(int) { return 1; }
+			virtual const rs::Quat getRobotBodyQuaternion(int, float, const rs::Quat&) { return rs::Quat(); };
+			virtual float getWheelRatio(int) { return 1; }
 
 		// data
 		protected:

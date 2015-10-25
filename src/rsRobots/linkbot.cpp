@@ -3,7 +3,7 @@
 using namespace rsRobots;
 using namespace rsLinkbot;
 
-Linkbot::Linkbot(int form) : Robot(form) {
+Linkbot::Linkbot(short form) : Robot(form) {
 	// disabled joint
 	_disabled = -1;
 	if (form == rs::LinkbotI) _disabled = Bodies::Joint2;
@@ -38,7 +38,7 @@ Linkbot::Linkbot(int form) : Robot(form) {
 /**********************************************************
 	public functions
  **********************************************************/
-const rs::Pos Linkbot::getConnFacePosition(int type, int side, int orientation, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Linkbot::getConnFacePosition(short type, short side, short orientation, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 
@@ -89,7 +89,7 @@ const rs::Pos Linkbot::getConnFacePosition(int type, int side, int orientation, 
 	return P;
 }
 
-const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientation, const rs::Quat &q) {
+const rs::Quat Linkbot::getConnFaceQuaternion(short type, short side, short orientation, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
@@ -138,7 +138,7 @@ const rs::Quat Linkbot::getConnFaceQuaternion(int type, int side, int orientatio
 	return Q;
 }
 
-const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Linkbot::getConnBodyPosition(short type, short orientation, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 
@@ -179,7 +179,7 @@ const rs::Pos Linkbot::getConnBodyPosition(int type, int orientation, const rs::
 	return P;
 }
 
-const rs::Quat Linkbot::getConnBodyQuaternion(int type, int orientation, const rs::Quat &q) {
+const rs::Quat Linkbot::getConnBodyQuaternion(short type, short orientation, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
@@ -187,7 +187,7 @@ const rs::Quat Linkbot::getConnBodyQuaternion(int type, int orientation, const r
 	return Q.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
 }
 
-const rs::Quat Linkbot::getRobotBodyQuaternion(int body, double theta, const rs::Quat &q) {
+const rs::Quat Linkbot::getRobotBodyQuaternion(short body, float theta, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
@@ -204,7 +204,7 @@ const rs::Quat Linkbot::getRobotBodyQuaternion(int body, double theta, const rs:
 	return Q;
 }
 
-const rs::Pos Linkbot::getRobotCenterPosition(int face, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Linkbot::getRobotCenterPosition(short face, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 
@@ -220,7 +220,7 @@ const rs::Pos Linkbot::getRobotCenterPosition(int face, const rs::Pos &p, const 
 	return P;
 }
 
-const rs::Quat Linkbot::getRobotCenterQuaternion(int face, int orientation, double angle, const rs::Quat &q) {
+const rs::Quat Linkbot::getRobotCenterQuaternion(short face, short orientation, float angle, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
@@ -243,7 +243,7 @@ const rs::Quat Linkbot::getRobotCenterQuaternion(int face, int orientation, doub
 	return Q;
 }
 
-const rs::Pos Linkbot::getRobotFacePosition(int face, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Linkbot::getRobotFacePosition(short face, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 
@@ -259,7 +259,7 @@ const rs::Pos Linkbot::getRobotFacePosition(int face, const rs::Pos &p, const rs
 	return P;
 }
 
-double Linkbot::getWheelRatio(int standard) {
+float Linkbot::getWheelRatio(short standard) {
 	switch (standard) {
 		case Connectors::BigWheel:
 			return _wheel_radius/_bigwheel_radius;
@@ -271,11 +271,11 @@ double Linkbot::getWheelRatio(int standard) {
 	return 0;
 }
 
-double Linkbot::getCasterScale(void) {
+float Linkbot::getCasterScale(void) {
 	return _wheel_radius/(_body_height + 0.008);
 }
 
-const rs::Quat Linkbot::tiltForWheels(int type1, int type2, double &p2) {
+const rs::Quat Linkbot::tiltForWheels(short type1, short type2, float &p2) {
 	// set wheel on this face
 	_wheels[0] = type1;
 	_wheels[1] = type2;

@@ -16,8 +16,8 @@ Mindstorms::Mindstorms(int form, bool trace) : rsRobots::Robot(form), rsRobots::
  **********************************************************/
 void Mindstorms::postProcess(void) {
 	// adjust height to be above zero
-	double p2;
-	_q.multiply(this->tiltForWheels(_wheels[0], _wheels[1], p2));
+	float p2;
+	_q.multiply(this->tiltForWheels((int)_wheels[0], (int)_wheels[1], p2));
 	_p[2] += p2;
 }
 

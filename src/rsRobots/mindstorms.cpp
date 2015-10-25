@@ -3,7 +3,7 @@
 using namespace rsRobots;
 using namespace rsMindstorms;
 
-Mindstorms::Mindstorms(int form) : Robot(form) {
+Mindstorms::Mindstorms(short form) : Robot(form) {
 	_bigwheel_radius = 0.04100;
 	_body_height = 0.04;			// dummy size
 	_body_length = 0.1;				// dummy size
@@ -19,7 +19,7 @@ Mindstorms::Mindstorms(int form) : Robot(form) {
 /**********************************************************
 	public functions
  **********************************************************/
-const rs::Quat Mindstorms::getRobotBodyQuaternion(int body, double theta, const rs::Quat &q) {
+const rs::Quat Mindstorms::getRobotBodyQuaternion(short body, float theta, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
@@ -30,7 +30,7 @@ const rs::Quat Mindstorms::getRobotBodyQuaternion(int body, double theta, const 
 	return Q;
 }
 
-double Mindstorms::getWheelRatio(int type) {
+float Mindstorms::getWheelRatio(short type) {
 	switch (type) {
 		case Connectors::Big:
 			return _bigwheel_radius/_smallwheel_radius;
@@ -40,7 +40,7 @@ double Mindstorms::getWheelRatio(int type) {
 	return 0;
 }
 
-const rs::Quat Mindstorms::tiltForWheels(int type1, int type2, double &p2) {
+const rs::Quat Mindstorms::tiltForWheels(short type1, short type2, float &p2) {
 	// set wheel on this face
 	_wheels[0] = type1;
 	_wheels[1] = type2;

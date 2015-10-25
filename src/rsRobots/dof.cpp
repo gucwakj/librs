@@ -33,7 +33,7 @@ Dof::Dof(short joint) : Robot(rs::Dof) {
 /**********************************************************
 	public functions
  **********************************************************/
-const rs::Pos Dof::getConnFacePosition(int type, int side, int orientation, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Dof::getConnFacePosition(short type, short side, short orientation, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 
@@ -54,7 +54,7 @@ const rs::Pos Dof::getConnFacePosition(int type, int side, int orientation, cons
 	return P;
 }
 
-const rs::Quat Dof::getConnFaceQuaternion(int type, int side, int orientation, const rs::Quat &q) {
+const rs::Quat Dof::getConnFaceQuaternion(short type, short side, short orientation, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
@@ -77,7 +77,7 @@ const rs::Quat Dof::getConnFaceQuaternion(int type, int side, int orientation, c
 	return Q;
 }
 
-const rs::Pos Dof::getConnBodyPosition(int type, int orientation, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Dof::getConnBodyPosition(short type, short orientation, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 
@@ -94,7 +94,7 @@ const rs::Pos Dof::getConnBodyPosition(int type, int orientation, const rs::Pos 
 	return P;
 }
 
-const rs::Quat Dof::getConnBodyQuaternion(int type, int orientation, const rs::Quat &q) {
+const rs::Quat Dof::getConnBodyQuaternion(short type, short orientation, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
@@ -102,7 +102,7 @@ const rs::Quat Dof::getConnBodyQuaternion(int type, int orientation, const rs::Q
 	return Q.multiply(sin(0.5*1.570796*orientation), 0, 0, cos(0.5*1.570796*orientation));
 }
 
-const rs::Quat Dof::getRobotBodyQuaternion(int body, double theta, const rs::Quat &q) {
+const rs::Quat Dof::getRobotBodyQuaternion(short body, float theta, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
@@ -119,7 +119,7 @@ const rs::Quat Dof::getRobotBodyQuaternion(int body, double theta, const rs::Qua
 	return Q;
 }
 
-const rs::Pos Dof::getRobotCenterPosition(int face, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Dof::getRobotCenterPosition(short face, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 
@@ -139,7 +139,7 @@ const rs::Pos Dof::getRobotCenterPosition(int face, const rs::Pos &p, const rs::
 	return P;
 }
 
-const rs::Quat Dof::getRobotCenterQuaternion(int face, int orientation, double angle, const rs::Quat &q) {
+const rs::Quat Dof::getRobotCenterQuaternion(short face, short orientation, float angle, const rs::Quat &q) {
 	// new quaternion
 	rs::Quat Q(q);
 
@@ -162,7 +162,7 @@ const rs::Quat Dof::getRobotCenterQuaternion(int face, int orientation, double a
 	return Q;
 }
 
-const rs::Pos Dof::getRobotFacePosition(int face, const rs::Pos &p, const rs::Quat &q) {
+const rs::Pos Dof::getRobotFacePosition(short face, const rs::Pos &p, const rs::Quat &q) {
 	// new position
 	rs::Pos P(p);
 

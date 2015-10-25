@@ -40,20 +40,20 @@ namespace rsRobots {
 	class LIBRSEXPORT Mindstorms : virtual public Robot {
 		// public functions
 		public:
-			Mindstorms(int);
+			Mindstorms(short);
 			virtual ~Mindstorms(void) {};
 
-			const rs::Quat tiltForWheels(int, int, double&);
+			const rs::Quat tiltForWheels(short, short, float&);
 
 		// inherited functions
 		public:
-			virtual const rs::Quat getRobotBodyQuaternion(int, double, const rs::Quat&);
-			virtual double getWheelRatio(int);
+			virtual const rs::Quat getRobotBodyQuaternion(short, float, const rs::Quat&);
+			virtual float getWheelRatio(short);
 
 		// protected data
 		protected:
-			double _bigwheel_radius;
-			double _smallwheel_radius;
+			float _bigwheel_radius;
+			float _smallwheel_radius;
 	};
 
 } // namespace rsRobots

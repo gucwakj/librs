@@ -22,7 +22,7 @@ namespace rsResearch {
 		short num_body;
 		short num_legs;
 		short num_vars;
-		int form;
+		short form;
 	};
 
 	// class
@@ -34,7 +34,7 @@ namespace rsResearch {
 
 			void setup(int(*)(double, const double*, double*, void*), short, short, short, short, float = 0.004);
 			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
-			const rs::Vec runStep(double);
+			const rs::Vec runStep(float);
 
 		// private data
 		private:

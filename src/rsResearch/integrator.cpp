@@ -89,7 +89,7 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	}
 }
 
-const rs::Vec Integrator::runStep(double newtime) {
+const rs::Vec Integrator::runStep(float newtime) {
 	// return vector
 	rs::Vec V(_num_robots);
 
@@ -104,12 +104,11 @@ const rs::Vec Integrator::runStep(double newtime) {
 
 	// save output array
 	if (_form == Forms::Salamander) {
-		//double init[4] = {0};
-		double theta_up = -5*M_PI/6;
-		double theta_down = -M_PI/6;
-		double a = theta_up - M_PI;
-		double b = (2*M_PI - theta_down + theta_up)/(M_PI);
-		double c = (theta_down - theta_up)/M_PI;
+		float theta_up = -5*M_PI/6;
+		float theta_down = -M_PI/6;
+		float a = theta_up - M_PI;
+		float b = (2*M_PI - theta_down + theta_up)/(M_PI);
+		float c = (theta_down - theta_up)/M_PI;
 		for (int i = 0, j = 0; i < _num_vars; i+=3, j++) {
 			if (i < _body_length*3)
 				V[j] = _array[i+1]*cos(_array[i]);

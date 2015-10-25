@@ -32,7 +32,7 @@ namespace rsResearch {
 			short _filter_size;		// size of filter string
 			short _id;				// id of this robot
 
-			double _angle;			// angle for this robot
+			float _angle;			// angle for this robot
 			unsigned int _time;		// timestamp for angle
 
 			float _v;				// cpg body frequency

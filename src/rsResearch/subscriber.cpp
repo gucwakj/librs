@@ -81,7 +81,7 @@ void Subscriber::receive(void) {
 	else if (_filter == 1) {
 		_angle = 0;
 		_time = 0;
-		sscanf(&string[_filter_size], "%u %lf", &_time, &_angle);
+		sscanf(&string[_filter_size], "%u %f", &_time, &_angle);
 	}
 }
 

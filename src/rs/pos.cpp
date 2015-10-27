@@ -10,7 +10,7 @@ Pos::Pos(void) {
 	_v[2] = 0;
 }
 
-Pos::Pos(double x, double y, double z) {
+Pos::Pos(float x, float y, float z) {
 	_v[0] = x;
 	_v[1] = y;
 	_v[2] = z;
@@ -33,7 +33,7 @@ const Pos Pos::add(const Pos &p) {
 	return (*this);
 }
 
-const Pos Pos::add(double x, double y, double z) {
+const Pos Pos::add(float x, float y, float z) {
 	_v[0] += x;
 	_v[1] += y;
 	_v[2] += z;

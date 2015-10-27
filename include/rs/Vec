@@ -12,27 +12,26 @@ namespace rs {
 		// public functions
 		public:
 			Vec(void);
-			Vec(int);
-			Vec(double);
-			Vec(double, double);
-			Vec(double, double, double);
-			Vec(double, double, double, double);
+			Vec(short);
+			Vec(float);
+			Vec(float, float);
+			Vec(float, float, float);
+			Vec(float, float, float, float);
 			Vec(const Vec&);
 			~Vec(void);
 
-			void add(double);
 			void allocate(int);
 			void print(const char* = "V");
 			void print(const char* = "V") const;
 			unsigned int size(void) const;
 
 			// access operators
-			inline double& operator[](int i) { return _v[i]; }
-			inline double  operator[](int i) const { return _v[i]; }
+			inline float& operator[](int i)	      { return _v[i]; }
+			inline float  operator[](int i) const { return _v[i]; }
 
 		// private data
 		private:
-			std::vector<double> _v;
+			std::vector<float> _v;
 	};
 
 } // namespace rs

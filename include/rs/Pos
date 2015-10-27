@@ -10,10 +10,10 @@ namespace rs {
 		// public functions
 		public:
 			Pos(void);
-			Pos(double, double, double);
+			Pos(float, float, float);
 			Pos(const Pos&);
 
-			const Pos add(double, double, double);
+			const Pos add(float, float, float);
 			const Pos add(const Pos&);
 
 			// output
@@ -21,18 +21,18 @@ namespace rs {
 			void print(const char* = "P") const;
 
 			// access operators
-			inline double& operator[](int i) { return _v[i]; }
-			inline double& x() { return _v[0]; }
-			inline double& y() { return _v[1]; }
-			inline double& z() { return _v[2]; }
-			inline double operator[](int i) const { return _v[i]; }
-			inline double x() const { return _v[0]; }
-			inline double y() const { return _v[1]; }
-			inline double z() const { return _v[2]; }
+			inline float& operator[](int i) { return _v[i]; }
+			inline float& x() { return _v[0]; }
+			inline float& y() { return _v[1]; }
+			inline float& z() { return _v[2]; }
+			inline float operator[](int i) const { return _v[i]; }
+			inline float x() const { return _v[0]; }
+			inline float y() const { return _v[1]; }
+			inline float z() const { return _v[2]; }
 
 		// private data
 		private:
-			double _v[3];
+			float _v[3];
 	};
 
 } // namespace rs

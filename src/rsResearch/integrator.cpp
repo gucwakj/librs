@@ -45,13 +45,13 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_num_vars = variables;
 
 	// run cpg until steady state
-	rs::Vec v;
 	for (int i = 0; i < 0.3/step; i++) {
-		v = this->runStep(step);
+		rs::Vec v = this->runStep(step);
 		_time_offset += step;
 	}
+	rs::Vec v = this->runStep(step);
 	while (v[0] < 0 && v[1] < 0) {
-		v = this->runStep(step);
+		rs::Vec v = this->runStep(step);
 		_time_offset += step;
 	}
 }
@@ -78,13 +78,13 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_num_vars = params->num_vars;
 
 	// run cpg until steady state
-	rs::Vec v;
 	for (int i = 0; i < 0.3/step; i++) {
-		v = this->runStep(step);
+		rs::Vec v = this->runStep(step);
 		_time_offset += step;
 	}
+	rs::Vec v = this->runStep(step);
 	while (v[0] < 0 && v[1] < 0) {
-		v = this->runStep(step);
+		rs::Vec v = this->runStep(step);
 		_time_offset += step;
 	}
 }

@@ -13,28 +13,28 @@ namespace rs {
 		// public functions
 		public:
 			Quat(void);
-			Quat(double, double, double, double);
+			Quat(float, float, float, float);
 			Quat(const Quat&);
 
 			// multiply by vector
 			const Pos multiply(const rs::Pos&);
-			const Pos multiply(double, double, double) const;
+			const Pos multiply(float, float, float) const;
 
 			// multiply by quaternion
 			const Quat multiply(const rs::Quat&);
-			const Quat multiply(double, double, double, double);
+			const Quat multiply(float, float, float, float);
 
 			// output
 			void print(const char* = "Q");
 			void print(const char* = "Q") const;
 
 			// access operators
-			inline double& operator[](int i) { return _v[i]; }
-			inline double  operator[](int i) const { return _v[i]; }
+			inline float& operator[](int i)       { return _v[i]; }
+			inline float  operator[](int i) const { return _v[i]; }
 
 		// private data
 		private:
-			double _v[4];
+			float _v[4];
 	};
 
 } // namespace rs

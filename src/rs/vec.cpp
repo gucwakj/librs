@@ -7,26 +7,26 @@ using namespace rs;
 Vec::Vec(void) {
 }
 
-Vec::Vec(int size) {
+Vec::Vec(short size) {
 	_v.resize(size);
 }
 
-Vec::Vec(double a) {
+Vec::Vec(float a) {
 	_v.push_back(a);
 }
 
-Vec::Vec(double a, double b) {
+Vec::Vec(float a, float b) {
 	_v.push_back(a);
 	_v.push_back(b);
 }
 
-Vec::Vec(double a, double b, double c) {
+Vec::Vec(float a, float b, float c) {
 	_v.push_back(a);
 	_v.push_back(b);
 	_v.push_back(c);
 }
 
-Vec::Vec(double a, double b, double c, double d) {
+Vec::Vec(float a, float b, float c, float d) {
 	_v.push_back(a);
 	_v.push_back(b);
 	_v.push_back(c);
@@ -46,10 +46,6 @@ Vec::~Vec(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Vec::add(double a) {
-	_v.push_back(a);
-}
-
 void Vec::allocate(int size) {
 	_v.resize(size);
 	for (unsigned int i = 0; i < _v.size(); i++) {

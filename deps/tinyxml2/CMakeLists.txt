@@ -8,6 +8,9 @@ cmake_policy (VERSION 2.6)
 set(GENERIC_LIB_VERSION "1.0.11")
 set(GENERIC_LIB_SOVERSION "1")
 
+# default to release build
+set (CMAKE_BUILD_TYPE Release)
+
 # add common source
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/.")
 

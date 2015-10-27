@@ -1,5 +1,4 @@
 #include <chrono>
-#include <cstring>
 #include <iostream>
 
 #include <zmq.h>
@@ -8,10 +7,7 @@
 
 using namespace rsResearch;
 
-Subscriber::Subscriber(std::string ip, std::string filter, short port, short id) {
-	// robot id
-	_id = id;
-
+Subscriber::Subscriber(std::string ip, std::string filter, std::string id, short port) {
 	// setup zmq
 	_context = zmq_ctx_new();
 	_socket = zmq_socket(_context, ZMQ_SUB);
@@ -28,9 +24,7 @@ Subscriber::Subscriber(std::string ip, std::string filter, short port, short id)
 
 	// set options
 	std::string sub(filter);
-	char str[4];
-	std::sprintf(str, "%02d", id);
-	sub.append(str);
+	sub.append(id);
 	sub.append(": ");
 	_filter = filter.compare("hard") ? 0 : 1;
 	_filter_size = sub.size();

@@ -1,6 +1,5 @@
 #include <cstring>
 #include <iostream>
-#include <string>
 
 #include <zmq.h>
 
@@ -25,15 +24,15 @@ Publisher::~Publisher(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-short Publisher::send(short id, unsigned int time, float angle) {
+short Publisher::send(std::string id, unsigned int time, float angle) {
 	char buffer[256];
-	sprintf(buffer, "hard%02d: %u %f", id, time, angle);
+	sprintf(buffer, "hard%s: %u %f", id.c_str(), time, angle);
 	return zmq_send(_socket, buffer, strlen(buffer), 0);
 }
 
-short Publisher::send(short id, float v, float r, float phi) {
+short Publisher::send(std::string id, float v, float r, float phi) {
 	char buffer[256];
-	sprintf(buffer, "cpg%02d: %f %f %f", id, v, r, phi);
+	sprintf(buffer, "cpg%s: %f %f %f", id.c_str(), v, r, phi);
 	return zmq_send(_socket, buffer, strlen(buffer), 0);
 }
 

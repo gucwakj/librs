@@ -11,7 +11,7 @@ namespace rsResearch {
 	class LIBRSEXPORT Subscriber {
 		// public functions
 		public:
-			Subscriber(std::string, std::string, short, short);
+			Subscriber(std::string, std::string, std::string, short);
 			virtual ~Subscriber(void);
 
 			float getAngle(void);
@@ -30,7 +30,6 @@ namespace rsResearch {
 
 			short _filter;			// filter id
 			short _filter_size;		// size of filter string
-			short _id;				// id of this robot
 
 			float _angle;			// angle for this robot
 			unsigned int _time;		// timestamp for angle

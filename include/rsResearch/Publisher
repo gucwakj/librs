@@ -1,6 +1,8 @@
 #ifndef RSRESEARCH_PUBLISHER_
 #define RSRESEARCH_PUBLISHER_
 
+#include <string>
+
 #include <rs/Macros>
 
 namespace rsResearch {
@@ -12,8 +14,8 @@ namespace rsResearch {
 			Publisher(int);
 			virtual ~Publisher(void);
 
-			short send(short, unsigned int, float);
-			short send(short, float, float, float);
+			short send(std::string, unsigned int, float);
+			short send(std::string, float, float, float);
 
 		// private data
 		private:

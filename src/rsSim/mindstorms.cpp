@@ -69,6 +69,8 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 	for (int i = 0; i < _dof; i++) {
 		_motor[i].goal = _motor[i].theta = rs::D2R(a[i]);
 	}
+	_motor[Bodies::Joint1].goal = _motor[Bodies::Joint1].theta = 0;
+	_motor[Bodies::Joint4].goal = _motor[Bodies::Joint4].theta = 0;
 
 	// build robot bodies
 	this->build_body(this->getRobotBodyPosition(Bodies::Body, p, q), this->getRobotBodyQuaternion(Bodies::Body, 0, q));
@@ -79,37 +81,50 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 	rs::Pos o;
 
 	// joint for body to wheel 1
-	_motor[Bodies::Joint1].joint = dJointCreateHinge(_world, 0);
-	dJointAttach(_motor[Bodies::Joint1].joint, _body[Bodies::Body], _body[Bodies::Wheel1]);
+	_motor[Bodies::Joint2].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[Bodies::Joint2].joint, _body[Bodies::Body], _body[Bodies::Wheel1]);
 	o = q.multiply(_wheel_depth/2, 0, 0);
 	o.add(this->getRobotBodyPosition(Bodies::Wheel1, p, q));
-	dJointSetHingeAnchor(_motor[Bodies::Joint1].joint, o[0], o[1], o[2]);
-	o = q.multiply(1, 0, 0);
-	dJointSetHingeAxis(_motor[Bodies::Joint1].joint, o[0], o[1], o[2]);
-
-	// joint for body to wheel 2
-	_motor[Bodies::Joint2].joint = dJointCreateHinge(_world, 0);
-	dJointAttach(_motor[Bodies::Joint2].joint, _body[Bodies::Body], _body[Bodies::Wheel2]);
-	o = q.multiply(-_wheel_depth/2, 0, 0);
-	o.add(this->getRobotBodyPosition(Bodies::Wheel2, p, q));
 	dJointSetHingeAnchor(_motor[Bodies::Joint2].joint, o[0], o[1], o[2]);
 	o = q.multiply(1, 0, 0);
 	dJointSetHingeAxis(_motor[Bodies::Joint2].joint, o[0], o[1], o[2]);
 
-	// build motors
-	for (int i = 0; i < _dof; i++) {
-		_motor[i].id = dJointCreateAMotor(_world, 0);
-		dJointAttach(_motor[i].id, _body[Bodies::Body], _body[Bodies::Wheel1 + i]);
-		dJointSetAMotorMode(_motor[i].id, dAMotorUser);
-		dJointSetAMotorNumAxes(_motor[i].id, 1);
-		dJointSetAMotorAngle(_motor[i].id, 0, 0);
-		dJointSetAMotorParam(_motor[i].id, dParamFMax, _motor[i].tau_max);
-		dJointSetAMotorParam(_motor[i].id, dParamFudgeFactor, 0.3);
-		dJointDisable(_motor[i].id);
-	}
+	// joint for body to wheel 2
+	_motor[Bodies::Joint3].joint = dJointCreateHinge(_world, 0);
+	dJointAttach(_motor[Bodies::Joint3].joint, _body[Bodies::Body], _body[Bodies::Wheel2]);
+	o = q.multiply(-_wheel_depth/2, 0, 0);
+	o.add(this->getRobotBodyPosition(Bodies::Wheel2, p, q));
+	dJointSetHingeAnchor(_motor[Bodies::Joint3].joint, o[0], o[1], o[2]);
 	o = q.multiply(1, 0, 0);
-	dJointSetAMotorAxis(_motor[Bodies::Joint1].id, 0, 1, o[0], o[1], o[2]);
+	dJointSetHingeAxis(_motor[Bodies::Joint3].joint, o[0], o[1], o[2]);
+
+	// build dummy motors for empty joints
+	_motor[Bodies::Joint1].id = dJointCreateAMotor(_world, 0);
+	_motor[Bodies::Joint4].id = dJointCreateAMotor(_world, 0);
+
+	// build motor for wheel 1
+	_motor[Bodies::Joint2].id = dJointCreateAMotor(_world, 0);
+	dJointAttach(_motor[Bodies::Joint2].id, _body[Bodies::Body], _body[Bodies::Wheel1]);
+	dJointSetAMotorMode(_motor[Bodies::Joint2].id, dAMotorUser);
+	dJointSetAMotorNumAxes(_motor[Bodies::Joint2].id, 1);
+	dJointSetAMotorAngle(_motor[Bodies::Joint2].id, 0, 0);
+	dJointSetAMotorParam(_motor[Bodies::Joint2].id, dParamFMax, _motor[Bodies::Joint2].tau_max);
+	dJointSetAMotorParam(_motor[Bodies::Joint2].id, dParamFudgeFactor, 0.3);
+	dJointDisable(_motor[Bodies::Joint2].id);
+	o = q.multiply(1, 0, 0);
 	dJointSetAMotorAxis(_motor[Bodies::Joint2].id, 0, 1, o[0], o[1], o[2]);
+
+	// build motor for wheel 2
+	_motor[Bodies::Joint3].id = dJointCreateAMotor(_world, 0);
+	dJointAttach(_motor[Bodies::Joint3].id, _body[Bodies::Body], _body[Bodies::Wheel2]);
+	dJointSetAMotorMode(_motor[Bodies::Joint3].id, dAMotorUser);
+	dJointSetAMotorNumAxes(_motor[Bodies::Joint3].id, 1);
+	dJointSetAMotorAngle(_motor[Bodies::Joint3].id, 0, 0);
+	dJointSetAMotorParam(_motor[Bodies::Joint3].id, dParamFMax, _motor[Bodies::Joint3].tau_max);
+	dJointSetAMotorParam(_motor[Bodies::Joint3].id, dParamFudgeFactor, 0.3);
+	dJointDisable(_motor[Bodies::Joint3].id);
+	o = q.multiply(1, 0, 0);
+	dJointSetAMotorAxis(_motor[Bodies::Joint3].id, 0, 1, o[0], o[1], o[2]);
 
 	// set damping on all bodies to 0.1
 	for (int i = 0; i < Bodies::Num_Parts; i++) dBodySetDamping(_body[i], 0.1, 0.1);
@@ -140,12 +155,14 @@ void Mindstorms::simPreCollisionThread(void) {
 
 	// update angle values for each degree of freedom
 	for (int i = 0; i < _dof; i++) {
+		// skip disabled joints
+		if (i == Bodies::Joint1 || i == Bodies::Joint4) continue;
 		// store current angle
 		_motor[i].theta = this->mod_angle(_motor[i].theta, dJointGetHingeAngle(_motor[i].joint), dJointGetHingeAngleRate(_motor[i].joint)) - _motor[i].offset;
 		// set rotation axis
 		dVector3 axis;
 		dJointGetHingeAxis(_motor[i].joint, axis);
-		dBodySetFiniteRotationAxis(_body[i+1], axis[0], axis[1], axis[2]);
+		dBodySetFiniteRotationAxis(_body[i], axis[0], axis[1], axis[2]);
 		// set motor angle to current angle
 		dJointSetAMotorAngle(_motor[i].id, 0, _motor[i].theta);
 		// engage motor depending upon motor mode
@@ -317,7 +334,8 @@ void Mindstorms::simPostCollisionThread(void) {
 
 	// all joints have completed their motions
 	MUTEX_LOCK(&_success_mutex);
-	if (_motor[Bodies::Joint1].success && _motor[Bodies::Joint2].success) {
+	if (_motor[Bodies::Joint1].success && _motor[Bodies::Joint2].success &&
+		_motor[Bodies::Joint3].success && _motor[Bodies::Joint4].success) {
 		_success = true;
 		COND_SIGNAL(&_success_cond);
 	}
@@ -357,11 +375,11 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	// set geometry 1 - sphere
 	// FAKED: adjust caster to make 3ds model look good
 	double offset;
-	if (_wheels[Bodies::Joint1] == Connectors::Big && _wheels[Bodies::Joint2] == Connectors::Big)
+	if (_wheels[0] == Connectors::Big && _wheels[1] == Connectors::Big)
 		offset = -0.006;
-	else if (_wheels[Bodies::Joint1] == Connectors::Small && _wheels[Bodies::Joint2] == Connectors::Big)
+	else if (_wheels[0] == Connectors::Small && _wheels[1] == Connectors::Big)
 		offset = -0.003;
-	else if (_wheels[Bodies::Joint1] == Connectors::Big && _wheels[Bodies::Joint2] == Connectors::Small)
+	else if (_wheels[0] == Connectors::Big && _wheels[1] == Connectors::Small)
 		offset = -0.003;
 	else
 		offset = 0.001;

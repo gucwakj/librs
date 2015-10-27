@@ -18,6 +18,8 @@ namespace rsMindstorms {
 		enum Joint {
 			Joint1,
 			Joint2,
+			Joint3,
+			Joint4,
 			Num_Joints
 		};
 	} // namespace Bodies

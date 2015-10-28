@@ -2,6 +2,7 @@
 
 #include <config.h>
 #include <rs/Macros>
+#include <rs/Timer>
 #include <rsSim/Sim>
 
 using namespace rsSim;
@@ -75,10 +76,6 @@ Sim::~Sim(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, int ground) {
-	return this->addRobot(robot, id, p, q, a, rs::Vec(0, 0), ground);
-}
-
 int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
 	// lock robot data
 	MUTEX_LOCK(&_robot_mutex);
@@ -229,20 +226,11 @@ int Sim::deleteRobot(int id) {
 	return _robot.size();
 }
 
-void Sim::done(void) {
-	COND_ACTION(&_running_cond, &_running_mutex, _running = false);
-}
-
-double Sim::getClock(void) {
+float Sim::getClock(void) {
 	MUTEX_LOCK(&_clock_mutex);
 	double clock = _clock;
 	MUTEX_UNLOCK(&_clock_mutex);
 	return clock;
-}
-
-void Sim::getCOR(double &robot, double &ground) {
-	robot = _restitution[0];
-	ground = _restitution[1];
 }
 
 void Sim::getCoM(double &x, double &y, double &z) {
@@ -259,11 +247,6 @@ void Sim::getCoM(double &x, double &y, double &z) {
 	x /= total;
 	y /= total;
 	z /= total;
-}
-
-void Sim::getMu(double &robot, double &ground) {
-	robot = _friction[0];
-	ground = _friction[1];
 }
 
 bool Sim::getPause(void) {
@@ -288,9 +271,9 @@ bool Sim::getRunning(void) {
 	return running;
 }
 
-double Sim::getStep(void) {
+float Sim::getStep(void) {
 	MUTEX_LOCK(&_step_mutex);
-	double step = _step;
+	float step = _step;
 	MUTEX_UNLOCK(&_step_mutex);
 	return step;
 }
@@ -323,7 +306,7 @@ void Sim::mutexUnlock(int type) {
 	}
 }
 
-void Sim::pause(int mode) {
+void Sim::setPause(int mode) {
 	// lock pause
 	MUTEX_LOCK(&_pause_mutex);
 
@@ -338,50 +321,33 @@ void Sim::pause(int mode) {
 	MUTEX_UNLOCK(&_pause_mutex);
 }
 
-void Sim::run(int milliseconds, void (*output)(void), int interval) {
-	// calculate sleep time
-	if (!interval) { interval = milliseconds; }
-
+void Sim::run(unsigned int time) {
 	// start simulation
-	this->start();
+	MUTEX_LOCK(&_pause_mutex);
+	_pause = false;
+	MUTEX_UNLOCK(&_pause_mutex);
 
 	if (_rt) {
-		// sleep and run output
-		for (int i = 0; i < milliseconds/interval; i++) {
-			#ifdef RS_WIN32
-				Sleep(interval);
-			#else
-				usleep(interval*1000);
-			#endif
-			if (output) output();
-		}
-		// end simulation
-		this->stop();
+		// sleep
+		rs::Timer timer(rs::Timer::MilliSeconds);
+		timer.sleep(time);
+
+		// ask sim to stop running
+		MUTEX_LOCK(&_running_mutex);
+		_running = false;
+		MUTEX_UNLOCK(&_running_mutex);
 	}
 	else {
 		// set stopping time
-		_stop = milliseconds/1000.0;
-		// wait for simulation loop to signal
-		MUTEX_LOCK(&_running_mutex);
-		while (_running) {
-			COND_WAIT(&_running_cond, &_running_mutex);
-		}
-		MUTEX_UNLOCK(&_running_mutex);
+		_stop = time/1000.0;
 	}
-}
 
-void Sim::setCollisions(int mode) {
-	if (mode == 0)
-		_collision = false;
-	else if (mode == 1)
-		_collision = true;
-	else if (mode == 2)
-		_collision = _collision ? false : true;
-}
-
-void Sim::setCOR(double robot, double ground) {
-	_restitution[0] = robot;
-	_restitution[1] = ground;
+	// wait for simulation loop to signal
+	MUTEX_LOCK(&_running_mutex);
+	while (_running) {
+		COND_WAIT(&_running_cond, &_running_mutex);
+	}
+	MUTEX_UNLOCK(&_running_mutex);
 }
 
 #ifdef RS_RESEARCH
@@ -393,30 +359,13 @@ void Sim::setCPG(int (*function)(double, const double[], double[], void*), struc
 }
 #endif
 
-void Sim::setMu(double robot, double ground) {
-	_friction[0] = robot;
-	_friction[1] = ground;
-}
-
-void Sim::start(void) {
-	// unpause simulation
-	MUTEX_LOCK(&_pause_mutex);
-	_pause = false;
-	MUTEX_UNLOCK(&_pause_mutex);
-}
-
-void Sim::stop(void) {
-	// ask sim to stop running
-	MUTEX_LOCK(&_running_mutex);
-	_running = false;
-	MUTEX_UNLOCK(&_running_mutex);
-
-	// wait for last loop to finish
-	MUTEX_LOCK(&_running_mutex);
-	while (_running) {
-		COND_WAIT(&_running_cond, &_running_mutex);
-	}
-	MUTEX_UNLOCK(&_running_mutex);
+void Sim::setCollisions(int mode) {
+	if (mode == 0)
+		_collision = false;
+	else if (mode == 1)
+		_collision = true;
+	else if (mode == 2)
+		_collision = _collision ? false : true;
 }
 
 /**********************************************************

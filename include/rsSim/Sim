@@ -24,35 +24,27 @@ namespace rsSim {
 			Sim(bool, bool);
 			virtual ~Sim(void);
 
-			int addRobot(Robot*, int, const rs::Pos&, const rs::Quat&, const rs::Vec&, int = -1);
-			int addRobot(Robot*, int, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int = -1);
+			int addRobot(Robot*, int, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec& = rs::Vec(0,0), int = -1);
 			int addRobot(ModularRobot*, int, Robot*, const rs::Vec&, int, int, int, int, int = rs::Right, int = -1);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double, int);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Vec&, double);
 			virtual int deleteRobot(int);
-			void done(void);
-			double getClock(void);
-			void getCOR(double&, double&);
+			float getClock(void);
 			void getCoM(double&, double&, double&);
-			void getMu(double&, double&);
 			bool getPause(void);
 			Robot* getRobot(int);
 			bool getRunning(void);
-			double getStep(void);
+			float getStep(void);
 			void mutexLock(int);
 			void mutexUnlock(int);
-			void pause(int);
-			void run(int, void (*output)(void) = NULL, int interval = 0);
-			void setCollisions(int);
-			void setCOR(double, double);
+			void run(unsigned int);
 #ifdef RS_RESEARCH
 			void setCPG(int(*)(double, const double*, double*, void*), int, int, int, int);		// research
 			void setCPG(int(*)(double, const double*, double*, void*), struct rsResearch::Params*);		// research
 #endif
-			void setMu(double, double);
-			void start(void);
-			void stop(void);
+			void setCollisions(int);
+			void setPause(int);
 
 		// public enumerations
 		public:

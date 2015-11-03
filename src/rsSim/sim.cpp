@@ -74,7 +74,7 @@ Sim::~Sim(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, int ground) {
+void Sim::addRobot(rsSim::Robot *robot, short id, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, short ground) {
 	// lock robot data
 	MUTEX_LOCK(&_robot_mutex);
 
@@ -90,12 +90,9 @@ int Sim::addRobot(rsSim::Robot *robot, int id, const rs::Pos &p, const rs::Quat 
 
 	// unlock robot data
 	MUTEX_UNLOCK(&_robot_mutex);
-
-	// success
-	return 0;
 }
 
-int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const rs::Vec &a, int face1, int face2, int type, int side, int orientation, int ground) {
+void Sim::addRobot(rsSim::ModularRobot *robot, short id, rsSim::Robot *base, const rs::Vec &a, short face1, short face2, short type, short side, short orientation, short ground) {
 	// lock robot data to insert a new one into simulation
 	MUTEX_LOCK(&_robot_mutex);
 
@@ -116,9 +113,6 @@ int Sim::addRobot(rsSim::ModularRobot *robot, int id, rsSim::Robot *base, const 
 
 	// unlock robot data
 	MUTEX_UNLOCK(&_robot_mutex);
-
-	// success
-	return 0;
 }
 
 Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, double mass) {

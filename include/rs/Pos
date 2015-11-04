@@ -9,8 +9,7 @@ namespace rs {
 	class LIBRSEXPORT Pos {
 		// public functions
 		public:
-			Pos(void);
-			Pos(float, float, float);
+			Pos(float = 0, float = 0, float = 0);
 			Pos(const Pos&);
 
 			const Pos add(float, float, float);

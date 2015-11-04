@@ -4,9 +4,6 @@
 
 using namespace rs;
 
-Vec::Vec(void) {
-}
-
 Vec::Vec(short size) {
 	_v.resize(size);
 }
@@ -39,10 +36,6 @@ Vec::Vec(const Vec &v) {
 	}
 }
 
-Vec::~Vec(void) {
-	_v.clear();
-}
-
 /**********************************************************
 	public functions
  **********************************************************/
@@ -67,9 +60,5 @@ void Vec::print(const char *name) const {
 		std::cerr << _v[i] << " ";
 	}
 	std::cerr << std::endl;
-}
-
-unsigned int Vec::size(void) const {
-	return _v.size();
 }
 

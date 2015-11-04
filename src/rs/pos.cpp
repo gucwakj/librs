@@ -4,12 +4,6 @@
 
 using namespace rs;
 
-Pos::Pos(void) {
-	_v[0] = 0;
-	_v[1] = 0;
-	_v[2] = 0;
-}
-
 Pos::Pos(float x, float y, float z) {
 	_v[0] = x;
 	_v[1] = y;

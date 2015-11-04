@@ -11,19 +11,19 @@ namespace rs {
 	class LIBRSEXPORT Vec {
 		// public functions
 		public:
-			Vec(void);
+			Vec(void) {};
 			Vec(short);
 			Vec(float);
 			Vec(float, float);
 			Vec(float, float, float);
 			Vec(float, float, float, float);
 			Vec(const Vec&);
-			~Vec(void);
+			~Vec(void) {};
 
 			void allocate(int);
 			void print(const char* = "V");
 			void print(const char* = "V") const;
-			unsigned int size(void) const;
+			unsigned int size(void) const { return _v.size(); };
 
 			// access operators
 			inline float& operator[](int i)	      { return _v[i]; }

@@ -5,13 +5,6 @@
 
 using namespace rs;
 
-Quat::Quat(void) {
-	_v[0] = 0;
-	_v[1] = 0;
-	_v[2] = 0;
-	_v[3] = 1;
-}
-
 Quat::Quat(float x, float y, float z, float w) {
 	_v[0] = x;
 	_v[1] = y;

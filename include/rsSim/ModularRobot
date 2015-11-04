@@ -22,20 +22,20 @@ namespace rsSim {
 	class LIBRSEXPORT ModularRobot : virtual public rsRobots::ModularRobot, virtual public rsSim::Robot {
 		// public functions
 		public:
-			ModularRobot(void);
-			virtual ~ModularRobot(void);
+			ModularRobot(void) : rsRobots::Robot(rs::Robot) {};
+			virtual ~ModularRobot(void) {};
 
 			virtual int addConnector(int, int, int = rs::Right, double = 0, int = 1, int = -1) { return 0; };
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, dBodyID, int, int, int) { return 0; };
 			virtual void calculateTrackwidth(void) { return; }
 			dBodyID getConnectorBodyID(int);
 			int getConnectorOrientation(int);
-			ConnectorList& getConnectorList(void);
+			ConnectorList& getConnectorList(void) { return _conn; };
 
 		// protected functions
 		protected:
-			int fix_body_to_connector(dBodyID, int);
-			int fix_connector_to_body(int, dBodyID, int = -1);
+			int fix_body_to_connector(dBodyID, short);
+			int fix_connector_to_body(short, dBodyID, short = -1);
 
 		// protected data
 		protected:

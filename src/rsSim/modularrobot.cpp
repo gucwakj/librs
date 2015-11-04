@@ -2,21 +2,9 @@
 
 using namespace rsSim;
 
-ModularRobot::ModularRobot(void) : rsRobots::Robot(rs::Robot) {
-}
-
-ModularRobot::~ModularRobot(void) {
-	// destroy connectors array
-	_conn.empty();
-}
-
 /**********************************************************
 	public functions
  **********************************************************/
-ConnectorList& ModularRobot::getConnectorList(void) {
-	return _conn;
-}
-
 dBodyID ModularRobot::getConnectorBodyID(int face) {
 	for (unsigned int i = 0; i < _conn.size(); i++) {
 		if (_conn[i].face == face) return _conn[i].body;
@@ -34,7 +22,7 @@ int ModularRobot::getConnectorOrientation(int face) {
 /**********************************************************
 	protected functions
  **********************************************************/
-int ModularRobot::fix_body_to_connector(dBodyID cBody, int face) {
+int ModularRobot::fix_body_to_connector(dBodyID cBody, short face) {
 	// fixed joint
 	dJointID joint = dJointCreateFixed(_world, 0);
 
@@ -48,7 +36,7 @@ int ModularRobot::fix_body_to_connector(dBodyID cBody, int face) {
 	return 0;
 }
 
-int ModularRobot::fix_connector_to_body(int face, dBodyID cBody, int conn) {
+int ModularRobot::fix_connector_to_body(short face, dBodyID cBody, short conn) {
 	// fixed joint
 	dJointID joint = dJointCreateFixed(_world, 0);
 

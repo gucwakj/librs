@@ -38,7 +38,7 @@ namespace rsSim {
 #endif
 			int addToSim(dWorldID&, dSpaceID&, int, rsSim::Sim*);
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int) { return 0; };
-			BodyList& getBodyList(void);
+			BodyList& getBodyList(void) { return _body; };
 			double getCenter(int);
 			const rs::Pos getPosition(void);
 			const rs::Quat getQuaternion(void);
@@ -50,7 +50,7 @@ namespace rsSim {
 		protected:
 			int doze(double);
 			int fixBodyToGround(dBodyID);
-			virtual dBodyID getBodyID(int);
+			virtual dBodyID getBodyID(short id) { return _body[id]; };
 			double getRotation(int, int);
 			double mod_angle(double, double, double);
 			short noisy(float*, short, float);

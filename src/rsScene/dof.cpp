@@ -119,6 +119,9 @@ void Dof::drawConnector(Group *group, int type, int face, int orientation, doubl
 		case Connectors::Foot:
 			node = osgDB::readNodeFile(_model_path + "dof/foot.3ds");
 			break;
+		case Connectors::Plank:
+			node = osgDB::readNodeFile(_model_path + "dof/plank.3ds");
+			break;
 	}
 	node->computeBound();
 	node->setCullingActive(false);

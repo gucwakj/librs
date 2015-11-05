@@ -96,6 +96,9 @@ int Dof::addConnector(int type, int face, int orientation, double size, int side
 		case Connectors::Foot:
 			this->build_foot(_conn.back());
 			break;
+		case Connectors::Plank:
+			this->build_plank(_conn.back());
+			break;
 	}
 
 	// set body parameters
@@ -115,7 +118,7 @@ double Dof::getAngle(int id) {
 	return 0;
 }
 
-dBodyID Dof::getBodyID(int face) {
+dBodyID Dof::getBodyID(short face) {
 	if (face == _enabled) return _body[Bodies::Cap];
 	return _body[Bodies::Body];
 }
@@ -397,6 +400,18 @@ void Dof::build_foot(Connector &conn) {
 
 	// set geometry
 	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_cap_radius, _conn_height);
+	dGeomSetBody(geom, conn.body);
+}
+
+void Dof::build_plank(Connector &conn) {
+	// set mass of body
+	dMass m;
+	dMassSetBox(&m, 170, _conn_depth, _el_length, _conn_height);
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(conn.body, &m);
+
+	// set geometry
+	dGeomID geom = dCreateBox(_space, _conn_depth, _el_length, _conn_height);
 	dGeomSetBody(geom, conn.body);
 }
 

@@ -28,7 +28,12 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_system = {function, NULL, static_cast<size_t>(variables), NULL};
 	_driver = gsl_odeiv2_driver_alloc_y_new(&_system, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
 	_array.resize(variables);
-	if (form == Forms::Salamander) {
+	if (form == Forms::Dog) {
+		for (int i = 0; i < variables; i+=3) {
+			_array[i] = 1;
+		}
+	}
+	else if (form == Forms::Salamander) {
 		for (int i = 0; i < variables; i+=3) {
 			_array[i] = 1;
 		}
@@ -61,7 +66,12 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_system = {function, NULL, static_cast<size_t>(params->num_vars), (void *)params};
 	_driver = gsl_odeiv2_driver_alloc_y_new(&_system, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
 	_array.resize(params->num_vars);
-	if (params->form == Forms::Salamander) {
+	if (params->form == Forms::Dog) {
+		for (int i = 0; i < params->num_vars; i+=3) {
+			_array[i] = 1;
+		}
+	}
+	else if (params->form == Forms::Salamander) {
 		for (int i = 0; i < params->num_vars; i+=3) {
 			_array[i] = 1;
 		}
@@ -103,7 +113,12 @@ const rs::Vec Integrator::runStep(float newtime) {
 	}
 
 	// save output array
-	if (_form == Forms::Salamander) {
+	if (_form == Forms::Dog) {
+		for (int j = 0, k = 0; j < _num_vars; j+=3, k++) {
+			V[k] = _array[j+1] + _array[j+1]*cos(_array[j]) - _array[j+4] - _array[j+4]*cos(_array[j+3]);
+		}
+	}
+	else if (_form == Forms::Salamander) {
 		float theta_up = -5*M_PI/6;
 		float theta_down = -M_PI/6;
 		float a = theta_up - M_PI;

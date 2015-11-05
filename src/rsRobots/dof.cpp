@@ -28,6 +28,7 @@ Dof::Dof(short joint) : Robot(rs::Dof) {
 	_conn_depth = 0.00570;
 	_conn_height = 0.03715;
 	_el_length = 0.13350 + 2*_cap_radius;
+	_plank_length = 0.13350;
 }
 
 /**********************************************************
@@ -49,6 +50,8 @@ const rs::Pos Dof::getConnFacePosition(short type, short side, short orientation
 		else if (side == Connectors::Side4)
 			return P.add(Q.multiply(_el_length/4, 0, _body_height/2 + _conn_depth));
 	}
+	else if (type == Connectors::Plank)
+		return P.add(Q.multiply(0, _plank_length - 2*_cap_radius, 0));
 
 	// default return
 	return P;
@@ -72,6 +75,8 @@ const rs::Quat Dof::getConnFaceQuaternion(short type, short side, short orientat
 			return Q.multiply(sin(1.570796), 0, 0, cos(1.570796));
 		}
 	}
+	else if (type == Connectors::Plank)
+		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
 
 	// default return
 	return Q;
@@ -89,6 +94,8 @@ const rs::Pos Dof::getConnBodyPosition(short type, short orientation, const rs::
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == Connectors::Foot)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
+	else if (type == Connectors::Plank)
+		return P.add(Q.multiply(_conn_depth/2, _plank_length/2 - _cap_radius, 0));
 
 	// default return
 	return P;

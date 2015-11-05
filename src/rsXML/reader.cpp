@@ -1079,6 +1079,11 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ctype = rsDof::Connectors::Foot;
 				cnum = 1;
 			}
+			else if ( !strcmp(node->Value(), "plank") ) {
+				ctype = rsDof::Connectors::Plank;
+				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
+			}
 #endif
 #ifdef RS_LINKBOT
 			if ( !strcmp(node->Value(), "bigwheel") ) {

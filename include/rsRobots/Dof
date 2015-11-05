@@ -34,6 +34,7 @@ namespace rsDof {
 			None,
 			El,
 			Foot,
+			Plank,
 			Num_Connectors
 		};
 
@@ -77,6 +78,7 @@ namespace rsRobots {
 			float _cap_depth;
 			float _cap_radius;
 			float _el_length;
+			float _plank_length;
 			short _enabled;
 	};
 

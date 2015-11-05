@@ -34,8 +34,8 @@ namespace rsSim {
 
 		// protected functions
 		protected:
-			int fix_body_to_connector(dBodyID, short);
-			int fix_connector_to_body(short, dBodyID, short = -1);
+			void fix_body_to_connector(dBodyID, short);
+			void fix_connector_to_body(short, dBodyID, short = -1);
 
 		// protected data
 		protected:

@@ -22,38 +22,39 @@ int ModularRobot::getConnectorOrientation(int face) {
 /**********************************************************
 	protected functions
  **********************************************************/
-int ModularRobot::fix_body_to_connector(dBodyID cBody, short face) {
-	// fixed joint
-	dJointID joint = dJointCreateFixed(_world, 0);
+void ModularRobot::fix_body_to_connector(dBodyID cBody, short face) {
+	// robot body part
+	dBodyID body = this->getBodyID(face);
 
-	// attach to correct body
-	dJointAttach(joint, cBody, this->getBodyID(face));
+	// create joint if both bodies exist
+	if (body && cBody) {
+		// fixed joint
+		dJointID joint = dJointCreateFixed(_world, 0);
 
-	// set joint params
-	dJointSetFixed(joint);
+		// attach to correct body
+		dJointAttach(joint, cBody, body);
 
-	// success
-	return 0;
+		// set joint params
+		dJointSetFixed(joint);
+	}
 }
 
-int ModularRobot::fix_connector_to_body(short face, dBodyID cBody, short conn) {
-	// fixed joint
-	dJointID joint = dJointCreateFixed(_world, 0);
-
+void ModularRobot::fix_connector_to_body(short face, dBodyID cBody, short conn) {
 	// connector or body part
-	dBodyID body;
-	if (conn != -1)
-		body = this->getConnectorBodyID(face);
-	else
-		body = this->getBodyID(face);
+	dBodyID body = NULL;
+	if (conn != -1) body = this->getConnectorBodyID(face);
+	else			body = this->getBodyID(face);
 
-	// attach to correct body
-	dJointAttach(joint, body, cBody);
+	// create joint if both bodies exist
+	if (body && cBody) {
+		// fixed joint
+		dJointID joint = dJointCreateFixed(_world, 0);
 
-	// set joint params
-	dJointSetFixed(joint);
+		// attach to correct body
+		dJointAttach(joint, body, cBody);
 
-	// success
-	return 0;
+		// set joint params
+		dJointSetFixed(joint);
+	}
 }
 

@@ -139,8 +139,6 @@ const rs::Pos Linkbot::getConnBodyPosition(short type, short orientation, const 
 		return P.add(Q.multiply(_conn_depth, _bridge_length/2 - _face_radius, 0));
 	else if (type == Connectors::Faceplate)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
-	else if (type == Connectors::Foot)
-		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == Connectors::Gripper)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == Connectors::Omniplate)

@@ -42,7 +42,6 @@ namespace rsLinkbot {
 			Cube,
 			DoubleBridge,
 			Faceplate,
-			Foot,
 			Gripper,
 			Omniplate,
 			Simple,

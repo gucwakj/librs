@@ -41,7 +41,6 @@ namespace rsLinkbot {
 			Caster,
 			Cube,
 			DoubleBridge,
-			Ell,
 			Faceplate,
 			Foot,
 			Gripper,
@@ -116,7 +115,6 @@ namespace rsRobots {
 			float _bridge_length;
 			float _body_radius;
 			float _cubic_length;
-			float _el_length;
 			float _face_depth;
 			float _face_radius;
 			float _omni_length;

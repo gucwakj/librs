@@ -33,7 +33,6 @@ namespace rsSim {
 			void build_caster(Connector&, int);
 			void build_cube(Connector&);
 			void build_doublebridge(Connector&);
-			void build_el(Connector&);
 			void build_faceplate(Connector&);
 			void build_foot(Connector&);
 			void build_gripper(Connector&, int);

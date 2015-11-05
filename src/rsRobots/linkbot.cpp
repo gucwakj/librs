@@ -27,7 +27,6 @@ Linkbot::Linkbot(short form) : Robot(form) {
 	_conn_depth = 0.00570;
 	_conn_height = 0.03715;
 	_cubic_length = 0.07115;
-	_el_length = _bridge_length + 2*_face_radius;
 	_omni_length = 0.17360;
 	_smallwheel_radius = 0.04445;
 	_tinywheel_radius = 0.04128;
@@ -65,14 +64,6 @@ const rs::Pos Linkbot::getConnFacePosition(short type, short side, short orienta
 			return P.add(Q.multiply(2*_conn_depth, 0, 0));
 		else if (side == Connectors::Side4)
 			return P.add(Q.multiply(2*_conn_depth, _bridge_length - 2*_face_radius, 0));
-	}
-	else if (type == Connectors::Ell) {
-		if (side == Connectors::Side2)
-			return P.add(Q.multiply(_el_length/4, -_body_width/2 - _face_depth, 0));
-		else if (side == Connectors::Side3)
-			return P.add(Q.multiply(_el_length/4, 0, -_body_height/2 - _conn_depth));
-		else if (side == Connectors::Side4)
-			return P.add(Q.multiply(_el_length/4, 0, _body_height/2 + _conn_depth));
 	}
 	else if (type == Connectors::Omniplate) {
 		if (side == Connectors::Side2)
@@ -119,16 +110,6 @@ const rs::Quat Linkbot::getConnFaceQuaternion(short type, short side, short orie
 		else if (side == Connectors::Side4)
 			return Q;
 	}
-	else if (type == Connectors::Ell) {
-		if (side == Connectors::Side2)
-			return Q.multiply(0, 0, sin(0.785398), cos(0.785398));
-		else if (side == Connectors::Side3)
-			return Q.multiply(0, sin(0.785398), 0, cos(0.785398));
-		else if (side == Connectors::Side4) {
-			Q.multiply(0, sin(2.356194), 0, cos(2.356194));
-			return Q.multiply(sin(1.570796), 0, 0, cos(1.570796));
-		}
-	}
 	else if (type == Connectors::Omniplate)
 		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
 	else if (type == Connectors::Simple)
@@ -156,8 +137,6 @@ const rs::Pos Linkbot::getConnBodyPosition(short type, short orientation, const 
 		return P.add(Q.multiply(_cubic_length/2, 0, 0));
 	else if (type == Connectors::DoubleBridge)
 		return P.add(Q.multiply(_conn_depth, _bridge_length/2 - _face_radius, 0));
-	else if (type == Connectors::Ell)
-		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == Connectors::Faceplate)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == Connectors::Foot)

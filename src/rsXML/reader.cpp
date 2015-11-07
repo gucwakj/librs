@@ -254,11 +254,18 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 	// get file
 	if (name != NULL) {
 #ifdef RS_WIN32
-		char base[512];
-		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
-			_path.append(base);
-			_path.append("\\C-STEM Studio\\RoboSim\\");
-			_path.append(name);
+		FILE *fp = fopen(name, "r");
+		if (fp) {
+			_path = name;
+			fclose(fp);
+		}
+		else {
+			char base[512];
+			if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
+				_path.append(base);
+				_path.append("\\C-STEM Studio\\RoboSim\\");
+				_path.append(name);
+			}
 		}
 #else
 		_path = getenv("HOME");

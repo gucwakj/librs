@@ -32,7 +32,7 @@ namespace rsScene {
 		protected:
 			osg::Material* create_material(osg::Vec4);
 			osg::Geode* create_hud(const rs::Pos&);
-			osg::Geode* create_tracking_line(const rs::Pos&, const rs::Vec&, bool);
+			osg::Geode* create_trace(const rs::Pos&, const rs::Vec&, bool);
 
 		// protected data
 		protected:

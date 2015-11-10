@@ -73,11 +73,11 @@ void Dof::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	//robot->setNodeMask(CASTS_SHADOW_MASK);
 	//robot->setNodeMask(IS_PICKABLE_MASK);
 
-	// draw HUD
+	// draw hud
 	group->insertChild(0, this->create_hud(p));
 
-	// tracking node
-	group->insertChild(1, this->create_tracking_line(p, c, trace));
+	// draw trace
+	group->insertChild(1, this->create_trace(p, c, trace));
 
 	// set robot name
 	group->setName(std::string("robot").append(std::to_string(this->getID())));

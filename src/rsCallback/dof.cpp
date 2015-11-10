@@ -41,7 +41,7 @@ void Dof::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
 		label->setText(text);
 		label->setPosition(osg::Vec3f(x, y, z));
-		// child 1: tracking line
+		// child 1: trace
 		if (_robot->getTrace()) {
 			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));
 			geode2->setNodeMask(VISIBLE_MASK);

@@ -79,7 +79,7 @@ osg::Material* Robot::create_material(osg::Vec4 color) {
 	return material;
 }
 
-osg::Geode* Robot::create_tracking_line(const rs::Pos &p, const rs::Vec &c, bool trace) {
+osg::Geode* Robot::create_trace(const rs::Pos &p, const rs::Vec &c, bool trace) {
 	// create line geometry
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	geom->setDataVariance(osg::Object::DYNAMIC);

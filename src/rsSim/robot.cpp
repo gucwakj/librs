@@ -10,14 +10,9 @@ using namespace rsSim;
 Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	// protected variables
 	_connected = false;
-	_id = -1;
-	_rgb[0] = 0;
-	_rgb[1] = 0;
-	_rgb[2] = 1;
 	_sim = NULL;
 	_speed = 2;
 	_success = false;
-	_trace = 1;
 
 	// private variables
 	_seed = time(NULL);

@@ -4,7 +4,7 @@ using namespace rsRobots;
 
 Robot::Robot(short form) {
 	_form = form;
-	_id = 0;
+	_id = -1;
 	_rgb[0] = 0;
 	_rgb[1] = 0;
 	_rgb[2] = 0;

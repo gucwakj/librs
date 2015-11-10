@@ -55,8 +55,8 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 		_time_offset += step;
 	}
 	rs::Vec v = this->runStep(step);
-	while (v[0] < 0 && v[1] < 0) {
-		rs::Vec v = this->runStep(step);
+	while (v[0] < -rs::Epsilon && v[1] < -rs::Epsilon) {
+		v = this->runStep(step);
 		_time_offset += step;
 	}
 }
@@ -93,8 +93,8 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 		_time_offset += step;
 	}
 	rs::Vec v = this->runStep(step);
-	while (v[0] < 0 && v[1] < 0) {
-		rs::Vec v = this->runStep(step);
+	while (v[0] < -rs::Epsilon && v[1] < -rs::Epsilon) {
+		v = this->runStep(step);
 		_time_offset += step;
 	}
 }

@@ -12,17 +12,26 @@ namespace rsRobots {
 			ModularRobot(void) : Robot(rs::Robot) {};
 			virtual ~ModularRobot(void) {};
 
+			// getting
+			float getConnDepth(void)	{ return _conn_depth;	};
+			float getConnHeight(void)	{ return _conn_height;	};
+			float getConnRadius(void)	{ return _conn_radius;	};
+
+			// setting
+			void setConnDepth(float f)	{ _conn_depth = f;	};
+			void setConnHeight(float f)	{ _conn_height = f;	};
+			void setConnRadius(float f)	{ _conn_radius = f;	};
+
 		// virtual functions
 		public:
 			virtual const rs::Pos getConnBodyPosition(short, short, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
 			virtual const rs::Pos getConnFacePosition(short, short, short, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
 			virtual const rs::Pos getRobotFacePosition(short, const rs::Pos&, const rs::Quat&) { return rs::Pos(); };
-
 			virtual const rs::Quat getConnBodyQuaternion(short, short, const rs::Quat&) { return rs::Quat(); };
 			virtual const rs::Quat getConnFaceQuaternion(short, short, short, const rs::Quat&) { return rs::Quat(); };
 
-		// protected data
-		protected:
+		// data
+		private:
 			float _conn_depth;
 			float _conn_height;
 			float _conn_radius;

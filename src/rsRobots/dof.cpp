@@ -15,7 +15,7 @@ Dof::Dof(short joint) : Robot(rs::Dof) {
 	_cap_depth = 0.00200;
 	_cap_radius = 0.03060;
 
-	// body position offsets
+	// body offsets
 	this->addBodyOffset(rs::Pos(0, 0, 0));								// body
 	float depth = 0; if (_enabled == Bodies::Face1) depth = _cap_depth/2;
 	this->addBodyOffset(rs::Pos(-this->getBodyWidth()/2 - depth, 0, 0));			// face1
@@ -25,8 +25,8 @@ Dof::Dof(short joint) : Robot(rs::Dof) {
 	this->addBodyOffset(rs::Pos(this->getBodyWidth()/2 + depth, 0, 0));			// face3
 
 	// connectors
-	_conn_depth = 0.00570;
-	_conn_height = 0.03715;
+	this->setConnDepth(0.00570);
+	this->setConnHeight(0.03715);
 	_el_length = 0.13350 + 2*_cap_radius;
 	_plank_length = 0.13350;
 }
@@ -46,9 +46,9 @@ const rs::Pos Dof::getConnFacePosition(short type, short side, short orientation
 		if (side == Connectors::Side2)
 			return P.add(Q.multiply(_el_length/4, -this->getBodyWidth()/2 - _cap_depth, 0));
 		else if (side == Connectors::Side3)
-			return P.add(Q.multiply(_el_length/4, 0, -this->getBodyHeight()/2 - _conn_depth));
+			return P.add(Q.multiply(_el_length/4, 0, -this->getBodyHeight()/2 - this->getConnDepth()));
 		else if (side == Connectors::Side4)
-			return P.add(Q.multiply(_el_length/4, 0, this->getBodyHeight()/2 + _conn_depth));
+			return P.add(Q.multiply(_el_length/4, 0, this->getBodyHeight()/2 + this->getConnDepth()));
 	}
 	else if (type == Connectors::Plank)
 		return P.add(Q.multiply(0, _plank_length - 2*_cap_radius, 0));
@@ -91,11 +91,11 @@ const rs::Pos Dof::getConnBodyPosition(short type, short orientation, const rs::
 
 	// get offset of body
 	if (type == Connectors::El)
-		return P.add(Q.multiply(_conn_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::Foot)
-		return P.add(Q.multiply(_conn_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::Plank)
-		return P.add(Q.multiply(_conn_depth/2, _plank_length/2 - _cap_radius, 0));
+		return P.add(Q.multiply(this->getConnDepth()/2, _plank_length/2 - _cap_radius, 0));
 
 	// default return
 	return P;

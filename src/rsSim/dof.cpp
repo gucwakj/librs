@@ -335,36 +335,36 @@ void Dof::build_cap(const rs::Pos &p, const rs::Quat &q) {
 void Dof::build_el(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, _conn_depth, 2*_cap_radius, _conn_height);
+	dMassSetBox(&m, 170, this->getConnDepth(), 2*_cap_radius, this->getConnHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_cap_radius, _conn_height);
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), 2*_cap_radius, this->getConnHeight());
 	dGeomSetBody(geom, conn.body);
 }
 
 void Dof::build_foot(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, _conn_depth, 2*_cap_radius, _conn_height);
+	dMassSetBox(&m, 170, this->getConnDepth(), 2*_cap_radius, this->getConnHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_cap_radius, _conn_height);
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), 2*_cap_radius, this->getConnHeight());
 	dGeomSetBody(geom, conn.body);
 }
 
 void Dof::build_plank(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, _conn_depth, _el_length, _conn_height);
+	dMassSetBox(&m, 170, this->getConnDepth(), _el_length, this->getConnHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, _conn_depth, _el_length, _conn_height);
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), _el_length, this->getConnHeight());
 	dGeomSetBody(geom, conn.body);
 }
 

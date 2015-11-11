@@ -16,22 +16,24 @@ Linkbot::Linkbot(short form) : Robot(form) {
 	_body_radius = 0.03625;
 	_face_depth = 0.00200;
 	_face_radius = 0.03060;
+
+	// body offsets
 	this->addBodyOffset(rs::Pos(0, 0, 0));		// body
 	this->addBodyOffset(rs::Pos(-this->getBodyWidth()/2 - _face_depth/2, 0, 0));	// face1
 	this->addBodyOffset(rs::Pos(0, -this->getBodyLength() - _face_depth/2, 0));		// face2
 	this->addBodyOffset(rs::Pos(this->getBodyWidth()/2 + _face_depth/2, 0, 0));		// face3
 
 	// connectors
+	this->setConnDepth(0.00570);
+	this->setConnHeight(0.03715);
+	this->setWheelDepth(0.00140);
+	this->setWheelRadius(0.04445);
 	_bigwheel_radius = 0.05080;
 	_bridge_length = 0.13350;
-	_conn_depth = 0.00570;
-	_conn_height = 0.03715;
 	_cubic_length = 0.07115;
 	_omni_length = 0.17360;
 	_smallwheel_radius = 0.04445;
 	_tinywheel_radius = 0.04128;
-	this->setWheelDepth(0.00140);
-	this->setWheelRadius(0.04445);
 }
 
 /**********************************************************
@@ -61,9 +63,9 @@ const rs::Pos Linkbot::getConnFacePosition(short type, short side, short orienta
 		if (side == Connectors::Side2)
 			return P.add(Q.multiply(0, _bridge_length - 2*_face_radius, 0));
 		else if (side == Connectors::Side3)
-			return P.add(Q.multiply(2*_conn_depth, 0, 0));
+			return P.add(Q.multiply(2*this->getConnDepth(), 0, 0));
 		else if (side == Connectors::Side4)
-			return P.add(Q.multiply(2*_conn_depth, _bridge_length - 2*_face_radius, 0));
+			return P.add(Q.multiply(2*this->getConnDepth(), _bridge_length - 2*_face_radius, 0));
 	}
 	else if (type == Connectors::Omniplate) {
 		if (side == Connectors::Side2)
@@ -74,7 +76,7 @@ const rs::Pos Linkbot::getConnFacePosition(short type, short side, short orienta
 			return P.add(Q.multiply(0, _omni_length - 2*_face_radius, -_omni_length + 2*_face_radius));
 	}
 	else if (type == Connectors::Simple)
-		return P.add(Q.multiply(_conn_depth, 0, 0));
+		return P.add(Q.multiply(this->getConnDepth(), 0, 0));
 
 	// default return
 	return P;
@@ -130,21 +132,21 @@ const rs::Pos Linkbot::getConnBodyPosition(short type, short orientation, const 
 	if (type == Connectors::BigWheel)
 		return P.add(Q.multiply(this->getWheelDepth()/2, 0, 0));
 	else if (type == Connectors::Bridge)
-		return P.add(Q.multiply(_conn_depth/2, _bridge_length/2 - _face_radius, 0));
+		return P.add(Q.multiply(this->getConnDepth()/2, _bridge_length/2 - _face_radius, 0));
 	else if (type == Connectors::Caster)
-		return P.add(Q.multiply(_conn_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::Cube)
 		return P.add(Q.multiply(_cubic_length/2, 0, 0));
 	else if (type == Connectors::DoubleBridge)
-		return P.add(Q.multiply(_conn_depth, _bridge_length/2 - _face_radius, 0));
+		return P.add(Q.multiply(this->getConnDepth(), _bridge_length/2 - _face_radius, 0));
 	else if (type == Connectors::Faceplate)
-		return P.add(Q.multiply(_conn_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::Gripper)
-		return P.add(Q.multiply(_conn_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::Omniplate)
-		return P.add(Q.multiply(_conn_depth/2, _omni_length/2 - _face_radius, -_omni_length/2 + _face_radius));
+		return P.add(Q.multiply(this->getConnDepth()/2, _omni_length/2 - _face_radius, -_omni_length/2 + _face_radius));
 	else if (type == Connectors::Simple)
-		return P.add(Q.multiply(_conn_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::SmallWheel)
 		return P.add(Q.multiply(this->getWheelDepth()/2, 0, 0));
 	else if (type == Connectors::TinyWheel)

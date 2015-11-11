@@ -488,12 +488,12 @@ void Linkbot::build_body(const rs::Pos &p, const rs::Quat &q) {
 void Linkbot::build_bridge(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, _conn_depth, _bridge_length, _conn_height);
+	dMassSetBox(&m, 170, this->getConnDepth(), _bridge_length, this->getConnHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, _conn_depth, _bridge_length, _conn_height);
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), _bridge_length, this->getConnHeight());
 	dGeomSetBody(geom, conn.body);
 }
 
@@ -527,7 +527,7 @@ void Linkbot::build_cap(int id, const rs::Pos &p, const rs::Quat &q) {
 void Linkbot::build_caster(Connector &conn, int custom) {
 	// set mass of body
 	dMass m, m1;
-	dMassSetBox(&m, 2000, 5*_conn_depth, 1.5*_face_radius, this->getBodyHeight());
+	dMassSetBox(&m, 2000, 5*this->getConnDepth(), 1.5*_face_radius, this->getBodyHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
@@ -535,7 +535,7 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 	dGeomID geom[4];
 
 	// set geometry 0 - box
-	geom[0] = dCreateBox(_space, _conn_depth, 1.5*_face_radius, this->getBodyHeight());
+	geom[0] = dCreateBox(_space, this->getConnDepth(), 1.5*_face_radius, this->getBodyHeight());
 	dGeomSetBody(geom[0], conn.body);
 
 	// default 3ds caster
@@ -543,34 +543,34 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 		// set geometry 1 - horizontal support
 		geom[1] = dCreateBox(_space, 0.0368, 0.022, 0.0032);
 		dGeomSetBody(geom[1], conn.body);
-		dGeomSetOffsetPosition(geom[1], _conn_depth/2 + 0.01 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0016 - m.c[2]);
+		dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 + 0.01 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0016 - m.c[2]);
 
 		// set geometry 2 - ball support
 		geom[2] = dCreateCylinder(_space, 0.011, 0.003);
 		dGeomSetBody(geom[2], conn.body);
-		dGeomSetOffsetPosition(geom[2], _conn_depth/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0001 - m.c[2]);
+		dGeomSetOffsetPosition(geom[2], this->getConnDepth()/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0001 - m.c[2]);
 
 		// set geometry 3 - sphere
 		geom[3] = dCreateSphere(_space, 0.006);
 		dGeomSetBody(geom[3], conn.body);
-		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 - 0.004 - m.c[2]);
+		dGeomSetOffsetPosition(geom[3], this->getConnDepth()/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 - 0.004 - m.c[2]);
 	}
 	// custom drawn one for mathematics
 	else {
 		// set geometry 1 - horizontal support
 		geom[1] = dCreateBox(_space, 0.0368, 0.022, 0.0032);
 		dGeomSetBody(geom[1], conn.body);
-		dGeomSetOffsetPosition(geom[1], _conn_depth/2 + 0.01, 0, -this->getBodyHeight()/2 + 0.0016);
+		dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 + 0.01, 0, -this->getBodyHeight()/2 + 0.0016);
 
 		// set geometry 2 - ball support
 		geom[2] = dCreateCylinder(_space, 0.011, this->getWheelRadius() -_face_radius - 0.006 + 0.0032);
 		dGeomSetBody(geom[2], conn.body);
-		dGeomSetOffsetPosition(geom[2], _conn_depth/2 + 0.02, 0, -this->getBodyHeight()/2 - (this->getWheelRadius() -_face_radius - 0.006)/2 + 0.0016);
+		dGeomSetOffsetPosition(geom[2], this->getConnDepth()/2 + 0.02, 0, -this->getBodyHeight()/2 - (this->getWheelRadius() -_face_radius - 0.006)/2 + 0.0016);
 
 		// set geometry 3 - sphere
 		geom[3] = dCreateSphere(_space, 0.006);
 		dGeomSetBody(geom[3], conn.body);
-		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.02, 0, -this->getBodyHeight()/2 + _face_radius - this->getWheelRadius() + 0.006);
+		dGeomSetOffsetPosition(geom[3], this->getConnDepth()/2 + 0.02, 0, -this->getBodyHeight()/2 + _face_radius - this->getWheelRadius() + 0.006);
 	}
 }
 
@@ -589,24 +589,24 @@ void Linkbot::build_cube(Connector &conn) {
 void Linkbot::build_doublebridge(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, 2*_conn_depth, _bridge_length, _conn_height);
+	dMassSetBox(&m, 170, 2*this->getConnDepth(), _bridge_length, this->getConnHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, 2*_conn_depth, _bridge_length, _conn_height);
+	dGeomID geom = dCreateBox(_space, 2*this->getConnDepth(), _bridge_length, this->getConnHeight());
 	dGeomSetBody(geom, conn.body);
 }
 
 void Linkbot::build_faceplate(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, _conn_depth, this->getBodyHeight(), this->getBodyHeight());
+	dMassSetBox(&m, 170, this->getConnDepth(), this->getBodyHeight(), this->getBodyHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, _conn_depth, this->getBodyHeight(), this->getBodyHeight());
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), this->getBodyHeight(), this->getBodyHeight());
 	dGeomSetBody(geom, conn.body);
 }
 
@@ -616,25 +616,25 @@ void Linkbot::build_gripper(Connector &conn, int face) {
 
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, _conn_depth, 2*_face_radius, _conn_height);
+	dMassSetBox(&m, 170, this->getConnDepth(), 2*_face_radius, this->getConnHeight());
 
 	// build geometries
 	dGeomID geom[3];
 
 	// set geometry 0
-	geom[0] = dCreateBox(_space, _conn_depth, 4*_face_radius, _conn_height/2);
+	geom[0] = dCreateBox(_space, this->getConnDepth(), 4*_face_radius, this->getConnHeight()/2);
 	dGeomSetBody(geom[0], conn.body);
 	dGeomSetOffsetPosition(geom[0], -m.c[0], -i*_face_radius - m.c[1], -m.c[2]);
 
 	// set geometry 1
-	geom[1] = dCreateBox(_space, 0.062, 0.04, _conn_depth);
+	geom[1] = dCreateBox(_space, 0.062, 0.04, this->getConnDepth());
 	dGeomSetBody(geom[1], conn.body);
-	dGeomSetOffsetPosition(geom[1], _conn_depth/2 - 0.062/2 - m.c[0], -i*3*_face_radius + i*0.02 - m.c[1], i*_conn_height/4 - i*_conn_depth/2 - m.c[2]);
+	dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 - 0.062/2 - m.c[0], -i*3*_face_radius + i*0.02 - m.c[1], i*this->getConnHeight()/4 - i*this->getConnDepth()/2 - m.c[2]);
 
 	// set geometry 2
 	geom[2] = dCreateBox(_space, 0.0344, 0.04, 0.007);
 	dGeomSetBody(geom[2], conn.body);
-	dGeomSetOffsetPosition(geom[2], _conn_depth/2 - 0.062 + 0.0344/2 - m.c[0], -i*3*_face_radius + i*0.02 - m.c[1], i*_conn_height/4 - i*_conn_depth/2 - i*0.007/2 - m.c[2]);
+	dGeomSetOffsetPosition(geom[2], this->getConnDepth()/2 - 0.062 + 0.0344/2 - m.c[0], -i*3*_face_radius + i*0.02 - m.c[1], i*this->getConnHeight()/4 - i*this->getConnDepth()/2 - i*0.007/2 - m.c[2]);
 
 	// center body mass on geoms
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
@@ -644,12 +644,12 @@ void Linkbot::build_gripper(Connector &conn, int face) {
 void Linkbot::build_omnidrive(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, _omni_length, _omni_length, _conn_depth);
+	dMassSetBox(&m, 170, _omni_length, _omni_length, this->getConnDepth());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, _conn_depth, _omni_length, _omni_length);
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), _omni_length, _omni_length);
 	dGeomSetBody(geom, conn.body);
 }
 
@@ -747,12 +747,12 @@ void Linkbot::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a)
 void Linkbot::build_simple(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, _conn_depth, 2*_face_radius, _conn_height);
+	dMassSetBox(&m, 170, this->getConnDepth(), 2*_face_radius, this->getConnHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, _conn_depth, 2*_face_radius, _conn_height);
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), 2*_face_radius, this->getConnHeight());
 	dGeomSetBody(geom, conn.body);
 }
 

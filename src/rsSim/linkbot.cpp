@@ -457,9 +457,9 @@ void Linkbot::simPostCollisionThread(void) {
 void Linkbot::build_body(const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m, m1;
-	dMassSetBox(&m, 1000, _body_width, _body_length, _body_height);
-	dMassTranslate(&m, 0, -_body_length/2, 0);
-	dMassSetCylinder(&m1, 400, 1, _body_radius, _body_width);
+	dMassSetBox(&m, 1000, this->getBodyWidth(), this->getBodyLength(), this->getBodyHeight());
+	dMassTranslate(&m, 0, -this->getBodyLength()/2, 0);
+	dMassSetCylinder(&m1, 400, 1, _body_radius, this->getBodyWidth());
 	dMassAdd(&m, &m1);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[Bodies::Body], &m);
@@ -474,12 +474,12 @@ void Linkbot::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dGeomID geom[2];
 
 	// set geometry 0 - box
-	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
+	geom[0] = dCreateBox(_space, this->getBodyWidth(), this->getBodyLength(), this->getBodyHeight());
 	dGeomSetBody(geom[0], _body[Bodies::Body]);
-	dGeomSetOffsetPosition(geom[0], 0, -_body_length/2, 0);
+	dGeomSetOffsetPosition(geom[0], 0, -this->getBodyLength()/2, 0);
 
 	// set geometry 1 - cylinder
-	geom[1] = dCreateCylinder(_space, _body_radius, _body_width);
+	geom[1] = dCreateCylinder(_space, _body_radius, this->getBodyWidth());
 	dGeomSetBody(geom[1], _body[Bodies::Body]);
 	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom[1], Q1);
@@ -527,7 +527,7 @@ void Linkbot::build_cap(int id, const rs::Pos &p, const rs::Quat &q) {
 void Linkbot::build_caster(Connector &conn, int custom) {
 	// set mass of body
 	dMass m, m1;
-	dMassSetBox(&m, 2000, 5*_conn_depth, 1.5*_face_radius, _body_height);
+	dMassSetBox(&m, 2000, 5*_conn_depth, 1.5*_face_radius, this->getBodyHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
@@ -535,7 +535,7 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 	dGeomID geom[4];
 
 	// set geometry 0 - box
-	geom[0] = dCreateBox(_space, _conn_depth, 1.5*_face_radius, _body_height);
+	geom[0] = dCreateBox(_space, _conn_depth, 1.5*_face_radius, this->getBodyHeight());
 	dGeomSetBody(geom[0], conn.body);
 
 	// default 3ds caster
@@ -543,34 +543,34 @@ void Linkbot::build_caster(Connector &conn, int custom) {
 		// set geometry 1 - horizontal support
 		geom[1] = dCreateBox(_space, 0.0368, 0.022, 0.0032);
 		dGeomSetBody(geom[1], conn.body);
-		dGeomSetOffsetPosition(geom[1], _conn_depth/2 + 0.01 - m.c[0], -m.c[1], -_body_height/2 + 0.0016 - m.c[2]);
+		dGeomSetOffsetPosition(geom[1], _conn_depth/2 + 0.01 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0016 - m.c[2]);
 
 		// set geometry 2 - ball support
 		geom[2] = dCreateCylinder(_space, 0.011, 0.003);
 		dGeomSetBody(geom[2], conn.body);
-		dGeomSetOffsetPosition(geom[2], _conn_depth/2 + 0.0368 - m.c[0], -m.c[1], -_body_height/2 + 0.0001 - m.c[2]);
+		dGeomSetOffsetPosition(geom[2], _conn_depth/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0001 - m.c[2]);
 
 		// set geometry 3 - sphere
 		geom[3] = dCreateSphere(_space, 0.006);
 		dGeomSetBody(geom[3], conn.body);
-		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.0368 - m.c[0], -m.c[1], -_body_height/2 - 0.004 - m.c[2]);
+		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 - 0.004 - m.c[2]);
 	}
 	// custom drawn one for mathematics
 	else {
 		// set geometry 1 - horizontal support
 		geom[1] = dCreateBox(_space, 0.0368, 0.022, 0.0032);
 		dGeomSetBody(geom[1], conn.body);
-		dGeomSetOffsetPosition(geom[1], _conn_depth/2 + 0.01, 0, -_body_height/2 + 0.0016);
+		dGeomSetOffsetPosition(geom[1], _conn_depth/2 + 0.01, 0, -this->getBodyHeight()/2 + 0.0016);
 
 		// set geometry 2 - ball support
-		geom[2] = dCreateCylinder(_space, 0.011, _wheel_radius -_face_radius - 0.006 + 0.0032);
+		geom[2] = dCreateCylinder(_space, 0.011, this->getWheelRadius() -_face_radius - 0.006 + 0.0032);
 		dGeomSetBody(geom[2], conn.body);
-		dGeomSetOffsetPosition(geom[2], _conn_depth/2 + 0.02, 0, -_body_height/2 - (_wheel_radius -_face_radius - 0.006)/2 + 0.0016);
+		dGeomSetOffsetPosition(geom[2], _conn_depth/2 + 0.02, 0, -this->getBodyHeight()/2 - (this->getWheelRadius() -_face_radius - 0.006)/2 + 0.0016);
 
 		// set geometry 3 - sphere
 		geom[3] = dCreateSphere(_space, 0.006);
 		dGeomSetBody(geom[3], conn.body);
-		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.02, 0, -_body_height/2 + _face_radius - _wheel_radius + 0.006);
+		dGeomSetOffsetPosition(geom[3], _conn_depth/2 + 0.02, 0, -this->getBodyHeight()/2 + _face_radius - this->getWheelRadius() + 0.006);
 	}
 }
 
@@ -601,12 +601,12 @@ void Linkbot::build_doublebridge(Connector &conn) {
 void Linkbot::build_faceplate(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, _conn_depth, _body_height, _body_height);
+	dMassSetBox(&m, 170, _conn_depth, this->getBodyHeight(), this->getBodyHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, _conn_depth, _body_height, _body_height);
+	dGeomID geom = dCreateBox(_space, _conn_depth, this->getBodyHeight(), this->getBodyHeight());
 	dGeomSetBody(geom, conn.body);
 }
 
@@ -677,7 +677,7 @@ void Linkbot::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a)
 	// joint for body to cap 1
 	_motor[Bodies::Joint1].joint = dJointCreateHinge(_world, 0);
 	dJointAttach(_motor[Bodies::Joint1].joint, _body[Bodies::Body], _body[Bodies::Cap1]);
-	o = q.multiply(-_body_width/2, 0, 0);
+	o = q.multiply(-this->getBodyWidth()/2, 0, 0);
 	dJointSetHingeAnchor(_motor[Bodies::Joint1].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 	o = q.multiply(1, 0, 0);
 	dJointSetHingeAxis(_motor[Bodies::Joint1].joint, o[0], o[1], o[2]);
@@ -692,7 +692,7 @@ void Linkbot::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a)
 	else {
 		_motor[Bodies::Joint2].joint = dJointCreateHinge(_world, 0);
 		dJointAttach(_motor[Bodies::Joint2].joint, _body[Bodies::Body], _body[Bodies::Cap2]);
-		o = q.multiply(0, -_body_length, 0);
+		o = q.multiply(0, -this->getBodyLength(), 0);
 		dJointSetHingeAnchor(_motor[Bodies::Joint2].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(0, 1, 0);
 		dJointSetHingeAxis(_motor[Bodies::Joint2].joint, o[0], o[1], o[2]);
@@ -708,7 +708,7 @@ void Linkbot::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a)
 	else {
 		_motor[Bodies::Joint3].joint = dJointCreateHinge(_world, 0);
 		dJointAttach(_motor[Bodies::Joint3].joint, _body[Bodies::Body], _body[Bodies::Cap3]);
-		o = q.multiply(_body_width/2, 0, 0);
+		o = q.multiply(this->getBodyWidth()/2, 0, 0);
 		dJointSetHingeAnchor(_motor[Bodies::Joint3].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(-1, 0, 0);
 		dJointSetHingeAxis(_motor[Bodies::Joint3].joint, o[0], o[1], o[2]);
@@ -758,16 +758,16 @@ void Linkbot::build_simple(Connector &conn) {
 
 void Linkbot::build_wheel(Connector &conn, double size) {
 	// store wheel radius
-	_wheel_radius = size;
+	this->setWheelRadius(size);
 
 	// set mass of body
 	dMass m;
-	dMassSetCylinder(&m, 170, 1, 2*_wheel_radius, _wheel_depth);
+	dMassSetCylinder(&m, 170, 1, 2*this->getWheelRadius(), this->getWheelDepth());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateCylinder(_space, _wheel_radius, _wheel_depth);
+	dGeomID geom = dCreateCylinder(_space, this->getWheelRadius(), this->getWheelDepth());
 	dGeomSetBody(geom, conn.body);
 	dQuaternion Q = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom, Q);

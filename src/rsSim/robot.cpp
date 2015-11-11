@@ -30,7 +30,7 @@ Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 
 Robot::~Robot(void) {
 	// delete robot from simulation
-	if (_sim) _sim->deleteRobot(_id);
+	if (_sim) _sim->deleteRobot(this->getID());
 
 	// destroy mutexes
 	MUTEX_DESTROY(&_goal_mutex);
@@ -158,9 +158,9 @@ void Robot::setCPGGoal(double value) {
 	protected functions
  **********************************************************/
 int Robot::addToSim(dWorldID &world, dSpaceID &space, int id, Sim *sim) {
+	this->setID(id);
 	_world = world;
 	_space = dHashSpaceCreate(space);
-	_id = id;
 	_sim = sim;
 
 	// success

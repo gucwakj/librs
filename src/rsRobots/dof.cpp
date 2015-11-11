@@ -8,21 +8,21 @@ Dof::Dof(short joint) : Robot(rs::Dof) {
 	_enabled = joint;
 
 	// body parts
-	_body_length = 0.03935;
-	_body_width = 0.07835;
-	_body_height = 0.07250;
+	this->setBodyHeight(0.07250);
+	this->setBodyLength(0.03935);
+	this->setBodyWidth(0.07835);
 	_body_radius = 0.03625;
 	_cap_depth = 0.00200;
 	_cap_radius = 0.03060;
 
 	// body position offsets
-	_offset.push_back(rs::Pos(0, 0, 0));								// body
+	this->addBodyOffset(rs::Pos(0, 0, 0));								// body
 	float depth = 0; if (_enabled == Bodies::Face1) depth = _cap_depth/2;
-	_offset.push_back(rs::Pos(-_body_width/2 - depth, 0, 0));			// face1
+	this->addBodyOffset(rs::Pos(-this->getBodyWidth()/2 - depth, 0, 0));			// face1
 	depth = 0; if (_enabled == Bodies::Face2) depth = _cap_depth/2;
-	_offset.push_back(rs::Pos(0, -_body_length - depth, 0));			// face2
+	this->addBodyOffset(rs::Pos(0, -this->getBodyLength() - depth, 0));			// face2
 	depth = 0; if (_enabled == Bodies::Face3) depth = _cap_depth/2;
-	_offset.push_back(rs::Pos(_body_width/2 + depth, 0, 0));			// face3
+	this->addBodyOffset(rs::Pos(this->getBodyWidth()/2 + depth, 0, 0));			// face3
 
 	// connectors
 	_conn_depth = 0.00570;
@@ -44,11 +44,11 @@ const rs::Pos Dof::getConnFacePosition(short type, short side, short orientation
 	// get offset of face
 	if (type == Connectors::El) {
 		if (side == Connectors::Side2)
-			return P.add(Q.multiply(_el_length/4, -_body_width/2 - _cap_depth, 0));
+			return P.add(Q.multiply(_el_length/4, -this->getBodyWidth()/2 - _cap_depth, 0));
 		else if (side == Connectors::Side3)
-			return P.add(Q.multiply(_el_length/4, 0, -_body_height/2 - _conn_depth));
+			return P.add(Q.multiply(_el_length/4, 0, -this->getBodyHeight()/2 - _conn_depth));
 		else if (side == Connectors::Side4)
-			return P.add(Q.multiply(_el_length/4, 0, _body_height/2 + _conn_depth));
+			return P.add(Q.multiply(_el_length/4, 0, this->getBodyHeight()/2 + _conn_depth));
 	}
 	else if (type == Connectors::Plank)
 		return P.add(Q.multiply(0, _plank_length - 2*_cap_radius, 0));
@@ -136,11 +136,11 @@ const rs::Pos Dof::getRobotCenterPosition(short face, const rs::Pos &p, const rs
 
 	// get position of robot
 	if (face == Bodies::Face1)
-		return P.add(q.multiply(_body_width/2 + depth, 0, 0));
+		return P.add(q.multiply(this->getBodyWidth()/2 + depth, 0, 0));
 	else if (face == Bodies::Face2)
-		return P.add(q.multiply(depth + _body_length, 0, 0));
+		return P.add(q.multiply(depth + this->getBodyLength(), 0, 0));
 	else if (face == Bodies::Face3)
-		return P.add(q.multiply(_body_width/2 + depth, 0, 0));
+		return P.add(q.multiply(this->getBodyWidth()/2 + depth, 0, 0));
 
 	// default return
 	return P;
@@ -178,12 +178,13 @@ const rs::Pos Dof::getRobotFacePosition(short face, const rs::Pos &p, const rs::
 	if (_enabled == face) depth = _cap_depth/2;
 
 	// calculate offset position
+	rs::Pos pos = this->getBodyOffset(face);
 	if (face == Bodies::Face1)
-		return P.add(q.multiply(_offset[face].x() - depth, _offset[face].y(), _offset[face].z()));
+		return P.add(q.multiply(pos.x() - depth, pos.y(), pos.z()));
 	else if (face == Bodies::Face2)
-		return P.add(q.multiply(_offset[face].x(), _offset[face].y() - depth, _offset[face].z()));
+		return P.add(q.multiply(pos.x(), pos.y() - depth, pos.z()));
 	else if (face == Bodies::Face3)
-		return P.add(q.multiply(_offset[face].x() + depth, _offset[face].y(), _offset[face].z()));
+		return P.add(q.multiply(pos.x() + depth, pos.y(), pos.z()));
 
 	// default return
 	return P;

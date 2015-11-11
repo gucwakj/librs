@@ -5,15 +5,15 @@ using namespace rsMindstorms;
 
 Mindstorms::Mindstorms(short form) : Robot(form) {
 	_bigwheel_radius = 0.04100;
-	_body_height = 0.04;			// dummy size
-	_body_length = 0.1;				// dummy size
-	_body_width = 0.087319;
+	this->setBodyHeight(0.04);
+	this->setBodyLength(0.1);
+	this->setBodyWidth(0.087319);
 	_smallwheel_radius = 0.02800;
-	_wheel_depth = 0.02660;
-	_wheel_radius = 0.02800;
-	_offset.push_back(rs::Pos(0, 0, 0));											// body
-	_offset.push_back(rs::Pos(-_body_width / 2 - _wheel_depth / 2 - 0.002, 0, 0));	// wheel1
-	_offset.push_back(rs::Pos(_body_width / 2 + _wheel_depth / 2 + 0.002, 0, 0));	// wheel2
+	this->setWheelDepth(0.02660);
+	this->setWheelRadius(0.02800);
+	this->addBodyOffset(rs::Pos(0, 0, 0));		// body
+	this->addBodyOffset(rs::Pos(-this->getBodyWidth()/2 - this->getWheelDepth()/2 - 0.002, 0, 0));		// wheel1
+	this->addBodyOffset(rs::Pos(this->getBodyWidth()/2 + this->getWheelDepth()/2 + 0.002, 0, 0));		// wheel2
 }
 
 /**********************************************************
@@ -42,8 +42,8 @@ float Mindstorms::getWheelRatio(short type) {
 
 const rs::Quat Mindstorms::tiltForWheels(short type1, short type2, float &p2) {
 	// set wheel on this face
-	_wheels[0] = type1;
-	_wheels[1] = type2;
+	this->setWheelLeft(type1);
+	this->setWheelRight(type2);
 
 	// tilt
 	if (type1 == Connectors::None && type2 == Connectors::None) {

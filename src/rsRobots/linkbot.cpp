@@ -10,16 +10,16 @@ Linkbot::Linkbot(short form) : Robot(form) {
 	else if (form == rs::LinkbotL) _disabled = Bodies::Joint3;
 
 	// body parts
-	_body_length = 0.03935;
-	_body_width = 0.07835;
-	_body_height = 0.07250;
+	this->setBodyHeight(0.07250);
+	this->setBodyLength(0.03935);
+	this->setBodyWidth(0.07835);
 	_body_radius = 0.03625;
 	_face_depth = 0.00200;
 	_face_radius = 0.03060;
-	_offset.push_back(rs::Pos(0, 0, 0));									// body
-	_offset.push_back(rs::Pos(-_body_width/2 - _face_depth/2, 0, 0));		// face1
-	_offset.push_back(rs::Pos(0, -_body_length - _face_depth/2, 0));		// face2
-	_offset.push_back(rs::Pos(_body_width/2 + _face_depth/2, 0, 0));		// face3
+	this->addBodyOffset(rs::Pos(0, 0, 0));		// body
+	this->addBodyOffset(rs::Pos(-this->getBodyWidth()/2 - _face_depth/2, 0, 0));	// face1
+	this->addBodyOffset(rs::Pos(0, -this->getBodyLength() - _face_depth/2, 0));		// face2
+	this->addBodyOffset(rs::Pos(this->getBodyWidth()/2 + _face_depth/2, 0, 0));		// face3
 
 	// connectors
 	_bigwheel_radius = 0.05080;
@@ -30,8 +30,8 @@ Linkbot::Linkbot(short form) : Robot(form) {
 	_omni_length = 0.17360;
 	_smallwheel_radius = 0.04445;
 	_tinywheel_radius = 0.04128;
-	_wheel_depth = 0.00140;
-	_wheel_radius = 0.04445;
+	this->setWheelDepth(0.00140);
+	this->setWheelRadius(0.04445);
 }
 
 /**********************************************************
@@ -128,7 +128,7 @@ const rs::Pos Linkbot::getConnBodyPosition(short type, short orientation, const 
 
 	// get offset of body
 	if (type == Connectors::BigWheel)
-		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getWheelDepth()/2, 0, 0));
 	else if (type == Connectors::Bridge)
 		return P.add(Q.multiply(_conn_depth/2, _bridge_length/2 - _face_radius, 0));
 	else if (type == Connectors::Caster)
@@ -146,11 +146,11 @@ const rs::Pos Linkbot::getConnBodyPosition(short type, short orientation, const 
 	else if (type == Connectors::Simple)
 		return P.add(Q.multiply(_conn_depth/2, 0, 0));
 	else if (type == Connectors::SmallWheel)
-		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getWheelDepth()/2, 0, 0));
 	else if (type == Connectors::TinyWheel)
-		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getWheelDepth()/2, 0, 0));
 	else if (type == Connectors::Wheel)
-		return P.add(Q.multiply(_wheel_depth/2, 0, 0));
+		return P.add(Q.multiply(this->getWheelDepth()/2, 0, 0));
 
 	// default return
 	return P;
@@ -187,11 +187,11 @@ const rs::Pos Linkbot::getRobotCenterPosition(short face, const rs::Pos &p, cons
 
 	// get position of robot
 	if (face == Bodies::Face1)
-		return P.add(q.multiply(_body_width/2 + _face_depth, 0, 0));
+		return P.add(q.multiply(this->getBodyWidth()/2 + _face_depth, 0, 0));
 	else if (face == Bodies::Face2)
-		return P.add(q.multiply(_face_depth + _body_length, 0, 0));
+		return P.add(q.multiply(_face_depth + this->getBodyLength(), 0, 0));
 	else if (face == Bodies::Face3)
-		return P.add(q.multiply(_body_width/2 + _face_depth, 0, 0));
+		return P.add(q.multiply(this->getBodyWidth()/2 + _face_depth, 0, 0));
 
 	// default return
 	return P;
@@ -225,37 +225,39 @@ const rs::Pos Linkbot::getRobotFacePosition(short face, const rs::Pos &p, const 
 	rs::Pos P(p);
 
 	// calculate offset position
+	rs::Pos pos = this->getBodyOffset(face);
 	if (face == Bodies::Face1)
-		return P.add(q.multiply(_offset[face].x() - _face_depth/2, _offset[face].y(), _offset[face].z()));
+		return P.add(q.multiply(pos.x() - _face_depth/2, pos.y(), pos.z()));
 	else if (face == Bodies::Face2)
-		return P.add(q.multiply(_offset[face].x(), _offset[face].y() - _face_depth/2, _offset[face].z()));
+		return P.add(q.multiply(pos.x(), pos.y() - _face_depth/2, pos.z()));
 	else if (face == Bodies::Face3)
-		return P.add(q.multiply(_offset[face].x() + _face_depth/2, _offset[face].y(), _offset[face].z()));
+		return P.add(q.multiply(pos.x() + _face_depth/2, pos.y(), pos.z()));
 
 	// default return
 	return P;
 }
 
 float Linkbot::getWheelRatio(short standard) {
+	float radius = this->getWheelRadius();
 	switch (standard) {
 		case Connectors::BigWheel:
-			return _wheel_radius/_bigwheel_radius;
+			return radius/_bigwheel_radius;
 		case Connectors::SmallWheel:
-			return _wheel_radius/_smallwheel_radius;
+			return radius/_smallwheel_radius;
 		case Connectors::TinyWheel:
-			return _wheel_radius/_tinywheel_radius;
+			return radius/_tinywheel_radius;
 	}
 	return 0;
 }
 
 float Linkbot::getCasterScale(void) {
-	return _wheel_radius/(_body_height + 0.008);
+	return this->getWheelRadius()/(this->getBodyHeight() + 0.008);
 }
 
 const rs::Quat Linkbot::tiltForWheels(short type1, short type2, float &p2) {
 	// set wheel on this face
-	_wheels[0] = type1;
-	_wheels[1] = type2;
+	this->setWheelLeft(type1);
+	this->setWheelRight(type2);
 
 	// tilt
 	if (type1 == Connectors::None && type2 == Connectors::TinyWheel) {

@@ -81,10 +81,6 @@ const rs::Quat Robot::getQuaternion(void) {
 	return _q;
 }
 
-double Robot::getRadius(void) {
-	return _wheel_radius;
-}
-
 bool Robot::getTrace(void) {
 	return _trace;
 }
@@ -95,8 +91,8 @@ const rs::Vec Robot::getWheels(void) {
 
 void Robot::printDebug(void) {
 	std::cerr << "XML Robot" << std::endl;
-	std::cerr << "form: " << _form << std::endl;
-	std::cerr << "  id: " << _id << std::endl;
+	std::cerr << "form: " << this->getForm() << std::endl;
+	std::cerr << "  id: " << this->getID() << std::endl;
 	_p.print();
 	_q.print();
 	_a.print();

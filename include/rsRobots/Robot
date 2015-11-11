@@ -19,20 +19,39 @@ namespace rsRobots {
 			Robot(short);
 			virtual ~Robot(void);
 
-			float getBodyHeight(void);
-			short getForm(void);
-			short getID(void);
-			std::string getName(void);
+			void addBodyOffset(rs::Pos a)	{ _offset.push_back(a);	};
+
+			// getting
+			float getBodyHeight(void)		{ return _body_height;	};
+			float getBodyLength(void)		{ return _body_length;	};
+			float getBodyWidth(void)		{ return _body_width;	};
+			rs::Pos getBodyOffset(int i)	{ return _offset[i];	};
+			short getForm(void)				{ return _form;			};
+			short getID(void)				{ return _id;			};
+			std::string getName(void)		{ return _name;			};
 			float* getRGB(void);
+			float getRGB(short s)			{ return _rgb[s-1];		};
 			const rs::Pos getRobotBodyPosition(short, const rs::Pos&, const rs::Quat&);
-			bool getTrace(void);
-			float getWheelRadius(void);
-			void setID(short);
-			void setForm(short);
-			void setLED(const rs::Vec&);
-			void setName(std::string);
-			void setTrace(bool);
-			void setWheelRadius(float);
+			bool getTrace(void)				{ return _trace;		};
+			short getWheel(short s)			{ return _wheels[s];	};
+			float getWheelDepth(void)		{ return _wheel_depth;	};
+			short getWheelLeft(void)		{ return _wheels[0];	};
+			float getWheelRadius(void)		{ return _wheel_radius;	};
+			short getWheelRight(void)		{ return _wheels[1];	};
+
+			// setting
+			void setBodyHeight(float f)		{ _body_height = f;		};
+			void setBodyLength(float f)		{ _body_length = f;		};
+			void setBodyWidth(float f)		{ _body_width = f;		};
+			void setID(short s)				{ _id = s;				};
+			void setForm(short s)			{ _form = s;			};
+			void setRGB(const rs::Vec&);
+			void setName(std::string s)		{ _name = s;			};
+			void setTrace(bool b)			{ _trace = b;			};
+			void setWheelDepth(float f)		{ _wheel_depth = f;		};
+			void setWheelLeft(short s)		{ _wheels[0] = s;		};
+			void setWheelRadius(float f)	{ _wheel_radius = f;	};
+			void setWheelRight(short s)		{ _wheels[1] = s;		};
 
 		// virtual functions
 		public:
@@ -40,7 +59,7 @@ namespace rsRobots {
 			virtual float getWheelRatio(int) { return 1; }
 
 		// data
-		protected:
+		private:
 			bool _trace;
 			float _body_length;
 			float _body_height;

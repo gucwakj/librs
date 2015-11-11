@@ -277,9 +277,9 @@ void Dof::simPostCollisionThread(void) {
 void Dof::build_body(const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m, m1;
-	dMassSetBox(&m, 1000, _body_width, _body_length, _body_height);
-	dMassTranslate(&m, 0, -_body_length/2, 0);
-	dMassSetCylinder(&m1, 400, 1, _body_radius, _body_width);
+	dMassSetBox(&m, 1000, this->getBodyWidth(), this->getBodyLength(), this->getBodyHeight());
+	dMassTranslate(&m, 0, -this->getBodyLength()/2, 0);
+	dMassSetCylinder(&m1, 400, 1, _body_radius, this->getBodyWidth());
 	dMassAdd(&m, &m1);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[Bodies::Body], &m);
@@ -294,12 +294,12 @@ void Dof::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dGeomID geom[2];
 
 	// set geometry 0 - box
-	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
+	geom[0] = dCreateBox(_space, this->getBodyWidth(), this->getBodyLength(), this->getBodyHeight());
 	dGeomSetBody(geom[0], _body[Bodies::Body]);
-	dGeomSetOffsetPosition(geom[0], 0, -_body_length/2, 0);
+	dGeomSetOffsetPosition(geom[0], 0, -this->getBodyLength()/2, 0);
 
 	// set geometry 1 - cylinder
-	geom[1] = dCreateCylinder(_space, _body_radius, _body_width);
+	geom[1] = dCreateCylinder(_space, _body_radius, this->getBodyWidth());
 	dGeomSetBody(geom[1], _body[Bodies::Body]);
 	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom[1], Q1);
@@ -386,17 +386,17 @@ void Dof::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
 	_motor[Bodies::Joint].joint = dJointCreateHinge(_world, 0);
 	dJointAttach(_motor[Bodies::Joint].joint, _body[Bodies::Body], _body[Bodies::Cap]);
 	if (_enabled == Bodies::Face1) {
-		o = q.multiply(-_body_width/2, 0, 0);
+		o = q.multiply(-this->getBodyWidth()/2, 0, 0);
 		dJointSetHingeAnchor(_motor[Bodies::Joint].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(1, 0, 0);
 	}
 	else if (_enabled == Bodies::Face2) {
-		o = q.multiply(0, -_body_length, 0);
+		o = q.multiply(0, -this->getBodyLength(), 0);
 		dJointSetHingeAnchor(_motor[Bodies::Joint].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(0, 1, 0);
 	}
 	else if (_enabled == Bodies::Face3) {
-		o = q.multiply(_body_width/2, 0, 0);
+		o = q.multiply(this->getBodyWidth()/2, 0, 0);
 		dJointSetHingeAnchor(_motor[Bodies::Joint].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(-1, 0, 0);
 	}

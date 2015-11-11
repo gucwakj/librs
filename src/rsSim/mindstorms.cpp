@@ -62,8 +62,8 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 	}
 
 	// set wheels
-	_wheels[0] = w[0];
-	_wheels[1] = w[1];
+	this->setWheelLeft(w[0]);
+	this->setWheelRight(w[1]);
 
 	// convert input angles to radians
 	for (int i = 0; i < _dof; i++) {
@@ -83,7 +83,7 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 	// joint for body to wheel 1
 	_motor[Bodies::Joint2].joint = dJointCreateHinge(_world, 0);
 	dJointAttach(_motor[Bodies::Joint2].joint, _body[Bodies::Body], _body[Bodies::Wheel1]);
-	o = q.multiply(_wheel_depth/2, 0, 0);
+	o = q.multiply(this->getWheelDepth()/2, 0, 0);
 	o.add(this->getRobotBodyPosition(Bodies::Wheel1, p, q));
 	dJointSetHingeAnchor(_motor[Bodies::Joint2].joint, o[0], o[1], o[2]);
 	o = q.multiply(1, 0, 0);
@@ -92,7 +92,7 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 	// joint for body to wheel 2
 	_motor[Bodies::Joint3].joint = dJointCreateHinge(_world, 0);
 	dJointAttach(_motor[Bodies::Joint3].joint, _body[Bodies::Body], _body[Bodies::Wheel2]);
-	o = q.multiply(-_wheel_depth/2, 0, 0);
+	o = q.multiply(-this->getWheelDepth()/2, 0, 0);
 	o.add(this->getRobotBodyPosition(Bodies::Wheel2, p, q));
 	dJointSetHingeAnchor(_motor[Bodies::Joint3].joint, o[0], o[1], o[2]);
 	o = q.multiply(1, 0, 0);
@@ -352,9 +352,9 @@ void Mindstorms::simPostCollisionThread(void) {
 void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m, m1;
-	dMassSetBox(&m, 100, _body_width, _body_length, _body_height);
+	dMassSetBox(&m, 100, this->getBodyWidth(), this->getBodyLength(), this->getBodyHeight());
 	dMassSetSphere(&m1, 500, 0.010229);
-	dMassTranslate(&m1, 0, -_body_length + 0.010229 - 0.5, -_body_height / 2 - 0.5);
+	dMassTranslate(&m1, 0, -this->getBodyLength() + 0.010229 - 0.5, -this->getBodyHeight() / 2 - 0.5);
 	dMassAdd(&m, &m1);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[Bodies::Body], &m);
@@ -368,37 +368,37 @@ void Mindstorms::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dGeomID geom[2];
 
 	// set geometry 0 - box
-	geom[0] = dCreateBox(_space, _body_width, _body_length, _body_height);
+	geom[0] = dCreateBox(_space, this->getBodyWidth(), this->getBodyLength(), this->getBodyHeight());
 	dGeomSetBody(geom[0], _body[Bodies::Body]);
 	dGeomSetOffsetPosition(geom[0], 0, 0, 0);
 
 	// set geometry 1 - sphere
 	// FAKED: adjust caster to make 3ds model look good
 	double offset;
-	if (_wheels[0] == Connectors::Big && _wheels[1] == Connectors::Big)
+	if (this->getWheelLeft() == Connectors::Big && this->getWheelRight() == Connectors::Big)
 		offset = -0.006;
-	else if (_wheels[0] == Connectors::Small && _wheels[1] == Connectors::Big)
+	else if (this->getWheelLeft() == Connectors::Small && this->getWheelRight() == Connectors::Big)
 		offset = -0.003;
-	else if (_wheels[0] == Connectors::Big && _wheels[1] == Connectors::Small)
+	else if (this->getWheelLeft() == Connectors::Big && this->getWheelRight() == Connectors::Small)
 		offset = -0.003;
 	else
 		offset = 0.001;
 	geom[1] = dCreateSphere(_space, 0.010229);
 	dGeomSetBody(geom[1], _body[Bodies::Body]);
-	dGeomSetOffsetPosition(geom[1], 0, -_body_length / 2 + 0.010229, -_body_height / 2 + offset);
+	dGeomSetOffsetPosition(geom[1], 0, -this->getBodyLength() / 2 + 0.010229, -this->getBodyHeight() / 2 + offset);
 }
 
 void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
 	// get radius
 	double radius = 0.001;
-	if (_wheels[id-1] == Connectors::Big)
+	if (this->getWheel(id-1) == Connectors::Big)
 		radius = _bigwheel_radius;
-	else if (_wheels[id-1] == Connectors::Small)
+	else if (this->getWheel(id-1) == Connectors::Small)
 		radius = _smallwheel_radius;
 
 	// set mass of body
 	dMass m;
-	dMassSetCylinder(&m, 200, 1, radius, _wheel_depth);
+	dMassSetCylinder(&m, 200, 1, radius, this->getWheelDepth());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[id], &m);
 
@@ -409,7 +409,7 @@ void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
 	dBodySetFiniteRotationMode(_body[id], 1);
 
 	// set geometry
-	dGeomID geom = dCreateCylinder(_space, radius, _wheel_depth);
+	dGeomID geom = dCreateCylinder(_space, radius, this->getWheelDepth());
 	dGeomSetBody(geom, _body[id]);
 	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom, Q1);

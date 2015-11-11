@@ -18,7 +18,7 @@ Dof::Dof(short joint) : Robot(rs::Dof) {
 	// body offsets
 	this->addBodyOffset(rs::Pos(0, 0, 0));								// body
 	float depth = 0; if (_enabled == Bodies::Face1) depth = _cap_depth/2;
-	this->addBodyOffset(rs::Pos(-this->getBodyWidth()/2 - depth, 0, 0));			// face1
+	this->addBodyOffset(rs::Pos(-this->getBodyWidth()/2 - depth, 0, 0));		// face1
 	depth = 0; if (_enabled == Bodies::Face2) depth = _cap_depth/2;
 	this->addBodyOffset(rs::Pos(0, -this->getBodyLength() - depth, 0));			// face2
 	depth = 0; if (_enabled == Bodies::Face3) depth = _cap_depth/2;
@@ -188,9 +188,5 @@ const rs::Pos Dof::getRobotFacePosition(short face, const rs::Pos &p, const rs::
 
 	// default return
 	return P;
-}
-
-short Dof::getEnabled(void) {
-	return _enabled;
 }
 

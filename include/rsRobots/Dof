@@ -58,7 +58,11 @@ namespace rsRobots {
 			Dof(short);
 			virtual ~Dof(void) {};
 
-			short getEnabled(void);
+			float getBodyRadius(void)	{ return _body_radius;	};
+			float getCapDepth(void)	{ return _cap_depth;	};
+			float getCapRadius(void)	{ return _cap_radius;	};
+			float getElLength(void)		{ return _el_length;	};
+			short getEnabled(void)	{ return _enabled;	};
 
 		// inherited functions
 		public:
@@ -66,14 +70,13 @@ namespace rsRobots {
 			virtual const rs::Pos getConnFacePosition(short, short, short, const rs::Pos&, const rs::Quat&);
 			virtual const rs::Pos getRobotCenterPosition(short, const rs::Pos&, const rs::Quat&);
 			virtual const rs::Pos getRobotFacePosition(short, const rs::Pos&, const rs::Quat&);
-
 			virtual const rs::Quat getConnBodyQuaternion(short, short, const rs::Quat&);
 			virtual const rs::Quat getConnFaceQuaternion(short, short, short, const rs::Quat&);
 			virtual const rs::Quat getRobotBodyQuaternion(short, float, const rs::Quat&);
 			virtual const rs::Quat getRobotCenterQuaternion(short, short, float, const rs::Quat&);
 
-		// protected data
-		protected:
+		// data
+		private:
 			float _body_radius;
 			float _cap_depth;
 			float _cap_radius;

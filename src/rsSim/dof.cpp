@@ -54,7 +54,7 @@ Dof::~Dof(void) {
 int Dof::addConnector(int type, int face, int orientation, double size, int side, int conn) {
 	// get connector body position
 	rs::Pos P1 = this->getRobotFacePosition(face, this->getPosition(), this->getQuaternion());
-	rs::Quat Q1 = this->getRobotBodyQuaternion(face, (_enabled == face) ? _motor[Bodies::Joint].theta : 0, this->getQuaternion());
+	rs::Quat Q1 = this->getRobotBodyQuaternion(face, (this->getEnabled() == face) ? _motor[Bodies::Joint].theta : 0, this->getQuaternion());
 	if (conn == -1) {
 		P1 = this->getConnBodyPosition(type, orientation, P1, Q1);
 		Q1 = this->getConnBodyQuaternion(type, orientation, Q1);
@@ -114,12 +114,12 @@ int Dof::addConnector(int type, int face, int orientation, double size, int side
 }
 
 double Dof::getAngle(int id) {
-	if (id == _enabled) return _motor[Bodies::Joint].theta;
+	if (id == this->getEnabled()) return _motor[Bodies::Joint].theta;
 	return 0;
 }
 
 dBodyID Dof::getBodyID(short face) {
-	if (face == _enabled) return _body[Bodies::Cap];
+	if (face == this->getEnabled()) return _body[Bodies::Cap];
 	return _body[Bodies::Body];
 }
 
@@ -279,7 +279,7 @@ void Dof::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dMass m, m1;
 	dMassSetBox(&m, 1000, this->getBodyWidth(), this->getBodyLength(), this->getBodyHeight());
 	dMassTranslate(&m, 0, -this->getBodyLength()/2, 0);
-	dMassSetCylinder(&m1, 400, 1, _body_radius, this->getBodyWidth());
+	dMassSetCylinder(&m1, 400, 1, this->getBodyRadius(), this->getBodyWidth());
 	dMassAdd(&m, &m1);
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[Bodies::Body], &m);
@@ -299,7 +299,7 @@ void Dof::build_body(const rs::Pos &p, const rs::Quat &q) {
 	dGeomSetOffsetPosition(geom[0], 0, -this->getBodyLength()/2, 0);
 
 	// set geometry 1 - cylinder
-	geom[1] = dCreateCylinder(_space, _body_radius, this->getBodyWidth());
+	geom[1] = dCreateCylinder(_space, this->getBodyRadius(), this->getBodyWidth());
 	dGeomSetBody(geom[1], _body[Bodies::Body]);
 	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom[1], Q1);
@@ -308,10 +308,10 @@ void Dof::build_body(const rs::Pos &p, const rs::Quat &q) {
 void Dof::build_cap(const rs::Pos &p, const rs::Quat &q) {
 	// set mass of body
 	dMass m;
-	if (_enabled == Bodies::Face2)
-		dMassSetCylinder(&m, 270, 2, 2*_cap_radius, _cap_depth);
+	if (this->getEnabled() == Bodies::Face2)
+		dMassSetCylinder(&m, 270, 2, 2*this->getCapRadius(), this->getCapDepth());
 	else
-		dMassSetCylinder(&m, 270, 1, 2*_cap_radius, _cap_depth);
+		dMassSetCylinder(&m, 270, 1, 2*this->getCapRadius(), this->getCapDepth());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(_body[Bodies::Cap], &m);
 
@@ -326,7 +326,7 @@ void Dof::build_cap(const rs::Pos &p, const rs::Quat &q) {
 	if (geom1) dGeomDestroy(geom1);
 
 	// set geometry
-	dGeomID geom = dCreateCylinder(_space, _cap_radius, _cap_depth);
+	dGeomID geom = dCreateCylinder(_space, this->getCapRadius(), this->getCapDepth());
 	dGeomSetBody(geom, _body[Bodies::Cap]);
 	dQuaternion Q1 = {cos(0.785398), 0, sin(0.785398), 0};
 	dGeomSetOffsetQuaternion(geom, Q1);
@@ -335,36 +335,36 @@ void Dof::build_cap(const rs::Pos &p, const rs::Quat &q) {
 void Dof::build_el(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, this->getConnDepth(), 2*_cap_radius, this->getConnHeight());
+	dMassSetBox(&m, 170, this->getConnDepth(), 2*this->getCapRadius(), this->getConnHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, this->getConnDepth(), 2*_cap_radius, this->getConnHeight());
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), 2*this->getCapRadius(), this->getConnHeight());
 	dGeomSetBody(geom, conn.body);
 }
 
 void Dof::build_foot(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, this->getConnDepth(), 2*_cap_radius, this->getConnHeight());
+	dMassSetBox(&m, 170, this->getConnDepth(), 2*this->getCapRadius(), this->getConnHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, this->getConnDepth(), 2*_cap_radius, this->getConnHeight());
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), 2*this->getCapRadius(), this->getConnHeight());
 	dGeomSetBody(geom, conn.body);
 }
 
 void Dof::build_plank(Connector &conn) {
 	// set mass of body
 	dMass m;
-	dMassSetBox(&m, 170, this->getConnDepth(), _el_length, this->getConnHeight());
+	dMassSetBox(&m, 170, this->getConnDepth(), this->getElLength(), this->getConnHeight());
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
 	dBodySetMass(conn.body, &m);
 
 	// set geometry
-	dGeomID geom = dCreateBox(_space, this->getConnDepth(), _el_length, this->getConnHeight());
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), this->getElLength(), this->getConnHeight());
 	dGeomSetBody(geom, conn.body);
 }
 
@@ -379,23 +379,23 @@ void Dof::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
 
 	// build robot bodies
 	this->build_body(p, q);
-	this->build_cap(this->getRobotBodyPosition(_enabled, p, q), this->getRobotBodyQuaternion(_enabled, 0, q));
+	this->build_cap(this->getRobotBodyPosition(this->getEnabled(), p, q), this->getRobotBodyQuaternion(this->getEnabled(), 0, q));
 
 	// build joints
 	rs::Pos o;
 	_motor[Bodies::Joint].joint = dJointCreateHinge(_world, 0);
 	dJointAttach(_motor[Bodies::Joint].joint, _body[Bodies::Body], _body[Bodies::Cap]);
-	if (_enabled == Bodies::Face1) {
+	if (this->getEnabled() == Bodies::Face1) {
 		o = q.multiply(-this->getBodyWidth()/2, 0, 0);
 		dJointSetHingeAnchor(_motor[Bodies::Joint].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(1, 0, 0);
 	}
-	else if (_enabled == Bodies::Face2) {
+	else if (this->getEnabled() == Bodies::Face2) {
 		o = q.multiply(0, -this->getBodyLength(), 0);
 		dJointSetHingeAnchor(_motor[Bodies::Joint].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(0, 1, 0);
 	}
-	else if (_enabled == Bodies::Face3) {
+	else if (this->getEnabled() == Bodies::Face3) {
 		o = q.multiply(this->getBodyWidth()/2, 0, 0);
 		dJointSetHingeAnchor(_motor[Bodies::Joint].joint, o[0] + p[0], o[1] + p[1], o[2] + p[2]);
 		o = q.multiply(-1, 0, 0);
@@ -404,7 +404,7 @@ void Dof::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
 	dBodySetFiniteRotationAxis(_body[Bodies::Cap], o[0], o[1], o[2]);
 
 	// build rotated joints
-	if (_motor[Bodies::Joint].theta != 0) this->build_cap(this->getRobotBodyPosition(_enabled, p, q), this->getRobotBodyQuaternion(_enabled, _motor[Bodies::Joint].theta, q));
+	if (_motor[Bodies::Joint].theta != 0) this->build_cap(this->getRobotBodyPosition(this->getEnabled(), p, q), this->getRobotBodyQuaternion(this->getEnabled(), _motor[Bodies::Joint].theta, q));
 
 	// set motors
 	_motor[Bodies::Joint].id = dJointCreateAMotor(_world, 0);

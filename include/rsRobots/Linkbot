@@ -91,7 +91,19 @@ namespace rsRobots {
 			Linkbot(short);
 			virtual ~Linkbot(void) {};
 
+			// getting
+			float getBigWheelRadius(void)	{ return _bigwheel_radius;		};
+			float getBodyRadius(void)		{ return _body_radius;			};
+			float getBridgeLength(void)		{ return _bridge_length;		};
 			float getCasterScale(void);
+			float getCubicLength(void)		{ return _cubic_length;			};
+			short getDisabled(void)			{ return _disabled;				};
+			float getFaceDepth(void)		{ return _face_depth;			};
+			float getFaceRadius(void)		{ return _face_radius;			};
+			float getOmniLength(void)		{ return _omni_length;			};
+			float getSmallWheelRadius(void)	{ return _smallwheel_radius;	};
+			float getTinyWheelRadius(void)	{ return _tinywheel_radius;		};
+
 			const rs::Quat tiltForWheels(short, short, float&);
 
 		// inherited functions
@@ -100,16 +112,14 @@ namespace rsRobots {
 			virtual const rs::Pos getConnFacePosition(short, short, short, const rs::Pos&, const rs::Quat&);
 			virtual const rs::Pos getRobotCenterPosition(short, const rs::Pos&, const rs::Quat&);
 			virtual const rs::Pos getRobotFacePosition(short, const rs::Pos&, const rs::Quat&);
-
 			virtual const rs::Quat getConnBodyQuaternion(short, short, const rs::Quat&);
 			virtual const rs::Quat getConnFaceQuaternion(short, short, short, const rs::Quat&);
 			virtual const rs::Quat getRobotBodyQuaternion(short, float, const rs::Quat&);
 			virtual const rs::Quat getRobotCenterQuaternion(short, short, float, const rs::Quat&);
-
 			virtual float getWheelRatio(short);
 
-		// protected data
-		protected:
+		// data
+		private:
 			float _bigwheel_radius;
 			float _bridge_length;
 			float _body_radius;

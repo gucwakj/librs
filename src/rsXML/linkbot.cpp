@@ -40,7 +40,7 @@ void Linkbot::postProcess(void) {
 		// tilt for casters
 		for (unsigned int i = 0; i < _conn.size(); i++) {
 			if (_conn[i]->getType() == Connectors::Caster && !static_cast<int>(_conn[i]->getSize()))
-				this->setPsi(atan2(this->getWheelRadius() - _smallwheel_radius, 0.08575));
+				this->setPsi(atan2(this->getWheelRadius() - this->getSmallWheelRadius(), 0.08575));
 		}
 	}
 }

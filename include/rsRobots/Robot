@@ -58,7 +58,7 @@ namespace rsRobots {
 			virtual const rs::Quat getRobotBodyQuaternion(short, float, const rs::Quat&) { return rs::Quat(); };
 			virtual float getWheelRatio(int) { return 1; }
 
-		// data
+		// private data
 		private:
 			bool _trace;
 			float _body_length;

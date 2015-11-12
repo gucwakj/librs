@@ -21,13 +21,15 @@ namespace rs {
 			~Vec(void) {};
 
 			void allocate(int);
-			void print(const char* = "V");
-			void print(const char* = "V") const;
 			unsigned int size(void) const { return _v.size(); };
 
+			// output
+			void print(const char* = "V");
+			void print(const char* = "V") const;
+
 			// access operators
-			inline float& operator[](int i)	      { return _v[i]; }
-			inline float  operator[](int i) const { return _v[i]; }
+			float& operator[](short s)			{ return _v[s]; }
+			float  operator[](short s) const	{ return _v[s]; }
 
 		// private data
 		private:

@@ -5,13 +5,10 @@
 
 using namespace rs;
 
-Timer::Timer(int units) {
+Timer::Timer(short units) {
 	_last = 0;
 	_now = 0;
 	_units = units;
-}
-
-Timer::~Timer(void) {
 }
 
 /**********************************************************

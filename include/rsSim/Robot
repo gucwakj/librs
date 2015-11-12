@@ -99,7 +99,7 @@ namespace rsSim {
 				float safety_timeout;	// safety timeout
 				float tau_max;			// maximum force
 				float theta;			// theta
-				int record_num;			// recording data points
+				int record_num;			// recording points
 				short mode;				// modes
 				short starting;			// starting movement
 				short state;			// state
@@ -119,7 +119,7 @@ namespace rsSim {
 			BodyList _body;				// body parts
 			bool _success;				// all joints are done
 			bool _connected;			// connected to controller
-			float _accel[3];			// accelerometer data
+			float _accel[3];			// accelerometer
 			float _center[3];			// offset of body from initial (x,y,z)
 #ifdef RS_RESEARCH
 			float _next_goal;			// research: next value to hit

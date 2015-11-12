@@ -11,8 +11,8 @@ namespace rs {
 	class LIBRSEXPORT Timer {
 		// public functions
 		public:
-			Timer(int);
-			~Timer(void);
+			Timer(short);
+			~Timer(void) {};
 
 			unsigned int delta(void);
 			unsigned int now(void);
@@ -29,7 +29,7 @@ namespace rs {
 
 		// private data
 		private:
-			int _units;
+			short _units;
 			unsigned int _last;
 			unsigned int _now;
 	};

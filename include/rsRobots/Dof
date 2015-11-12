@@ -58,11 +58,12 @@ namespace rsRobots {
 			Dof(short);
 			virtual ~Dof(void) {};
 
+			// getting
 			float getBodyRadius(void)	{ return _body_radius;	};
-			float getCapDepth(void)	{ return _cap_depth;	};
+			float getCapDepth(void)		{ return _cap_depth;	};
 			float getCapRadius(void)	{ return _cap_radius;	};
 			float getElLength(void)		{ return _el_length;	};
-			short getEnabled(void)	{ return _enabled;	};
+			short getEnabled(void)		{ return _enabled;		};
 
 		// inherited functions
 		public:

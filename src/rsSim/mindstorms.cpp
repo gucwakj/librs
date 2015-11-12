@@ -392,9 +392,9 @@ void Mindstorms::build_wheel(int id, const rs::Pos &p, const rs::Quat &q) {
 	// get radius
 	double radius = 0.001;
 	if (this->getWheel(id-1) == Connectors::Big)
-		radius = _bigwheel_radius;
+		radius = this->getBigWheelRadius();
 	else if (this->getWheel(id-1) == Connectors::Small)
-		radius = _smallwheel_radius;
+		radius = this->getSmallWheelRadius();
 
 	// set mass of body
 	dMass m;

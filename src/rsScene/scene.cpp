@@ -822,8 +822,15 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		osg::ref_ptr<osg::LineWidth> linewidth3 = new osg::LineWidth();
 		linewidth3->setWidth(3.0f);
 		gridGeode3->getOrCreateStateSet()->setAttributeAndModes(linewidth3, osg::StateAttribute::ON);
+		// depth
+		osg::ref_ptr<osg::Depth> depth3 = new osg::Depth();
+		depth3->setFunction(osg::Depth::LEQUAL);
+		depth3->setRange(1.0, 1.0);
 		// set rendering properties
 		gridGeode3->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		gridGeode3->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+		gridGeode3->getOrCreateStateSet()->setAttributeAndModes(depth3, osg::StateAttribute::ON);
+		gridGeode3->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
 		gridGeode3->getOrCreateStateSet()->setRenderBinDetails(5, "RenderBin");
 		gridGeode3->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		// enable shadowing
@@ -874,13 +881,22 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 				xnum_billboard->addDrawable(xnumneg_text, osg::Vec3d(-i*hash, 0, 0));
 			}
 		}
+		// depth
+		osg::ref_ptr<osg::Depth> xnumb_depth = new osg::Depth();
+		xnumb_depth->setFunction(osg::Depth::LEQUAL);
+		xnumb_depth->setRange(1.0, 1.0);
+		// drawing properties
 		xnum_billboard->setMode(osg::Billboard::AXIAL_ROT);
 		xnum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
 		xnum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		xnum_billboard->setNodeMask(~IS_PICKABLE_MASK);
+		// set rendering properties
 		xnum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		xnum_billboard->getOrCreateStateSet()->setRenderBinDetails(5, "RenderBin");
+		xnum_billboard->getOrCreateStateSet()->setAttributeAndModes(xnumb_depth, osg::StateAttribute::ON);
+		xnum_billboard->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+		xnum_billboard->getOrCreateStateSet()->setRenderBinDetails(10, "RenderBin");
 		xnum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		// add to scene
 		xnum_billboard->setName("xnumbering");
 		_background->addChild(xnum_billboard);
 
@@ -916,13 +932,22 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 				ynum_billboard->addDrawable(ynumneg_text, osg::Vec3d(0, -i*hash, 0));
 			}
 		}
+		// depth
+		osg::ref_ptr<osg::Depth> ynumb_depth = new osg::Depth();
+		ynumb_depth->setFunction(osg::Depth::LEQUAL);
+		ynumb_depth->setRange(1.0, 1.0);
+		// drawing properties
 		ynum_billboard->setMode(osg::Billboard::AXIAL_ROT);
 		ynum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
 		ynum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		ynum_billboard->setNodeMask(~IS_PICKABLE_MASK);
+		// set rendering properties
 		ynum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		ynum_billboard->getOrCreateStateSet()->setAttributeAndModes(ynumb_depth, osg::StateAttribute::ON);
+		ynum_billboard->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
 		ynum_billboard->getOrCreateStateSet()->setRenderBinDetails(5, "RenderBin");
 		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		// add to scene
 		ynum_billboard->setName("ynumbering");
 		_background->addChild(ynum_billboard);
 
@@ -960,9 +985,16 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		osg::ref_ptr<osg::LineWidth> linewidth2 = new osg::LineWidth();
 		linewidth2->setWidth(2.0f);
 		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(linewidth2, osg::StateAttribute::ON);
+		// depth
+		osg::ref_ptr<osg::Depth> depth2 = new osg::Depth();
+		depth2->setFunction(osg::Depth::LEQUAL);
+		depth2->setRange(1.0, 1.0);
 		// set rendering properties
 		gridGeode2->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		gridGeode2->getOrCreateStateSet()->setRenderBinDetails(3, "RenderBin");
+		gridGeode2->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(depth2, osg::StateAttribute::ON);
+		//gridGeode2->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+		gridGeode2->getOrCreateStateSet()->setRenderBinDetails(10, "RenderBin");
 		gridGeode2->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		// enable shadowing
 		//gridGeode2->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
@@ -1005,16 +1037,21 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		osg::ref_ptr<osg::LineWidth> linewidth = new osg::LineWidth();
 		linewidth->setWidth(1);
 		gridGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+		// depth
+		osg::ref_ptr<osg::Depth> depth = new osg::Depth();
+		depth->setFunction(osg::Depth::LEQUAL);
+		depth->setRange(1.0, 1.0);
 		// set rendering properties
-		gridGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::OFF);
+		gridGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 		gridGeode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-		gridGeode->getOrCreateStateSet()->setRenderBinDetails(1, "RenderBin");
+		gridGeode->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
+		//gridGeode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+		gridGeode->getOrCreateStateSet()->setRenderBinDetails(15, "RenderBin");
 		gridGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 		// enable shadowing
 		//gridGeode->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
 		gridGeode->addDrawable(gridLines);
-		gridGeode->setDataVariance(osg::Object::DYNAMIC);
 		gridGeode->setName("tics");
 		_background->addChild(gridGeode);
 
@@ -1088,14 +1125,17 @@ void Scene::draw_ground(void) {
 	osg::ref_ptr<osg::Depth> depth = new osg::Depth();
 	depth->setFunction(osg::Depth::LEQUAL);
 	depth->setRange(1.0, 1.0);
+
 	// geode
 	osg::ref_ptr<osg::Node> geode = osgDB::readNodeFile(_path[rs::Ground]);
+
 	// rendering properties
 	geode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin");
 	geode->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.298, 0.424, 0.200, 1)), osg::StateAttribute::OVERRIDE);
 	geode->setName("ground");
+
 	// add to scene
 	_background->addChild(geode);
 }

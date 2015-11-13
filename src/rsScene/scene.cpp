@@ -776,6 +776,8 @@ void Scene::draw_board(double xsize, double ysize) {
 void Scene::draw_grid(double tics, double hash, double minx, double maxx, double miny, double maxy, double enabled) {
 	if ((maxx - minx < -rs::Epsilon) || (maxy - miny < -rs::Epsilon)) return;
 
+	// rendering bins don't seem to work.  add all to opaque_bin and let it sort
+	// from top down.  first thing listed is first drawn.
 	if (static_cast<int>(enabled)) {
 		// x- and y-axis lines
 		osg::ref_ptr<osg::Geode> gridGeode3 = new osg::Geode();
@@ -821,18 +823,9 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		// set line width
 		osg::ref_ptr<osg::LineWidth> linewidth3 = new osg::LineWidth();
 		linewidth3->setWidth(3.0f);
-		gridGeode3->getOrCreateStateSet()->setAttributeAndModes(linewidth3, osg::StateAttribute::ON);
-		// depth
-		osg::ref_ptr<osg::Depth> depth3 = new osg::Depth();
-		depth3->setFunction(osg::Depth::LEQUAL);
-		depth3->setRange(1.0, 1.0);
 		// set rendering properties
-		gridGeode3->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		gridGeode3->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-		gridGeode3->getOrCreateStateSet()->setAttributeAndModes(depth3, osg::StateAttribute::ON);
-		gridGeode3->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-		gridGeode3->getOrCreateStateSet()->setRenderBinDetails(5, "RenderBin");
-		gridGeode3->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		gridGeode3->getOrCreateStateSet()->setAttributeAndModes(linewidth3, osg::StateAttribute::ON);
+		gridGeode3->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// enable shadowing
 		//gridGeode3->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
@@ -881,20 +874,12 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 				xnum_billboard->addDrawable(xnumneg_text, osg::Vec3d(-i*hash, 0, 0));
 			}
 		}
-		// depth
-		osg::ref_ptr<osg::Depth> xnumb_depth = new osg::Depth();
-		xnumb_depth->setFunction(osg::Depth::LEQUAL);
-		xnumb_depth->setRange(1.0, 1.0);
 		// drawing properties
 		xnum_billboard->setMode(osg::Billboard::AXIAL_ROT);
 		xnum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
 		xnum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		xnum_billboard->setNodeMask(~IS_PICKABLE_MASK);
 		// set rendering properties
-		xnum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		xnum_billboard->getOrCreateStateSet()->setAttributeAndModes(xnumb_depth, osg::StateAttribute::ON);
-		xnum_billboard->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-		xnum_billboard->getOrCreateStateSet()->setRenderBinDetails(10, "RenderBin");
 		xnum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		xnum_billboard->setName("xnumbering");
@@ -932,26 +917,83 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 				ynum_billboard->addDrawable(ynumneg_text, osg::Vec3d(0, -i*hash, 0));
 			}
 		}
-		// depth
-		osg::ref_ptr<osg::Depth> ynumb_depth = new osg::Depth();
-		ynumb_depth->setFunction(osg::Depth::LEQUAL);
-		ynumb_depth->setRange(1.0, 1.0);
 		// drawing properties
 		ynum_billboard->setMode(osg::Billboard::AXIAL_ROT);
 		ynum_billboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
 		ynum_billboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
 		ynum_billboard->setNodeMask(~IS_PICKABLE_MASK);
 		// set rendering properties
-		ynum_billboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		ynum_billboard->getOrCreateStateSet()->setAttributeAndModes(ynumb_depth, osg::StateAttribute::ON);
-		ynum_billboard->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-		ynum_billboard->getOrCreateStateSet()->setRenderBinDetails(5, "RenderBin");
 		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		ynum_billboard->setName("ynumbering");
 		_background->addChild(ynum_billboard);
 
-		// grid lines for each foot
+		// x-axis label
+		osg::ref_ptr<osg::Billboard> xbillboard = new osg::Billboard();
+		osg::ref_ptr<osgText::Text> xtext = new osgText::Text();
+		xtext->setText("x");
+		xtext->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+		xtext->setAlignment(osgText::Text::CENTER_BASE_LINE);
+		xtext->setRotation(osg::Quat(-1.57, osg::Vec3(0, 0, 1)));
+		xtext->setCharacterSize(50);
+		xtext->setColor(osg::Vec4(0, 0, 0, 1));
+		xtext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+		if ( fabs(maxx) > fabs(minx) ) {
+			if (maxx < rs::Epsilon)
+				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
+			else
+				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
+		}
+		else {
+			if (minx < -rs::Epsilon)
+				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
+			else
+				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
+		}
+		// drawing properties
+		xbillboard->setMode(osg::Billboard::AXIAL_ROT);
+		xbillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
+		xbillboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
+		xbillboard->setNodeMask(~IS_PICKABLE_MASK);
+		// set rendering properties
+		xbillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		// add to scene
+		xbillboard->setName("xlabel");
+		_background->addChild(xbillboard);
+
+		// y-axis label
+		osg::ref_ptr<osg::Billboard> ybillboard = new osg::Billboard();
+		osg::ref_ptr<osgText::Text> ytext = new osgText::Text();
+		ytext->setText("y");
+		ytext->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+		ytext->setAlignment(osgText::Text::CENTER_BASE_LINE);
+		ytext->setCharacterSize(50);
+		ytext->setColor(osg::Vec4(0, 0, 0, 1));
+		ytext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+		if ( fabs(maxy) > fabs(miny) ) {
+			if (maxy < rs::Epsilon)
+				ybillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
+			else
+				ybillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
+		}
+		else {
+			if (miny < -rs::Epsilon)
+				ybillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
+			else
+				ybillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
+		}
+		// drawing properties
+		ybillboard->setMode(osg::Billboard::AXIAL_ROT);
+		ybillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
+		ybillboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
+		ybillboard->setNodeMask(~IS_PICKABLE_MASK);
+		// set rendering properties
+		ybillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		// add to scene
+		ybillboard->setName("ylabel");
+		_background->addChild(ybillboard);
+
+		// grid lines for major markings
 		double minx2 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.01 : 0.99)*minx/hash))*hash;
 		double miny2 = static_cast<int>(ceil(((miny < -rs::Epsilon) ? 1.01 : 0.99)*miny/hash))*hash;
 		double maxx2 = static_cast<int>(floor(((maxx < -rs::Epsilon) ? 0.99 : 1.01)*maxx/hash))*hash;
@@ -984,18 +1026,9 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		// set line width
 		osg::ref_ptr<osg::LineWidth> linewidth2 = new osg::LineWidth();
 		linewidth2->setWidth(2.0f);
-		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(linewidth2, osg::StateAttribute::ON);
-		// depth
-		osg::ref_ptr<osg::Depth> depth2 = new osg::Depth();
-		depth2->setFunction(osg::Depth::LEQUAL);
-		depth2->setRange(1.0, 1.0);
 		// set rendering properties
-		gridGeode2->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		gridGeode2->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(depth2, osg::StateAttribute::ON);
-		//gridGeode2->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-		gridGeode2->getOrCreateStateSet()->setRenderBinDetails(10, "RenderBin");
-		gridGeode2->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(linewidth2, osg::StateAttribute::ON);
+		gridGeode2->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// enable shadowing
 		//gridGeode2->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
@@ -1003,7 +1036,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		gridGeode2->setName("hash");
 		_background->addChild(gridGeode2);
 
-		// grid lines for each sub-foot
+		// grid lines for sub-markings
 		double minx1 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.001 : 0.999)*minx/tics))*tics;
 		double miny1 = static_cast<int>(ceil(((miny < -rs::Epsilon) ? 1.001 : 0.999)*miny/tics))*tics;
 		double maxx1 = static_cast<int>(floor(((maxx < -rs::Epsilon) ? 0.999 : 1.001)*maxx/tics))*tics;
@@ -1036,87 +1069,15 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		// set line width
 		osg::ref_ptr<osg::LineWidth> linewidth = new osg::LineWidth();
 		linewidth->setWidth(1);
-		gridGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
-		// depth
-		osg::ref_ptr<osg::Depth> depth = new osg::Depth();
-		depth->setFunction(osg::Depth::LEQUAL);
-		depth->setRange(1.0, 1.0);
 		// set rendering properties
-		gridGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		gridGeode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-		gridGeode->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
-		//gridGeode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-		gridGeode->getOrCreateStateSet()->setRenderBinDetails(15, "RenderBin");
-		gridGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		gridGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+		gridGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// enable shadowing
 		//gridGeode->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
 		gridGeode->addDrawable(gridLines);
 		gridGeode->setName("tics");
 		_background->addChild(gridGeode);
-
-		// x-axis label
-		osg::ref_ptr<osg::Billboard> xbillboard = new osg::Billboard();
-		osg::ref_ptr<osgText::Text> xtext = new osgText::Text();
-		xtext->setText("x");
-		xtext->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-		xtext->setAlignment(osgText::Text::CENTER_BASE_LINE);
-		xtext->setRotation(osg::Quat(-1.57, osg::Vec3(0, 0, 1)));
-		xtext->setCharacterSize(50);
-		xtext->setColor(osg::Vec4(0, 0, 0, 1));
-		xtext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-		if ( fabs(maxx) > fabs(minx) ) {
-			if (maxx < rs::Epsilon)
-				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
-			else
-				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
-		}
-		else {
-			if (minx < -rs::Epsilon)
-				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
-			else
-				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
-		}
-		xbillboard->setMode(osg::Billboard::AXIAL_ROT);
-		xbillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
-		xbillboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
-		xbillboard->setNodeMask(~IS_PICKABLE_MASK);
-		xbillboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		xbillboard->getOrCreateStateSet()->setRenderBinDetails(2, "RenderBin");
-		xbillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-		xbillboard->setName("xlabel");
-		_background->addChild(xbillboard);
-
-		// y-axis label
-		osg::ref_ptr<osg::Billboard> ybillboard = new osg::Billboard();
-		osg::ref_ptr<osgText::Text> ytext = new osgText::Text();
-		ytext->setText("y");
-		ytext->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-		ytext->setAlignment(osgText::Text::CENTER_BASE_LINE);
-		ytext->setCharacterSize(50);
-		ytext->setColor(osg::Vec4(0, 0, 0, 1));
-		ytext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-		if ( fabs(maxy) > fabs(miny) ) {
-			if (maxy < rs::Epsilon)
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
-			else
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
-		}
-		else {
-			if (miny < -rs::Epsilon)
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
-			else
-				xbillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
-		}
-		ybillboard->setMode(osg::Billboard::AXIAL_ROT);
-		ybillboard->setAxis(osg::Vec3d(0.0, 0.0, 1.0));
-		ybillboard->setNormal(osg::Vec3d(0.0, 0.0, 1.0));
-		ybillboard->setNodeMask(~IS_PICKABLE_MASK);
-		ybillboard->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-		ybillboard->getOrCreateStateSet()->setRenderBinDetails(2, "RenderBin");
-		ybillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-		ybillboard->setName("ylabel");
-		_background->addChild(ybillboard);
 	}
 }
 

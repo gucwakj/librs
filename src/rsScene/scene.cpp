@@ -1097,8 +1097,13 @@ void Scene::draw_ground(void) {
 	geode->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.298, 0.424, 0.200, 1)), osg::StateAttribute::OVERRIDE);
 	geode->setName("ground");
 
+	// transform
+	osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
+	transform->setScale(osg::Vec3d(10, 10, 0));
+	transform->addChild(geode);
+
 	// add to scene
-	_background->addChild(geode);
+	_background->addChild(transform);
 }
 
 void Scene::draw_hud(double w, double h, bool paused) {

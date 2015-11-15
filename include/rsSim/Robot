@@ -123,6 +123,7 @@ namespace rsSim {
 			float _center[3];			// offset of body from initial (x,y,z)
 #ifdef RS_RESEARCH
 			float _next_goal;			// research: next value to hit
+			bool _start;				// research: starting simulation
 #endif
 			float _speed;				// linear velocity of the robot
 			float _trackwidth;			// trackwidth of robot

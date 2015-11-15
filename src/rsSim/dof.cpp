@@ -12,6 +12,9 @@ Dof::Dof(short joint) : rsRobots::Robot(rs::Dof), rsRobots::Dof(joint) {
 	// create arrays of proper size
 	_motor.resize(_dof);
 
+	// starting motion
+	_start = true;
+
 	// fill with default data
 	_motor[Bodies::Joint].accel.init = 0;
 	_motor[Bodies::Joint].accel.run = 0;
@@ -224,17 +227,24 @@ void Dof::simPreCollisionThread(void) {
 #ifdef RS_RESEARCH
 	switch (_motor[Bodies::Joint].mode) {
 		case SINGULAR:
-			// reenable body on start
-			dBodyEnable(_body[0]);
+			// don't move until positive
+			if (_start) {
+				if (_next_goal > -rs::Epsilon)
+					_start = false;
+			}
+			else {
+				// reenable body on start
+				dBodyEnable(_body[0]);
 
-			// set new omega
-			_motor[Bodies::Joint].goal = _next_goal;
-			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
-			_motor[Bodies::Joint].state = NEUTRAL;
+				// set new omega
+				_motor[Bodies::Joint].goal = _next_goal;
+				_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
+				_motor[Bodies::Joint].state = NEUTRAL;
 
-			// move forever
-			dJointEnable(_motor[Bodies::Joint].id);
-			dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].omega);
+				// move forever
+				dJointEnable(_motor[Bodies::Joint].id);
+				dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].omega);
+			}
 
 			// end
 			break;

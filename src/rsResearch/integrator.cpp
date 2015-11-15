@@ -48,17 +48,6 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_form = form;
 	_num_robots = robots;
 	_num_vars = variables;
-
-	// run cpg until steady state
-	for (int i = 0; i < 0.3/step; i++) {
-		rs::Vec v = this->runStep(step);
-		_time_offset += step;
-	}
-	rs::Vec v = this->runStep(step);
-	while (v[0] < -rs::Epsilon && v[1] < -rs::Epsilon) {
-		v = this->runStep(step);
-		_time_offset += step;
-	}
 }
 
 void Integrator::setup(int (*function)(double, const double[], double[], void*), struct Params *params, float step) {
@@ -86,17 +75,6 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_form = params->form;
 	_num_robots = params->num_legs + params->num_body;
 	_num_vars = params->num_vars;
-
-	// run cpg until steady state
-	for (int i = 0; i < 0.3/step; i++) {
-		rs::Vec v = this->runStep(step);
-		_time_offset += step;
-	}
-	rs::Vec v = this->runStep(step);
-	while (v[0] < -rs::Epsilon && v[1] < -rs::Epsilon) {
-		v = this->runStep(step);
-		_time_offset += step;
-	}
 }
 
 const rs::Vec Integrator::runStep(float newtime) {

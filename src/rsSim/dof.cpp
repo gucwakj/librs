@@ -162,7 +162,10 @@ const rs::Vec Dof::getJoints(void) {
 }
 
 #ifdef RS_RESEARCH
-void Dof::moveJointSingular(void) {
+void Dof::moveJointSingular(bool wait) {
+	// tell joint whether to wait or not
+	_start = wait;
+
 	// set motion parameters
 	_motor[Bodies::Joint].mode = SINGULAR;
 	_motor[Bodies::Joint].state = POSITIVE;

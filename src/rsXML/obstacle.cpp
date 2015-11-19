@@ -85,7 +85,7 @@ void Obstacle::setID(int a) {
 }
 
 void Obstacle::setMass(double a) {
-	_mass = a;
+	_mass = (fabs(a) < rs::Epsilon) ? 10000000 : a;
 }
 
 void Obstacle::setPosition(double a, double b, double c) {

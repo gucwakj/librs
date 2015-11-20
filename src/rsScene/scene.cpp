@@ -1129,7 +1129,7 @@ void Scene::draw_hud(double w, double h, bool paused) {
 	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	geode->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin");
+	geode->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin");
 	geode->addDrawable(text);
 	geode->addDrawable(geom);
 

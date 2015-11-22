@@ -93,7 +93,7 @@ const rs::Vec Integrator::runStep(float newtime) {
 	// save output array
 	if (_form == Forms::Dog) {
 		for (int j = 0, k = 0; j < _num_vars; j+=3, k++) {
-			V[k] = _array[j+1] + _array[j+1]*cos(_array[j]) - _array[j+4] - _array[j+4]*cos(_array[j+3]);
+			V[k] = _array[j+1]*cos(_array[j]);
 		}
 	}
 	else if (_form == Forms::Salamander) {

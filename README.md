@@ -33,19 +33,20 @@ line.
 ```
 These disable support for each of the major components of LibRS.
 
-LibRS can simulate three different types of robot modules.  Each has its own
+LibRS can simulate four different types of robot modules.  Each has its own
 purpose for learning or researching.  These can also be enabled/disabled
 individually to simplify the library for a specific purpose.  By default the
-Linkbots and Mindstorms are enabled and the Dof is not.
+Linkbots and Mindstorms are enabledl while the Dof and MiniDof are not.
 ```
 -DRS_DOF=no
 -DRS_LINKBOT=no
 -DRS_MINDSTORMS=no
+-DRS_MINIDOF=no
 ```
 
 There are research functions built into LibRS which rely upon the GNU
-Scientific Library.  The research pieces of the Dof and Linkbot modules can be
-enabled or disabled with a CMake definition.
+Scientific Library.  The research pieces of the Dof, Linkbot, and MiniDof
+modules can be enabled or disabled with a CMake definition.
 ```
 -DRS_RESEARCH=yes
 ```

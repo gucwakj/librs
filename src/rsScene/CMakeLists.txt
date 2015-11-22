@@ -54,6 +54,9 @@ endif ()
 if (RS_MINDSTORMS)
 	set (SRCS ${SRCS} mindstorms.cpp)
 endif ()
+if (RS_MINIDOF)
+	set (SRCS ${SRCS} minidof.cpp)
+endif ()
 
 # add the library
 add_library (rsScene SHARED ${SRCS})

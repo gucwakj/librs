@@ -1,0 +1,45 @@
+#ifndef RSSIM_MINIDOF_
+#define RSSIM_MINIDOF_
+
+#include <rsRobots/MiniDof>
+#include <rsSim/ModularRobot>
+
+namespace rsSim {
+
+	// class
+	class LIBRSEXPORT MiniDof : virtual public rsRobots::MiniDof, virtual public ModularRobot {
+		// public functions
+		public:
+			MiniDof(short);
+			virtual ~MiniDof(void);
+
+			virtual int addConnector(int, int, int = rs::Right, double = 0, int = 1, int = -1);
+			virtual double getAngle(int);
+			virtual dBodyID getBodyID(short);
+			virtual const rs::Pos getCoM(double&);
+			const rs::Vec getJoints(void);
+#ifdef RS_RESEARCH
+			void moveJointSingular(bool = true);		// research: move one step at a time
+#endif
+
+		// inherited functions
+		protected:
+			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int);
+			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, dBodyID, int, int, int);
+			virtual void simPreCollisionThread(void);
+			virtual void simPostCollisionThread(void);
+
+		// private functions
+		private:
+			void build_body(const rs::Pos&, const rs::Quat&);
+			void build_cap(const rs::Pos&, const rs::Quat&);
+			void build_el(Connector&);
+			void build_foot(Connector&);
+			void build_plank(Connector&);
+			void build_robot(const rs::Pos&, const rs::Quat&, const rs::Vec&);
+	};
+
+} // namespace rsSim
+
+#endif // RSSIM_MINIDOF_
+

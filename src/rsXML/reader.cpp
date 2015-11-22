@@ -13,6 +13,9 @@
 #ifdef RS_MINDSTORMS
 #include <rsXML/Mindstorms>
 #endif
+#ifdef RS_MINIDOF
+#include <rsXML/MiniDof>
+#endif
 
 using namespace rsXML;
 
@@ -179,6 +182,11 @@ Robot* Reader::getNextRobot(int form) {
 #ifdef RS_MINDSTORMS
 			case rs::EV3: case rs::NXT:
 				std::cerr << "Error: Could not find a Mindstorms EV3 or NXT in the RoboSim GUI robot list." << std::endl;
+				break;
+#endif
+#ifdef RS_DOF
+			case rs::MiniDof:
+				std::cerr << "Error: Could not find a MiniDof in the RoboSim GUI robot list." << std::endl;
 				break;
 #endif
 		}
@@ -1075,6 +1083,69 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot.back()->setGround(i);
 		}
 #endif
+#ifdef RS_MINIDOF
+		else if ( !strcmp(node->Value(), "minidof") ) {
+			_robot.push_back(new MiniDof());
+			node->QueryIntAttribute("id", &i);
+			_robot.back()->setID(i);
+			if ( (ele = node->FirstChildElement("joint")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryDoubleAttribute("j", &a);
+				_robot.back()->setJoints(a, b, c);
+			}
+			if ( (ele = node->FirstChildElement("led")) ) {
+				a = 0; b = 0; c = 0; d = 0;
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_robot.back()->setLED(a, b, c, d);
+			}
+			if ( (ele = node->FirstChildElement("name")) ) {
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
+				_robot.back()->setName(str);
+			}
+			if (!node->QueryIntAttribute("orientation", &i)) {
+				_robot.back()->setOrientation(i);
+				if (i == rs::Right)
+					_robot.back()->setPsi(0);
+				else if (i == rs::Up)
+					_robot.back()->setPsi(rs::Pi/2);
+				else if (i == rs::Left)
+					_robot.back()->setPsi(rs::Pi);
+				else if (i == rs::Down)
+					_robot.back()->setPsi(3*rs::Pi/2);
+			}
+			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_robot.back()->setPosition(a, b, c);
+			}
+			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0, d = 0;
+				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryDoubleAttribute("theta", &b);
+					ele->QueryDoubleAttribute("phi", &c);
+					_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
+				}
+				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryDoubleAttribute("x", &a);
+					ele->QueryDoubleAttribute("y", &b);
+					ele->QueryDoubleAttribute("z", &c);
+					ele->QueryDoubleAttribute("w", &d);
+					_robot.back()->setRotation(a, b, c, d);
+				}
+				else {
+					_robot.back()->setRotation(0, 0, 0, 1);
+				}
+			}
+			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
+			_robot.back()->setGround(i);
+		}
+#endif
 		else {
 #ifdef RS_DOF
 			if ( !strcmp(node->Value(), "el") ) {
@@ -1148,6 +1219,22 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				ctype = rsLinkbot::Connectors::Wheel;
 				cnum = 1;
 				node->QueryDoubleAttribute("radius", &size);
+			}
+#endif
+#ifdef RS_MINIDOF
+			if ( !strcmp(node->Value(), "miniel") ) {
+				ctype = rsMiniDof::Connectors::El;
+				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
+			}
+			else if ( !strcmp(node->Value(), "minifoot") ) {
+				ctype = rsMiniDof::Connectors::Foot;
+				cnum = 1;
+			}
+			else if ( !strcmp(node->Value(), "miniplank") ) {
+				ctype = rsMiniDof::Connectors::Plank;
+				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
 			}
 #endif
 			rtmp = new int[cnum];

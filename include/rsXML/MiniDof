@@ -1,0 +1,22 @@
+#ifndef RSXML_MINIDOF_
+#define RSXML_MINIDOF_
+
+#include <rsRobots/MiniDof>
+#include <rsXML/Robot>
+
+namespace rsXML {
+
+	// class
+	class LIBRSEXPORT MiniDof : virtual public rsRobots::MiniDof, virtual public Robot {
+		// public functions
+		public:
+			MiniDof(int = -1);
+			virtual ~MiniDof(void) {};
+
+			virtual void postProcess(void);
+	};
+
+} // namespace rsXML
+
+#endif // RSXML_MINIDOF_
+

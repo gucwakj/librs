@@ -6,11 +6,12 @@ namespace rs {
 	// robot forms
 	enum Form {
 		Dof,
+		EV3,
 		LinkbotI,
 		LinkbotL,
 		LinkbotT,
+		MiniDof,
 		NXT,
-		EV3,
 		Robot,
 		Num_Types
 	};

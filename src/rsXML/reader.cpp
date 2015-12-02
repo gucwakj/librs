@@ -25,7 +25,7 @@ Reader::Reader(const char *name, bool process) {
 	_pause = true;
 	_preconfig = false;
 	_rt = true;
-	_trace = false;
+	_trace = true;
 	_version = 0;
 	for (int i = 0; i < 2; i++) {
 		_friction.push_back(0);

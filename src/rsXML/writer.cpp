@@ -130,8 +130,8 @@ void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, const
 			size->SetAttribute("z", l[2]);
 			break;
 		case rs::Cylinder:
-			size->SetAttribute("length", l[0]);
-			size->SetAttribute("radius", l[1]);
+			size->SetAttribute("radius", l[0]);
+			size->SetAttribute("length", l[1]);
 			obstacle->SetAttribute("axis", l[2]);
 			break;
 		case rs::Sphere:

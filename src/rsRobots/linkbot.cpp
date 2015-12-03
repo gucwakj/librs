@@ -59,14 +59,6 @@ const rs::Pos Linkbot::getConnFacePosition(short type, short side, short orienta
 		else if (side == Connectors::Side5)
 			return P.add(Q.multiply(_cubic_length/2, 0, _cubic_length/2));
 	}
-	else if (type == Connectors::DoubleBridge) {
-		if (side == Connectors::Side2)
-			return P.add(Q.multiply(0, _bridge_length - 2*_face_radius, 0));
-		else if (side == Connectors::Side3)
-			return P.add(Q.multiply(2*this->getConnDepth(), 0, 0));
-		else if (side == Connectors::Side4)
-			return P.add(Q.multiply(2*this->getConnDepth(), _bridge_length - 2*_face_radius, 0));
-	}
 	else if (type == Connectors::Omniplate) {
 		if (side == Connectors::Side2)
 			return P.add(Q.multiply(0, 0, -_omni_length + 2*_face_radius));
@@ -104,14 +96,6 @@ const rs::Quat Linkbot::getConnFaceQuaternion(short type, short side, short orie
 			return Q.multiply(sin(-0.785398), 0, 0, cos(-0.785398));
 		}
 	}
-	else if (type == Connectors::DoubleBridge) {
-		if (side == Connectors::Side2)
-			return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
-		else if (side == Connectors::Side3)
-			return Q;
-		else if (side == Connectors::Side4)
-			return Q;
-	}
 	else if (type == Connectors::Omniplate)
 		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
 	else if (type == Connectors::Simple)
@@ -137,8 +121,6 @@ const rs::Pos Linkbot::getConnBodyPosition(short type, short orientation, const 
 		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::Cube)
 		return P.add(Q.multiply(_cubic_length/2, 0, 0));
-	else if (type == Connectors::DoubleBridge)
-		return P.add(Q.multiply(this->getConnDepth(), _bridge_length/2 - _face_radius, 0));
 	else if (type == Connectors::Faceplate)
 		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::Gripper)

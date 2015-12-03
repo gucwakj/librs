@@ -40,7 +40,6 @@ namespace rsLinkbot {
 			Bridge,
 			Caster,
 			Cube,
-			DoubleBridge,
 			Faceplate,
 			Gripper,
 			Omniplate,

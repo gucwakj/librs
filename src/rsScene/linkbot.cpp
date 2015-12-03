@@ -159,9 +159,6 @@ void Linkbot::drawConnector(Group *group, int type, int face, int orientation, d
 		case Connectors::Cube:
 			node = osgDB::readNodeFile(_model_path + "linkbot/cube.3ds");
 			break;
-		case Connectors::DoubleBridge:
-			node = osgDB::readNodeFile(_model_path + "linkbot/doublebridge.3ds");
-			break;
 		case Connectors::Faceplate:
 			node = osgDB::readNodeFile(_model_path + "linkbot/faceplate.3ds");
 			break;

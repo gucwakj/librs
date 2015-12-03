@@ -1184,11 +1184,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				cnum = 5;
 				node->QueryIntAttribute("orientation", &orientation);
 			}
-			else if ( !strcmp(node->Value(), "doublebridge") ) {
-				ctype = rsLinkbot::Connectors::DoubleBridge;
-				cnum = 4;
-				node->QueryIntAttribute("orientation", &orientation);
-			}
 			else if ( !strcmp(node->Value(), "faceplate") ) {
 				ctype = rsLinkbot::Connectors::Faceplate;
 				cnum = 1;

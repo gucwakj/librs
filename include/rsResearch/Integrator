@@ -38,7 +38,6 @@ namespace rsResearch {
 		// private data
 		private:
 			double _time;					// time of integration
-			float _time_offset;				// initial time offset
 			short _body_length;				// length of robot body
 			short _form;					// form of robot shape
 			short _num_robots;				// number of robots

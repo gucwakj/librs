@@ -13,7 +13,6 @@ Integrator::Integrator(void) {
 	_num_robots = 0;
 	_num_vars = 0;
 	_time = 0;
-	_time_offset = 0;
 }
 
 Integrator::~Integrator(void) {
@@ -55,7 +54,7 @@ const rs::Vec Integrator::runStep(float newtime) {
 	rs::Vec V(_num_robots);
 
 	// integrate
-	int status = gsl_odeiv2_driver_apply(_driver, &_time, newtime + _time_offset, _array.data());
+	int status = gsl_odeiv2_driver_apply(_driver, &_time, newtime, _array.data());
 
 	// die if integration step fails and return empty vector
 	if (status != GSL_SUCCESS) {

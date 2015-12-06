@@ -40,7 +40,6 @@ namespace rsSim {
 			void mutexUnlock(int);
 			void run(unsigned int);
 #ifdef RS_RESEARCH
-			void setCPG(int(*)(double, const double*, double*, void*), int, int, int, int);		// research
 			void setCPG(int(*)(double, const double*, double*, void*), struct rsResearch::Params*);		// research
 #endif
 			void setCollisions(int);

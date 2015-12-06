@@ -32,7 +32,6 @@ namespace rsResearch {
 			Integrator(void);
 			virtual ~Integrator(void);
 
-			void setup(int(*)(double, const double*, double*, void*), short, short, short, short, float = 0.004);
 			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
 			const rs::Vec runStep(float);
 

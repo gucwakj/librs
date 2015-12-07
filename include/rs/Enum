@@ -10,7 +10,6 @@ namespace rs {
 		LinkbotI,
 		LinkbotL,
 		LinkbotT,
-		MiniDof,
 		NXT,
 		Robot,
 		Num_Types

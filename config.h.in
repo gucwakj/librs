@@ -8,7 +8,6 @@
 #cmakedefine RS_DOF
 #cmakedefine RS_LINKBOT
 #cmakedefine RS_MINDSTORMS
-#cmakedefine RS_MINIDOF
 
 // research defines
 #cmakedefine RS_RESEARCH

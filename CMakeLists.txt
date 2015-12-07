@@ -80,7 +80,6 @@ option (RS_RESEARCH "Build librs for research" OFF)
 option (RS_DOF "Enable dof compilation" OFF)
 option (RS_LINKBOT "Enable linkbot compilation" ON)
 option (RS_MINDSTORMS "Enable mindstorms compilation" ON)
-option (RS_MINIDOF "Enable minidof compilation" OFF)
 
 # options for building pieces of whole library
 option (RS_GRAPHICS "Enable graphical library" ON)

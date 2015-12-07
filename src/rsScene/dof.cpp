@@ -10,7 +10,7 @@
 using namespace rsScene;
 using namespace rsDof;
 
-Dof::Dof(int form) : rsRobots::Robot(form), rsRobots::Dof(form), rsScene::Robot() { }
+Dof::Dof(short form, float scale) : rsRobots::Robot(form), rsRobots::Dof(form, scale), rsScene::Robot() { }
 
 Dof::~Dof(void) { }
 
@@ -22,6 +22,7 @@ void Dof::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	osg::ref_ptr<osg::Node> body[Bodies::Num_Parts];
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat[Bodies::Num_Parts];
 	int enabled = dynamic_cast<rsRobots::Dof *>(this)->getEnabled();
+	float scale = dynamic_cast<rsRobots::Dof *>(this)->getScale();
 
 	// create transforms
 	for (int i = 0; i < Bodies::Num_Parts; i++) {
@@ -34,6 +35,7 @@ void Dof::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	body[Bodies::Body]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.867, 0.827, 0.776, 1)));
 	pat[Bodies::Body]->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 	pat[Bodies::Body]->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+	pat[Bodies::Body]->setScale(osg::Vec3d(scale, scale, scale));
 
 	// draw 'led'
 	osg::ref_ptr<osg::Cylinder> cyl = new osg::Cylinder(osg::Vec3d(0, -0.02, 0.0308), 0.01, 0.01);
@@ -54,6 +56,7 @@ void Dof::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	body[Bodies::Cap]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
 	pat[Bodies::Cap]->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
 	pat[Bodies::Cap]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
+	pat[Bodies::Cap]->setScale(osg::Vec3d(scale, scale, scale));
 
 	// set rendering
 	for (int i = 0; i < Bodies::Num_Parts; i++) {
@@ -105,10 +108,14 @@ void Dof::drawConnector(Group *group, int type, int face, int orientation, doubl
 		Q1 = this->getConnBodyQuaternion(type, orientation, Q1);
 	}
 
+	// get body scale
+	float scale = dynamic_cast<rsRobots::Dof *>(this)->getScale();
+
 	// PAT to transform mesh
 	osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
 	transform->setPosition(osg::Vec3d(P1[0], P1[1], P1[2]));
 	transform->setAttitude(osg::Quat(Q1[0], Q1[1], Q1[2], Q1[3]));
+	transform->setScale(osg::Vec3d(scale, scale, scale));
 
 	// create node to hold mesh
 	osg::ref_ptr<osg::Node> node;

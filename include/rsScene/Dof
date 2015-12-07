@@ -13,7 +13,7 @@ namespace rsScene {
 	class LIBRSEXPORT Dof : virtual public rsRobots::Dof, virtual public ModularRobot {
 		// public functions
 		public:
-			Dof(int);
+			Dof(short, float = 1);
 			virtual ~Dof(void);
 
 			virtual void draw(Group*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);

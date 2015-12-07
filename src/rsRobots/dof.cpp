@@ -3,32 +3,33 @@
 using namespace rsRobots;
 using namespace rsDof;
 
-Dof::Dof(short joint) : Robot(rs::Dof) {
+Dof::Dof(short joint, float scale) : Robot(rs::Dof) {
 	// enabled joint
 	_enabled = joint;
 
 	// body parts
-	this->setBodyHeight(0.07250);
-	this->setBodyLength(0.03935);
-	this->setBodyWidth(0.07835);
-	_body_radius = 0.03625;
-	_cap_depth = 0.00200;
-	_cap_radius = 0.03060;
+	_scale = scale;
+	this->setBodyHeight(_scale*0.07250);
+	this->setBodyLength(_scale*0.03935);
+	this->setBodyWidth(_scale*0.07835);
+	_body_radius = _scale*0.03625;
+	_cap_depth = _scale*0.00200;
+	_cap_radius = _scale*0.03060;
 
 	// body offsets
-	this->addBodyOffset(rs::Pos(0, 0, 0));								// body
+	this->addBodyOffset(rs::Pos(0, 0, 0));									// body
 	float depth = 0; if (_enabled == Bodies::Face1) depth = _cap_depth/2;
-	this->addBodyOffset(rs::Pos(-this->getBodyWidth()/2 - depth, 0, 0));		// face1
+	this->addBodyOffset(rs::Pos(-this->getBodyWidth()/2 - depth, 0, 0));	// face1
 	depth = 0; if (_enabled == Bodies::Face2) depth = _cap_depth/2;
-	this->addBodyOffset(rs::Pos(0, -this->getBodyLength() - depth, 0));			// face2
+	this->addBodyOffset(rs::Pos(0, -this->getBodyLength() - depth, 0));		// face2
 	depth = 0; if (_enabled == Bodies::Face3) depth = _cap_depth/2;
-	this->addBodyOffset(rs::Pos(this->getBodyWidth()/2 + depth, 0, 0));			// face3
+	this->addBodyOffset(rs::Pos(this->getBodyWidth()/2 + depth, 0, 0));		// face3
 
 	// connectors
-	this->setConnDepth(0.00570);
-	this->setConnHeight(0.03715);
-	_el_length = 0.13350 + 2*_cap_radius;
-	_plank_length = 0.13350;
+	this->setConnDepth(_scale*0.00570);
+	this->setConnHeight(_scale*0.03715);
+	_el_length = _scale*0.13350 + 2*_cap_radius;
+	_plank_length = _scale*0.13350;
 }
 
 /**********************************************************

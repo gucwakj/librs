@@ -691,7 +691,13 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 		if (node->ToComment()) {}
 #ifdef RS_DOF
 		else if ( !strcmp(node->Value(), "dof") ) {
-			_robot.push_back(new Dof());
+			// query scale
+			a = 1;
+			node->QueryDoubleAttribute("scale", &a);
+			// create robot
+			_robot.push_back(new Dof(a));
+			// query id
+			i = 0;
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {

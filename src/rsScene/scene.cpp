@@ -88,7 +88,13 @@ Scene::~Scene(void) {
 	public functions
  **********************************************************/
 void Scene::addAndRemoveChildren(void) {
-	// add new robots to scene
+	// remove objects from scene
+	while (_staging[1]->getNumChildren()) {
+		_scene->removeChild(_staging[1]->getChild(0));
+		_staging[1]->removeChild(0, 1);
+	}
+
+	// add new objects to scene
 	while (_staging[0]->getNumChildren()) {
 		_scene->addChild(_staging[0]->getChild(0));
 		_staging[0]->removeChild(0, 1);
@@ -97,12 +103,6 @@ void Scene::addAndRemoveChildren(void) {
 	// share newly created data with other nodes
 	osgDB::SharedStateManager *ssm = osgDB::Registry::instance()->getSharedStateManager();
 	if (ssm) ssm->share(_root);
-
-	// remove robots from scene
-	while (_staging[1]->getNumChildren()) {
-		_scene->removeChild(_staging[1]->getChild(0));
-		_staging[1]->removeChild(0, 1);
-	}
 
 	// optimize the scene graph, remove redundancies
 	osgUtil::Optimizer optimizer;

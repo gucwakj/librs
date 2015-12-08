@@ -21,6 +21,7 @@ namespace rsResearch {
 		float phi;
 		short num_body;
 		short num_legs;
+		short num_robots;
 		short num_vars;
 		short form;
 	};
@@ -38,10 +39,10 @@ namespace rsResearch {
 		// private data
 		private:
 			double _time;					// time of integration
-			short _body_length;				// length of robot body
 			short _form;					// form of robot shape
+			short _num_body;				// number of body modules
+			short _num_legs;				// number of legs
 			short _num_robots;				// number of robots
-			short _num_vars;				// number of variables
 			std::vector<double> _array;		// array of values from cpg integration
 			gsl_odeiv2_driver *_driver;		// driver of cpg integration
 			gsl_odeiv2_system _system;		// system of ode equations

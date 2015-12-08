@@ -470,9 +470,6 @@ void Scene::setLabel(bool label) {
 }
 
 void Scene::setLevel(int level) {
-	// exit if level doesn't change
-	if (_level == level) return;
-
 	// set new level
 	_level = level;
 

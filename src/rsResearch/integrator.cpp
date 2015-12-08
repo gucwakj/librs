@@ -27,22 +27,6 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_system = {function, NULL, static_cast<size_t>(params->num_vars), (void *)params};
 	_driver = gsl_odeiv2_driver_alloc_y_new(&_system, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
 	_array.resize(params->num_vars);
-	if (params->form == Forms::Dog) {
-		for (int i = 0; i < params->num_vars; i+=3) {
-			_array[i] = 1;
-		}
-	}
-	else if (params->form == Forms::Salamander) {
-		for (int i = 0; i < params->num_vars; i+=3) {
-			_array[i] = 1;
-		}
-	}
-	else if (params->form == Forms::Snake) {
-		for (int i = 0; i < params->num_vars; i+=6) {
-			_array[i] = 1;
-			_array[i+3] = -1;
-		}
-	}
 	_body_length = params->num_body;
 	_form = params->form;
 	_num_robots = params->num_legs + params->num_body;
@@ -96,8 +80,8 @@ const rs::Vec Integrator::runStep(float newtime) {
 		}
 	}
 	else if (_form == Forms::Snake) {
-		for (int j = 0, k = 0; j < _num_vars; j+=6, k++) {
-			V[k] = _array[j+1] + _array[j+1]*cos(_array[j]) - _array[j+4] - _array[j+4]*cos(_array[j+3]);
+		for (int j = 0, k = 0; j < _num_vars; j+=3, k++) {
+			V[k] = _array[j+1]*cos(_array[j]);
 		}
 	}
 	return V;

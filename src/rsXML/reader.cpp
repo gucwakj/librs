@@ -687,7 +687,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			a = 1;
 			node->QueryDoubleAttribute("scale", &a);
 			// create robot
-			_robot.push_back(new Dof(a));
+			_robot.push_back(new Dof(a, _trace));
 			// query id
 			i = 0;
 			node->QueryIntAttribute("id", &i);

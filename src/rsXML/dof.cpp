@@ -5,7 +5,7 @@
 using namespace rsXML;
 using namespace rsDof;
 
-Dof::Dof(float scale) : rsRobots::Robot(rs::Dof), rsRobots::Dof(-1, scale), rsXML::Robot(0) {
+Dof::Dof(float scale, bool trace) : rsRobots::Robot(rs::Dof), rsRobots::Dof(-1, scale), rsXML::Robot(trace) {
 	_a.allocate(Bodies::Num_Joints);
 	for (unsigned int i = 0; i < _a.size(); i++) {
 		_a[i] = 0;

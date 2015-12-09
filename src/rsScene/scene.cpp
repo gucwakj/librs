@@ -1309,7 +1309,10 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 		if (test && (!test->getName().compare(0, 5, "robot")) && (test->getName().compare(5, 1, std::to_string(id)))) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
-			if (bb.intersects(cbbv.getBoundingBox())) {
+			osg::BoundingBox bb2 = cbbv.getBoundingBox();
+			if (	std::max(bb.xMin(), bb2.xMin()) + 0.001 <= std::min(bb.xMax(), bb2.xMax()) - 0.001 &&
+					std::max(bb.yMin(), bb2.yMin()) + 0.001 <= std::min(bb.yMax(), bb2.yMax()) - 0.001 &&
+					std::max(bb.zMin(), bb2.zMin()) + 0.001 <= std::min(bb.zMax(), bb2.zMax()) - 0.001) {
 				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
 				retval = true;
 			}

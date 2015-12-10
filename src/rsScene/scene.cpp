@@ -1,3 +1,6 @@
+#include <algorithm>
+#define NOMINMAX 1		// f*$k microsoft
+
 #include <osg/BlendFunc>
 #include <osg/ComputeBoundsVisitor>
 #include <osg/Depth>

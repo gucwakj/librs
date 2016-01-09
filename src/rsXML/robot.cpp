@@ -15,6 +15,7 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::Robot) {
 	_ground = -1;
 	_id = -1;
 	_orientation = 0;
+	_shape = 0;
 	_trace = trace;
 	_wheels.allocate(2);
 	_wheels[0] = 0;
@@ -79,6 +80,10 @@ const rs::Pos Robot::getPosition(void) {
 
 const rs::Quat Robot::getQuaternion(void) {
 	return _q;
+}
+
+int Robot::getShape(void) {
+	return _shape;
 }
 
 bool Robot::getTrace(void) {

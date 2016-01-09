@@ -4,12 +4,13 @@
 using namespace rsXML;
 using namespace rsLinkbot;
 
-Linkbot::Linkbot(int form, bool trace) : rsRobots::Robot(form), rsRobots::Linkbot(form), rsXML::Robot(trace) {
+Linkbot::Linkbot(int form, int shape, bool trace) : rsRobots::Robot(form), rsRobots::Linkbot(form), rsXML::Robot(trace) {
 	_a.allocate(Bodies::Num_Joints);
 	for (unsigned int i = 0; i < _a.size(); i++) {
 		_a[i] = 0;
 	}
-};
+	_shape = shape;
+}
 
 /**********************************************************
 	public functions

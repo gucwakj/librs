@@ -119,26 +119,31 @@ void Scene::addChildrenToBackground(void) {
 	}
 }
 
-void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
+void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, const rs::Vec &c) {
 	// deselect everything
 	if (exclusive) {
 		// find nodes of intersection
 		osg::Group *test = NULL;
 		for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 			test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+			// get preconfig node
+			if (test && (!test->getName().compare(0, 3, "pre"))) {
+				if (!strcmp(test->getChild(0)->asGroup()->getChild(2)->asTransform()->getChild(0)->className(),"Outline"))
+					this->toggleHighlight(test, test, c);
+			}
 			// get robot node
-			if (test && (!test->getName().compare(0, 5, "robot"))) {
-				if (dynamic_cast<osgFX::Outline *>(test->getChild(2)->asTransform()->getChild(0)))
+			else if (test && (!test->getName().compare(0, 5, "robot"))) {
+				if (!strcmp(test->getChild(2)->asTransform()->getChild(0)->className(),"Outline"))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)), c);
 			}
 			// get obstacle node
 			else if (test && !test->getName().compare(0, 8, "obstacle")) {
-				if (dynamic_cast<osgFX::Outline *>(test->getChild(0)->asTransform()->getChild(0)))
+				if (!strcmp(test->getChild(0)->asTransform()->getChild(0)->className(),"Outline"))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
 			}
 			// get marker node
 			else if (test && !test->getName().compare(0, 6, "marker")) {
-				if (dynamic_cast<osgFX::Outline *>(test->getChild(0)->asTransform()->getChild(0)))
+				if (!strcmp(test->getChild(0)->asTransform()->getChild(0)->className(),"Outline"))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
 			}
 		}
@@ -148,19 +153,30 @@ void Scene::addHighlight(int id, bool robot, bool exclusive, const rs::Vec &c) {
 	osg::Group *test = NULL;
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		// get preconfig node
+		if (robot && test && !test->getName().compare(std::string("pre").append(std::to_string(id)))) {
+			this->setHUD(false);
+			this->toggleHighlight(test, test, c, true);
+		}
 		// get robot node
-		if (robot && test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
-			osg::ComputeBoundsVisitor cbbv;
-			test->accept(cbbv);
-			if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
-				this->setHUD(true);
-				this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
-				this->getHUDText()->setText("Robots are Colliding!");
-				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
+		else if (robot && test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
+			if (!preconfig) {
+				osg::ComputeBoundsVisitor cbbv;
+				test->accept(cbbv);
+				if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+					this->setHUD(true);
+					this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
+					this->getHUDText()->setText("Robots are Colliding!");
+					this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
+				}
+				else {
+					this->setHUD(false);
+					this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), c);
+				}
 			}
 			else {
 				this->setHUD(false);
-				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), c);
+				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), c, true);
 			}
 			break;
 		}
@@ -197,6 +213,18 @@ void Scene::changeID(int newid) {
 			test->setName(std::string("robot").append(std::to_string(newid)));
 		}
 	}
+}
+
+Group* Scene::createPreconfig(int id) {
+	// create new robot
+	osg::ref_ptr<osg::Group> group = new osg::Group();
+	group->ref();
+
+	// set user properties of node
+	group->setName(std::string("pre").append(std::to_string(id)));
+
+	// return robot group
+	return group;
 }
 
 Group* Scene::createRobot(rsScene::Robot *robot) {
@@ -666,7 +694,12 @@ void Scene::start(int pause) {
 void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec &c, bool on) {
 	if (!_highlight) return;
 
-	if (!parent->getName().compare(0, 5, "robot")) {
+	if (!parent->getName().compare(0, 3, "pre")) {
+		for (unsigned int i = 0; i < parent->getNumChildren(); i++) {
+			this->toggleHighlight(parent->getChild(i)->asGroup(), parent->getChild(i)->asGroup()->getChild(2)->asTransform()->getChild(0), c, on);
+		}
+	}
+	else if (!parent->getName().compare(0, 5, "robot")) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Outline *>(child))) {
 			for (unsigned int i = 2; i < parent->getNumChildren(); i++) {

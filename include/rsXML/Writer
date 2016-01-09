@@ -25,6 +25,7 @@ namespace rsXML {
 			tinyxml2::XMLElement* getOrCreateElement(const char*, const char*);
 			tinyxml2::XMLElement* getOrCreateMarker(int, int);
 			tinyxml2::XMLElement* getOrCreateObstacle(int, int);
+			tinyxml2::XMLElement* getOrCreatePreconfig(int, int, int);
 			tinyxml2::XMLElement* getOrCreateRobot(int, int);
 			tinyxml2::XMLElement* getOrCreateSide(tinyxml2::XMLElement*, const char*, int);
 			int save(void);
@@ -34,6 +35,7 @@ namespace rsXML {
 			void setGrid(std::vector<double>);
 			void setMarker(tinyxml2::XMLElement*, std::string, const rs::Pos&, const rs::Pos&, const rs::Vec&, int);
 			void setObstacle(tinyxml2::XMLElement*, std::string, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, double);
+			void setPreconfig(tinyxml2::XMLElement*, std::string, const rs::Pos&, const rs::Quat&, const rs::Vec&);
 			void setRobot(tinyxml2::XMLElement*, std::string, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&);
 			void setRobotWheels(tinyxml2::XMLElement*, int, double, int, double);
 			void setTrace(bool);

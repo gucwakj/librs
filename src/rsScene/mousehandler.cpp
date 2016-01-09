@@ -62,17 +62,26 @@ int MouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *view
 		osg::Group *test = NULL;
 		for (unsigned int i = 0; i < nodePath.size() - 2; i++) {
 			test = dynamic_cast<osg::Group *>(nodePath[i]);
+			// get preconfig node
+			if (test && !test->getName().compare(0, 3, "pre")) {
+				int id = atoi(&(test->getName()[3]));
+				_scene->addHighlight(id, true, false, true);
+				_scene->toggleLabel(test, dynamic_cast<osg::Node *>(nodePath[i + 3]));
+				return id;
+			}
 			// get robot node
-			if (test && !test->getName().compare(0, 5, "robot")) {
-				_scene->toggleHighlight(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
+			else if (test && !test->getName().compare(0, 5, "robot")) {
+				int id = atoi(&(test->getName()[5]));
+				_scene->addHighlight(id, true, false, true);
 				_scene->toggleLabel(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
-				return atoi(&(test->getName()[5]));
+				return id;
 			}
 			// get ground node
-			if (test && !test->getName().compare(0, 6, "ground")) {
-				_scene->toggleHighlight(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
+			else if (test && !test->getName().compare(0, 6, "ground")) {
+				int id = atoi(&(test->getName()[6]));
+				_scene->addHighlight(id, false, false, true);
 				_scene->toggleLabel(test, dynamic_cast<osg::Node *>(nodePath[i + 2]));
-				return atoi(&(test->getName()[6])) + 1000;
+				return id;
 			}
 		}
 	}

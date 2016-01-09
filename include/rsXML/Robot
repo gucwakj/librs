@@ -34,6 +34,7 @@ namespace rsXML {
 			int getOrientation(void);
 			const rs::Pos getPosition(void);
 			const rs::Quat getQuaternion(void);
+			int getShape(void);
 			bool getTrace(void);
 			const rs::Vec getWheels(void);
 			virtual void postProcess(void) {};
@@ -58,6 +59,7 @@ namespace rsXML {
 			int _ground;
 			int _id;
 			int _orientation;
+			int _shape;
 			int _trace;
 			ConnectorList _conn;
 			Conn *_base;

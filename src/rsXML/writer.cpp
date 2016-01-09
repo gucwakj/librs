@@ -150,6 +150,35 @@ void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, const
 	this->save();
 }
 
+void Writer::setPreconfig(tinyxml2::XMLElement *robot, std::string name, const rs::Pos &p, const rs::Quat &q, const rs::Vec &c) {
+	// set position
+	tinyxml2::XMLElement *pos = getOrCreateChild(robot, "position");
+	pos->SetAttribute("x", p[0]);
+	pos->SetAttribute("y", p[1]);
+	pos->SetAttribute("z", p[2]);
+
+	// set rotation
+	tinyxml2::XMLElement *rot = getOrCreateChild(robot, "rotation");
+	rot->SetAttribute("x", q[0]);
+	rot->SetAttribute("y", q[1]);
+	rot->SetAttribute("z", q[2]);
+	rot->SetAttribute("w", q[3]);
+
+	// set led
+	tinyxml2::XMLElement *led = getOrCreateChild(robot, "led");
+	led->SetAttribute("r", c[0]);
+	led->SetAttribute("g", c[1]);
+	led->SetAttribute("b", c[2]);
+	led->SetAttribute("alpha", c[3]);
+
+	// set name
+	this->getOrCreateChild(robot, "name")->DeleteChildren();
+	this->getOrCreateChild(robot, "name")->InsertFirstChild(this->toText(name));
+
+	// write to disk
+	this->save();
+}
+
 void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, const rs::Pos &p, const rs::Quat &q, const rs::Vec &r, const rs::Vec &c) {
 	// set position
 	tinyxml2::XMLElement *pos = getOrCreateChild(robot, "position");
@@ -423,6 +452,45 @@ tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
 	node->SetAttribute("id", id);
 	node->SetAttribute("form", form);
 	ground->InsertFirstChild(node);
+	return node;
+}
+
+tinyxml2::XMLElement* Writer::getOrCreatePreconfig(int form, int shape, int id) {
+	// get robot elements
+	tinyxml2::XMLElement *sim = _doc.FirstChildElement("sim");
+	tinyxml2::XMLElement *node = sim->FirstChildElement();
+
+	// find old node with 'id'
+	int i = -1;
+	while (node) {
+		node->QueryIntAttribute("id", &i);
+		if (i == id) return node;
+		node = node->NextSiblingElement();
+	}
+
+	// create new node if one matching 'id' is not found
+	switch (shape) {
+		case rsLinkbot::Preconfigs::Bow:
+			node = _doc.NewElement("bow");
+			break;
+	}
+	node->SetAttribute("id", id);
+	node->SetAttribute("form", form);
+
+	// insert after node with id = id-1
+	tinyxml2::XMLElement *prev_node = sim->FirstChildElement();
+	while (prev_node) {
+		int i = -1;
+		prev_node->QueryIntAttribute("id", &i);
+		if (i == id - 1) {
+			sim->InsertAfterChild(prev_node, node);
+			return node;
+		}
+		prev_node = prev_node->NextSiblingElement();
+	}
+
+	// insert at beginning
+	sim->InsertFirstChild(node);
 	return node;
 }
 

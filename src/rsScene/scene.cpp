@@ -155,8 +155,18 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		// get preconfig node
 		if (robot && test && !test->getName().compare(std::string("pre").append(std::to_string(id)))) {
-			this->setHUD(false);
-			this->toggleHighlight(test, test, c, true);
+			osg::ComputeBoundsVisitor cbbv;
+			test->accept(cbbv);
+			if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+				this->setHUD(true);
+				this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
+				this->getHUDText()->setText("Robots are Colliding!");
+				this->toggleHighlight(test, test, rs::Vec(1, 0, 0), true);
+			}
+			else {
+				this->setHUD(false);
+				this->toggleHighlight(test, test, c);
+			}
 		}
 		// get robot node
 		else if (robot && test && !test->getName().compare(std::string("robot").append(std::to_string(id)))) {
@@ -255,6 +265,17 @@ int Scene::deleteObstacle(int id) {
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		if (test && !test->getName().compare(std::string("obstacle").append(std::to_string(id)))) {
+			_staging[1]->addChild(test);
+			return 0;
+		}
+	}
+	return -1;
+}
+
+int Scene::deletePreconfig(int id) {
+	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
+		osg::Group *test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		if (test && !test->getName().compare(std::string("pre").append(std::to_string(id)))) {
 			_staging[1]->addChild(test);
 			return 0;
 		}
@@ -1341,8 +1362,16 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 	bool retval = false;
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		if (test && (!test->getName().compare(0, 3, "pre")) && (test->getName().compare(3, 1, std::to_string(id)))) {
+			osg::ComputeBoundsVisitor cbbv;
+			test->accept(cbbv);
+			if (bb.intersects(cbbv.getBoundingBox())) {
+				this->toggleHighlight(test, test, rs::Vec(1, 0, 0), true);
+				retval = true;
+			}
+		}
 		// get robot node
-		if (test && (!test->getName().compare(0, 5, "robot")) && (test->getName().compare(5, 1, std::to_string(id)))) {
+		else if (test && (!test->getName().compare(0, 5, "robot")) && (test->getName().compare(5, 1, std::to_string(id)))) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
 			osg::BoundingBox bb2 = cbbv.getBoundingBox();
@@ -1354,7 +1383,7 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 			}
 		}
 		// get obstacle node
-		if (test && !test->getName().compare(0, 8, "obstacle") && (test->getName().compare(8, 1, std::to_string(id)))) {
+		else if (test && !test->getName().compare(0, 8, "obstacle") && (test->getName().compare(8, 1, std::to_string(id)))) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
 			if (bb.intersects(cbbv.getBoundingBox())) {

@@ -442,6 +442,9 @@ tinyxml2::XMLElement* Writer::getOrCreateObstacle(int form, int id) {
 		case rs::HackySack:
 			node = _doc.NewElement("hackysack");
 			break;
+		case rs::PullupBar:
+			node = _doc.NewElement("pullupbar");
+			break;
 		case rs::Sphere:
 			node = _doc.NewElement("sphere");
 			break;

@@ -593,6 +593,27 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				_obstacle.back()->setPosition(a, b, 0.0275);
 			}
 		}
+		else if ( !strcmp(node->Value(), "pullupbar") ) {
+			// create object
+			_obstacle.push_back(new Obstacle(rs::PullupBar));
+			// id
+			i = 0;
+			node->QueryIntAttribute("id", &i);
+			_obstacle.back()->setID(i);
+			// dimensions
+			_obstacle.back()->setDimensions(0, 0, 0);
+			// mass
+			_obstacle.back()->setMass(10000);
+			// color
+			_obstacle.back()->setColor(1, 1, 1, 1);
+			// position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				_obstacle.back()->setPosition(a, b, 0);
+			}
+		}
 		else if ( !strcmp(node->Value(), "sphere") ) {
 			// create object
 			_obstacle.push_back(new Obstacle(rs::Sphere));

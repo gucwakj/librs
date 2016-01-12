@@ -386,6 +386,30 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			body->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
 			break;
 		}
+		case rs::PullupBar: {
+			// front left
+			osg::ref_ptr<osg::Cylinder> cyl = new osg::Cylinder(osg::Vec3d(-0.056569, -0.08, 0.056569), 0.0125, 0.16);
+			cyl->setRotation(osg::Quat(0, 0.382683, 0, 0.923880));
+			// front right
+			osg::ref_ptr<osg::Cylinder> cyl2 = new osg::Cylinder(osg::Vec3d(0.056569, -0.08, 0.056569), 0.0125, 0.16);
+			cyl2->setRotation(osg::Quat(0, -0.382683, 0, 0.923880));
+			// back left
+			osg::ref_ptr<osg::Cylinder> cyl3 = new osg::Cylinder(osg::Vec3d(-0.056569, 0.08, 0.056569), 0.0125, 0.16);
+			cyl3->setRotation(osg::Quat(0, 0.382683, 0, 0.923880));
+			// back right
+			osg::ref_ptr<osg::Cylinder> cyl4 = new osg::Cylinder(osg::Vec3d(0.056569, 0.08, 0.056569), 0.0125, 0.16);
+			cyl4->setRotation(osg::Quat(0, -0.382683, 0, 0.923880));
+			// top
+			osg::ref_ptr<osg::Cylinder> cyl5 = new osg::Cylinder(osg::Vec3d(0, 0, 0.113137), 0.0125, 0.16);
+			cyl5->setRotation(osg::Quat(0.707107, 0, 0, 0.707107));
+			// add to body
+			body->addDrawable(new osg::ShapeDrawable(cyl));
+			body->addDrawable(new osg::ShapeDrawable(cyl2));
+			body->addDrawable(new osg::ShapeDrawable(cyl3));
+			body->addDrawable(new osg::ShapeDrawable(cyl4));
+			body->addDrawable(new osg::ShapeDrawable(cyl5));
+			break;
+		}
 		case rs::Sphere:
 			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0])));
 			break;

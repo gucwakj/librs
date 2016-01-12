@@ -29,6 +29,7 @@ namespace rsSim {
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double, int);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Vec&, double);
+			Obstacle* addPullupBar(const rs::Pos&, const rs::Quat&, const rs::Vec&);
 			virtual int deleteRobot(int);
 			float getClock(void);
 			void getCoM(double&, double&, double&);

@@ -1,6 +1,6 @@
 <?RoboSim XML Configuration?>
 <config>
-    <background>C:/Ch/package/chrobosim/data/background/2014RoboPlay</background>
+    <background>2014RoboPlay</background>
 </config>
 
 <graphics>

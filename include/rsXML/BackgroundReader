@@ -45,6 +45,7 @@ namespace rsXML {
 	};
 
 	std::string LIBRSEXPORT getDefaultBackgroundPath(void);
+	std::string LIBRSEXPORT getDefaultChallengePath(void);
 
 } // namespace rsXML
 

@@ -1,0 +1,29 @@
+<?RoboSim XML Configuration?>
+<config>
+    <background>C:/Ch/package/chrobosim/data/background/2014RoboPlay</background>
+</config>
+
+<graphics>
+    <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
+</graphics>
+
+<ground/>
+
+<sim>
+    <linkboti form="1" id="0">
+        <wheels left="9" right="9"/>
+        <name></name>
+        <led r="0" g="1" b="0" alpha="1"/>
+        <joint f1="0" f2="0" f3="0"/>
+        <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
+        <position x="-0.977902" y="-0.1524" z="0"/>
+    </linkboti>
+    <linkboti form="1" id="1">
+        <wheels left="9" right="9"/>
+        <name></name>
+        <led r="0" g="1" b="0" alpha="1"/>
+        <joint f1="0" f2="0" f3="0"/>
+        <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
+        <position x="-0.977902" y="0.1524" z="0"/>
+    </linkboti>
+</sim>

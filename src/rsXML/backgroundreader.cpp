@@ -423,3 +423,27 @@ std::string rsXML::getDefaultBackgroundPath(void) {
 	return path;
 }
 
+std::string rsXML::getDefaultChallengePath(void) {
+	std::string path;
+#ifdef RS_WIN32
+	DWORD size = 128;
+	HKEY key;
+#if defined(_WIN64)
+	RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\Wow6432Node\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
+#else
+	RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\SoftIntegration"), 0, KEY_QUERY_VALUE, &key);
+#endif
+	char base[128];
+	RegQueryValueEx(key, TEXT("CHHOME"), NULL, NULL, (LPBYTE)base, &size);
+	base[size] = '\0';
+	if (base[0] == '\0')
+		path = "C:/Ch";
+	else
+		path = base;
+	path += "/package/chrobosim/data/challenges/";
+#else
+	path = "/home/kgucwa/projects/librs/resources/challenges/";
+#endif
+	return path;
+}
+

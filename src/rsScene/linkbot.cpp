@@ -166,7 +166,7 @@ void Linkbot::drawConnector(Group *group, int type, int face, int orientation, d
 			node = osgDB::readNodeFile(_model_path + "linkbot/gripper.3ds");
 			break;
 		case Connectors::Omniplate:
-			node = osgDB::readNodeFile(_model_path + "linkbot/omnidrive.3ds");
+			node = osgDB::readNodeFile(_model_path + "linkbot/omniplate.3ds");
 			break;
 		case Connectors::Simple:
 			node = osgDB::readNodeFile(_model_path + "linkbot/simple.3ds");

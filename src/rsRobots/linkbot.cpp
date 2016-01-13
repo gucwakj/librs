@@ -31,7 +31,7 @@ Linkbot::Linkbot(short form) : Robot(form) {
 	_bigwheel_radius = 0.05080;
 	_bridge_length = 0.13350;
 	_cubic_length = 0.07115;
-	_omni_length = 0.17360;
+	_omni_length = 0.15250;
 	_smallwheel_radius = 0.04445;
 	_tinywheel_radius = 0.04128;
 }

@@ -1040,6 +1040,75 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				}
 			}
 		}
+		else if ( !strcmp(node->Value(), "fourbotdrive") ) {
+			_robot.push_back(new Linkbot(rs::LinkbotI, rsLinkbot::Preconfigs::FourBotDrive, _trace));
+			int first = _robot.size() - 1;
+			_robot.push_back(new Linkbot(rs::LinkbotI, rsLinkbot::Preconfigs::FourBotDrive, _trace));
+			int second = _robot.size() - 1;
+			_robot.push_back(new Linkbot(rs::LinkbotI, rsLinkbot::Preconfigs::FourBotDrive, _trace));
+			int third = _robot.size() - 1;
+			_robot.push_back(new Linkbot(rs::LinkbotI, rsLinkbot::Preconfigs::FourBotDrive, _trace));
+			int fourth = _robot.size() - 1;
+			node->QueryIntAttribute("id", &i);
+			_robot[first]->setID(i);
+			_robot[second]->setID(i + 1);
+			_robot[third]->setID(i + 2);
+			_robot[fourth]->setID(i + 3);
+			_robot[first]->addConnector(new Conn(0, rs::Right, -1, 2, 2, _robot[first]->getID(), 1, rsLinkbot::Connectors::Omniplate));
+			_robot[second]->addConnector(new Conn(0, rs::Right, -1, 2, 2, _robot[first]->getID(), 2, rsLinkbot::Connectors::Omniplate));
+			_robot[third]->addConnector(new Conn(0, rs::Right, -1, 2, 2, _robot[first]->getID(), 3, rsLinkbot::Connectors::Omniplate));
+			_robot[fourth]->addConnector(new Conn(0, rs::Right, -1, 2, 2, _robot[first]->getID(), 4, rsLinkbot::Connectors::Omniplate));
+			_robot[first]->addConnector(new Conn(0, 0, -1, 1, 1, _robot[first]->getID(), 1, rsLinkbot::Connectors::Simple));
+			_robot[first]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 1, 1, _robot[first]->getID(), 2, rsLinkbot::Connectors::Simple));
+			_robot[second]->addConnector(new Conn(0, 0, -1, 1, 1, _robot[second]->getID(), 1, rsLinkbot::Connectors::Simple));
+			_robot[second]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 1, 1, _robot[second]->getID(), 2, rsLinkbot::Connectors::Simple));
+			_robot[third]->addConnector(new Conn(0, 0, -1, 3, 3, _robot[first]->getID(), 1, rsLinkbot::Connectors::Simple));
+			_robot[third]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[first]->getID(), 2, rsLinkbot::Connectors::Simple));
+			_robot[fourth]->addConnector(new Conn(0, 0, -1, 3, 3, _robot[second]->getID(), 1, rsLinkbot::Connectors::Simple));
+			_robot[fourth]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[second]->getID(), 2, rsLinkbot::Connectors::Simple));
+			if ( (ele = node->FirstChildElement("led")) ) {
+				a = 0; b = 0; c = 0; d = 0;
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_robot[first]->setLED(a, b, c, d);
+				_robot[second]->setLED(a, b, c, d);
+				_robot[third]->setLED(a, b, c, d);
+				_robot[fourth]->setLED(a, b, c, d);
+			}
+			if ( (ele = node->FirstChildElement("name")) ) {
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
+				_robot[first]->setName(str);
+				_robot[second]->setName(str);
+			}
+			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_robot[first]->setPosition(a, b, c);
+			}
+			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0, d = 0;
+				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryDoubleAttribute("theta", &b);
+					ele->QueryDoubleAttribute("phi", &c);
+					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
+				}
+				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryDoubleAttribute("x", &a);
+					ele->QueryDoubleAttribute("y", &b);
+					ele->QueryDoubleAttribute("z", &c);
+					ele->QueryDoubleAttribute("w", &d);
+					_robot[first]->setRotation(a, b, c, d);
+				}
+				else {
+					_robot[first]->setRotation(0, 0, 0, 1);
+				}
+			}
+		}
 #endif
 #ifdef RS_MINDSTORMS
 		else if ( !strcmp(node->Value(), "ev3") ) {

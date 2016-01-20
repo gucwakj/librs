@@ -10,7 +10,7 @@ rsSim		simulation engine based upon ODE
 rsScene		scene graph library based upon OSG
 rsCallback	graphical updating library using data from rsSim to manipulate
 			rsScene drawings
-rsXML		xml parsing library
+rsXML		XML parsing library
 
 rsSim, rsScene, and rsXML are independent and each rely upon rs and rsRobots
 for basic robot information.  rsCallback is dependent upon rsScene and rsSim.
@@ -36,7 +36,7 @@ These disable support for each of the major components of LibRS.
 LibRS can simulate three different types of robot modules.  Each has its own
 purpose for learning or researching.  These can also be enabled/disabled
 individually to simplify the library for a specific purpose.  By default the
-Linkbots and Mindstorms are enabledl while the Dof is not.
+Linkbots and Mindstorms are enabled while the Dof is not.
 ```
 -DRS_DOF=no
 -DRS_LINKBOT=no
@@ -139,7 +139,7 @@ build Release solution
 
 ### Raspberry Pi
 
-#### open dynamics engine
+#### Open Dynamics Engine
 ODE relies upon configure scripts to build.  The one-liner provided builds the
 shared library which is linked in the LibRS build scripts.  ``make install`` is
 used to put all libraries into one folder for easier access.
@@ -166,14 +166,46 @@ The five libraries of LibRS are built into build/lib.
 $ mkdir build/
 $ cd build/
 $ cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-4.9 -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.9 \
-	-DENABLE_DOF=yes -DENABLE_LINKBOT=no -DENABLE_MINDSTORMS=no \
-	-DENABLE_GRAPHICS=no -DENABLE_XML=no ..
+		-DRS_DOF=yes -DRS_LINKBOT=no -DRS_MINDSTORMS=no \
+		-DRS_GRAPHICS=no -DRS_XML=no ..
+$ make
+$ cd ../
+```
+
+### Raspberry Pi 2
+The RPi2 has been tested with the Arch Linux ARM distribution.
+
+#### Open Dynamics Engine
+ODE relies upon configure scripts to build.  The one-liner provided builds the
+shared library which is linked in the LibRS build scripts.  ``make install`` is
+used to put all libraries into one folder for easier access.
+```
+$ cd deps/ode/
+$ sh autogen.sh
+$ ./configure --prefix=$PWD"/sys/" --enable-single-precision --enable-shared \
+	--with-trimesh=none --with-drawstuff=none \
+	--disable-demos --disable-asserts
+$ make
+$ make install
+$ cd ../../
+```
+
+#### LibRS
+Disabling the
+Graphics and XML libraries are useful for running headless simulations.  Also
+disabling the unnecessary robots is useful to minimize the size of the library.
+The five libraries of LibRS are built into build/lib.
+```
+$ mkdir build/
+$ cd build/
+$ cmake	-DRS_RESEARCH=yes -DRS_DOF=yes -DRS_LINKBOT=no -DRS_MINDSTORMS=no \
+		-DRS_GRAPHICS=no -DRS_XML=no ..
 $ make
 $ cd ../
 ```
 
 ## Credits
-(c) 2014 - 2015
+(c) 2014 - 2016
 
 The University of California, Davis
 Center for Integrated Computing and STEM Education

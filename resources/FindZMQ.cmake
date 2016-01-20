@@ -16,7 +16,6 @@ find_path (ZMQ_ROOT_DIR
 		/usr/local
 )
 
-#find_path (ZMQ_INCLUDE_DIRS zmq.h ${ZMQ_ROOT_DIR}/include)
 find_path (ZMQ_INCLUDE_DIRS
 	NAMES
 		zmq.h
@@ -35,7 +34,7 @@ find_library (ZMQ_LIBRARIES
 		"${ZMQ_ROOT_DIR}/lib"
 )
 
-if (ZMQ_INCLUDE_DIR AND ZMQ_LIBRARY)
+if (ZMQ_INCLUDE_DIRS AND ZMQ_LIBRARIES)
 	set (ZMQ_FOUND 1)
 	message (STATUS "Found ZMQ library: ${ZMQ_LIBRARIES}")
 	message (STATUS "Found ZMQ headers: ${ZMQ_INCLUDE_DIRS}")

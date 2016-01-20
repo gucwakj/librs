@@ -192,8 +192,8 @@ int Robot::fixBodyToGround(dBodyID cbody) {
 }
 
 double Robot::getCenter(int i) {
-	const double *pos = dBodyGetPosition(_body[0]);
-	const double *R = dBodyGetRotation(_body[0]);
+	const float *pos = dBodyGetPosition(_body[0]);
+	const float *R = dBodyGetRotation(_body[0]);
 	double p[3] = {	R[0]*_center[0] + R[1]*_center[1] + R[2]*_center[2],
 					R[4]*_center[0] + R[5]*_center[1] + R[6]*_center[2],
 					R[8]*_center[0] + R[9]*_center[1] + R[10]*_center[2]};
@@ -201,17 +201,17 @@ double Robot::getCenter(int i) {
 }
 
 const rs::Pos Robot::getPosition(void) {
-	const double *p = dBodyGetPosition(_body[0]);
+	const float *p = dBodyGetPosition(_body[0]);
 	return rs::Pos(p[0], p[1], p[2]);
 }
 
 const rs::Quat Robot::getQuaternion(void) {
-	const double *q = dBodyGetQuaternion(_body[0]);
+	const float *q = dBodyGetQuaternion(_body[0]);
 	return rs::Quat(q[1], q[2], q[3], q[0]);
 }
 
 double Robot::getRotation(int body, int i) {
-	const double *R = dBodyGetRotation(_body[body]);
+	const float *R = dBodyGetRotation(_body[body]);
 	double angles[3] = {0};
 	if ( fabs(R[8]-1) < rs::Epsilon ) {			// R_31 == 1; theta = rs::Pi/2
 		angles[0] = atan2(-R[1], -R[2]);		// psi

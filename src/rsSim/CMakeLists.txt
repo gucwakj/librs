@@ -19,7 +19,11 @@ endif ()
 set (EXTRA_LIBS ${EXTRA_LIBS} ode)
 
 # ODE options
-add_definitions (-DdDOUBLE)
+if ( ${CMAKE_SYSTEM_PROCESSOR} MATCHES "armv6l" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "armv7l" )
+	add_definitions (-DdSINGLE)
+else ()
+	add_definitions (-DdDOUBLE)
+endif ()
 add_definitions (-DdNODEBUG)
 
 # add threading

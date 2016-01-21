@@ -35,7 +35,7 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 
 const rs::Vec Integrator::runStep(float newtime) {
 	// return vector
-	rs::Vec V(_num_robots);
+	rs::Vec V(_num_robots + 1.f);
 
 	// integrate
 	int status = gsl_odeiv2_driver_apply(_driver, &_time, newtime, _array.data());
@@ -47,29 +47,32 @@ const rs::Vec Integrator::runStep(float newtime) {
 	}
 
 	// save output array
-	for (int i = 0, j = 0; i < _num_body*3; i+=3, j++) {
+	for (int i = 0, j = 1; i < _num_body*3; i+=3, j++) {
 		V[j] = _array[i+1]*cos(_array[i]);
 	}
+	// double head motion to bring module back to centerline
+	V[1] = 2*_array[1]*cos(_array[0]);
+	// move face back to straight ahead
+	V[0] = -V[1]/2;
+	// linearize the legs motion
 	if (_num_legs) {
-		if (_form == Forms::Salamander) {
-			float theta_up = -5*M_PI/6;
-			float theta_down = -M_PI/6;
-			float a = theta_up - M_PI;
-			float b = (2*M_PI - theta_down + theta_up)/(M_PI);
-			float c = (theta_down - theta_up)/M_PI;
-			for (int i = _num_body*3, j = _num_body; i < _num_robots*3; i+=3, j++) {
-				// get continuous output vectors
-				if (_array[i] < theta_up)
-					V[j] = theta_up + (_array[i] - theta_up)*b;
-				else if (_array[i] < a)
-					V[j] = theta_up + (_array[i] - theta_up)*c;
-				else
-					V[j] = theta_down + (_array[i] - a)*b;
-				// flip right side legs for linkbots
-				if ( !((j+1 - _num_body)%2) ) V[j] = -V[j];
-				// scale
-				V[j] *= 4;
-			}
+		float theta_up = -5*M_PI/6;
+		float theta_down = -M_PI/6;
+		float a = theta_up - M_PI;
+		float b = (2*M_PI - theta_down + theta_up)/(M_PI);
+		float c = (theta_down - theta_up)/M_PI;
+		for (short i = _num_body*3, j = _num_body + 1; i < _num_robots*3; i+=3, j++) {
+			// get continuous output vectors
+			if (_array[i] < theta_up)
+				V[j] = theta_up + (_array[i] - theta_up)*b;
+			else if (_array[i] < a)
+				V[j] = theta_up + (_array[i] - theta_up)*c;
+			else
+				V[j] = theta_down + (_array[i] - a)*b;
+			// flip right side legs for linkbots
+			if ( !((j+1 - _num_body)%2) ) V[j] = -V[j];
+			// scale
+			V[j] *= 4;
 		}
 	}
 

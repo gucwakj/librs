@@ -38,6 +38,7 @@ Scene::Scene(void) : KeyboardHandler() {
 	// staging area for new insertions
 	_staging[0] = new osg::Group;
 	_staging[1] = new osg::Group;
+	_staging[2] = new osg::Group;
 
 	// set default level to load
 	_level = -1;
@@ -90,7 +91,7 @@ Scene::~Scene(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Scene::addAndRemoveChildren(void) {
+void Scene::addAndRemoveChildren(bool clean) {
 	// remove objects from scene
 	while (_staging[1]->getNumChildren()) {
 		_scene->removeChild(_staging[1]->getChild(0));
@@ -103,13 +104,18 @@ void Scene::addAndRemoveChildren(void) {
 		_staging[0]->removeChild(0, 1);
 	}
 
+	// clean out old background if requested
+	if (clean) _background->removeChildren(0, _background->getNumChildren());
+
+	// add new background to scene
+	while (_staging[2]->getNumChildren()) {
+		_background->addChild(_staging[2]->getChild(0));
+		_staging[2]->removeChild(0, 1);
+	}
+
 	// share newly created data with other nodes
 	osgDB::SharedStateManager *ssm = osgDB::Registry::instance()->getSharedStateManager();
 	if (ssm) ssm->share(_root);
-
-	// optimize the scene graph, remove redundancies
-	osgUtil::Optimizer optimizer;
-	optimizer.optimize(_root);
 }
 
 void Scene::addChildrenToBackground(void) {
@@ -513,16 +519,23 @@ void Scene::setGrid(std::vector<double> grid, bool draw) {
 	if (grid[5] != -1) _grid[5] = grid[5];
 	if (grid[6] != -1) _grid[6] = grid[6];
 
-	// draw grid if there is a background on which to draw
-	if (_level && draw) {
-		// remove old grid
-		// background[0] -> skybox
-		// background[1] -> ground
-		_background->removeChildren(2, _background->getNumChildren());
+	// lock thread from playing with _background
+	MUTEX_LOCK(&(_thread_mutex));
 
-		// draw new grid
+	// remove old grid
+	for (unsigned int i = 0; i < _background->getNumChildren(); i++) {
+		osg::Group *test = dynamic_cast<osg::Group *>(_background->getChild(i));
+		if (test && !test->getName().compare(std::string("grid")))
+			_background->removeChild(test);
+	}
+
+	// draw grid if there is a background on which to draw
+	if (_level == rs::Level::Outdoors && static_cast<int>(_grid[6]) && draw) {
 		this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 	}
+
+	// unlock for thread drawing
+	MUTEX_UNLOCK(&(_thread_mutex));
 }
 
 void Scene::setHighlight(bool highlight) {
@@ -549,13 +562,11 @@ void Scene::setLevel(int level) {
 	// set new level
 	_level = level;
 
-	// remove background pieces
-	if (_background && _background->getNumChildren()) {
-		_background->removeChildren(0, _background->getNumChildren());
-	}
-
-	// level==NONE, return
+	// level == NONE, return
 	if (_level == rs::Level::None) return;
+
+	// lock threaded add/remove
+	MUTEX_LOCK(&(_thread_mutex));
 
 	// draw new level
 	switch (level) {
@@ -571,6 +582,9 @@ void Scene::setLevel(int level) {
 			this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 			break;
 	}
+
+	// unlock threaded add/remove
+	MUTEX_UNLOCK(&(_thread_mutex));
 }
 
 void Scene::setMouseHandler(rsScene::MouseHandler *mh) {
@@ -677,12 +691,8 @@ int Scene::setupScene(double w, double h, bool pause) {
 
 	// draw background pieces for levels
 	_background = new osg::Group();
+	_background->setName("background");
 	_scene->addChild(_background);
-	this->setLevel(rs::Level::Outdoors);
-
-	// optimize the scene graph, remove redundancies
-	osgUtil::Optimizer optimizer;
-	optimizer.optimize(_root);
 
 	// event handler
 	_viewer->addEventHandler(dynamic_cast<KeyboardHandler*>(this));
@@ -848,7 +858,7 @@ void Scene::draw_board(double xsize, double ysize) {
 	geode->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
 	geode->setName("board");
 	// add to scene
-	_background->addChild(geode);
+	_staging[2]->addChild(geode);
 }
 
 void Scene::draw_grid(double tics, double hash, double minx, double maxx, double miny, double maxy, double enabled) {
@@ -857,6 +867,10 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 	// rendering bins don't seem to work.  add all to opaque_bin and let it sort
 	// from top down.  first thing listed is first drawn.
 	if (static_cast<int>(enabled)) {
+		// grid group
+		osg::ref_ptr<osg::Group> group = new osg::Group();
+		group->setName("grid");
+
 		// x- and y-axis lines
 		osg::ref_ptr<osg::Geode> gridGeode3 = new osg::Geode();
 		osg::ref_ptr<osg::Geometry> gridLines3 = new osg::Geometry();
@@ -909,7 +923,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		// add to scene
 		gridGeode3->addDrawable(gridLines3);
 		gridGeode3->setName("axes");
-		_background->addChild(gridGeode3);
+		group->addChild(gridGeode3);
 
 		// x grid numbering
 		osg::ref_ptr<osg::Billboard> xnum_billboard = new osg::Billboard();
@@ -961,7 +975,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xnum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		xnum_billboard->setName("xnumbering");
-		_background->addChild(xnum_billboard);
+		group->addChild(xnum_billboard);
 
 		// y grid numbering
 		osg::ref_ptr<osg::Billboard> ynum_billboard = new osg::Billboard();
@@ -1004,7 +1018,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		ynum_billboard->setName("ynumbering");
-		_background->addChild(ynum_billboard);
+		group->addChild(ynum_billboard);
 
 		// x-axis label
 		osg::ref_ptr<osg::Billboard> xbillboard = new osg::Billboard();
@@ -1037,7 +1051,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xbillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		xbillboard->setName("xlabel");
-		_background->addChild(xbillboard);
+		group->addChild(xbillboard);
 
 		// y-axis label
 		osg::ref_ptr<osg::Billboard> ybillboard = new osg::Billboard();
@@ -1069,7 +1083,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ybillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		ybillboard->setName("ylabel");
-		_background->addChild(ybillboard);
+		group->addChild(ybillboard);
 
 		// grid lines for major markings
 		double minx2 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.01 : 0.99)*minx/hash))*hash;
@@ -1112,7 +1126,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		// add to scene
 		gridGeode2->addDrawable(gridLines2);
 		gridGeode2->setName("hash");
-		_background->addChild(gridGeode2);
+		group->addChild(gridGeode2);
 
 		// grid lines for sub-markings
 		double minx1 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.001 : 0.999)*minx/tics))*tics;
@@ -1155,7 +1169,10 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		// add to scene
 		gridGeode->addDrawable(gridLines);
 		gridGeode->setName("tics");
-		_background->addChild(gridGeode);
+		group->addChild(gridGeode);
+
+		// add group to staging
+		_staging[2]->addChild(group);
 	}
 }
 
@@ -1173,15 +1190,15 @@ void Scene::draw_ground(void) {
 	geode->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin");
 	geode->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.298, 0.424, 0.200, 1)), osg::StateAttribute::OVERRIDE);
-	geode->setName("ground");
 
 	// transform
 	osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
 	transform->setScale(osg::Vec3d(10, 10, 0));
 	transform->addChild(geode);
+	transform->setName("ground");
 
 	// add to scene
-	_background->addChild(transform);
+	_staging[2]->addChild(transform);
 }
 
 void Scene::draw_hud(double w, double h, bool paused) {
@@ -1293,7 +1310,7 @@ void Scene::draw_skybox(void) {
 	transform->setCullingActive(false);
 	transform->addChild(geode);
 	transform->setName("skybox");
-	_background->addChild(transform);
+	_staging[2]->addChild(transform);
 }
 
 void* Scene::graphics_thread(void *arg) {
@@ -1342,7 +1359,6 @@ void* Scene::graphics_thread(void *arg) {
 	p->setupScene(traits->width, traits->height, 1);
 
 	// thread is now running
-	MUTEX_INIT(&(p->_thread_mutex));
 	p->_thread = true;
 
 	// viewer event handlers
@@ -1362,7 +1378,9 @@ void* Scene::graphics_thread(void *arg) {
 
 		// update thread & scene elements
 		p->_viewer->frame();
+		MUTEX_LOCK(&(p->_thread_mutex));
 		p->addAndRemoveChildren();
+		MUTEX_UNLOCK(&(p->_thread_mutex));
 
 		// pause for proper frame rate
 		osg::Timer_t endFrameTick = osg::Timer::instance()->tick();

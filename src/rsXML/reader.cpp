@@ -1300,6 +1300,61 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				}
 			}
 		}
+		else if ( !strcmp(node->Value(), "stand") ) {
+			_robot.push_back(new Linkbot(rs::LinkbotL, rsLinkbot::Preconfigs::Stand, _trace));
+			int first = _robot.size() - 1;
+			_robot.push_back(new Linkbot(rs::LinkbotL, rsLinkbot::Preconfigs::Stand, _trace));
+			int second = _robot.size() - 1;
+			node->QueryIntAttribute("id", &i);
+			_robot[first]->setID(i);
+			_robot[second]->setID(i + 1);
+			_robot[first]->addConnector(new Conn(0, rs::Left, -1, 1, 1, _robot[first]->getID(), 1, rsLinkbot::Connectors::Bridge));
+			_robot[second]->addConnector(new Conn(0, rs::Left, -1, 1, 1, _robot[first]->getID(), 2, rsLinkbot::Connectors::Bridge));
+			_robot[first]->addConnector(new Conn(0, 0, -1, 2, 2, _robot[first]->getID(), 1, rsLinkbot::Connectors::Simple));
+			_robot[first]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::Faceplate, 2, 2, _robot[first]->getID(), 2, rsLinkbot::Connectors::Simple));
+			_robot[second]->addConnector(new Conn(0, 0, -1, 2, 2, _robot[second]->getID(), 1, rsLinkbot::Connectors::Simple));
+			_robot[second]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::Faceplate, 2, 2, _robot[second]->getID(), 2, rsLinkbot::Connectors::Simple));
+			if ( (ele = node->FirstChildElement("led")) ) {
+				a = 0; b = 0; c = 0; d = 0;
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_robot[first]->setLED(a, b, c, d);
+				_robot[second]->setLED(a, b, c, d);
+			}
+			if ( (ele = node->FirstChildElement("name")) ) {
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
+				_robot[first]->setName(str);
+				_robot[second]->setName(str);
+			}
+			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryDoubleAttribute("z", &c);
+				_robot[first]->setPosition(a, b, c);
+			}
+			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0, d = 0;
+				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryDoubleAttribute("theta", &b);
+					ele->QueryDoubleAttribute("phi", &c);
+					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
+				}
+				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryDoubleAttribute("x", &a);
+					ele->QueryDoubleAttribute("y", &b);
+					ele->QueryDoubleAttribute("z", &c);
+					ele->QueryDoubleAttribute("w", &d);
+					_robot[first]->setRotation(a, b, c, d);
+				}
+				else {
+					_robot[first]->setRotation(0, 0, 0, 1);
+				}
+			}
+		}
 #endif
 #ifdef RS_MINDSTORMS
 		else if ( !strcmp(node->Value(), "ev3") ) {

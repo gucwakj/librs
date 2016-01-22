@@ -485,6 +485,9 @@ tinyxml2::XMLElement* Writer::getOrCreatePreconfig(int form, int shape, int id) 
 		case rsLinkbot::Preconfigs::GroupBow:
 			node = _doc.NewElement("groupbow");
 			break;
+		case rsLinkbot::Preconfigs::Inchworm:
+			node = _doc.NewElement("inchworm");
+			break;
 	}
 	node->SetAttribute("id", id);
 	node->SetAttribute("form", form);

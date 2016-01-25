@@ -128,16 +128,6 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 			break;
 	}
 
-	if (type == Connectors::Gripper) {
-		_conn.push_back(Connector());
-		_conn.back().d_side = -1;
-		_conn.back().d_type = -1;
-		_conn.back().face = face;
-		_conn.back().type = type;
-		_conn.back().orientation = orientation;
-		this->build_gripper(_conn.back(), 3);
-	}
-
 	// set body parameters
 	dBodySetPosition(_conn.back().body, P1[0], P1[1], P1[2]);
 	dQuaternion Q = {Q1[3], Q1[0], Q1[1], Q1[2]};

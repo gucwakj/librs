@@ -488,6 +488,9 @@ tinyxml2::XMLElement* Writer::getOrCreatePreconfig(int form, int shape, int id) 
 		case rsLinkbot::Preconfigs::Inchworm:
 			node = _doc.NewElement("inchworm");
 			break;
+		case rsLinkbot::Preconfigs::Lift:
+			node = _doc.NewElement("lift");
+			break;
 		case rsLinkbot::Preconfigs::Stand:
 			node = _doc.NewElement("stand");
 			break;

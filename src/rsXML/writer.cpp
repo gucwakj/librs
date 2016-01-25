@@ -491,6 +491,9 @@ tinyxml2::XMLElement* Writer::getOrCreatePreconfig(int form, int shape, int id) 
 		case rsLinkbot::Preconfigs::Lift:
 			node = _doc.NewElement("lift");
 			break;
+		case rsLinkbot::Preconfigs::Omnidrive:
+			node = _doc.NewElement("omnidrive");
+			break;
 		case rsLinkbot::Preconfigs::Snake:
 			node = _doc.NewElement("snake");
 			break;

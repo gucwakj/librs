@@ -31,7 +31,7 @@ Linkbot::Linkbot(short form) : Robot(form) {
 	_bigwheel_radius = 0.05080;
 	_bridge_length = 0.13350;
 	_cubic_length = 0.07115;
-	_omni_length = 0.15250;
+	_omni_length = 0.10175;
 	_smallwheel_radius = 0.04445;
 	_tinywheel_radius = 0.04128;
 }
@@ -61,11 +61,11 @@ const rs::Pos Linkbot::getConnFacePosition(short type, short side, short orienta
 	}
 	else if (type == Connectors::Omniplate) {
 		if (side == Connectors::Side2)
-			return P.add(Q.multiply(0, 0, -_omni_length + 2*_face_radius));
+			return P.add(Q.multiply(0, 0, -_omni_length));
 		else if (side == Connectors::Side3)
-			return P.add(Q.multiply(0, _omni_length - 2*_face_radius, 0));
+			return P.add(Q.multiply(0, _omni_length, 0));
 		else if (side == Connectors::Side4)
-			return P.add(Q.multiply(0, _omni_length - 2*_face_radius, -_omni_length + 2*_face_radius));
+			return P.add(Q.multiply(0, _omni_length, -_omni_length));
 	}
 	else if (type == Connectors::Simple)
 		return P.add(Q.multiply(this->getConnDepth(), 0, 0));
@@ -126,7 +126,7 @@ const rs::Pos Linkbot::getConnBodyPosition(short type, short orientation, const 
 	else if (type == Connectors::Gripper)
 		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::Omniplate)
-		return P.add(Q.multiply(this->getConnDepth()/2, _omni_length/2 - _face_radius, -_omni_length/2 + _face_radius));
+		return P.add(Q.multiply(this->getConnDepth()/2, _omni_length/2, -_omni_length/2));
 	else if (type == Connectors::Simple)
 		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::SmallWheel)

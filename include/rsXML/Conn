@@ -1,6 +1,7 @@
 #ifndef RSXML_CONN_
 #define RSXML_CONN_
 
+#include <rs/Enum>
 #include <rs/Macros>
 
 namespace rsXML {
@@ -10,7 +11,7 @@ namespace rsXML {
 		// public functions
 		public:
 			Conn(void);
-			Conn(double, int, int, int, int, int, int, int);
+			Conn(double, int, int, int, int, int, int, int, int = rs::Right);
 			virtual ~Conn(void) {};
 
 			double getSize(void);
@@ -18,6 +19,7 @@ namespace rsXML {
 			int getFace1(void);
 			int getFace2(void);
 			int getOrientation(void);
+			int getOrientation2(void);
 			int getRobot(void);
 			int getSide(void);
 			int getType(void);
@@ -30,6 +32,7 @@ namespace rsXML {
 			int _face1;
 			int _face2;
 			int _orientation;
+			int _orientation2;
 			int _robot;
 			int _side;
 			int _type;

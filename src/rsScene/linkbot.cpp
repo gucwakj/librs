@@ -47,7 +47,8 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 	bodyled->setCullingActive(false);
 
 	// draw cap 1
-	rs::Quat q1 = this->getRobotBodyQuaternion(Bodies::Cap1, rs::D2R(a[Bodies::Joint1]), q);
+	_angles[Bodies::Joint1] = rs::D2R(a[Bodies::Joint1]);
+	rs::Quat q1 = this->getRobotBodyQuaternion(Bodies::Cap1, _angles[Bodies::Joint1], q);
 	rs::Pos p1 = this->getRobotBodyPosition(Bodies::Cap1, p, q);
 	body[Bodies::Cap1] = osgDB::readNodeFile(_model_path + "linkbot/face_rotate.3ds");
 	body[Bodies::Cap1]->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0, 0, 0, 1)));
@@ -55,7 +56,8 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 	pat[Bodies::Cap1]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 
 	// draw cap 2
-	q1 = this->getRobotBodyQuaternion(Bodies::Cap2, rs::D2R(a[Bodies::Joint2]), q);
+	_angles[Bodies::Joint2] = rs::D2R(a[Bodies::Joint2]);
+	q1 = this->getRobotBodyQuaternion(Bodies::Cap2, _angles[Bodies::Joint2], q);
 	p1 = this->getRobotBodyPosition(Bodies::Cap2, p, q);
 	if (this->getForm() == rs::LinkbotI) {
 		body[Bodies::Cap2] = osgDB::readNodeFile(_model_path + "linkbot/face_fixed.3ds");
@@ -69,7 +71,8 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 	pat[Bodies::Cap2]->setAttitude(osg::Quat(q1[0], q1[1], q1[2], q1[3]));
 
 	// draw cap 3
-	q1 = this->getRobotBodyQuaternion(Bodies::Cap3, rs::D2R(a[Bodies::Joint3]), q);
+	_angles[Bodies::Joint3] = rs::D2R(a[Bodies::Joint3]);
+	q1 = this->getRobotBodyQuaternion(Bodies::Cap3, _angles[Bodies::Joint3], q);
 	p1 = this->getRobotBodyPosition(Bodies::Cap3, p, q);
 	if (this->getForm() == rs::LinkbotL) {
 		body[Bodies::Cap3] = osgDB::readNodeFile(_model_path + "linkbot/face_fixed.3ds");
@@ -110,7 +113,7 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 	group->setName(std::string("robot").append(std::to_string(this->getID())));
 }
 
-void Linkbot::drawConnector(Group *group, int type, int face, int orientation, double size, int side, int conn) {
+void Linkbot::drawConnector(Group *group, int type, int face, int orientation, double size, int side, int conn, int orientation2) {
 	// get robot p&q
 	osg::PositionAttitudeTransform *pat;
 	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + Bodies::Body));
@@ -118,7 +121,7 @@ void Linkbot::drawConnector(Group *group, int type, int face, int orientation, d
 	osg::Quat q = pat->getAttitude();
 
 	// get face p&q
-	rs::Quat Q1 = this->getRobotBodyQuaternion(face, 0, rs::Quat(q[0], q[1], q[2], q[3]));
+	rs::Quat Q1 = this->getRobotBodyQuaternion(face, _angles[face - 1], rs::Quat(q[0], q[1], q[2], q[3]));
 	rs::Pos P1 = this->getRobotFacePosition(face, rs::Pos(p[0], p[1], p[2]), rs::Quat(q[0], q[1], q[2], q[3]));
 	if (conn == -1) {
 		P1 = this->getConnBodyPosition(type, orientation, P1, Q1);
@@ -128,8 +131,8 @@ void Linkbot::drawConnector(Group *group, int type, int face, int orientation, d
 		P1 = this->getConnFacePosition(type, side, orientation, P1, Q1);
 		Q1 = this->getConnFaceQuaternion(type, side, orientation, Q1);
 		type = conn;
-		P1 = this->getConnBodyPosition(type, orientation, P1, Q1);
-		Q1 = this->getConnBodyQuaternion(type, orientation, Q1);
+		P1 = this->getConnBodyPosition(type, orientation2, P1, Q1);
+		Q1 = this->getConnBodyQuaternion(type, orientation2, Q1);
 	}
 
 	// PAT to transform mesh

@@ -476,6 +476,9 @@ tinyxml2::XMLElement* Writer::getOrCreatePreconfig(int form, int shape, int id) 
 		case rsLinkbot::Preconfigs::Bow:
 			node = _doc.NewElement("bow");
 			break;
+		case rsLinkbot::Preconfigs::Explorer:
+			node = _doc.NewElement("explorer");
+			break;
 		case rsLinkbot::Preconfigs::FourBotDrive:
 			node = _doc.NewElement("fourbotdrive");
 			break;

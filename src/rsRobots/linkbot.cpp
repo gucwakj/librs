@@ -93,7 +93,7 @@ const rs::Quat Linkbot::getConnFaceQuaternion(short type, short side, short orie
 			return Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
 		else if (side == Connectors::Side5) {
 			Q.multiply(0, 0, sin(-0.785398), cos(-0.785398));
-			return Q.multiply(sin(-0.785398), 0, 0, cos(-0.785398));
+			return Q.multiply(0, sin(-0.785398), 0, cos(-0.785398));
 		}
 	}
 	else if (type == Connectors::Omniplate)

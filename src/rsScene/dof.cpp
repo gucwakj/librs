@@ -86,7 +86,7 @@ void Dof::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::Vec 
 	group->setName(std::string("robot").append(std::to_string(this->getID())));
 }
 
-void Dof::drawConnector(Group *group, int type, int face, int orientation, double size, int side, int conn) {
+void Dof::drawConnector(Group *group, int type, int face, int orientation, double size, int side, int conn, int orientation2) {
 	// get robot p&q
 	osg::PositionAttitudeTransform *pat;
 	pat = dynamic_cast<osg::PositionAttitudeTransform *>(group->getChild(2 + Bodies::Body));

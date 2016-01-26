@@ -17,7 +17,11 @@ namespace rsScene {
 			virtual ~Linkbot(void);
 
 			virtual void draw(Group*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
-			virtual void drawConnector(Group*, int, int, int, double, int, int);
+			virtual void drawConnector(Group*, int, int, int, double, int, int, int = rs::Right);
+
+		// private data
+		private:
+			float _angles[3];
 	};
 
 } // namespace rsScene

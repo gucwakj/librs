@@ -13,7 +13,7 @@ namespace rsSim {
 			Dof(short, float = 1);
 			virtual ~Dof(void);
 
-			virtual int addConnector(int, int, int = rs::Right, double = 0, int = 1, int = -1);
+			virtual int addConnector(int, int, int = rs::Right, double = 0, int = 1, int = -1, int = rs::Right);
 			virtual double getAngle(int);
 			virtual dBodyID getBodyID(short);
 			virtual const rs::Pos getCoM(double&);

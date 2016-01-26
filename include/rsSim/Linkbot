@@ -13,7 +13,7 @@ namespace rsSim {
 			Linkbot(int);
 			virtual ~Linkbot(void);
 
-			virtual int addConnector(int, int, int = rs::Right, double = 0, int = 1, int = -1);
+			virtual int addConnector(int, int, int = rs::Right, double = 0, int = 1, int = -1, int = rs::Right);
 			virtual void calculateTrackwidth(void);
 			virtual const rs::Pos getCoM(double&);
 			const rs::Vec getJoints(void);

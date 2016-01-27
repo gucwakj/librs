@@ -133,7 +133,7 @@ const rs::Pos Dof::getCoM(double &mass) {
 	for (unsigned int i = 0; i < _body.size(); i++) {
 		dMass m;
 		dBodyGetMass(_body[i], &m);
-		const float *p = dBodyGetPosition(_body[i]);
+		const double *p = dBodyGetPosition(_body[i]);
 		x += m.mass*p[0];
 		y += m.mass*p[1];
 		z += m.mass*p[2];
@@ -143,7 +143,7 @@ const rs::Pos Dof::getCoM(double &mass) {
 	for (unsigned int i = 0; i < _conn.size(); i++) {
 		dMass m;
 		dBodyGetMass(_conn[i].body, &m);
-		const float *p = dBodyGetPosition(_conn[i].body);
+		const double *p = dBodyGetPosition(_conn[i].body);
 		x += m.mass*p[0];
 		y += m.mass*p[1];
 		z += m.mass*p[2];

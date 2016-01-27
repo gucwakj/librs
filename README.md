@@ -182,7 +182,7 @@ used to put all libraries into one folder for easier access.
 ```
 $ cd deps/ode/
 $ sh autogen.sh
-$ ./configure --prefix=$PWD"/sys/" --enable-single-precision --enable-shared \
+$ ./configure --prefix=$PWD"/sys/" --enable-double-precision --enable-shared \
 	--with-trimesh=none --with-drawstuff=none \
 	--disable-demos --disable-asserts
 $ make
@@ -191,10 +191,9 @@ $ cd ../../
 ```
 
 #### LibRS
-Disabling the
-Graphics and XML libraries are useful for running headless simulations.  Also
-disabling the unnecessary robots is useful to minimize the size of the library.
-The five libraries of LibRS are built into build/lib.
+Disabling the Graphics and XML libraries are useful for running headless
+simulations.  Also disabling the unnecessary robots is useful to minimize the
+size of the library.  The five libraries of LibRS are built into build/lib.
 ```
 $ mkdir build/
 $ cd build/

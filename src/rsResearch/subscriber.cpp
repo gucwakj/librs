@@ -29,6 +29,13 @@ Subscriber::Subscriber(std::string ip, std::string filter, std::string id, short
 	_filter = filter.compare("hard") ? 0 : 1;
 	_filter_size = sub.size();
 	zmq_setsockopt(_socket, ZMQ_SUBSCRIBE, sub.c_str(), _filter_size);
+
+	// initialize variables
+	_angle = 0;
+	_time = 0;
+	_v = 0;
+	_r = 0;
+	_phi = 0;
 }
 
 Subscriber::~Subscriber(void) {
@@ -59,14 +66,14 @@ float Subscriber::getPhi(void) {
 	return _phi;
 }
 
-void Subscriber::receive(void) {
+short Subscriber::receive(void) {
 	// get string
 	char string[256];
 	int size = zmq_recv(_socket, string, 255, ZMQ_DONTWAIT);
 
 	// no message right now, just return
 	if (size == -1) {
-		return;
+		return -1;
 	}
 
 	// truncate string
@@ -84,5 +91,6 @@ void Subscriber::receive(void) {
 		_time = 0;
 		sscanf(&string[_filter_size], "%u %f", &_time, &_angle);
 	}
+	return 0;
 }
 

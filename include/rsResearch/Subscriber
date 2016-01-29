@@ -21,7 +21,7 @@ namespace rsResearch {
 			float getR(void);
 			float getPhi(void);
 			
-			void receive(void);
+			short receive(void);
 
 		// private data
 		private:

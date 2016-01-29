@@ -17,7 +17,7 @@ namespace rsScene {
 			virtual ~Dof(void);
 
 			virtual void draw(Group*, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, bool);
-			virtual void drawConnector(Group*, int, int, int, double, int, int);
+			virtual void drawConnector(Group*, int, int, int, double, int, int, int = rs::Right);
 	};
 
 } // namespace rsScene

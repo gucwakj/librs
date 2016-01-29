@@ -13,7 +13,7 @@ namespace rsScene {
 			ModularRobot(void) : rsRobots::Robot(rs::Robot) {};
 			virtual ~ModularRobot(void) {};
 
-			virtual void drawConnector(Group*, int, int, int, double, int, int) { return; };
+			virtual void drawConnector(Group*, int, int, int, double, int, int, int = rs::Right) { return; };
 	};
 
 } // namepsace rsScene

@@ -54,7 +54,7 @@ Linkbot::~Linkbot(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-int Linkbot::addConnector(int type, int face, int orientation, double size, int side, int conn) {
+int Linkbot::addConnector(int type, int face, int orientation, double size, int side, int conn, int orientation2) {
 	// get connector body position
 	rs::Pos P1 = this->getRobotFacePosition(face, this->getPosition(), this->getQuaternion());
 	rs::Quat Q1 = this->getRobotBodyQuaternion(face, _motor[face-1].theta, this->getQuaternion());
@@ -65,8 +65,8 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 	else {
 		P1 = this->getConnFacePosition(type, side, orientation, P1, Q1);
 		Q1 = this->getConnFaceQuaternion(type, side, orientation, Q1);
-		P1 = this->getConnBodyPosition(conn, orientation, P1, Q1);
-		Q1 = this->getConnBodyQuaternion(conn, orientation, Q1);
+		P1 = this->getConnBodyPosition(conn, orientation2, P1, Q1);
+		Q1 = this->getConnBodyQuaternion(conn, orientation2, Q1);
 	}
 
 	// create new connector
@@ -126,16 +126,6 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		case Connectors::Wheel:
 			this->build_wheel(_conn.back(), size);
 			break;
-	}
-
-	if (type == Connectors::Gripper) {
-		_conn.push_back(Connector());
-		_conn.back().d_side = -1;
-		_conn.back().d_type = -1;
-		_conn.back().face = face;
-		_conn.back().type = type;
-		_conn.back().orientation = orientation;
-		this->build_gripper(_conn.back(), 3);
 	}
 
 	// set body parameters

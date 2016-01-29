@@ -33,7 +33,7 @@ namespace rsScene {
 			Scene(void);
 			virtual ~Scene(void);
 
-			void addAndRemoveChildren(void);
+			void addAndRemoveChildren(bool = false);
 			void addChildrenToBackground(void);
 			void addHighlight(int, bool = false, bool = true, bool = true, const rs::Vec& = rs::Vec(1, 1, 0));
 			void changeID(int);
@@ -93,7 +93,7 @@ namespace rsScene {
 			osg::Camera *_camera;				// camera to view scene
 			osg::Group *_background;			// pieces of each level which are interchangeable
 			osg::Group *_root;					// root node of scene
-			osg::Group *_staging[2];			// temp variable for adding objects
+			osg::Group *_staging[3];			// temp variable for adding objects
 			osgViewer::Viewer *_viewer;			// viewer
 			osgShadow::ShadowedScene *_scene;	// shadow root of scene
 			std::string _tex_path;				// path to texture objects

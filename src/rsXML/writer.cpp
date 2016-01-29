@@ -476,8 +476,35 @@ tinyxml2::XMLElement* Writer::getOrCreatePreconfig(int form, int shape, int id) 
 		case rsLinkbot::Preconfigs::Bow:
 			node = _doc.NewElement("bow");
 			break;
+		case rsLinkbot::Preconfigs::Explorer:
+			node = _doc.NewElement("explorer");
+			break;
 		case rsLinkbot::Preconfigs::FourBotDrive:
 			node = _doc.NewElement("fourbotdrive");
+			break;
+		case rsLinkbot::Preconfigs::FourWheelDrive:
+			node = _doc.NewElement("fourwheeldrive");
+			break;
+		case rsLinkbot::Preconfigs::FourWheelExplorer:
+			node = _doc.NewElement("fourwheelexplorer");
+			break;
+		case rsLinkbot::Preconfigs::GroupBow:
+			node = _doc.NewElement("groupbow");
+			break;
+		case rsLinkbot::Preconfigs::Inchworm:
+			node = _doc.NewElement("inchworm");
+			break;
+		case rsLinkbot::Preconfigs::Lift:
+			node = _doc.NewElement("lift");
+			break;
+		case rsLinkbot::Preconfigs::Omnidrive:
+			node = _doc.NewElement("omnidrive");
+			break;
+		case rsLinkbot::Preconfigs::Snake:
+			node = _doc.NewElement("snake");
+			break;
+		case rsLinkbot::Preconfigs::Stand:
+			node = _doc.NewElement("stand");
 			break;
 	}
 	node->SetAttribute("id", id);

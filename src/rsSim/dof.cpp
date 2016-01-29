@@ -54,7 +54,7 @@ Dof::~Dof(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-int Dof::addConnector(int type, int face, int orientation, double size, int side, int conn) {
+int Dof::addConnector(int type, int face, int orientation, double size, int side, int conn, int orientation2) {
 	// get connector body position
 	rs::Pos P1 = this->getRobotFacePosition(face, this->getPosition(), this->getQuaternion());
 	rs::Quat Q1 = this->getRobotBodyQuaternion(face, (this->getEnabled() == face) ? _motor[Bodies::Joint].theta : 0, this->getQuaternion());
@@ -65,8 +65,8 @@ int Dof::addConnector(int type, int face, int orientation, double size, int side
 	else {
 		P1 = this->getConnFacePosition(type, side, orientation, P1, Q1);
 		Q1 = this->getConnFaceQuaternion(type, side, orientation, Q1);
-		P1 = this->getConnBodyPosition(conn, orientation, P1, Q1);
-		Q1 = this->getConnBodyQuaternion(conn, orientation, Q1);
+		P1 = this->getConnBodyPosition(conn, orientation2, P1, Q1);
+		Q1 = this->getConnBodyQuaternion(conn, orientation2, Q1);
 	}
 
 	// create new connector

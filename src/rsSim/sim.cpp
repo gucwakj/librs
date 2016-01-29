@@ -119,9 +119,14 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l
 	// body
 	dBodyID *body = new dBodyID();
 	*body = dBodyCreate(_world);
+
+	// set position
 	dBodySetPosition(*body, p[0], p[1], p[2]);
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
 	dBodySetQuaternion(*body, Q);
+
+	// disable (fix in space) heavy bodies
+	if (mass > 1000) dBodyDisable(*body);
 
 	// mass
 	dMass m;
@@ -140,9 +145,14 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l
 	// create body
 	dBodyID *body = new dBodyID();
 	*body = dBodyCreate(_world);
+
+	// set position
 	dBodySetPosition(*body, p[0], p[1], p[2]);
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
 	dBodySetQuaternion(*body, Q);
+
+	// disable (fix in space) heavy bodies
+	if (mass > 1000) dBodyDisable(*body);
 
 	// mass
 	dMass m;
@@ -166,7 +176,12 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Vec &l, double mass) {
 	// create body
 	dBodyID *body = new dBodyID();
 	*body = dBodyCreate(_world);
+
+	// set position
 	dBodySetPosition(*body, p[0], p[1], p[2]);
+
+	// disable (fix in space) heavy bodies
+	if (mass > 1000) dBodyDisable(*body);
 
 	// mass
 	dMass m;

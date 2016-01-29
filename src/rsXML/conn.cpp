@@ -7,17 +7,20 @@ Conn::Conn(void) {
 	_conn = 0;
 	_face1 = 0;
 	_face2 = 0;
+	_orientation = 0;
+	_orientation2 = 0;
 	_robot = 0;
 	_side = 0;
 	_size = 0;
 	_type = 0;
 }
 
-Conn::Conn(double size, int orientation, int conn, int face1, int face2, int robot, int side, int type) {
+Conn::Conn(double size, int orientation, int conn, int face1, int face2, int robot, int side, int type, int orientation2) {
 	_conn = conn;
 	_face1 = face1;
 	_face2 = face2;
 	_orientation = orientation;
+	_orientation2 = orientation2;
 	_robot = robot;
 	_side = side;
 	_size = size;
@@ -45,6 +48,10 @@ int Conn::getFace2(void) {
 
 int Conn::getOrientation(void) {
 	return _orientation;
+}
+
+int Conn::getOrientation2(void) {
+	return _orientation2;
 }
 
 int Conn::getRobot(void) {

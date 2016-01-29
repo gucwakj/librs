@@ -62,7 +62,14 @@ float Subscriber::getPhi(void) {
 void Subscriber::receive(void) {
 	// get string
 	char string[256];
-	int size = zmq_recv(_socket, string, 255, 0);
+	int size = zmq_recv(_socket, string, 255, ZMQ_DONTWAIT);
+
+	// no message right now, just return
+	if (size == -1) {
+		return;
+	}
+
+	// truncate string
 	string[size] = 0;
 
 	// read from string

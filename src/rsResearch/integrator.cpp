@@ -35,7 +35,8 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 
 const rs::Vec Integrator::runStep(float newtime) {
 	// return vector
-	rs::Vec V(_num_robots + 1.f);
+	short size = _num_robots + 1;
+	rs::Vec V(size);
 
 	// integrate
 	int status = gsl_odeiv2_driver_apply(_driver, &_time, newtime, _array.data());

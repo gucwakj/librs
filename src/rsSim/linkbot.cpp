@@ -586,9 +586,6 @@ void Linkbot::build_faceplate(Connector &conn) {
 }
 
 void Linkbot::build_gripper(Connector &conn, int face) {
-	// create body
-	int i = (face == 1) ? 1 : -1;
-
 	// set mass of body
 	dMass m;
 	dMassSetBox(&m, 170, this->getConnDepth(), 2*this->getFaceRadius(), this->getConnHeight());
@@ -599,17 +596,17 @@ void Linkbot::build_gripper(Connector &conn, int face) {
 	// set geometry 0
 	geom[0] = dCreateBox(_space, this->getConnDepth(), 4*this->getFaceRadius(), this->getConnHeight()/2);
 	dGeomSetBody(geom[0], conn.body);
-	dGeomSetOffsetPosition(geom[0], -m.c[0], -i*this->getFaceRadius() - m.c[1], -m.c[2]);
+	dGeomSetOffsetPosition(geom[0], -m.c[0], this->getFaceRadius() - m.c[1], -m.c[2]);
 
 	// set geometry 1
 	geom[1] = dCreateBox(_space, 0.062, 0.04, this->getConnDepth());
 	dGeomSetBody(geom[1], conn.body);
-	dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 - 0.062/2 - m.c[0], -i*3*this->getFaceRadius() + i*0.02 - m.c[1], i*this->getConnHeight()/4 - i*this->getConnDepth()/2 - m.c[2]);
+	dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 - 0.062/2 - m.c[0], 3*this->getFaceRadius() - 0.02 - m.c[1], this->getConnDepth()/2 + 0.003 - m.c[2]);
 
 	// set geometry 2
-	geom[2] = dCreateBox(_space, 0.0344, 0.04, 0.007);
+	geom[2] = dCreateBox(_space, 0.0344, 0.04, 0.003);
 	dGeomSetBody(geom[2], conn.body);
-	dGeomSetOffsetPosition(geom[2], this->getConnDepth()/2 - 0.062 + 0.0344/2 - m.c[0], -i*3*this->getFaceRadius() + i*0.02 - m.c[1], i*this->getConnHeight()/4 - i*this->getConnDepth()/2 - i*0.007/2 - m.c[2]);
+	dGeomSetOffsetPosition(geom[2], this->getConnDepth()/2 - 0.062 + 0.0344/2 - m.c[0], 3*this->getFaceRadius() - 0.02 - m.c[1], -0.003/2 - m.c[2]);
 
 	// center body mass on geoms
 	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);

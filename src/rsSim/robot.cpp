@@ -18,10 +18,10 @@ Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	_seed = time(NULL);
 
 	// threading
-	MUTEX_INIT(&_goal_mutex);
-	MUTEX_INIT(&_success_mutex);
-	COND_INIT(&_success_cond);
-	MUTEX_INIT(&_theta_mutex);
+	RS_MUTEX_INIT(&_goal_mutex);
+	RS_MUTEX_INIT(&_success_mutex);
+	RS_COND_INIT(&_success_cond);
+	RS_MUTEX_INIT(&_theta_mutex);
 
 #ifdef RS_RESEARCH
 	_next_goal = 0;		// research: next cpg values to hit
@@ -33,10 +33,10 @@ Robot::~Robot(void) {
 	if (_sim) _sim->deleteRobot(this->getID());
 
 	// destroy mutexes
-	MUTEX_DESTROY(&_goal_mutex);
-	MUTEX_DESTROY(&_success_mutex);
-	COND_DESTROY(&_success_cond);
-	MUTEX_DESTROY(&_theta_mutex);
+	RS_MUTEX_DESTROY(&_goal_mutex);
+	RS_MUTEX_DESTROY(&_success_mutex);
+	RS_COND_DESTROY(&_success_cond);
+	RS_MUTEX_DESTROY(&_theta_mutex);
 }
 
 /**********************************************************
@@ -73,7 +73,7 @@ int Robot::moveJoint(int id, double angle) {
 
 int Robot::moveJointNB(int id, double angle) {
 	// lock goal
-	MUTEX_LOCK(&_goal_mutex);
+	RS_MUTEX_LOCK(&_goal_mutex);
 
 	// set new goal angles
 	if (_motor[id].omega < -rs::Epsilon) angle = -angle;
@@ -83,19 +83,19 @@ int Robot::moveJointNB(int id, double angle) {
 	_motor[id].mode = SEEK;
 
 	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
+	RS_MUTEX_LOCK(&_theta_mutex);
 	dJointEnable(_motor[id].id);
 	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
 	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
+	RS_MUTEX_UNLOCK(&_theta_mutex);
 
 	// set success to false
-	MUTEX_LOCK(&_motor[id].success_mutex);
+	RS_MUTEX_LOCK(&_motor[id].success_mutex);
 	_motor[id].success = false;
-	MUTEX_UNLOCK(&_motor[id].success_mutex);
+	RS_MUTEX_UNLOCK(&_motor[id].success_mutex);
 
 	// unlock goal
-	MUTEX_UNLOCK(&_goal_mutex);
+	RS_MUTEX_UNLOCK(&_goal_mutex);
 
 	// success
 	return 0;
@@ -111,7 +111,7 @@ int Robot::moveJointTo(int id, double angle) {
 
 int Robot::moveJointToNB(int id, double angle) {
 	// lock goal
-	MUTEX_LOCK(&_goal_mutex);
+	RS_MUTEX_LOCK(&_goal_mutex);
 
 	// set new goal angles
 	_motor[id].goal = rs::D2R(angle);
@@ -120,19 +120,19 @@ int Robot::moveJointToNB(int id, double angle) {
 	_motor[id].mode = SEEK;
 
 	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
+	RS_MUTEX_LOCK(&_theta_mutex);
 	dJointEnable(_motor[id].id);
 	dJointSetAMotorAngle(_motor[id].id, 0, _motor[id].theta);
 	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
+	RS_MUTEX_UNLOCK(&_theta_mutex);
 
 	// set success to false
-	MUTEX_LOCK(&_motor[id].success_mutex);
+	RS_MUTEX_LOCK(&_motor[id].success_mutex);
 	_motor[id].success = false;
-	MUTEX_UNLOCK(&_motor[id].success_mutex);
+	RS_MUTEX_UNLOCK(&_motor[id].success_mutex);
 
 	// unlock goal
-	MUTEX_UNLOCK(&_goal_mutex);
+	RS_MUTEX_UNLOCK(&_goal_mutex);
 
 	// success
 	return 0;
@@ -140,9 +140,9 @@ int Robot::moveJointToNB(int id, double angle) {
 
 int Robot::moveJointWait(int id) {
 	// wait for motion to complete
-	MUTEX_LOCK(&_motor[id].success_mutex);
-	while ( !_motor[id].success ) { COND_WAIT(&_motor[id].success_cond, &_motor[id].success_mutex); }
-	MUTEX_UNLOCK(&_motor[id].success_mutex);
+	RS_MUTEX_LOCK(&_motor[id].success_mutex);
+	while ( !_motor[id].success ) { RS_COND_WAIT(&_motor[id].success_cond, &_motor[id].success_mutex); }
+	RS_MUTEX_UNLOCK(&_motor[id].success_mutex);
 
 	// success
 	return 0;

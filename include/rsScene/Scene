@@ -99,10 +99,10 @@ namespace rsScene {
 			std::string _tex_path;				// path to texture objects
 			std::vector<double> _grid;			// grid
 			std::vector<std::string> _path;		// image paths
-			COND_T _graphics_cond;				// condition: graphics setup waiting
-			MUTEX_T _thread_mutex;				// mutex: thread running state
-			MUTEX_T _graphics_mutex;			// mutex: graphics setup complete
-			THREAD_T _osgThread;				// thread: graphics window
+			RS_COND_T _graphics_cond;			// condition: graphics setup waiting
+			RS_MUTEX_T _thread_mutex;			// mutex: thread running state
+			RS_MUTEX_T _graphics_mutex;			// mutex: graphics setup complete
+			RS_THREAD_T _osgThread;				// thread: graphics window
 	};
 
 } // namespace rsScene

@@ -41,14 +41,14 @@ Dof::Dof(short joint, float scale) : rsRobots::Robot(rs::Dof), rsRobots::Dof(joi
 	_motor[Bodies::Joint].theta = 0;
 
 	// init threading
-	MUTEX_INIT(&_motor[Bodies::Joint].success_mutex);
-	COND_INIT(&_motor[Bodies::Joint].success_cond);
+	RS_MUTEX_INIT(&_motor[Bodies::Joint].success_mutex);
+	RS_COND_INIT(&_motor[Bodies::Joint].success_cond);
 }
 
 Dof::~Dof(void) {
 	// delete mutexes
-	MUTEX_DESTROY(&_motor[Bodies::Joint].success_mutex);
-	COND_DESTROY(&_motor[Bodies::Joint].success_cond);
+	RS_MUTEX_DESTROY(&_motor[Bodies::Joint].success_mutex);
+	RS_COND_DESTROY(&_motor[Bodies::Joint].success_cond);
 }
 
 /**********************************************************
@@ -171,16 +171,16 @@ void Dof::moveJointSingular(bool wait) {
 	_motor[Bodies::Joint].state = POSITIVE;
 
 	// enable motor
-	MUTEX_LOCK(&_theta_mutex);
+	RS_MUTEX_LOCK(&_theta_mutex);
 	dJointEnable(_motor[Bodies::Joint].id);
 	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
 	dBodyEnable(_body[0]);
-	MUTEX_UNLOCK(&_theta_mutex);
+	RS_MUTEX_UNLOCK(&_theta_mutex);
 
 	// unsuccessful
-	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
+	RS_MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
 	_motor[Bodies::Joint].success = false;
-	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
+	RS_MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
 }
 #endif
 
@@ -218,8 +218,8 @@ int Dof::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyID ba
 
 void Dof::simPreCollisionThread(void) {
 	// lock angle and goal
-	MUTEX_LOCK(&_goal_mutex);
-	MUTEX_LOCK(&_theta_mutex);
+	RS_MUTEX_LOCK(&_goal_mutex);
+	RS_MUTEX_LOCK(&_theta_mutex);
 
 	// store current angle
 	_motor[Bodies::Joint].theta = this->mod_angle(_motor[Bodies::Joint].theta, dJointGetHingeAngle(_motor[Bodies::Joint].joint), dJointGetHingeAngleRate(_motor[Bodies::Joint].joint)) - _motor[Bodies::Joint].offset;
@@ -255,16 +255,16 @@ void Dof::simPreCollisionThread(void) {
 #endif
 
 	// unlock angle and goal
-	MUTEX_UNLOCK(&_theta_mutex);
-	MUTEX_UNLOCK(&_goal_mutex);
+	RS_MUTEX_UNLOCK(&_theta_mutex);
+	RS_MUTEX_UNLOCK(&_goal_mutex);
 }
 
 void Dof::simPostCollisionThread(void) {
 	// lock angle and goal
-	MUTEX_LOCK(&_goal_mutex);
-	MUTEX_LOCK(&_theta_mutex);
-	MUTEX_LOCK(&_success_mutex);
-	MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
+	RS_MUTEX_LOCK(&_goal_mutex);
+	RS_MUTEX_LOCK(&_theta_mutex);
+	RS_MUTEX_LOCK(&_success_mutex);
+	RS_MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
 
 	// zero velocity == stopped
 	_motor[Bodies::Joint].stopping += (!(int)(dJointGetAMotorParam(_motor[Bodies::Joint].id, dParamVel)*1000) );
@@ -272,16 +272,16 @@ void Dof::simPostCollisionThread(void) {
 	if (_motor[Bodies::Joint].stopping == 50) {
 		_motor[Bodies::Joint].stopping = 0;
 		_motor[Bodies::Joint].success = 1;
-		COND_SIGNAL(&_motor[Bodies::Joint].success_cond);
+		RS_COND_SIGNAL(&_motor[Bodies::Joint].success_cond);
 		_success = true;
-		COND_SIGNAL(&_success_cond);
+		RS_COND_SIGNAL(&_success_cond);
 	}
 
 	// unlock mutex
-	MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
-	MUTEX_UNLOCK(&_success_mutex);
-	MUTEX_UNLOCK(&_theta_mutex);
-	MUTEX_UNLOCK(&_goal_mutex);
+	RS_MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
+	RS_MUTEX_UNLOCK(&_success_mutex);
+	RS_MUTEX_UNLOCK(&_theta_mutex);
+	RS_MUTEX_UNLOCK(&_goal_mutex);
 }
 
 /**********************************************************

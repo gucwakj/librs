@@ -63,7 +63,7 @@ namespace rsSim {
 		private:
 			struct RobotNode {
 				rsSim::Robot *robot;
-				THREAD_T thread;
+				RS_THREAD_T thread;
 			};
 
 			bool _collision;					// flag: perform collisions
@@ -79,13 +79,13 @@ namespace rsSim {
 			dSpaceID _space;					// ode: space for robots
 			dJointGroupID _group;				// ode: joint group
 			std::vector<RobotNode> _robot;		// list: robots
-			COND_T _running_cond;				// condition: actively running simulation
-			MUTEX_T _clock_mutex;				// mutex: getting the clock
-			MUTEX_T _pause_mutex;				// mutex: paused simulation
-			MUTEX_T _robot_mutex;				// mutex: ground collisions
-			MUTEX_T _running_mutex;				// mutex: actively running program
-			MUTEX_T _step_mutex;				// mutex: getting the step value
-			THREAD_T _simulation;				// thread: simulation
+			RS_COND_T _running_cond;			// condition: actively running simulation
+			RS_MUTEX_T _clock_mutex;			// mutex: getting the clock
+			RS_MUTEX_T _pause_mutex;				// mutex: paused simulation
+			RS_MUTEX_T _robot_mutex;				// mutex: ground collisions
+			RS_MUTEX_T _running_mutex;				// mutex: actively running program
+			RS_MUTEX_T _step_mutex;				// mutex: getting the step value
+			RS_THREAD_T _simulation;				// thread: simulation
 #ifdef RS_RESEARCH
 			rsResearch::Integrator _integ;		// research: integrator class
 #endif

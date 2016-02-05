@@ -39,16 +39,16 @@ Mindstorms::Mindstorms(int form) : rsRobots::Robot(form), rsRobots::Mindstorms(f
 		_motor[i].tau_max = 6;
 		_motor[i].timeout = 0;
 		_motor[i].theta = 0;
-		MUTEX_INIT(&_motor[i].success_mutex);
-		COND_INIT(&_motor[i].success_cond);
+		RS_MUTEX_INIT(&_motor[i].success_mutex);
+		RS_COND_INIT(&_motor[i].success_cond);
 	}
 }
 
 Mindstorms::~Mindstorms(void) {
 	// delete mutexes
 	for (int i = 0; i < _dof; i++) {
-		MUTEX_DESTROY(&_motor[i].success_mutex);
-		COND_DESTROY(&_motor[i].success_cond);
+		RS_MUTEX_DESTROY(&_motor[i].success_mutex);
+		RS_COND_DESTROY(&_motor[i].success_cond);
 	}
 }
 
@@ -141,8 +141,8 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 
 void Mindstorms::simPreCollisionThread(void) {
 	// lock angle and goal
-	MUTEX_LOCK(&_goal_mutex);
-	MUTEX_LOCK(&_theta_mutex);
+	RS_MUTEX_LOCK(&_goal_mutex);
+	RS_MUTEX_LOCK(&_theta_mutex);
 
 	// get body rotation from world
 	const double *R = dBodyGetRotation(_body[Bodies::Body]);
@@ -307,43 +307,43 @@ void Mindstorms::simPreCollisionThread(void) {
 	}
 
 	// unlock angle and goal
-	MUTEX_UNLOCK(&_theta_mutex);
-	MUTEX_UNLOCK(&_goal_mutex);
+	RS_MUTEX_UNLOCK(&_theta_mutex);
+	RS_MUTEX_UNLOCK(&_goal_mutex);
 }
 
 void Mindstorms::simPostCollisionThread(void) {
 	// lock angle and goal
-	MUTEX_LOCK(&_goal_mutex);
-	MUTEX_LOCK(&_theta_mutex);
+	RS_MUTEX_LOCK(&_goal_mutex);
+	RS_MUTEX_LOCK(&_theta_mutex);
 
 	// check if joint speed is zero -> joint has completed step
 	for (int i = 0; i < _dof; i++) {
 		// lock mutex
-		MUTEX_LOCK(&_motor[i].success_mutex);
+		RS_MUTEX_LOCK(&_motor[i].success_mutex);
 		// zero velocity == stopped
 		_motor[i].stopping += (!(int)(dJointGetAMotorParam(this->_motor[i].id, dParamVel)*1000) );
 		// once motor has been stopped for 10 steps
 		if (_motor[i].stopping == 50) {
 			_motor[i].stopping = 0;
 			_motor[i].success = 1;
-			COND_SIGNAL(&_motor[i].success_cond);
+			RS_COND_SIGNAL(&_motor[i].success_cond);
 		}
 		// unlock mutex
-		MUTEX_UNLOCK(&_motor[i].success_mutex);
+		RS_MUTEX_UNLOCK(&_motor[i].success_mutex);
 	}
 
 	// all joints have completed their motions
-	MUTEX_LOCK(&_success_mutex);
+	RS_MUTEX_LOCK(&_success_mutex);
 	if (_motor[Bodies::Joint1].success && _motor[Bodies::Joint2].success &&
 		_motor[Bodies::Joint3].success && _motor[Bodies::Joint4].success) {
 		_success = true;
-		COND_SIGNAL(&_success_cond);
+		RS_COND_SIGNAL(&_success_cond);
 	}
-	MUTEX_UNLOCK(&_success_mutex);
+	RS_MUTEX_UNLOCK(&_success_mutex);
 
 	// unlock angle and goal
-	MUTEX_UNLOCK(&_theta_mutex);
-	MUTEX_UNLOCK(&_goal_mutex);
+	RS_MUTEX_UNLOCK(&_theta_mutex);
+	RS_MUTEX_UNLOCK(&_goal_mutex);
 }
 
 /**********************************************************

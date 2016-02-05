@@ -54,7 +54,7 @@ Scene::Scene(void) : KeyboardHandler() {
 	_grid.push_back(1);				// enabled?
 
 	// set thread mutex
-	MUTEX_INIT(&_thread_mutex);
+	RS_MUTEX_INIT(&_thread_mutex);
 	_thread = false;
 	_osgThread = 0;
 
@@ -77,14 +77,14 @@ Scene::Scene(void) : KeyboardHandler() {
 Scene::~Scene(void) {
 	// stop thread
 	if (_osgThread) {
-		MUTEX_LOCK(&_thread_mutex);
+		RS_MUTEX_LOCK(&_thread_mutex);
 		_thread = false;
-		MUTEX_UNLOCK(&_thread_mutex);
-		THREAD_JOIN(_osgThread);
-		COND_DESTROY(&_graphics_cond);
-		MUTEX_DESTROY(&_graphics_mutex);
+		RS_MUTEX_UNLOCK(&_thread_mutex);
+		RS_THREAD_JOIN(_osgThread);
+		RS_COND_DESTROY(&_graphics_cond);
+		RS_MUTEX_DESTROY(&_graphics_mutex);
 		// clean mutexes
-		MUTEX_DESTROY(&_thread_mutex);
+		RS_MUTEX_DESTROY(&_thread_mutex);
 	}
 }
 
@@ -520,7 +520,7 @@ void Scene::setGrid(std::vector<double> grid, bool draw) {
 	if (grid[6] != -1) _grid[6] = grid[6];
 
 	// lock thread from playing with _background
-	MUTEX_LOCK(&(_thread_mutex));
+	RS_MUTEX_LOCK(&(_thread_mutex));
 
 	// remove old grid
 	for (unsigned int i = 0; i < _background->getNumChildren(); i++) {
@@ -535,7 +535,7 @@ void Scene::setGrid(std::vector<double> grid, bool draw) {
 	}
 
 	// unlock for thread drawing
-	MUTEX_UNLOCK(&(_thread_mutex));
+	RS_MUTEX_UNLOCK(&(_thread_mutex));
 }
 
 void Scene::setHighlight(bool highlight) {
@@ -566,7 +566,7 @@ void Scene::setLevel(int level) {
 	if (_level == rs::Level::None) return;
 
 	// lock threaded add/remove
-	MUTEX_LOCK(&(_thread_mutex));
+	RS_MUTEX_LOCK(&(_thread_mutex));
 
 	// draw new level
 	switch (level) {
@@ -584,7 +584,7 @@ void Scene::setLevel(int level) {
 	}
 
 	// unlock threaded add/remove
-	MUTEX_UNLOCK(&(_thread_mutex));
+	RS_MUTEX_UNLOCK(&(_thread_mutex));
 }
 
 void Scene::setMouseHandler(rsScene::MouseHandler *mh) {
@@ -731,19 +731,19 @@ void Scene::stageChild(osg::Group *group) {
 
 void Scene::start(int pause) {
 	// init graphics variables
-	COND_INIT(&_graphics_cond);
-	MUTEX_INIT(&_graphics_mutex);
+	RS_COND_INIT(&_graphics_cond);
+	RS_MUTEX_INIT(&_graphics_mutex);
 	_graphics = false;
 
 	// create thread
-	THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
+	RS_THREAD_CREATE(&_osgThread, (void* (*)(void *))&Scene::graphics_thread, (void *)this);
 
 	// wait for graphics to be set up
-	MUTEX_LOCK(&_graphics_mutex);
+	RS_MUTEX_LOCK(&_graphics_mutex);
 	while (!_graphics) {
-		COND_WAIT(&_graphics_cond, &_graphics_mutex);
+		RS_COND_WAIT(&_graphics_cond, &_graphics_mutex);
 	}
-	MUTEX_UNLOCK(&_graphics_mutex);
+	RS_MUTEX_UNLOCK(&_graphics_mutex);
 }
 
 void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec &c, bool on) {
@@ -1365,12 +1365,12 @@ void* Scene::graphics_thread(void *arg) {
 	p->_viewer->addEventHandler(new osgViewer::WindowSizeHandler());
 
 	// signal calling function that setup is done
-	COND_ACTION(&(p->_graphics_cond), &(p->_graphics_mutex), p->_graphics = true);
+	RS_COND_ACTION(&(p->_graphics_cond), &(p->_graphics_mutex), p->_graphics = true);
 
 	// run viewer
-	MUTEX_LOCK(&(p->_thread_mutex));
+	RS_MUTEX_LOCK(&(p->_thread_mutex));
 	while (p->_thread && !p->_viewer->done()) {
-		MUTEX_UNLOCK(&(p->_thread_mutex));
+		RS_MUTEX_UNLOCK(&(p->_thread_mutex));
 
 		// start clock for frame rate calculation
 		double minFrameTime = (p->_rate > 0.0) ? 1.0 / p->_rate : 0.0;
@@ -1378,18 +1378,18 @@ void* Scene::graphics_thread(void *arg) {
 
 		// update thread & scene elements
 		p->_viewer->frame();
-		MUTEX_LOCK(&(p->_thread_mutex));
+		RS_MUTEX_LOCK(&(p->_thread_mutex));
 		p->addAndRemoveChildren();
-		MUTEX_UNLOCK(&(p->_thread_mutex));
+		RS_MUTEX_UNLOCK(&(p->_thread_mutex));
 
 		// pause for proper frame rate
 		osg::Timer_t endFrameTick = osg::Timer::instance()->tick();
 		double frameTime = osg::Timer::instance()->delta_s(startFrameTick, endFrameTick);
 		if (frameTime < minFrameTime) OpenThreads::Thread::microSleep(static_cast<unsigned int>(1000000.0*(minFrameTime - frameTime)));
 
-		MUTEX_LOCK(&(p->_thread_mutex));
+		RS_MUTEX_LOCK(&(p->_thread_mutex));
 	}
-	MUTEX_UNLOCK(&(p->_thread_mutex));
+	RS_MUTEX_UNLOCK(&(p->_thread_mutex));
 
 	// clean up viewer & root
 	p->_viewer->setSceneData(NULL);

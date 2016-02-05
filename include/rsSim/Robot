@@ -108,8 +108,8 @@ namespace rsSim {
 				dJointID id;			// motor id
 				dJointID joint;			// joint of the motor
 				Accel accel;			// acceleration variables
-				MUTEX_T success_mutex;	// motion successful mutex
-				COND_T success_cond;	// motion successful condition
+				RS_MUTEX_T success_mutex;	// motion successful mutex
+				RS_COND_T success_cond;	// motion successful condition
 			};
 
 			dSpaceID _space;			// space for this robot
@@ -128,10 +128,10 @@ namespace rsSim {
 			float _speed;				// linear velocity of the robot
 			float _trackwidth;			// trackwidth of robot
 			short _dof;					// number of DOF
-			MUTEX_T _goal_mutex;		// goal value being written
-			MUTEX_T _success_mutex;		// completed step
-			MUTEX_T _theta_mutex;		// theta value being written
-			COND_T _success_cond;		// completed step
+			RS_MUTEX_T _goal_mutex;		// goal value being written
+			RS_MUTEX_T _success_mutex;	// completed step
+			RS_MUTEX_T _theta_mutex;	// theta value being written
+			RS_COND_T _success_cond;	// completed step
 
 		// private functions
 		private:

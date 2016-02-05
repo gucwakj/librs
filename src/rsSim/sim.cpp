@@ -37,27 +37,27 @@ Sim::Sim(bool pause, bool rt) {
 	_stop = 0;											// time at which to stop simulation
 
 	// thread variables
-	MUTEX_INIT(&_clock_mutex);
-	MUTEX_INIT(&_pause_mutex);
-	MUTEX_INIT(&_robot_mutex);
-	MUTEX_INIT(&_running_mutex);
-	MUTEX_INIT(&_step_mutex);
-	COND_INIT(&_running_cond);
-	THREAD_CREATE(&_simulation, (void* (*)(void *))&Sim::simulation_thread, this);
+	RS_MUTEX_INIT(&_clock_mutex);
+	RS_MUTEX_INIT(&_pause_mutex);
+	RS_MUTEX_INIT(&_robot_mutex);
+	RS_MUTEX_INIT(&_running_mutex);
+	RS_MUTEX_INIT(&_step_mutex);
+	RS_COND_INIT(&_running_cond);
+	RS_THREAD_CREATE(&_simulation, (void* (*)(void *))&Sim::simulation_thread, this);
 }
 
 Sim::~Sim(void) {
 	// remove simulation
-	MUTEX_LOCK(&_running_mutex);
+	RS_MUTEX_LOCK(&_running_mutex);
 	_running = false;
-	MUTEX_UNLOCK(&_running_mutex);
-	THREAD_JOIN(_simulation);
-	COND_DESTROY(&_running_cond);
-	MUTEX_DESTROY(&_clock_mutex);
-	MUTEX_DESTROY(&_pause_mutex);
-	MUTEX_DESTROY(&_robot_mutex);
-	MUTEX_DESTROY(&_running_mutex);
-	MUTEX_DESTROY(&_step_mutex);
+	RS_MUTEX_UNLOCK(&_running_mutex);
+	RS_THREAD_JOIN(_simulation);
+	RS_COND_DESTROY(&_running_cond);
+	RS_MUTEX_DESTROY(&_clock_mutex);
+	RS_MUTEX_DESTROY(&_pause_mutex);
+	RS_MUTEX_DESTROY(&_robot_mutex);
+	RS_MUTEX_DESTROY(&_running_mutex);
+	RS_MUTEX_DESTROY(&_step_mutex);
 
 	// remove ode
 	dJointGroupDestroy(_group);
@@ -76,7 +76,7 @@ Sim::~Sim(void) {
  **********************************************************/
 void Sim::addRobot(rsSim::Robot *robot, short id, const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::Vec &w, short ground) {
 	// lock robot data
-	MUTEX_LOCK(&_robot_mutex);
+	RS_MUTEX_LOCK(&_robot_mutex);
 
 	// create new robot
 	_robot.push_back(RobotNode());
@@ -89,12 +89,12 @@ void Sim::addRobot(rsSim::Robot *robot, short id, const rs::Pos &p, const rs::Qu
 	robot->build(p, q, a, w, ground);
 
 	// unlock robot data
-	MUTEX_UNLOCK(&_robot_mutex);
+	RS_MUTEX_UNLOCK(&_robot_mutex);
 }
 
 void Sim::addRobot(rsSim::ModularRobot *robot, short id, rsSim::Robot *base, const rs::Vec &a, short face1, short face2, short type, short side, short orientation, short ground) {
 	// lock robot data to insert a new one into simulation
-	MUTEX_LOCK(&_robot_mutex);
+	RS_MUTEX_LOCK(&_robot_mutex);
 
 	// create new robot
 	_robot.push_back(RobotNode());
@@ -112,7 +112,7 @@ void Sim::addRobot(rsSim::ModularRobot *robot, short id, rsSim::Robot *base, con
 	robot->build(P, Q, a, dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorBodyID(face1), face2, orientation, ground);
 
 	// unlock robot data
-	MUTEX_UNLOCK(&_robot_mutex);
+	RS_MUTEX_UNLOCK(&_robot_mutex);
 }
 
 Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, double mass) {
@@ -254,7 +254,7 @@ Obstacle* Sim::addPullupBar(const rs::Pos &p, const rs::Quat &q, const rs::Vec &
 
 int Sim::deleteRobot(int id) {
 	// lock robot data to delete
-	MUTEX_LOCK(&_robot_mutex);
+	RS_MUTEX_LOCK(&_robot_mutex);
 
 	// find robot by id and remove
 	for (unsigned int i = 0; i < _robot.size(); i++) {
@@ -265,16 +265,16 @@ int Sim::deleteRobot(int id) {
 	}
 
 	// unlock robot data
-	MUTEX_UNLOCK(&_robot_mutex);
+	RS_MUTEX_UNLOCK(&_robot_mutex);
 
 	// success
 	return _robot.size();
 }
 
 float Sim::getClock(void) {
-	MUTEX_LOCK(&_clock_mutex);
+	RS_MUTEX_LOCK(&_clock_mutex);
 	double clock = _clock;
-	MUTEX_UNLOCK(&_clock_mutex);
+	RS_MUTEX_UNLOCK(&_clock_mutex);
 	return clock;
 }
 
@@ -295,9 +295,9 @@ void Sim::getCoM(double &x, double &y, double &z) {
 }
 
 bool Sim::getPause(void) {
-	MUTEX_LOCK(&_pause_mutex);
+	RS_MUTEX_LOCK(&_pause_mutex);
 	bool pause = _pause;
-	MUTEX_UNLOCK(&_pause_mutex);
+	RS_MUTEX_UNLOCK(&_pause_mutex);
 	return pause;
 }
 
@@ -310,29 +310,29 @@ Robot* Sim::getRobot(int id) {
 }
 
 bool Sim::getRunning(void) {
-	MUTEX_LOCK(&_running_mutex);
+	RS_MUTEX_LOCK(&_running_mutex);
 	bool running = _running;
-	MUTEX_UNLOCK(&_running_mutex);
+	RS_MUTEX_UNLOCK(&_running_mutex);
 	return running;
 }
 
 float Sim::getStep(void) {
-	MUTEX_LOCK(&_step_mutex);
+	RS_MUTEX_LOCK(&_step_mutex);
 	float step = _step;
-	MUTEX_UNLOCK(&_step_mutex);
+	RS_MUTEX_UNLOCK(&_step_mutex);
 	return step;
 }
 
 void Sim::mutexLock(int type) {
 	switch (type) {
 		case Sim::AddRobot:
-			MUTEX_LOCK(&_robot_mutex);
+			RS_MUTEX_LOCK(&_robot_mutex);
 			break;
 		case Sim::PauseSimulation:
-			MUTEX_LOCK(&_pause_mutex);
+			RS_MUTEX_LOCK(&_pause_mutex);
 			break;
 		case Sim::RunningSimulation:
-			MUTEX_LOCK(&_running_mutex);
+			RS_MUTEX_LOCK(&_running_mutex);
 			break;
 	}
 }
@@ -340,20 +340,20 @@ void Sim::mutexLock(int type) {
 void Sim::mutexUnlock(int type) {
 	switch (type) {
 		case Sim::AddRobot:
-			MUTEX_UNLOCK(&_robot_mutex);
+			RS_MUTEX_UNLOCK(&_robot_mutex);
 			break;
 		case Sim::PauseSimulation:
-			MUTEX_UNLOCK(&_pause_mutex);
+			RS_MUTEX_UNLOCK(&_pause_mutex);
 			break;
 		case Sim::RunningSimulation:
-			MUTEX_UNLOCK(&_running_mutex);
+			RS_MUTEX_UNLOCK(&_running_mutex);
 			break;
 	}
 }
 
 void Sim::setPause(int mode) {
 	// lock pause
-	MUTEX_LOCK(&_pause_mutex);
+	RS_MUTEX_LOCK(&_pause_mutex);
 
 	if (mode == 0)
 		_pause = false;
@@ -363,14 +363,14 @@ void Sim::setPause(int mode) {
 		_pause = _pause ? false : true;
 
 	// unlock pause
-	MUTEX_UNLOCK(&_pause_mutex);
+	RS_MUTEX_UNLOCK(&_pause_mutex);
 }
 
 void Sim::run(unsigned int time) {
 	// start simulation
-	MUTEX_LOCK(&_pause_mutex);
+	RS_MUTEX_LOCK(&_pause_mutex);
 	_pause = false;
-	MUTEX_UNLOCK(&_pause_mutex);
+	RS_MUTEX_UNLOCK(&_pause_mutex);
 
 	if (_rt) {
 		// sleep
@@ -378,9 +378,9 @@ void Sim::run(unsigned int time) {
 		timer.sleep(time);
 
 		// ask sim to stop running
-		MUTEX_LOCK(&_running_mutex);
+		RS_MUTEX_LOCK(&_running_mutex);
 		_running = false;
-		MUTEX_UNLOCK(&_running_mutex);
+		RS_MUTEX_UNLOCK(&_running_mutex);
 	}
 	else {
 		// set stopping time
@@ -388,11 +388,11 @@ void Sim::run(unsigned int time) {
 	}
 
 	// wait for simulation loop to signal
-	MUTEX_LOCK(&_running_mutex);
+	RS_MUTEX_LOCK(&_running_mutex);
 	while (_running) {
-		COND_WAIT(&_running_cond, &_running_mutex);
+		RS_COND_WAIT(&_running_cond, &_running_mutex);
 	}
-	MUTEX_UNLOCK(&_running_mutex);
+	RS_MUTEX_UNLOCK(&_running_mutex);
 }
 
 #ifdef RS_RESEARCH
@@ -467,12 +467,12 @@ void* Sim::simulation_thread(void *arg) {
 	unsigned int start_time = 0, start = 0, end = 0;
 #endif
 
-	MUTEX_LOCK(&(sim->_running_mutex));
+	RS_MUTEX_LOCK(&(sim->_running_mutex));
 	while (sim->_running) {
-		MUTEX_UNLOCK(&(sim->_running_mutex));
+		RS_MUTEX_UNLOCK(&(sim->_running_mutex));
 
 		// lock pause variable
-		MUTEX_LOCK(&(sim->_pause_mutex));
+		RS_MUTEX_LOCK(&(sim->_pause_mutex));
 
 		if (sim->_rt) {
 			// get starting times
@@ -486,7 +486,7 @@ void* Sim::simulation_thread(void *arg) {
 
 		while (!(sim->_pause) && sim->_running) {
 			// unlock pause variable
-			MUTEX_UNLOCK(&(sim->_pause_mutex));
+			RS_MUTEX_UNLOCK(&(sim->_pause_mutex));
 
 			if (sim->_rt) {
 				// get start time of execution in milliseconds
@@ -507,30 +507,30 @@ void* Sim::simulation_thread(void *arg) {
 #endif
 
 			// perform pre-collision updates
-			MUTEX_LOCK(&(sim->_robot_mutex));
+			RS_MUTEX_LOCK(&(sim->_robot_mutex));
 			for (unsigned int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_CREATE(&(sim->_robot[j].thread), (void* (*)(void *))&rsSim::Robot::simPreCollisionThreadEntry, (void *)sim->_robot[j].robot);
+				RS_THREAD_CREATE(&(sim->_robot[j].thread), (void* (*)(void *))&rsSim::Robot::simPreCollisionThreadEntry, (void *)sim->_robot[j].robot);
 			}
 			for (unsigned int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_JOIN(sim->_robot[j].thread);
+				RS_THREAD_JOIN(sim->_robot[j].thread);
 			}
 
 			// perform ode update
 			dSpaceCollide(sim->_space, sim, &sim->collision);
 			dWorldStep(sim->_world, sim->_step);
-			MUTEX_LOCK(&(sim->_clock_mutex));
+			RS_MUTEX_LOCK(&(sim->_clock_mutex));
 			sim->_clock += sim->_step;
-			MUTEX_UNLOCK(&(sim->_clock_mutex));
+			RS_MUTEX_UNLOCK(&(sim->_clock_mutex));
 			dJointGroupEmpty(sim->_group);
 
 			// perform post-collision updates
 			for (unsigned int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_CREATE(&(sim->_robot[j].thread), (void* (*)(void *))&rsSim::Robot::simPostCollisionThreadEntry, (void *)sim->_robot[j].robot);
+				RS_THREAD_CREATE(&(sim->_robot[j].thread), (void* (*)(void *))&rsSim::Robot::simPostCollisionThreadEntry, (void *)sim->_robot[j].robot);
 			}
 			for (unsigned int j = 0; j < sim->_robot.size(); j++) {
-				THREAD_JOIN(sim->_robot[j].thread);
+				RS_THREAD_JOIN(sim->_robot[j].thread);
 			}
-			MUTEX_UNLOCK(&(sim->_robot_mutex));
+			RS_MUTEX_UNLOCK(&(sim->_robot_mutex));
 
 			// get ending time
 			if (sim->_rt) {
@@ -557,7 +557,7 @@ void* Sim::simulation_thread(void *arg) {
 				}
 
 				// lock step variable
-				MUTEX_LOCK(&(sim->_step_mutex));
+				RS_MUTEX_LOCK(&(sim->_step_mutex));
 
 				// set next time step if calculations took longer than step
 				if ( (end - start) > ((unsigned int)(sim->_clock*1000) - clock/1000) ) {
@@ -577,17 +577,17 @@ void* Sim::simulation_thread(void *arg) {
 				sim->_step = (sim->_step*1000 < 4) ? 0.004 : sim->_step;
 
 				// unlock step variable
-				MUTEX_UNLOCK(&(sim->_step_mutex));
+				RS_MUTEX_UNLOCK(&(sim->_step_mutex));
 			}
 
 			// stop when clock has reached max time
 			if (sim->_stop && sim->_clock >= sim->_stop) { sim->_running = 0; }
 
 			// lock pause variable
-			MUTEX_LOCK(&(sim->_pause_mutex));
+			RS_MUTEX_LOCK(&(sim->_pause_mutex));
 		}
 		// unlock pause variable
-		MUTEX_UNLOCK(&(sim->_pause_mutex));
+		RS_MUTEX_UNLOCK(&(sim->_pause_mutex));
 
 		if (sim->_rt) {
 			// reset clock counters on pausing
@@ -597,13 +597,13 @@ void* Sim::simulation_thread(void *arg) {
 		}
 
 		// lock running mutex
-		MUTEX_LOCK(&(sim->_running_mutex));
+		RS_MUTEX_LOCK(&(sim->_running_mutex));
 	}
 	// unlock running variable
-	MUTEX_UNLOCK(&(sim->_running_mutex));
+	RS_MUTEX_UNLOCK(&(sim->_running_mutex));
 
 	// signal waiting threads
-	COND_SIGNAL(&(sim->_running_cond));
+	RS_COND_SIGNAL(&(sim->_running_cond));
 
 	// cleanup
 	delete [] dt;

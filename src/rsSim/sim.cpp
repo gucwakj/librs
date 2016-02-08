@@ -125,13 +125,17 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
 	dBodySetQuaternion(*body, Q);
 
-	// disable (fix in space) heavy bodies
-	if (mass > 1000) dBodyDisable(*body);
-
 	// mass
 	dMass m;
 	dMassSetBoxTotal(&m, mass, l[0], l[1], l[2]);
 	dBodySetMass(*body, &m);
+
+	// fix heavy bodies to space
+	if (mass > 1000) {
+		dJointID joint = dJointCreateFixed(_world, 0);
+		dJointAttach(joint, *body, 0);
+		dJointSetFixed(joint);
+	}
 
 	// geom
 	dGeomID geom = dCreateBox(_space, l[0], l[1], l[2]);
@@ -151,22 +155,21 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l
 	dQuaternion Q = {q[3], q[0], q[1], q[2]};
 	dBodySetQuaternion(*body, Q);
 
-	// disable (fix in space) heavy bodies
-	if (mass > 1000) dBodyDisable(*body);
-
 	// mass
 	dMass m;
-	dMassSetCylinderTotal(&m, mass, axis, l[0], l[1]);
+	dMassSetCylinderTotal(&m, mass, 3, l[0], l[1]);
 	dBodySetMass(*body, &m);
+
+	// fix heavy bodies to space
+	if (mass > 1000) {
+		dJointID joint = dJointCreateFixed(_world, 0);
+		dJointAttach(joint, *body, 0);
+		dJointSetFixed(joint);
+	}
 
 	// geom
 	dGeomID geom = dCreateCylinder(_space, l[0], l[1]);
 	dGeomSetBody(geom, *body);
-	dMatrix3 R;
-	if (axis == 1) {		dRFromAxisAndAngle(R, 0, 1, 0, rs::Pi/2); }
-	else if (axis == 2) {	dRFromAxisAndAngle(R, 1, 0, 0, rs::Pi/2); }
-	else if (axis == 3) {	dRFromAxisAndAngle(R, 0, 0, 1, 0); }
-	dGeomSetOffsetRotation(geom, R);
 
 	// return object
 	return body;
@@ -180,15 +183,19 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Vec &l, double mass) {
 	// set position
 	dBodySetPosition(*body, p[0], p[1], p[2]);
 
-	// disable (fix in space) heavy bodies
-	if (mass > 1000) dBodyDisable(*body);
-
 	// mass
 	dMass m;
 	dMassSetSphereTotal(&m, mass, l[0]);
 	dBodySetMass(*body, &m);
 
-	// position geom
+	// fix heavy bodies to space
+	if (mass > 1000) {
+		dJointID joint = dJointCreateFixed(_world, 0);
+		dJointAttach(joint, *body, 0);
+		dJointSetFixed(joint);
+	}
+
+	// geom
 	dGeomID geom = dCreateSphere(_space, l[0]);
 	dGeomSetBody(geom, *body);
 

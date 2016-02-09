@@ -7,6 +7,11 @@ include_directories (
 	"${LibRS_BINARY_DIR}"
 )
 
+# prevent windows from auto adding manifest
+if (WIN32)
+	set (CMAKE_SHARED_LINKER_FLAGS /MANIFEST:NO)
+endif ()
+
 # add OpenSceneGraph library
 include_directories ("${LibRS_SOURCE_DIR}/deps/osg3.4.0/build/include")
 include_directories ("${LibRS_SOURCE_DIR}/deps/osg3.4.0/include")
@@ -64,6 +69,7 @@ target_link_libraries (rsScene ${EXTRA_LIBS})
 # set version properties
 set_target_properties (rsScene PROPERTIES VERSION ${LibRS_VERSION} SOVERSION ${LibRS_SO_VERSION})
 
+# add windows manifest file for DPI scaling
 if (WIN32)
 	add_custom_command (TARGET rsScene
 		POST_BUILD

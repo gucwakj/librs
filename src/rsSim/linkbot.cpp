@@ -24,7 +24,7 @@ Linkbot::Linkbot(int form) : rsRobots::Robot(form), rsRobots::Linkbot(form) {
 		_motor[i].goal = 0;
 		_motor[i].mode = SEEK;
 		_motor[i].offset = 0;
-		_motor[i].omega = 0.7854;			// 45 deg/sec
+		_motor[i].omega = 1.5708;			// 90 deg/sec
 		_motor[i].omega_max = 4.1888;		// 240 deg/sec
 		_motor[i].record = false;
 		_motor[i].record_active = false;

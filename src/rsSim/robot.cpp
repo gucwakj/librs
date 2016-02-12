@@ -47,6 +47,8 @@ double Robot::getAngle(int id) {
 }
 
 int Robot::holdJoint(int id) {
+	_motor[id].mode = CONTINUOUS;
+	_motor[id].state = HOLD;
 	_motor[id].omega = 0;
 
 	// success
@@ -56,7 +58,7 @@ int Robot::holdJoint(int id) {
 int Robot::holdJoints(void) {
 	// set joints to zero speed
 	for (int i = 0; i < _dof; i++) {
-		_motor[i].omega = 0;
+		this->holdJoint(i);
 	}
 
 	// success

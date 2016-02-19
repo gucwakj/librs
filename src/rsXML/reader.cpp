@@ -444,7 +444,9 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 			// label
 			if ( (ele = node->FirstChildElement("name")) ) {
-				_marker.back()->setLabel(ele->GetText());
+				const char *n = ele->GetText();
+				std::string str(n ? n : "");
+				_marker.back()->setLabel(str);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {

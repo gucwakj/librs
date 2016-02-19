@@ -31,6 +31,7 @@ namespace rsXML {
 			void setMass(double);
 			void setPosition(double, double, double);
 			void setRotation(double, double, double);
+			void setRotation(double, double, double, double);
 
 		// private data
 		private:

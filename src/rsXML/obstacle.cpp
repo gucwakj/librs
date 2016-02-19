@@ -117,3 +117,10 @@ void Obstacle::setRotation(double a, double b, double c) {
 			q3[2]*q2[3]*q1[2] - q3[2]*q2[0]*q1[1] + q3[2]*q2[1]*q1[0] - q3[2]*q2[2]*q1[3];
 }
 
+void Obstacle::setRotation(double a, double b, double c, double d) {
+	_q[0] = a;
+	_q[1] = b;
+	_q[2] = c;
+	_q[3] = d;
+}
+

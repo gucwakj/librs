@@ -371,6 +371,29 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 		case rs::Box:
 			body->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2])));
 			break;
+		case rs::CompetitionBorder: {
+			osg::ref_ptr<osg::Cylinder> cyl0 = new osg::Cylinder(osg::Vec3d(0, -l[1]/2, 0.04), l[2], l[0]);
+			cyl0->setRotation(osg::Quat(0, 0.707107, 0, 0.707107));
+			osg::ref_ptr<osg::Cylinder> cyl1 = new osg::Cylinder(osg::Vec3d(0, l[1]/2, 0.04), l[2], l[0]);
+			cyl1->setRotation(osg::Quat(0, 0.707107, 0, 0.707107));
+			osg::ref_ptr<osg::Cylinder> cyl2 = new osg::Cylinder(osg::Vec3d(-l[0]/2, 0, 0.04), l[2], l[1]);
+			cyl2->setRotation(osg::Quat(0.707107, 0, 0, 0.707107));
+			osg::ref_ptr<osg::Cylinder> cyl3 = new osg::Cylinder(osg::Vec3d(l[0]/2, 0, 0.04), l[2], l[1]);
+			cyl3->setRotation(osg::Quat(0.707107, 0, 0, 0.707107));
+			osg::ref_ptr<osg::Cylinder> cyl4 = new osg::Cylinder(osg::Vec3d(-l[0]/2, -l[1]/2, 0.02), 0.02, 0.04);
+			osg::ref_ptr<osg::Cylinder> cyl5 = new osg::Cylinder(osg::Vec3d(-l[0]/2, l[1]/2, 0.02), 0.02, 0.04);
+			osg::ref_ptr<osg::Cylinder> cyl6 = new osg::Cylinder(osg::Vec3d(l[0]/2, l[1]/2, 0.02), 0.02, 0.04);
+			osg::ref_ptr<osg::Cylinder> cyl7 = new osg::Cylinder(osg::Vec3d(l[0]/2, -l[1]/2, 0.02), 0.02, 0.04);
+			body->addDrawable(new osg::ShapeDrawable(cyl0));
+			body->addDrawable(new osg::ShapeDrawable(cyl1));
+			body->addDrawable(new osg::ShapeDrawable(cyl2));
+			body->addDrawable(new osg::ShapeDrawable(cyl3));
+			body->addDrawable(new osg::ShapeDrawable(cyl4));
+			body->addDrawable(new osg::ShapeDrawable(cyl5));
+			body->addDrawable(new osg::ShapeDrawable(cyl6));
+			body->addDrawable(new osg::ShapeDrawable(cyl7));
+			break;
+		}
 		case rs::Cylinder:
 			body->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[0], l[1])));
 			break;

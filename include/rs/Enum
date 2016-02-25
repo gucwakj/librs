@@ -18,6 +18,7 @@ namespace rs {
 	// drawing objects (ground and graphic)
 	enum Drawing {
 		Box,
+		CompetitionBorder,
 		Cylinder,
 		Dot,
 		HackySack,

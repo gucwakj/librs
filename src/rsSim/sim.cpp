@@ -115,6 +115,79 @@ void Sim::addRobot(rsSim::ModularRobot *robot, short id, rsSim::Robot *base, con
 	RS_MUTEX_UNLOCK(&_robot_mutex);
 }
 
+Obstacle* Sim::addCompetitionBorder(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l) {
+	// body
+	dBodyID *body = new dBodyID();
+	*body = dBodyCreate(_world);
+	dBodySetPosition(*body, p[0], p[1], p[2]);
+	dQuaternion Q = {q[3], q[0], q[1], q[2]};
+	dBodySetQuaternion(*body, Q);
+
+	// mass
+	dMass m;
+	dMassSetBoxTotal(&m, 10000, l[0], l[1], l[2]);
+	dBodySetMass(*body, &m);
+
+	dJointID joint = dJointCreateFixed(_world, 0);
+	dJointAttach(joint, *body, 0);
+	dJointSetFixed(joint);
+
+	// geom
+	dGeomID geom[8];
+	dMatrix3 R;
+
+	// front
+	geom[0] = dCreateCylinder(_space, l[2], l[0]); // radius, x size
+	dGeomSetBody(geom[0], *body);
+	dGeomSetOffsetPosition(geom[0], 0, -l[1]/2, 0.04);
+	dRFromAxisAndAngle(R, 0, 1, 0, -rs::Pi/2);
+	dGeomSetOffsetRotation(geom[0], R);
+
+	// back
+	geom[1] = dCreateCylinder(_space, l[2], l[0]);
+	dGeomSetBody(geom[1], *body);
+	dGeomSetOffsetPosition(geom[1], 0, l[1]/2, 0.04);
+	dRFromAxisAndAngle(R, 0, 1, 0, -rs::Pi/2);
+	dGeomSetOffsetRotation(geom[1], R);
+
+	// left
+	geom[2] = dCreateCylinder(_space, l[2], l[1]); // radius, y size
+	dGeomSetBody(geom[2], *body);
+	dGeomSetOffsetPosition(geom[2], -l[0]/2, 0, 0.04);
+	dRFromAxisAndAngle(R, 1, 0, 0, -rs::Pi/2);
+	dGeomSetOffsetRotation(geom[2], R);
+
+	// right
+	geom[3] = dCreateCylinder(_space, l[2], l[1]);
+	dGeomSetBody(geom[3], *body);
+	dGeomSetOffsetPosition(geom[3], l[0]/2, 0, 0.04);
+	dRFromAxisAndAngle(R, 1, 0, 0, -rs::Pi/2);
+	dGeomSetOffsetRotation(geom[3], R);
+
+	// front left foot
+	geom[4] = dCreateCylinder(_space, l[2], 0.04);
+	dGeomSetBody(geom[4], *body);
+	dGeomSetOffsetPosition(geom[4], -l[0]/2, -l[1]/2, 0.02);
+
+	// back left foot
+	geom[5] = dCreateCylinder(_space, l[2], 0.04);
+	dGeomSetBody(geom[5], *body);
+	dGeomSetOffsetPosition(geom[5], -l[0]/2, l[1]/2, 0.02);
+
+	// back right foot
+	geom[6] = dCreateCylinder(_space, l[2], 0.04);
+	dGeomSetBody(geom[6], *body);
+	dGeomSetOffsetPosition(geom[6], l[0]/2, l[1]/2, 0.02);
+
+	// front right foot
+	geom[7] = dCreateCylinder(_space, l[2], 0.04);
+	dGeomSetBody(geom[7], *body);
+	dGeomSetOffsetPosition(geom[7], l[0]/2, -l[1]/2, 0.02);
+
+	// return object
+	return body;
+}
+
 Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l, double mass) {
 	// body
 	dBodyID *body = new dBodyID();

@@ -26,6 +26,7 @@ namespace rsSim {
 
 			void addRobot(Robot*, short, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec& = rs::Vec(0,0), short = -1);
 			void addRobot(ModularRobot*, short, Robot*, const rs::Vec&, short, short, short, short, short = rs::Right, short = -1);
+			Obstacle* addCompetitionBorder(const rs::Pos&, const rs::Quat&, const rs::Vec&);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Quat&, const rs::Vec&, double, int);
 			Obstacle* addObstacle(const rs::Pos&, const rs::Vec&, double);

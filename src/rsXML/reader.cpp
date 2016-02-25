@@ -526,6 +526,59 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
+		else if ( !strcmp(node->Value(), "competitionborder") ) {
+			// create object
+			_obstacle.push_back(new Obstacle(rs::CompetitionBorder));
+			// id
+			i = 0;
+			node->QueryIntAttribute("id", &i);
+			_obstacle.back()->setID(i);
+			// dimensions
+			if ( (ele = node->FirstChildElement("size")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryDoubleAttribute("xlength", &a);
+				ele->QueryDoubleAttribute("ylength", &b);
+				ele->QueryDoubleAttribute("radius", &c);
+				_obstacle.back()->setDimensions(a, b, c);
+			}
+			// mass
+			_obstacle.back()->setMass(10000);
+			// color
+			if ( (ele = node->FirstChildElement("color")) ) {
+				a = 0; b = 0; c = 0; d = 0;
+				ele->QueryDoubleAttribute("r", &a);
+				ele->QueryDoubleAttribute("g", &b);
+				ele->QueryDoubleAttribute("b", &c);
+				ele->QueryDoubleAttribute("alpha", &d);
+				_obstacle.back()->setColor(a, b, c, d);
+			}
+			// position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0;
+				ele->QueryDoubleAttribute("x", &a);
+				ele->QueryDoubleAttribute("y", &b);
+				_obstacle.back()->setPosition(a, b, 0);
+			}
+			// rotation
+			if ( (ele = node->FirstChildElement("rotation")) ) {
+				a = 0; b = 0; c = 0, d = 0;
+				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryDoubleAttribute("theta", &b);
+					ele->QueryDoubleAttribute("phi", &c);
+					_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
+				}
+				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryDoubleAttribute("x", &a);
+					ele->QueryDoubleAttribute("y", &b);
+					ele->QueryDoubleAttribute("z", &c);
+					ele->QueryDoubleAttribute("w", &d);
+					_obstacle.back()->setRotation(a, b, c, d);
+				}
+				else {
+					_obstacle.back()->setRotation(0, 0, 0, 1);
+				}
+			}
+		}
 		else if ( !strcmp(node->Value(), "cylinder") ) {
 			// create object
 			_obstacle.push_back(new Obstacle(rs::Cylinder));

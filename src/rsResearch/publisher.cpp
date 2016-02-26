@@ -1,3 +1,4 @@
+#include <cstdarg>
 #include <cstring>
 #include <iostream>
 
@@ -7,9 +8,16 @@
 
 using namespace rsResearch;
 
-Publisher::Publisher(int port) {
+Publisher::Publisher(int port, std::string prefix) {
+	// save message prefix
+	_prefix = prefix;
+	_prefix.append(":");
+
+	// create zmq context
 	_context = zmq_ctx_new();
 	_socket = zmq_socket(_context, ZMQ_PUB);
+
+	// open port for sending
 	std::string protocol("tcp://*:");
 	protocol.append(std::to_string(port));
 	if (zmq_bind(_socket, protocol.c_str()))
@@ -24,15 +32,23 @@ Publisher::~Publisher(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-short Publisher::send(std::string id, unsigned int time, float angle) {
+short Publisher::send(const char *format, ...) {
+	// buffer
 	char buffer[256];
-	sprintf(buffer, "hard%s: %u %f", id.c_str(), time, angle);
-	return zmq_send(_socket, buffer, strlen(buffer), 0);
-}
 
-short Publisher::send(std::string id, float v, float r, float phi) {
-	char buffer[256];
-	sprintf(buffer, "cpg%s: %f %f %f", id.c_str(), v, r, phi);
+	// put prefix into buffer
+	int pre = _prefix.size() + 1;
+	snprintf(buffer, pre, "%s", _prefix.c_str());
+	buffer[_prefix.size()] = ' ';
+
+	// create, read, close va list
+	va_list args;
+	va_start(args, format); 
+	vsnprintf(&buffer[pre], 255 - pre, format, args);
+	buffer[strlen(buffer)] = '\0';
+	va_end(args);
+
+	// send message
 	return zmq_send(_socket, buffer, strlen(buffer), 0);
 }
 

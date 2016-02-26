@@ -14,29 +14,14 @@ namespace rsResearch {
 			Subscriber(std::string, std::string, std::string, short);
 			virtual ~Subscriber(void);
 
-			float getAngle(void);
-			unsigned int getTime(void);
-
-			float getV(void);
-			float getR(void);
-			float getPhi(void);
-			
-			short receive(void);
+			short receive(const char*, ...);
 
 		// private data
 		private:
 			void *_context;			// zmq context
 			void *_socket;			// zmq socket
 
-			short _filter;			// filter id
-			short _filter_size;		// size of filter string
-
-			float _angle;			// angle for this robot
-			unsigned int _time;		// timestamp for angle
-
-			float _v;				// cpg body frequency
-			float _r;				// cpg body amplitude
-			float _phi;				// cpg phase shift
+			std::string _prefix;	// receiving filter prefix
 	};
 
 } // namespace rsResearch

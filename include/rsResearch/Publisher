@@ -11,16 +11,16 @@ namespace rsResearch {
 	class LIBRSEXPORT Publisher {
 		// public functions
 		public:
-			Publisher(int);
+			Publisher(int, std::string);
 			virtual ~Publisher(void);
 
-			short send(std::string, unsigned int, float);
-			short send(std::string, float, float, float);
+			short send(const char*, ...);
 
 		// private data
 		private:
-			void *_context;		// zmq context
-			void *_socket;		// zmq socket
+			void *_context;			// zmq context
+			void *_socket;			// zmq socket
+			std::string _prefix;	// message prefix
 	};
 
 } // namespace rsResearch

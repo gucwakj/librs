@@ -12,15 +12,8 @@ Subscriber::Subscriber(std::string ip, std::string filter, std::string id, short
 	_context = zmq_ctx_new();
 	_socket = zmq_socket(_context, ZMQ_SUB);
 
-	// set protocol
-	std::string protocol("tcp://");
-	protocol.append(ip);
-	protocol.append(":");
-	protocol.append(std::to_string(port));
-
-	// connect to socket
- 	if (zmq_connect(_socket, protocol.c_str()))
-		std::cerr << "rsResearch::Subscriber cannot connect to socket" << std::endl;
+	// add subscription to socket
+	this->addSubscription(ip, port);
 
 	// set options
 	_prefix = filter;
@@ -38,6 +31,20 @@ Subscriber::~Subscriber(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+short Subscriber::addSubscription(std::string ip, short port) {
+	// set protocol
+	std::string protocol("tcp://");
+	protocol.append(ip);
+	protocol.append(":");
+	protocol.append(std::to_string(port));
+
+	// connect to socket
+ 	int rc = zmq_connect(_socket, protocol.c_str());
+
+ 	if (rc) std::cerr << "rsResearch::Subscriber cannot connect to socket" << std::endl;
+	return rc;
+}
+
 short Subscriber::receive(const char *format, ...) {
 	// get string
 	char string[256];

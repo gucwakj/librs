@@ -1219,10 +1219,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[first]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 1, 1, _robot[first]->getID(), 2, rsLinkbot::Connectors::Simple));
 			_robot[second]->addConnector(new Conn(0, 0, -1, 1, 1, _robot[second]->getID(), 1, rsLinkbot::Connectors::Simple));
 			_robot[second]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 1, 1, _robot[second]->getID(), 2, rsLinkbot::Connectors::Simple));
-			_robot[third]->addConnector(new Conn(0, 0, -1, 3, 3, _robot[first]->getID(), 1, rsLinkbot::Connectors::Simple));
-			_robot[third]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[first]->getID(), 2, rsLinkbot::Connectors::Simple));
-			_robot[fourth]->addConnector(new Conn(0, 0, -1, 3, 3, _robot[second]->getID(), 1, rsLinkbot::Connectors::Simple));
-			_robot[fourth]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[second]->getID(), 2, rsLinkbot::Connectors::Simple));
+			_robot[third]->addConnector(new Conn(0, 0, -1, 3, 3, _robot[third]->getID(), 1, rsLinkbot::Connectors::Simple));
+			_robot[third]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[third]->getID(), 2, rsLinkbot::Connectors::Simple));
+			_robot[fourth]->addConnector(new Conn(0, 0, -1, 3, 3, _robot[fourth]->getID(), 1, rsLinkbot::Connectors::Simple));
+			_robot[fourth]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[fourth]->getID(), 2, rsLinkbot::Connectors::Simple));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);
@@ -1284,8 +1284,8 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[first]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[first]->getID(), 2, rsLinkbot::Connectors::Simple));
 			_robot[second]->addConnector(new Conn(0, 0, -1, 1, 1, _robot[second]->getID(), 1, rsLinkbot::Connectors::Simple));
 			_robot[second]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 1, 1, _robot[second]->getID(), 2, rsLinkbot::Connectors::Simple));
-			_robot[second]->addConnector(new Conn(0, 0, -1, 3, 3, _robot[first]->getID(), 1, rsLinkbot::Connectors::Simple));
-			_robot[second]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[first]->getID(), 2, rsLinkbot::Connectors::Simple));
+			_robot[second]->addConnector(new Conn(0, 0, -1, 3, 3, _robot[second]->getID(), 1, rsLinkbot::Connectors::Simple));
+			_robot[second]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[second]->getID(), 2, rsLinkbot::Connectors::Simple));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
 				ele->QueryDoubleAttribute("r", &a);

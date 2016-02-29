@@ -602,7 +602,6 @@ void Scene::setLevel(int level) {
 		case rs::Level::Outdoors:
 			this->draw_skybox();
 			this->draw_ground();
-			this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 			break;
 	}
 

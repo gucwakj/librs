@@ -110,7 +110,7 @@ int Dof::addConnector(int type, int face, int orientation, double size, int side
 	dBodySetQuaternion(_conn.back().body, Q);
 
 	// fix connector to body
-	this->fix_connector_to_body(face, _conn.back().body, conn);
+	this->fixConnectorToBody(face, _conn.back().body, conn);
 
 	// success
 	return 0;
@@ -207,7 +207,7 @@ int Dof::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyID ba
 	this->build_robot(P, Q, a);
 
 	// add fixed joint to attach two modules
-	this->fix_body_to_connector(base, face);
+	this->fixBodyToConnector(base, face);
 
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);

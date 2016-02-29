@@ -28,14 +28,11 @@ namespace rsSim {
 			virtual int addConnector(int, int, int = rs::Right, double = 0, int = 1, int = -1, int = rs::Right) { return 0; };
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, dBodyID, int, int, int) { return 0; };
 			virtual void calculateTrackwidth(void) { return; }
+			void fixBodyToConnector(dBodyID, short);
+			void fixConnectorToBody(short, dBodyID, short = -1);
 			dBodyID getConnectorBodyID(int);
 			int getConnectorOrientation(int);
 			ConnectorList& getConnectorList(void) { return _conn; };
-
-		// protected functions
-		protected:
-			void fix_body_to_connector(dBodyID, short);
-			void fix_connector_to_body(short, dBodyID, short = -1);
 
 		// protected data
 		protected:

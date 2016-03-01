@@ -29,7 +29,7 @@ Linkbot::Linkbot(short form) : Robot(form) {
 	this->setWheelDepth(0.00140);
 	this->setWheelRadius(0.04445);
 	_bigwheel_radius = 0.05080;
-	_bridge_length = 0.13550;
+	_bridge_length = 0.13750;
 	_cubic_length = 0.07115;
 	_omni_length = 0.10175;
 	_smallwheel_radius = 0.04445;

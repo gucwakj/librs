@@ -1133,6 +1133,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[fifth]->setID(i + 4);
 			_robot[first]->addConnector(new Conn(0, rs::Up, -1, 1, 1, _robot[first]->getID(), 1, rsLinkbot::Connectors::Cube));
 			_robot[first]->addConnector(new Conn(0, rs::Up, rsLinkbot::Connectors::Caster, 1, 1, _robot[first]->getID(), 2, rsLinkbot::Connectors::Cube));
+			_robot[first]->addConnector(new Conn(0, rs::Up, rsLinkbot::Connectors::Caster, 1, 1, _robot[first]->getID(), 4, rsLinkbot::Connectors::Cube));
 			_robot[second]->addConnector(new Conn(0, rs::Up, -1, 1, 3, _robot[first]->getID(), 3, rsLinkbot::Connectors::Cube));
 			_robot[third]->addConnector(new Conn(0, rs::Up, -1, 1, 2, _robot[first]->getID(), 5, rsLinkbot::Connectors::Cube));
 			_robot[first]->addConnector(new Conn(0, rs::Right, -1, 3, 3, _robot[first]->getID(), 1, rsLinkbot::Connectors::Simple));

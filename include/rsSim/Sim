@@ -43,6 +43,7 @@ namespace rsSim {
 			void run(unsigned int);
 #ifdef RS_RESEARCH
 			void setCPG(int(*)(double, const double*, double*, void*), struct rsResearch::Params*);		// research
+			rsResearch::Integrator* getIntegrator(void);		// research
 #endif
 			void setCollisions(int);
 			void setPause(int);

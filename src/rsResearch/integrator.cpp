@@ -8,6 +8,7 @@
 using namespace rsResearch;
 
 Integrator::Integrator(void) {
+	_delta = 0;
 	_time = 0;
 }
 
@@ -18,14 +19,6 @@ Integrator::~Integrator(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Integrator::setup(int (*function)(double, const double[], double[], void*), struct Params *params, float step) {
-	// set cpg variables
-	_system = {function, NULL, static_cast<size_t>(params->num_vars), (void *)params};
-	_driver = gsl_odeiv2_driver_alloc_y_new(&_system, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
-	_array.resize(params->num_vars);
-	_params = params;
-}
-
 const rs::Vec Integrator::runStep(float newtime) {
 	// return vector
 	short size = _params->num_robots + 1;
@@ -70,7 +63,28 @@ const rs::Vec Integrator::runStep(float newtime) {
 		}
 	}
 
+	// turning
+	if (fabs(_delta) > rs::Epsilon) {
+		float a = (_delta > 0) ? -1*_params->R + _delta : -1*_params->R;
+		float b = (_delta < 0) ? _params->R + _delta : _params->R;
+		for (short i = 0; i < _params->num_body; i++) {
+			V[i] = ((b-a)*(V[i] - -1*_params->R))/(2*_params->R) + a;
+		}
+	}
+
 	// return output array
 	return V;
+}
+
+void Integrator::setup(int (*function)(double, const double[], double[], void*), struct Params *params, float step) {
+	// set cpg variables
+	_system = {function, NULL, static_cast<size_t>(params->num_vars), (void *)params};
+	_driver = gsl_odeiv2_driver_alloc_y_new(&_system, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
+	_array.resize(params->num_vars);
+	_params = params;
+}
+
+void Integrator::turn(float val) {
+	_delta = val;
 }
 

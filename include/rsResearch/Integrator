@@ -33,12 +33,14 @@ namespace rsResearch {
 			Integrator(void);
 			virtual ~Integrator(void);
 
-			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
 			const rs::Vec runStep(float);
+			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
+			void turn(float);
 
 		// private data
 		private:
 			double _time;					// time of integration
+			float _delta;					// turn delta
 			Params *_params;				// all the parameters
 			std::vector<double> _array;		// array of values from cpg integration
 			gsl_odeiv2_driver *_driver;		// driver of cpg integration

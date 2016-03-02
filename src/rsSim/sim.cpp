@@ -479,6 +479,10 @@ void Sim::run(unsigned int time) {
 void Sim::setCPG(int (*function)(double, const double[], double[], void*), struct rsResearch::Params *params) {
 	_integ.setup(function, params, _step);
 }
+
+rsResearch::Integrator* Sim::getIntegrator(void) {
+	return &_integ;
+}
 #endif
 
 void Sim::setCollisions(int mode) {

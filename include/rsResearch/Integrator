@@ -39,10 +39,7 @@ namespace rsResearch {
 		// private data
 		private:
 			double _time;					// time of integration
-			short _form;					// form of robot shape
-			short _num_body;				// number of body modules
-			short _num_legs;				// number of legs
-			short _num_robots;				// number of robots
+			Params *_params;				// all the parameters
 			std::vector<double> _array;		// array of values from cpg integration
 			gsl_odeiv2_driver *_driver;		// driver of cpg integration
 			gsl_odeiv2_system _system;		// system of ode equations

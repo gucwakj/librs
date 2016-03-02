@@ -8,10 +8,6 @@
 using namespace rsResearch;
 
 Integrator::Integrator(void) {
-	_form = 0;
-	_num_body = 0;
-	_num_legs = 0;
-	_num_robots = 0;
 	_time = 0;
 }
 
@@ -27,15 +23,12 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_system = {function, NULL, static_cast<size_t>(params->num_vars), (void *)params};
 	_driver = gsl_odeiv2_driver_alloc_y_new(&_system, gsl_odeiv2_step_rkf45, 1e-4, 1e-4, 0);
 	_array.resize(params->num_vars);
-	_num_body = params->num_body;
-	_num_legs = params->num_legs;
-	_num_robots = params->num_robots;
-	_form = params->form;
+	_params = params;
 }
 
 const rs::Vec Integrator::runStep(float newtime) {
 	// return vector
-	short size = _num_robots + 1;
+	short size = _params->num_robots + 1;
 	rs::Vec V(size);
 
 	// integrate
@@ -48,7 +41,7 @@ const rs::Vec Integrator::runStep(float newtime) {
 	}
 
 	// save output array
-	for (int i = 0, j = 1; i < _num_body*3; i+=3, j++) {
+	for (short i = 0, j = 1; i < _params->num_body*3; i+=3, j++) {
 		V[j] = _array[i+1]*cos(_array[i]);
 	}
 	// double head motion to bring module back to centerline
@@ -56,13 +49,13 @@ const rs::Vec Integrator::runStep(float newtime) {
 	// move face back to straight ahead
 	V[0] = -V[1]/2;
 	// linearize the legs motion
-	if (_num_legs) {
+	if (_params->num_legs) {
 		float theta_up = -5*M_PI/6;
 		float theta_down = -M_PI/6;
 		float a = theta_up - M_PI;
 		float b = (2*M_PI - theta_down + theta_up)/(M_PI);
 		float c = (theta_down - theta_up)/M_PI;
-		for (short i = _num_body*3, j = _num_body + 1; i < _num_robots*3; i+=3, j++) {
+		for (short i = _params->num_body*3, j = _params->num_body + 1; i < _params->num_robots*3; i+=3, j++) {
 			// get continuous output vectors
 			if (_array[i] < theta_up)
 				V[j] = theta_up + (_array[i] - theta_up)*b;
@@ -71,7 +64,7 @@ const rs::Vec Integrator::runStep(float newtime) {
 			else
 				V[j] = theta_down + (_array[i] - a)*b;
 			// flip right side legs for linkbots
-			if ( !((j+1 - _num_body)%2) ) V[j] = -V[j];
+			if ( !((j - _params->num_body)%2) ) V[j] = -V[j];
 			// scale
 			V[j] *= 4;
 		}

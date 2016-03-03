@@ -18,9 +18,7 @@ namespace rsSim {
 			virtual dBodyID getBodyID(short);
 			virtual const rs::Pos getCoM(double&);
 			const rs::Vec getJoints(void);
-#ifdef RS_RESEARCH
 			void moveJointSingular(bool = true);		// research: move one step at a time
-#endif
 
 		// inherited functions
 		protected:

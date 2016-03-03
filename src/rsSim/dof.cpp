@@ -161,7 +161,6 @@ const rs::Vec Dof::getJoints(void) {
 	return rs::Vec(_motor[Bodies::Joint].theta);
 }
 
-#ifdef RS_RESEARCH
 void Dof::moveJointSingular(bool wait) {
 	// tell joint whether to wait or not
 	_start = wait;
@@ -182,7 +181,6 @@ void Dof::moveJointSingular(bool wait) {
 	_motor[Bodies::Joint].success = false;
 	RS_MUTEX_UNLOCK(&_motor[Bodies::Joint].success_mutex);
 }
-#endif
 
 /**********************************************************
 	protected functions
@@ -227,7 +225,6 @@ void Dof::simPreCollisionThread(void) {
 	dJointSetAMotorAngle(_motor[Bodies::Joint].id, 0, _motor[Bodies::Joint].theta);
 	// engage motor depending upon motor mode
 	double step = _sim->getStep();
-#ifdef RS_RESEARCH
 	switch (_motor[Bodies::Joint].mode) {
 		case SINGULAR:
 			// don't move until positive
@@ -252,7 +249,6 @@ void Dof::simPreCollisionThread(void) {
 			// end
 			break;
 	}
-#endif
 
 	// unlock angle and goal
 	RS_MUTEX_UNLOCK(&_theta_mutex);

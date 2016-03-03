@@ -12,9 +12,6 @@ Dof::Dof(short joint, float scale) : rsRobots::Robot(rs::Dof), rsRobots::Dof(joi
 	// create arrays of proper size
 	_motor.resize(_dof);
 
-	// starting motion
-	_start = true;
-
 	// fill with default data
 	_motor[Bodies::Joint].accel.init = 0;
 	_motor[Bodies::Joint].accel.run = 0;
@@ -161,10 +158,7 @@ const rs::Vec Dof::getJoints(void) {
 	return rs::Vec(_motor[Bodies::Joint].theta);
 }
 
-void Dof::moveJointSingular(bool wait) {
-	// tell joint whether to wait or not
-	_start = wait;
-
+void Dof::moveJointSingular(void) {
 	// set motion parameters
 	_motor[Bodies::Joint].mode = SINGULAR;
 	_motor[Bodies::Joint].state = POSITIVE;
@@ -227,29 +221,21 @@ void Dof::simPreCollisionThread(void) {
 	double step = _sim->getStep();
 	switch (_motor[Bodies::Joint].mode) {
 		case SINGULAR:
-			// don't move until positive
-			if (_start) {
-				if (_next_goal > -rs::Epsilon)
-					_start = false;
-			}
-			else {
-				// reenable body on start
-				dBodyEnable(_body[0]);
+			// reenable body on start
+			dBodyEnable(_body[0]);
 
-				// set new omega
-				_motor[Bodies::Joint].goal = _next_goal;
-				_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
-				_motor[Bodies::Joint].state = NEUTRAL;
+			// set new omega
+			_motor[Bodies::Joint].goal = _next_goal;
+			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
+			_motor[Bodies::Joint].state = NEUTRAL;
 
-				// move forever
-				dJointEnable(_motor[Bodies::Joint].id);
-				dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].omega);
-			}
+			// move forever
+			dJointEnable(_motor[Bodies::Joint].id);
+			dJointSetAMotorParam(_motor[Bodies::Joint].id, dParamVel, _motor[Bodies::Joint].omega);
 
 			// end
 			break;
 	}
-
 	// unlock angle and goal
 	RS_MUTEX_UNLOCK(&_theta_mutex);
 	RS_MUTEX_UNLOCK(&_goal_mutex);

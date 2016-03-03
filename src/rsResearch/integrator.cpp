@@ -37,10 +37,8 @@ const rs::Vec Integrator::runStep(float newtime) {
 	for (short i = 0, j = 1; i < _params->num_body*3; i+=3, j++) {
 		V[j] = _array[i+1]*cos(_array[i]);
 	}
-	// double head motion to bring module back to centerline
-	V[1] = 2*_array[1]*cos(_array[0]);
-	// move face back to straight ahead
-	V[0] = -V[1]/2;
+	// dummy output for tail robot
+	V[0] = 0;
 	// linearize the legs motion
 	if (_params->num_legs) {
 		float theta_up = -5*M_PI/6;

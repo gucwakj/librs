@@ -16,6 +16,7 @@ namespace rsResearch {
 
 			short addSubscription(std::string, short);
 			short receive(const char*, ...);
+			short receiveRaw(char*, short);
 
 		// private data
 		private:

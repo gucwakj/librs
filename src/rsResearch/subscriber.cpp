@@ -18,8 +18,10 @@ Subscriber::Subscriber(std::string ip, std::string filter, std::string id, short
 	// set options
 	_prefix = filter;
 	_prefix.append(": ");
-	_prefix.append(id);
-	_prefix.append(" ");
+	if (id.size() != 0) {
+		_prefix.append(id);
+		_prefix.append(" ");
+	}
 	zmq_setsockopt(_socket, ZMQ_SUBSCRIBE, _prefix.c_str(), _prefix.size());
 }
 
@@ -48,15 +50,12 @@ short Subscriber::addSubscription(std::string ip, short port) {
 short Subscriber::receive(const char *format, ...) {
 	// get string
 	char string[256];
-	int size = zmq_recv(_socket, string, 255, ZMQ_DONTWAIT);
+	int size = this->receiveRaw(string, 256);
 
 	// no message right now, just return
 	if (size == -1) {
 		return -1;
 	}
-
-	// truncate string
-	string[size] = 0;
 
 	// start, scan, end va list
 	va_list args;
@@ -66,5 +65,16 @@ short Subscriber::receive(const char *format, ...) {
 
 	// done
 	return 0;
+}
+
+short Subscriber::receiveRaw(char *string, short length) {
+	// receive
+	int size = zmq_recv(_socket, string, length - 1, ZMQ_DONTWAIT);
+
+	// terminate string
+	string[size] = '\0';
+
+	// return
+	return size;
 }
 

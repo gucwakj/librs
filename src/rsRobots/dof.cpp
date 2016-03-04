@@ -47,9 +47,9 @@ const rs::Pos Dof::getConnFacePosition(short type, short side, short orientation
 		if (side == Connectors::Side2)
 			return P.add(Q.multiply(_el_length/4, -this->getBodyWidth()/2 - _cap_depth, 0));
 		else if (side == Connectors::Side3)
-			return P.add(Q.multiply(_el_length/4, 0, -this->getBodyHeight()/2 - this->getConnDepth()));
+			return P.add(Q.multiply(-_el_length/4, 0, -this->getBodyHeight()/2 - this->getConnDepth()));
 		else if (side == Connectors::Side4)
-			return P.add(Q.multiply(_el_length/4, 0, this->getBodyHeight()/2 + this->getConnDepth()));
+			return P.add(Q.multiply(-_el_length/4, 0, this->getBodyHeight()/2 + this->getConnDepth()));
 	}
 	else if (type == Connectors::Plank)
 		return P.add(Q.multiply(0, _plank_length - 2*_cap_radius, 0));

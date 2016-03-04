@@ -28,7 +28,7 @@ Dof::Dof(short joint, float scale) : Robot(rs::Dof) {
 	// connectors
 	this->setConnDepth(_scale*0.00570);
 	this->setConnHeight(_scale*0.03715);
-	_el_length = _scale*0.13350 + 2*_cap_radius;
+	_el_length = 0.06;
 	_plank_length = _scale*0.13350;
 }
 
@@ -45,11 +45,11 @@ const rs::Pos Dof::getConnFacePosition(short type, short side, short orientation
 	// get offset of face
 	if (type == Connectors::El) {
 		if (side == Connectors::Side2)
-			return P.add(Q.multiply(_el_length/4, -this->getBodyWidth()/2 - _cap_depth, 0));
+			return P.add(Q.multiply(_el_length, -this->getBodyWidth()/2 - _cap_depth, 0));
 		else if (side == Connectors::Side3)
-			return P.add(Q.multiply(-_el_length/4, 0, -this->getBodyHeight()/2 - this->getConnDepth()));
+			return P.add(Q.multiply(-this->getBodyLength() + _cap_depth, 0, -0.09));
 		else if (side == Connectors::Side4)
-			return P.add(Q.multiply(-_el_length/4, 0, this->getBodyHeight()/2 + this->getConnDepth()));
+			return P.add(Q.multiply(-this->getBodyLength() + _cap_depth, 0, 0.09));
 	}
 	else if (type == Connectors::Plank)
 		return P.add(Q.multiply(0, _plank_length - 2*_cap_radius, 0));

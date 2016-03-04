@@ -829,7 +829,7 @@ void Scene::toggleLabel(osg::Group *parent, osg::Node *child) {
 		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
 		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
 	}
-	else if (!parent->getName().compare(0, 8, "obstacle")) {
+	else if (!parent->getName().compare(0, 8, "obstacle") || !parent->getName().compare(0, 6, "marker")) {
 		osg::Geode *geode = dynamic_cast<osg::Geode *>(parent->getChild(0));
 		geode->setNodeMask((geode->getNodeMask() ? NOT_VISIBLE_MASK : VISIBLE_MASK));
 	}

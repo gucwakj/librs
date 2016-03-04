@@ -36,7 +36,7 @@ void Mindstorms::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		if (_units)
 			text.append("\n\n(" + std::to_string(rs::M2CM(x)) + ", " + std::to_string(rs::M2CM(y)) + ") [cm]");
 		else
-			text.append("\n\n(" + std::to_string(rs::IN2M(y)) + ", " + std::to_string(rs::IN2M(y)) + ") [in]");
+			text.append("\n\n(" + std::to_string(rs::M2IN(y)) + ", " + std::to_string(rs::M2IN(y)) + ") [in]");
 		// draw label
 		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
 		label->setText(text);

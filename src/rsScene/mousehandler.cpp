@@ -1,4 +1,10 @@
+#include <osg/Geode>
+#include <osgGA/GUIActionAdapter>
+#include <osgGA/GUIEventAdapter>
+#include <osgGA/GUIEventHandler>
 #include <osgText/Text>
+#include <osgUtil/IntersectionVisitor>
+#include <osgViewer/Viewer>
 
 #include <rsScene/MouseHandler>
 #include <rsScene/Scene>

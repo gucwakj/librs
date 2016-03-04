@@ -1,15 +1,6 @@
 #ifndef RSSCENE_SCENE_
 #define RSSCENE_SCENE_
 
-#include <OpenThreads/Thread>
-
-#include <osg/Camera>
-#include <osg/Group>
-#include <osg/Material>
-#include <osgShadow/ShadowedScene>
-#include <osgText/Text>
-#include <osgViewer/Viewer>
-
 #include <rs/Threads>
 #include <rsScene/KeyboardHandler>
 #include <rsScene/MouseHandler>
@@ -20,6 +11,24 @@ extern osg::Node::NodeMask RECEIVES_SHADOW_MASK;
 extern osg::Node::NodeMask CASTS_SHADOW_MASK;
 extern osg::Node::NodeMask IS_PICKABLE_MASK;
 extern osg::Node::NodeMask VISIBLE_MASK;
+
+namespace osg {
+	class Camera;
+	class Group;
+	class Material;
+}
+
+namespace osgShadow {
+	class ShadowedScene;
+}
+
+namespace osgText {
+	class Text;
+}
+
+namespace osgViewer {
+	class Viewer;
+}
 
 namespace rsScene {
 

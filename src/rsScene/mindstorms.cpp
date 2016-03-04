@@ -1,5 +1,6 @@
 #include <osg/Geode>
 #include <osg/Group>
+#include <osg/Material>
 #include <osg/PositionAttitudeTransform>
 #include <osg/ShapeDrawable>
 #include <osgDB/ReadFile>

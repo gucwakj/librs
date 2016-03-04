@@ -2,18 +2,26 @@
 #define NOMINMAX 1		// f*$k microsoft
 
 #include <osg/BlendFunc>
+#include <osg/Camera>
 #include <osg/ComputeBoundsVisitor>
 #include <osg/Depth>
+#include <osg/Group>
 #include <osg/LineWidth>
+#include <osg/Material>
 #include <osg/MatrixTransform>
+#include <osg/PositionAttitudeTransform>
 #include <osg/ShapeDrawable>
+#include <osg/TexMat>
 #include <osg/TextureCubeMap>
 #include <osgDB/FileUtils>
 #include <osgDB/ReadFile>
 #include <osgFX/Outline>
 #include <osgGA/OrbitManipulator>
+#include <osgShadow/ShadowedScene>
+#include <osgText/Text>
 #include <osgUtil/Optimizer>
 #include <osgUtil/SmoothingVisitor>
+#include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 
 #include <rs/Enum>

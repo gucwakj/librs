@@ -1,12 +1,13 @@
 #ifndef RSSCENE_SKYTRANSFORM_
 #define RSSCENE_SKYTRANSFORM_
 
-#include <osg/Matrix>
-#include <osg/NodeVisitor>
 #include <osg/Transform>
-#include <osgUtil/CullVisitor>
 
 #include <rs/Macros>
+
+namespace osg {
+	class NodeVisitor;
+}
 
 namespace rsScene {
 

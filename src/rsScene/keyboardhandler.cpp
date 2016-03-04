@@ -1,4 +1,11 @@
+#include <osg/Billboard>
+#include <osg/PositionAttitudeTransform>
 #include <osgFX/Scribe>
+#include <osgGA/GUIActionAdapter>
+#include <osgGA/GUIEventAdapter>
+#include <osgGA/GUIEventHandler>
+#include <osgShadow/ShadowedScene>
+#include <osgViewer/Viewer>
 
 #include <rsScene/KeyboardHandler>
 

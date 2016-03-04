@@ -1,12 +1,7 @@
 #ifndef RSSCENE_MOUSEHANDLER_
 #define RSSCENE_MOUSEHANDLER_
 
-#include <osg/Geode>
-#include <osgGA/GUIActionAdapter>
-#include <osgGA/GUIEventAdapter>
 #include <osgGA/GUIEventHandler>
-#include <osgUtil/IntersectionVisitor>
-#include <osgViewer/Viewer>
 
 #include <rs/Macros>
 
@@ -15,6 +10,10 @@ extern osg::Node::NodeMask RECEIVES_SHADOW_MASK;
 extern osg::Node::NodeMask CASTS_SHADOW_MASK;
 extern osg::Node::NodeMask IS_PICKABLE_MASK;
 extern osg::Node::NodeMask VISIBLE_MASK;
+
+namespace osgViewer {
+	class Viewer;
+}
 
 namespace rsScene {
 

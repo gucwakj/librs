@@ -1,3 +1,9 @@
+#include <osg/Matrix>
+#include <osg/Node>
+#include <osg/NodeVisitor>
+#include <osg/TexMat>
+#include <osgUtil/CullVisitor>
+
 #include <rsScene/TextureCallback>
 
 using namespace rsScene;

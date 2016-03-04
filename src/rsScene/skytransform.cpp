@@ -1,3 +1,7 @@
+#include <osg/Matrix>
+#include <osg/NodeVisitor>
+#include <osgUtil/CullVisitor>
+
 #include <rsScene/SkyTransform>
 
 using namespace rsScene;

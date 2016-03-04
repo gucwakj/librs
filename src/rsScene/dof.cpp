@@ -1,7 +1,9 @@
 #include <osg/Geode>
 #include <osg/Group>
+#include <osg/Material>
 #include <osg/PositionAttitudeTransform>
 #include <osg/ShapeDrawable>
+#include <osg/StateSet>
 #include <osgDB/ReadFile>
 
 #include <rs/Macros>

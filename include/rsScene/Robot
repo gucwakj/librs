@@ -1,15 +1,17 @@
 #ifndef RSSCENE_ROBOT_
 #define RSSCENE_ROBOT_
 
-#include <osg/Geode>
-#include <osg/Group>
-#include <osg/Material>
-
 #include <rs/Pos>
 #include <rs/Quat>
 #include <rs/Threads>
 #include <rs/Vec>
 #include <rsRobots/Robot>
+
+namespace osg {
+	class Geode;
+	class Group;
+	class Material;
+}
 
 namespace rsScene {
 

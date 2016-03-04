@@ -1,13 +1,15 @@
 #ifndef RSSCENE_TEXTURECALLBACK_
 #define RSSCENE_TEXTURECALLBACK_
 
-#include <osg/Node>
 #include <osg/NodeCallback>
-#include <osg/NodeVisitor>
-#include <osg/TexMat>
-#include <osgUtil/CullVisitor>
 
 #include <rs/Macros>
+
+namespace osg {
+	class Node;
+	class NodeVisitor;
+	class TexMat;
+}
 
 namespace rsScene {
 

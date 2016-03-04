@@ -1,4 +1,7 @@
+#include <osg/Geode>
 #include <osg/Geometry>
+#include <osg/Group>
+#include <osg/Material>
 #include <osg/Point>
 #include <osgText/Text>
 

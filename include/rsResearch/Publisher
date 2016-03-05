@@ -2,6 +2,7 @@
 #define RSRESEARCH_PUBLISHER_
 
 #include <string>
+#include <vector>
 
 #include <rs/Macros>
 
@@ -11,16 +12,18 @@ namespace rsResearch {
 	class LIBRSEXPORT Publisher {
 		// public functions
 		public:
-			Publisher(int, std::string);
+			Publisher(short, std::string);
 			virtual ~Publisher(void);
 
-			short send(const char*, ...);
+			void addMessage(short);
+			short send(short id, const char*, ...);
 
 		// private data
 		private:
-			void *_context;			// zmq context
-			void *_socket;			// zmq socket
-			std::string _prefix;	// message prefix
+			short _port;					// base message port
+			std::string _prefix;			// message prefix
+			std::vector<void*> _context;	// zmq context
+			std::vector<void*> _socket;		// zmq prefix
 	};
 
 } // namespace rsResearch

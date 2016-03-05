@@ -8,31 +8,41 @@
 
 using namespace rsResearch;
 
-Publisher::Publisher(int port, std::string prefix) {
+Publisher::Publisher(short port, std::string prefix) {
+	// save port
+	_port = port;
+
 	// save message prefix
 	_prefix = prefix;
 	_prefix.append(":");
 
-	// create zmq context
-	_context = zmq_ctx_new();
-	_socket = zmq_socket(_context, ZMQ_PUB);
-
-	// open port for sending
-	std::string protocol("tcp://*:");
-	protocol.append(std::to_string(port));
-	if (zmq_bind(_socket, protocol.c_str()))
-		std::cerr << "rsResearch::Publisher cannot bind to socket" << std::endl;
+	// add first message
+	this->addMessage(0);
 }
 
 Publisher::~Publisher(void) {
-	zmq_close(_socket);
-	zmq_ctx_destroy(_context);
+	for (unsigned int i = 0; i < _socket.size(); i++) {
+		zmq_close(_socket[i]);
+		zmq_ctx_destroy(_context[i]);
+	}
 }
 
 /**********************************************************
 	public functions
  **********************************************************/
-short Publisher::send(const char *format, ...) {
+void Publisher::addMessage(short id) {
+	// create zmq context
+	_context.push_back(zmq_ctx_new());
+	_socket.push_back(zmq_socket(_context[id], ZMQ_PUB));
+
+	// open port for sending
+	std::string protocol("tcp://*:");
+	protocol.append(std::to_string(_port + id));
+	if (zmq_bind(_socket[id], protocol.c_str()))
+		std::cerr << "rsResearch::Publisher cannot bind to socket" << std::endl;
+}
+
+short Publisher::send(short id, const char *format, ...) {
 	// buffer
 	char buffer[256];
 
@@ -49,6 +59,6 @@ short Publisher::send(const char *format, ...) {
 	va_end(args);
 
 	// send message
-	return zmq_send(_socket, buffer, strlen(buffer), 0);
+	return zmq_send(_socket[id], buffer, strlen(buffer), 0);
 }
 

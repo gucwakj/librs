@@ -2,6 +2,7 @@
 #define RSRESEARCH_SUBSCRIBER_
 
 #include <string>
+#include <vector>
 
 #include <rs/Macros>
 
@@ -14,16 +15,18 @@ namespace rsResearch {
 			Subscriber(std::string, std::string, std::string, short);
 			virtual ~Subscriber(void);
 
-			short addSubscription(std::string, short);
-			short receive(const char*, ...);
-			short receiveRaw(char*, short);
+			short addMessage(short);
+			short addSubscription(std::string, short, short = 0);
+			short receive(short id, const char*, ...);
+			short receiveRaw(char*, short, short = 0);
 
 		// private data
 		private:
-			void *_context;			// zmq context
-			void *_socket;			// zmq socket
-
-			std::string _prefix;	// receiving filter prefix
+			short _port;					// base message port
+			std::vector<void*> _context;	// zmq context
+			std::vector<void*> _socket;		// zmq prefix
+			std::string _ip;				// base ip address
+			std::string _prefix;			// message prefix
 	};
 
 } // namespace rsResearch

@@ -12,7 +12,7 @@ namespace rsResearch {
 	class LIBRSEXPORT Subscriber {
 		// public functions
 		public:
-			Subscriber(std::string, std::string, std::string, short);
+			Subscriber(std::string, std::string, std::string, short, short = 0);
 			virtual ~Subscriber(void);
 
 			short addMessage(short);

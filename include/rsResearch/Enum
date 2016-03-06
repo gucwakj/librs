@@ -4,15 +4,12 @@
 namespace rsResearch {
 
 	namespace Forms {
-
-		// Forms
 		enum Form {
 			Dog,
 			Individual,
 			Salamander,
 			Snake
 		};
-
 	} // namespace Forms
 
 } // namespace rsResearch

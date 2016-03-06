@@ -7,7 +7,7 @@
 
 using namespace rsResearch;
 
-Subscriber::Subscriber(std::string ip, std::string prefix, std::string name, short port) {
+Subscriber::Subscriber(std::string ip, std::string prefix, std::string name, short port, short id) {
 	// save data
 	_ip = ip;
 	_port = port;
@@ -21,7 +21,7 @@ Subscriber::Subscriber(std::string ip, std::string prefix, std::string name, sho
 	}
 
 	// add first message protocol
-	this->addMessage(0);
+	this->addMessage(id);
 }
 
 Subscriber::~Subscriber(void) {

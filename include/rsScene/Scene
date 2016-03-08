@@ -45,7 +45,6 @@ namespace rsScene {
 			void addAndRemoveChildren(bool = false);
 			void addChildrenToBackground(void);
 			void addHighlight(int, bool = false, bool = true, bool = true, const rs::Vec& = rs::Vec(1, 1, 0));
-			void changeID(int);
 			Group* createPreconfig(int);
 			Group* createRobot(rsScene::Robot*);
 			int deleteMarker(int);
@@ -56,6 +55,7 @@ namespace rsScene {
 			Obstacle* drawObstacle(int, int, const rs::Pos&, const rs::Vec&, const rs::Vec&, const rs::Quat&);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
+			void reidRobot(int);
 			void setBackgroundImage(int, std::string);
 			void setFrameRate(int);
 			void setGrid(std::vector<double>, bool = false);

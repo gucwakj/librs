@@ -234,16 +234,6 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 	}
 }
 
-void Scene::changeID(int newid) {
-	osg::Group *test = NULL;
-	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
-		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
-		if (!test->getName().compare(std::string("robot").append(std::to_string(newid + 1)))) {
-			test->setName(std::string("robot").append(std::to_string(newid)));
-		}
-	}
-}
-
 Group* Scene::createPreconfig(int id) {
 	// create new robot
 	osg::ref_ptr<osg::Group> group = new osg::Group();
@@ -535,6 +525,16 @@ std::string Scene::getTexturePath(void) {
 	path = "/home/kgucwa/projects/librs/resources/";
 #endif
 	return path;
+}
+
+void Scene::reidRobot(int id) {
+	osg::Group *test = NULL;
+	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
+		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		if (!test->getName().compare(std::string("robot").append(std::to_string(id)))) {
+			test->setName(std::string("robot").append(std::to_string(id - 1)));
+		}
+	}
 }
 
 void Scene::setBackgroundImage(int pos, std::string path) {

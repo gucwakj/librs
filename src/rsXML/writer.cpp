@@ -65,6 +65,12 @@ Writer::~Writer(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+void Writer::reidRobot(tinyxml2::XMLElement *robot) {
+	int i = -1;
+	robot->QueryIntAttribute("id", &i);
+	robot->SetAttribute("id", i - 1);
+}
+
 void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, int size) {
 	// set start position
 	tinyxml2::XMLElement *pos = getOrCreateChild(marker, "position");

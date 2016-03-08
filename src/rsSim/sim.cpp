@@ -625,7 +625,7 @@ void* Sim::simulation_thread(void *arg) {
 				end = s_time.tv_sec*1000 + s_time.tv_nsec/1000000;
 #endif
 
-				// running mean of last four time steps
+				// running mean of last 'num' time steps
 				if (!restart) {
 					for (i = num-2; i >= 0; i--) { dt[i+1] = dt[i]; }
 					dt[0] = end - start_time;

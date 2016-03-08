@@ -150,6 +150,16 @@ int Robot::moveJointWait(int id) {
 	return 0;
 }
 
+int Robot::pauseWait() {
+	// wait for pause to finish
+	RS_MUTEX_LOCK(&_pause_mutex);
+	while (_sim->getPause()) { RS_COND_WAIT(&_pause_cond, &_pause_mutex); }
+	RS_MUTEX_UNLOCK(&_pause_mutex);
+
+	// success
+	return 0;
+}
+
 #ifdef RS_RESEARCH
 void Robot::setCPGGoal(double value) {
 	_next_goal = value;

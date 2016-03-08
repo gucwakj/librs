@@ -33,6 +33,7 @@ namespace rsSim {
 			int moveJointTo(int, double);
 			int moveJointToNB(int, double);
 			int moveJointWait(int);
+			int pauseWait(void);
 #ifdef RS_RESEARCH
 			void setCPGGoal(double);		// research: set next goal value
 #endif
@@ -129,8 +130,10 @@ namespace rsSim {
 			float _trackwidth;			// trackwidth of robot
 			short _dof;					// number of DOF
 			RS_MUTEX_T _goal_mutex;		// goal value being written
+			RS_MUTEX_T _pause_mutex;	// simulation is paused
 			RS_MUTEX_T _success_mutex;	// completed step
 			RS_MUTEX_T _theta_mutex;	// theta value being written
+			RS_COND_T _pause_cond;		// finish pausing
 			RS_COND_T _success_cond;	// completed step
 
 		// private functions

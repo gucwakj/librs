@@ -66,10 +66,9 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 	this->setWheelRight(w[1]);
 
 	// convert input angles to radians
-	for (int i = 0; i < _dof; i++) {
-		_motor[i].goal = _motor[i].theta = rs::D2R(a[i]);
-	}
 	_motor[Bodies::Joint1].goal = _motor[Bodies::Joint1].theta = 0;
+	_motor[Bodies::Joint2].goal = _motor[Bodies::Joint2].theta = rs::D2R(a[0]);
+	_motor[Bodies::Joint3].goal = _motor[Bodies::Joint3].theta = rs::D2R(a[1]);
 	_motor[Bodies::Joint4].goal = _motor[Bodies::Joint4].theta = 0;
 
 	// build robot bodies

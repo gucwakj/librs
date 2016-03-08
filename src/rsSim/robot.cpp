@@ -79,7 +79,7 @@ int Robot::moveJointNB(int id, double angle) {
 
 	// set new goal angles
 	if (_motor[id].omega < -rs::Epsilon) angle = -angle;
-	_motor[id].goal += rs::D2R(angle);
+	_motor[id].goal = _motor[id].theta + rs::D2R(angle);
 
 	// actively seeking an angle
 	_motor[id].mode = SEEK;

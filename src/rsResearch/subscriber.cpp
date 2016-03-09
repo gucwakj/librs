@@ -87,7 +87,7 @@ short Subscriber::receiveRaw(char *string, short length, short id) {
 	int size = zmq_recv(_socket[id], string, length - 1, ZMQ_DONTWAIT);
 
 	// terminate string
-	string[size] = '\0';
+	if (size != -1) string[size] = '\0';
 
 	// return
 	return size;

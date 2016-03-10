@@ -207,10 +207,27 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 		// get obstacle node
 		else if (!robot && test && !test->getName().compare(std::string("obstacle").append(std::to_string(id)))) {
 			int num = test->getChild(0)->asTransform()->getChild(0)->asGeode()->getNumChildren();
-			for (int i = 0; i < num; i++) {
-				osg::ShapeDrawable *test2 = dynamic_cast<osg::ShapeDrawable *>(test->getChild(0)->asTransform()->getChild(0)->asGeode()->getChild(i));
+			if (num > 1) {
+				for (int i = 0; i < num; i++) {
+					osg::ShapeDrawable *test2 = dynamic_cast<osg::ShapeDrawable *>(test->getChild(0)->asTransform()->getChild(0)->asGeode()->getChild(i));
+					osg::ComputeBoundsVisitor cbbv;
+					test2->accept(cbbv);
+					if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+						this->setHUD(true);
+						this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
+						this->getHUDText()->setText("Objects are Colliding!");
+						this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
+					}
+					else {
+						this->setHUD(false);
+						this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), c);
+					}
+					break;
+				}
+			}
+			else {
 				osg::ComputeBoundsVisitor cbbv;
-				test2->accept(cbbv);
+				test->accept(cbbv);
 				if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
 					this->setHUD(true);
 					this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
@@ -221,7 +238,6 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 					this->setHUD(false);
 					this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), c);
 				}
-				break;
 			}
 			break;
 		}
@@ -1462,10 +1478,21 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 		// get obstacle node
 		else if (test && !test->getName().compare(0, 8, "obstacle") && (test->getName().compare(8, 1, std::to_string(id)))) {
 			int num = test->getChild(0)->asTransform()->getChild(0)->asGeode()->getNumChildren();
-			for (int i = 0; i < num; i++) {
-				osg::ShapeDrawable *test2 = dynamic_cast<osg::ShapeDrawable *>(test->getChild(0)->asTransform()->getChild(0)->asGeode()->getChild(i));
+			if (num > 1) {
+				for (int i = 0; i < num; i++) {
+					osg::ShapeDrawable *test2 = dynamic_cast<osg::ShapeDrawable *>(test->getChild(0)->asTransform()->getChild(0)->asGeode()->getChild(i));
+					osg::ComputeBoundsVisitor cbbv;
+					test2->accept(cbbv);
+					if (bb.intersects(cbbv.getBoundingBox())) {
+						this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
+						retval = true;
+						break;
+					}
+				}
+			}
+			else {
 				osg::ComputeBoundsVisitor cbbv;
-				test2->accept(cbbv);
+				test->accept(cbbv);
 				if (bb.intersects(cbbv.getBoundingBox())) {
 					this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
 					retval = true;

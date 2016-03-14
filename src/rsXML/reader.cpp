@@ -433,6 +433,11 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			i = 0;
 			node->QueryIntAttribute("id", &i);
 			_marker.back()->setID(i);
+			// size
+			i = 0;
+			if ( !node->QueryIntAttribute("size", &i) ) {
+				_marker.back()->setSize(i);
+			}
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;

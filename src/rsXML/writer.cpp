@@ -95,6 +95,7 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs:
 		case rs::Text:
 			this->getOrCreateChild(marker, "name")->DeleteChildren();
 			this->getOrCreateChild(marker, "name")->InsertFirstChild(this->toText(name));
+			marker->SetAttribute("size", size);
 			break;
 	}
 

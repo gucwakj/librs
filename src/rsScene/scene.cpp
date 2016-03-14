@@ -347,9 +347,8 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			osg::ref_ptr<osgText::Text> label = new osgText::Text();
 			label->setAlignment(osgText::Text::CENTER_CENTER);
 			label->setAxisAlignment(osgText::Text::SCREEN);
-			label->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 			label->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
-			label->setCharacterSize(25*size);
+			label->setCharacterSize(size);
 			label->setDrawMode(osgText::Text::TEXT);
 			label->setPosition(osg::Vec3(0, 0, 0));
 			label->setText(s);

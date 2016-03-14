@@ -15,41 +15,41 @@
 	<box id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="0" theta="0" phi="0"/>
-		<position x="0" y="0.6095" z="0.02"/>
+		<position x="1.219" y="1.219" z="0.02"/>
 		<size x="2.438" y="0.0254" z="0.04"/>
 	</box>
 	<!-- bottom -->
 	<box id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="0" theta="0" phi="0"/>
-		<position x="0" y="-0.6095" z="0.02"/>
+		<position x="1.219" y="0" z="0.02"/>
 		<size x="2.438" y="0.0254" z="0.04"/>
 	</box>
 	<!-- left -->
 	<box id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="0" theta="0" phi="0"/>
-		<position x="-1.219" y="0" z="0.02"/>
+		<position x="0" y="0.6095" z="0.02"/>
 		<size x="0.0254" y="1.219" z="0.04"/>
 	</box>
 	<!-- right -->
 	<box id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="0" theta="0" phi="0"/>
-		<position x="1.219" y="0" z="0.02"/>
+		<position x="2.438" y="0.6095" z="0.02"/>
 		<size x="0.0254" y="1.219" z="0.04"/>
 	</box>
 	<!-- bell support -->
 	<cylinder id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="0" theta="0" phi="0"/>
-		<position x="-0.305" y="0.6095" z="0.165"/>
+		<position x="0.914" y="1.219" z="0.165"/>
 		<size length="0.330" radius="0.0125"/>
 	</cylinder>
 	<cylinder id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="90" theta="0" phi="0"/>
-		<position x="-0.305" y="0.546" z="0.317"/>
+		<position x="0.914" y="1.1555" z="0.317"/>
 		<size length="0.157" radius="0.0125"/>
 	</cylinder>
 </obstacles>

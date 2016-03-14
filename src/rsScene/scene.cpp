@@ -874,10 +874,10 @@ void Scene::draw_board(double xsize, double ysize) {
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	// extents of geom
 	osg::ref_ptr<osg::Vec3Array> coords = new osg::Vec3Array();
-	coords->push_back(osg::Vec3(-xsize, -ysize, 0));
-	coords->push_back(osg::Vec3( xsize, -ysize, 0));
-	coords->push_back(osg::Vec3( xsize,  ysize, 0));
-	coords->push_back(osg::Vec3(-xsize,  ysize, 0));
+	coords->push_back(osg::Vec3( 0, 0, 0));
+	coords->push_back(osg::Vec3(2*xsize, 0, 0));
+	coords->push_back(osg::Vec3(2*xsize, 2*ysize, 0));
+	coords->push_back(osg::Vec3(0, 2*ysize, 0));
 	geom->setVertexArray(coords);
 	// texture coordinates
 	osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();

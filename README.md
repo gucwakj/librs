@@ -121,8 +121,8 @@ build Release solution
 cd deps/osg/
 mkdir build/
 cd build/
-cmake -G "Visual Studio 12 2013 Win64" -DCMAKE_PREFIX_PATH="C:/Qt/5.4.1/5.4/msvc2013_64_opengl/lib/cmake"
-	-DDESIRED_QT_VERSION=5 -DACTUAL_3RDPARTY_DIR="../third_party/{x64/x86}" ..
+cmake -G "Visual Studio 12 2013 Win64" -DCMAKE_PREFIX_PATH="C:/Qt/5.5.1/5.5/msvc2013_64/lib/cmake"
+	-DDESIRED_QT_VERSION=5 -DACTUAL_3RDPARTY_DIR="../3rd_party/{x64/x86}" ..
 open build/OpenSceneGraph.sln in visual studio
 build Release solution
 	packages used:	osg osgDB osgFX osgGA osgQt osgShadow osgText

@@ -44,6 +44,9 @@ namespace rs {
 			ActivityMat,
 			Board,
 			Outdoors,
+			RPC2014,
+			RPC2015,
+			RPC2016,
 			Num_Levels
 		};
 	} // namespace Level

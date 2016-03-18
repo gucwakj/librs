@@ -622,14 +622,23 @@ void Scene::setLevel(int level) {
 	// draw new level
 	switch (level) {
 		case rs::Level::ActivityMat:
-			this->draw_board(0.68, 0.37);
+			this->draw_board(0.68, 0.37, 0.68, 0.37);
 			break;
 		case rs::Level::Board:
-			this->draw_board(1.219, 0.610);
+			this->draw_board(1.219, 0.610, 1.219, 0.610);
 			break;
 		case rs::Level::Outdoors:
 			this->draw_skybox();
 			this->draw_ground();
+			break;
+		case rs::Level::RPC2014:
+			this->draw_board(1.219, 0.610, 0, 0);
+			break;
+		case rs::Level::RPC2015:
+			this->draw_board(1.219, 0.610, rs::IN2M(6), rs::IN2M(3));
+			break;
+		case rs::Level::RPC2016:
+			this->draw_board(1.219, 0.610, 0, 0);
 			break;
 	}
 
@@ -868,15 +877,15 @@ osg::Material* Scene::create_material(osg::Vec4 color) {
 	return material;
 }
 
-void Scene::draw_board(double xsize, double ysize) {
+void Scene::draw_board(double xsize, double ysize, double xoffset, double yoffset) {
 	// square geometry
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	// extents of geom
 	osg::ref_ptr<osg::Vec3Array> coords = new osg::Vec3Array();
-	coords->push_back(osg::Vec3( 0, 0, 0));
-	coords->push_back(osg::Vec3(2*xsize, 0, 0));
-	coords->push_back(osg::Vec3(2*xsize, 2*ysize, 0));
-	coords->push_back(osg::Vec3(0, 2*ysize, 0));
+	coords->push_back(osg::Vec3(0 - xoffset, 0 - yoffset, 0));
+	coords->push_back(osg::Vec3(2*xsize - xoffset, 0 - yoffset, 0));
+	coords->push_back(osg::Vec3(2*xsize - xoffset, 2*ysize - yoffset, 0));
+	coords->push_back(osg::Vec3(0 - xoffset, 2*ysize - yoffset, 0));
 	geom->setVertexArray(coords);
 	// texture coordinates
 	osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();

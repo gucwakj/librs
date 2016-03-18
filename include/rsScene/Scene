@@ -83,7 +83,7 @@ namespace rsScene {
 		private:
 			osg::Material* create_material(osg::Vec4);
 			void draw_grid(double, double, double, double, double, double, double);
-			void draw_board(double, double);
+			void draw_board(double, double, double, double);
 			void draw_ground(void);
 			void draw_hud(double, double, bool);
 			void draw_skybox(void);

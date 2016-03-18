@@ -30,6 +30,12 @@ BackgroundReader::BackgroundReader(std::string dir) {
 			_level = rs::Level::Board;
 		else if ( !strcmp(node->GetText(), "outdoors") )
 			_level = rs::Level::Outdoors;
+		else if ( !strcmp(node->GetText(), "RPC2014") )
+			_level = rs::Level::RPC2014;
+		else if ( !strcmp(node->GetText(), "RPC2015") )
+			_level = rs::Level::RPC2015;
+		else if ( !strcmp(node->GetText(), "RPC2016") )
+			_level = rs::Level::RPC2016;
 	}
 
 	// get screenshot

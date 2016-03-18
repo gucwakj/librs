@@ -811,7 +811,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 				osg::ref_ptr<osgFX::Outline> outline = new osgFX::Outline();
 				outline->setWidth(20);
 				outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
-				outline->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+				outline->getOrCreateStateSet()->setRenderBinDetails(90, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 				outline->addChild(parent->getChild(i)->asTransform()->getChild(0));
 				parent->getChild(i)->asTransform()->replaceChild(parent->getChild(i)->asTransform()->getChild(0), outline);
 			}
@@ -830,7 +830,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 			osg::ref_ptr<osgFX::Outline> outline = new osgFX::Outline();
 			outline->setWidth(20);
 			outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
-			outline->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			outline->getOrCreateStateSet()->setRenderBinDetails(90, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 			outline->addChild(parent->getChild(0)->asTransform()->getChild(0));
 			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), outline);
 		}

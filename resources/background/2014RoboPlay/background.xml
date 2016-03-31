@@ -7,7 +7,7 @@
 <screenshot>screenshot.png</screenshot>
 
 <background>
-	<ground>board2.png</ground>
+	<ground>board.png</ground>
 </background>
 
 <obstacles>

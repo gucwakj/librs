@@ -15,28 +15,28 @@
 	<box id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="0" theta="0" phi="0"/>
-		<position x="1.0666" y="1.1428" z="0.02"/>
-		<size x="2.438" y="0.0254" z="0.04"/>
+		<position x="1.219" y="1.372" z="0.02"/>
+		<size x="2.743" y="0.0254" z="0.04"/>
 	</box>
 	<!-- bottom -->
 	<box id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="0" theta="0" phi="0"/>
-		<position x="1.0666" y="-0.0762" z="0.02"/>
-		<size x="2.438" y="0.0254" z="0.04"/>
+		<position x="1.219" y="-0.1524" z="0.02"/>
+		<size x="2.743" y="0.0254" z="0.04"/>
 	</box>
 	<!-- left -->
 	<box id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="0" theta="0" phi="0"/>
-		<position x="-0.1524" y="0.5333" z="0.02"/>
-		<size x="0.0254" y="1.219" z="0.04"/>
+		<position x="-0.1524" y="0.6095" z="0.02"/>
+		<size x="0.0254" y="1.524" z="0.04"/>
 	</box>
 	<!-- right -->
 	<box id="0" mass="0">
 		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
 		<rotation psi="0" theta="0" phi="0"/>
-		<position x="2.2856" y="0.5333" z="0.02"/>
-		<size x="0.0254" y="1.219" z="0.04"/>
+		<position x="2.591" y="0.6095" z="0.02"/>
+		<size x="0.0254" y="1.524" z="0.04"/>
 	</box>
 </obstacles>

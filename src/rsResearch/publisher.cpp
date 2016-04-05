@@ -8,7 +8,7 @@
 
 using namespace rsResearch;
 
-Publisher::Publisher(short port, std::string prefix) {
+Publisher::Publisher(short port, std::string prefix, short id) {
 	// save port
 	_port = port;
 
@@ -17,7 +17,7 @@ Publisher::Publisher(short port, std::string prefix) {
 	_prefix.append(":");
 
 	// add first message
-	this->addMessage(0);
+	this->addMessage(id);
 }
 
 Publisher::~Publisher(void) {

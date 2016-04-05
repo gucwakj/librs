@@ -1,5 +1,5 @@
-#ifndef RSRESEARCH_PUBLISHER_
-#define RSRESEARCH_PUBLISHER_
+#ifndef RSRESEARCH_REPLIER_
+#define RSRESEARCH_REPLIER_
 
 #include <string>
 #include <vector>
@@ -9,24 +9,23 @@
 namespace rsResearch {
 
 	// class
-	class LIBRSEXPORT Publisher {
+	class LIBRSEXPORT Replier {
 		// public functions
 		public:
-			Publisher(short, std::string, short = 0);
-			virtual ~Publisher(void);
+			Replier(short, short = 0);
+			virtual ~Replier(void);
 
-			void addMessage(short);
-			short send(short id, const char*, ...);
+			short addMessage(short);
+			short reply(short, const char*, ...);
 
 		// private data
 		private:
 			short _port;					// base message port
-			std::string _prefix;			// message prefix
 			std::vector<void*> _context;	// zmq context
 			std::vector<void*> _socket;		// zmq prefix
 	};
 
 } // namespace rsResearch
 
-#endif // RSRESEARCH_PUBLISHER_
+#endif // RSRESEARCH_REPLIER_
 

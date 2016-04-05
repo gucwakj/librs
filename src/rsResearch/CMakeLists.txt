@@ -27,6 +27,8 @@ set (EXTRA_LIBS ${EXTRA_LIBS} optimized rs debug rsd)
 set (SRCS ${SRCS}
 	integrator.cpp
 	publisher.cpp
+	replier.cpp
+	requester.cpp
 	subscriber.cpp
 )
 

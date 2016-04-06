@@ -10,18 +10,12 @@
 </graphics>
 
 <ground>
-    <hackysack id="0" form="4" mass="0.06">
-        <color r="1" g="0" b="0" alpha="1"/>
+    <pullupbar id="0" form="6" mass="10000">
+        <color r="1" g="1" b="1" alpha="1"/>
         <size/>
         <rotation x="0" y="0" z="0" w="1"/>
-        <position x="1.41986" y="0.2286" z="0.0275"/>
-    </hackysack>
-    <woodblock id="1" form="9" mass="8.19363e-006">
-        <color r="1" g="0" b="0" alpha="1"/>
-        <size x="0.0254" y="0.0254" z="0.0254"/>
-        <rotation x="0" y="0" z="0" w="1"/>
-        <position x="1.56972" y="0.2286" z="0.0127"/>
-    </woodblock>
+        <position x="1.0668" y="0.533401" z="0"/>
+    </pullupbar>
 </ground>
 
 <sim>
@@ -30,7 +24,7 @@
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
-        <rotation x="0" y="0" z="0" w="1"/>
-        <position x="1.0668" y="0.533401" z="0"/>
+        <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
+        <position x="0.939802" y="0.533401" z="0"/>
     </linkboti>
 </sim>

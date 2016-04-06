@@ -4,6 +4,7 @@
 </config>
 
 <graphics>
+    <units>0</units>
     <trace>1</trace>
     <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
 </graphics>
@@ -17,6 +18,6 @@
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
         <rotation x="0" y="0" z="0.707107" w="0.707107"/>
-        <position x="0" y="0" z="0"/>
+        <position x="1.0668" y="0.533401" z="0"/>
     </linkboti>
 </sim>

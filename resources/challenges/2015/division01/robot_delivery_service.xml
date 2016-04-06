@@ -4,39 +4,41 @@
 </config>
 
 <graphics>
+    <units>0</units>
+    <trace>1</trace>
     <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
 </graphics>
 
 <ground>
-    <woodblock id="1" form="7" mass="453.593">
-        <color r="0" g="1" b="0" alpha="1"/>
+    <woodblock id="0" form="9" mass="8.19363e-006">
+        <color r="1" g="0" b="0" alpha="1"/>
         <size x="0.0254" y="0.0254" z="0.0254"/>
         <rotation x="0" y="0" z="0" w="1"/>
-        <position x="-1.0414" y="-0.482601" z="0.0127"/>
+        <position x="0.0254" y="1.016" z="0.0127"/>
     </woodblock>
-    <woodblock id="0" form="7" mass="453.593">
-        <color r="0" g="1" b="0" alpha="1"/>
-        <size x="0.0254001" y="0.0254001" z="0.0254001"/>
+    <woodblock id="1" form="9" mass="8.19353e-006">
+        <color r="1" g="0" b="0" alpha="1"/>
+        <size x="0.0254" y="0.0254" z="0.0254"/>
         <rotation x="0" y="0" z="0" w="1"/>
-        <position x="-1.0414" y="0.482601" z="0.0127"/>
+        <position x="0.0254" y="0.0508001" z="0.0127"/>
     </woodblock>
 </ground>
 
 <sim>
-    <linkboti form="1" id="0">
+    <linkboti form="2" id="0">
         <wheels left="9" right="9"/>
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
         <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
-        <position x="-1.1049" y="0.482601" z="0"/>
+        <position x="-0.0381001" y="1.016" z="0"/>
     </linkboti>
-    <linkboti form="1" id="1">
+    <linkboti form="2" id="1">
         <wheels left="9" right="9"/>
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
         <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
-        <position x="-1.1049" y="-0.482601" z="0"/>
+        <position x="-0.0381001" y="0.0508001" z="0"/>
     </linkboti>
 </sim>

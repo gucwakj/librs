@@ -4,34 +4,36 @@
 </config>
 
 <graphics>
+    <units>0</units>
+    <trace>1</trace>
     <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
 </graphics>
 
 <ground/>
 
 <sim>
-    <linkboti form="1" id="0">
-        <wheels left="12" right="12"/>
+    <linkboti form="2" id="0">
+        <wheels left="9" right="9"/>
         <name></name>
-        <led r="0.501961" g="0" b="0.501961" alpha="1"/>
+        <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
         <rotation x="0" y="0" z="0.843391" w="0.5373"/>
-        <position x="0" y="0.254001" z="0"/>
+        <position x="1.0668" y="0.787402" z="0"/>
     </linkboti>
-    <linkboti form="1" id="1">
-        <wheels left="12" right="12"/>
+    <linkboti form="2" id="1">
+        <wheels left="9" right="9"/>
         <name></name>
-        <led r="0.501961" g="0" b="0.501961" alpha="1"/>
+        <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
         <rotation x="0" y="0" z="0" w="1"/>
-        <position x="-0.2286" y="-0.127" z="0"/>
+        <position x="0.838202" y="0.406401" z="0"/>
     </linkboti>
-    <linkboti form="1" id="2">
-        <wheels left="12" right="12"/>
+    <linkboti form="2" id="2">
+        <wheels left="9" right="9"/>
         <name></name>
-        <led r="0.501961" g="0" b="0.501961" alpha="1"/>
+        <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
-        <rotation x="0" y="0" z="0.843391" w="-0.5373"/>
-        <position x="-0.457201" y="0.254001" z="0"/>
+        <rotation x="0" y="0" z="-0.843391" w="0.5373"/>
+        <position x="0.609601" y="0.787402" z="0"/>
     </linkboti>
 </sim>

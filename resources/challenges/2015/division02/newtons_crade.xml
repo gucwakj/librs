@@ -4,45 +4,47 @@
 </config>
 
 <graphics>
+    <units>0</units>
+    <trace>1</trace>
     <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
 </graphics>
 
 <ground>
-    <woodblock id="3" form="7" mass="8.19353e-006">
+    <woodblock id="1" form="9" mass="6.55486e-005">
         <color r="1" g="0" b="0" alpha="1"/>
         <size x="0.0508001" y="0.0508001" z="0.0508001"/>
         <rotation x="0" y="0" z="0" w="1"/>
-        <position x="-0.609093" y="-0.482601" z="0.0127"/>
+        <position x="0.406655" y="0.0508001" z="0.0127"/>
     </woodblock>
-    <woodblock id="2" form="7" mass="8.19353e-006">
+    <woodblock id="2" form="9" mass="6.55486e-005">
         <color r="1" g="0" b="0" alpha="1"/>
         <size x="0.0508001" y="0.0508001" z="0.0508001"/>
         <rotation x="0" y="0" z="0" w="1"/>
-        <position x="-0.711201" y="-0.482601" z="0.0127"/>
+        <position x="0.355601" y="0.0508001" z="0.0127"/>
     </woodblock>
-    <woodblock id="1" form="7" mass="8.19353e-006">
+    <woodblock id="3" form="9" mass="6.55486e-005">
         <color r="1" g="0" b="0" alpha="1"/>
         <size x="0.0508001" y="0.0508001" z="0.0508001"/>
         <rotation x="0" y="0" z="0" w="1"/>
-        <position x="-0.660147" y="-0.482601" z="0.0127"/>
+        <position x="0.457709" y="0.0508001" z="0.0127"/>
     </woodblock>
 </ground>
 
 <sim>
-    <linkboti form="1" id="0">
-        <wheels left="12" right="12"/>
+    <linkboti form="2" id="0">
+        <wheels left="9" right="9"/>
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
-        <rotation x="0" y="0" z="0.707107" w="-0.707107"/>
-        <position x="-1.0922" y="-0.482601" z="0"/>
+        <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
+        <position x="-0.0381001" y="0.0508001" z="0"/>
     </linkboti>
-    <linkboti form="1" id="1">
-        <wheels left="12" right="12"/>
+    <linkboti form="2" id="1">
+        <wheels left="9" right="9"/>
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
-        <rotation x="0" y="0" z="0.707107" w="-0.707107"/>
-        <position x="-0.482601" y="-0.482601" z="0"/>
+        <rotation x="0" y="0" z="0.707107" w="0.707107"/>
+        <position x="0.584201" y="0.0508001" z="0"/>
     </linkboti>
 </sim>

@@ -4,49 +4,51 @@
 </config>
 
 <graphics>
+    <units>0</units>
+    <trace>1</trace>
     <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
 </graphics>
 
 <ground>
-    <cylinder id="0" form="1" mass="453.593" axis="2">
+    <cylinder id="0" form="2" mass="453.593" axis="0.1">
         <color r="0" g="1" b="0" alpha="1"/>
-        <size length="0.0254001" radius="0.0254001"/>
+        <size radius="0.0254" length="0.0254"/>
         <rotation x="0" y="0" z="0" w="1"/>
-        <position x="0.254001" y="0.353061" z="0"/>
+        <position x="1.3208" y="0.886462" z="0"/>
     </cylinder>
 </ground>
 
 <sim>
-    <linkboti form="1" id="0">
+    <linkboti form="2" id="0">
         <wheels left="9" right="9"/>
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
         <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
-        <position x="-1.1049" y="0.482601" z="0"/>
+        <position x="-0.0381001" y="1.016" z="0"/>
     </linkboti>
-    <linkboti form="1" id="1">
+    <linkboti form="2" id="1">
         <wheels left="9" right="9"/>
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
         <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
-        <position x="-1.1049" y="-0.482601" z="0"/>
+        <position x="-0.0381001" y="0.0508001" z="0"/>
     </linkboti>
-    <linkboti form="1" id="2">
+    <linkboti form="2" id="2">
         <wheels left="9" right="9"/>
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
         <rotation x="0" y="0" z="0.707107" w="0.707107"/>
-        <position x="1.1049" y="-0.482601" z="0"/>
+        <position x="2.159" y="0.0508001" z="0"/>
     </linkboti>
-    <linkboti form="1" id="3">
+    <linkboti form="2" id="3">
         <wheels left="9" right="9"/>
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
         <rotation x="0" y="0" z="0.707107" w="0.707107"/>
-        <position x="1.0922" y="0.482601" z="0"/>
+        <position x="2.159" y="1.016" z="0"/>
     </linkboti>
 </sim>

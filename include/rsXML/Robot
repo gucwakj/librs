@@ -55,12 +55,12 @@ namespace rsXML {
 
 		// protected data
 		protected:
+			bool _trace;
 			int _connected;
 			int _ground;
 			int _id;
 			int _orientation;
 			int _shape;
-			int _trace;
 			ConnectorList _conn;
 			Conn *_base;
 			rs::Pos _p;

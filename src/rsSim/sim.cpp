@@ -11,7 +11,11 @@ Sim::Sim(bool pause, bool rt) {
 	_world = dWorldCreate();							// create world for simulation
 	_space = dHashSpaceCreate(0);						// create space for robots
 	_group = dJointGroupCreate(0);						// create group for joints
-	dCreatePlane(_space, 0, 0, 1, 0);					// ground plane
+
+	// ground objects
+	dGeomID geom = dCreatePlane(_space, 0, 0, 1, 0);	// ground plane
+	char *str = "1";
+	dGeomSetData(geom, (void *)str);
 
 	// simulation parameters
 	dWorldSetAutoDisableFlag(_world, 1);				// auto-disable bodies that are not moving
@@ -213,6 +217,8 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l
 	// geom
 	dGeomID geom = dCreateBox(_space, l[0], l[1], l[2]);
 	dGeomSetBody(geom, *body);
+	char *str = "1";
+	dGeomSetData(geom, (void *)str);
 
 	// return object
 	return body;
@@ -243,6 +249,8 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Quat &q, const rs::Vec &l
 	// geom
 	dGeomID geom = dCreateCylinder(_space, l[0], l[1]);
 	dGeomSetBody(geom, *body);
+	char *str = "1";
+	dGeomSetData(geom, (void *)str);
 
 	// return object
 	return body;
@@ -271,6 +279,8 @@ Obstacle* Sim::addObstacle(const rs::Pos &p, const rs::Vec &l, double mass) {
 	// geom
 	dGeomID geom = dCreateSphere(_space, l[0]);
 	dGeomSetBody(geom, *body);
+	char *str = "1";
+	dGeomSetData(geom, (void *)str);
 
 	// return object
 	return body;
@@ -505,13 +515,14 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 	dBodyID b1 = dGeomGetBody(o1);
 	dBodyID b2 = dGeomGetBody(o2);
 
-	// if geom bodies are connected, do not intersect
+	// if bodies are connected, do not intersect
 	if ( b1 && b2 && dAreConnected(b1, b2) ) return;
 
-	// do not collide spaces (robots) together
-	if (!ptr->_collision && dGeomIsSpace(o1) && dGeomIsSpace(o2)) {
-		return;
-	}
+	// if requested, do not intersect
+	if (!ptr->_collision && dGeomIsSpace(o1) && dGeomIsSpace(o2)) return;
+
+	// if geoms have user data, do not intersect
+	if ((char *)dGeomGetData(o1) && (char *)dGeomGetData(o2)) return;
 
 	// special case for collision of spaces
 	if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {

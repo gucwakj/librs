@@ -54,7 +54,7 @@ int MouseHandler::pick(const osgGA::GUIEventAdapter &ea, osgViewer::Viewer *view
 	osg::ref_ptr<osgUtil::LineSegmentIntersector> picker;
 	picker = new osgUtil::LineSegmentIntersector(osgUtil::Intersector::PROJECTION, x, y);
 	picker->setIntersectionLimit(osgUtil::Intersector::LIMIT_ONE_PER_DRAWABLE);
-	osgUtil::IntersectionVisitor iv(picker);
+	osgUtil::IntersectionVisitor iv(picker.get());
 	iv.setTraversalMask(IS_PICKABLE_MASK);
 	viewer->getCamera()->accept(iv);
 

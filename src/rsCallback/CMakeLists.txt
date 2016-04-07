@@ -27,6 +27,7 @@ include_directories ("${LibRS_SOURCE_DIR}/deps/osg3.4.0/build/include")
 include_directories ("${LibRS_SOURCE_DIR}/deps/osg3.4.0/include")
 link_directories ("${LibRS_SOURCE_DIR}/deps/osg3.4.0/build/lib")
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized osg debug osgd)
+set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgGA debug osgGAd)
 set (EXTRA_LIBS ${EXTRA_LIBS} optimized osgText debug osgTextd)
 
 # add LibRS library

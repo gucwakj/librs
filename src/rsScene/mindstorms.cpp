@@ -35,10 +35,10 @@ void Mindstorms::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const r
 
 	// draw 'led'
 	osg::ref_ptr<osg::Cylinder> cyl = new osg::Cylinder(osg::Vec3d(0, 0.02, 0), 0.01, 0.01);
-	osg::ref_ptr<osg::ShapeDrawable> led = new osg::ShapeDrawable(cyl);
+	osg::ref_ptr<osg::ShapeDrawable> led = new osg::ShapeDrawable(cyl.get());
 	led->setColor(osg::Vec4(c[0], c[1], c[2], 1));
 	osg::ref_ptr<osg::Geode> bodyled = new osg::Geode();
-	bodyled->addDrawable(led);
+	bodyled->addDrawable(led.get());
 	bodyled->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	bodyled->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	bodyled->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
@@ -47,9 +47,9 @@ void Mindstorms::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const r
 	bodyled->setCullingActive(false);
 
 	// add body to transform
-	pat->addChild(body);
+	pat->addChild(body.get());
 	// add 'led' as second child of body
-	pat->addChild(bodyled);
+	pat->addChild(bodyled.get());
 	// set position of body
 	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
@@ -98,12 +98,12 @@ void Mindstorms::drawWheel(Group *group, int type, int face) {
 	node->setCullingActive(false);
 
 	// add node to transform
-	transform->addChild(node);
+	transform->addChild(node.get());
 
 	// set user properties of node
 	node->setName("wheel");
 
 	// add to scenegraph
-	group->addChild(transform);
+	group->addChild(transform.get());
 }
 

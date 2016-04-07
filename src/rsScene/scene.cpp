@@ -259,7 +259,7 @@ Group* Scene::createPreconfig(int id) {
 	group->setName(std::string("pre").append(std::to_string(id)));
 
 	// return robot group
-	return group;
+	return group.get();
 }
 
 Group* Scene::createRobot(rsScene::Robot *robot) {
@@ -272,7 +272,7 @@ Group* Scene::createRobot(rsScene::Robot *robot) {
 	robot->setUnits(_units);
 
 	// return robot group
-	return group;
+	return group.get();
 }
 
 int Scene::deleteMarker(int id) {
@@ -335,12 +335,12 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			vert->push_back(osg::Vec3(0, 0, 0));
 			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]));
-			geom->setVertexArray(vert);
+			geom->setVertexArray(vert.get());
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
 			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
 			width->setWidth(3*size);
-			geode->addDrawable(geom);
-			geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
+			geode->addDrawable(geom.get());
+			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
 			break;
 		}
 		case rs::Text: {
@@ -352,7 +352,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			label->setDrawMode(osgText::Text::TEXT);
 			label->setPosition(osg::Vec3(0, 0, 0));
 			label->setText(s);
-			geode->addDrawable(label);
+			geode->addDrawable(label.get());
 			break;
 		}
 	}
@@ -375,7 +375,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	marker->setName(std::string("marker").append(std::to_string(id)));
 
 	// add to scenegraph
-	_staging[0]->addChild(marker);
+	_staging[0]->addChild(marker.get());
 
 	return 0;
 }
@@ -402,14 +402,14 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			osg::ref_ptr<osg::Cylinder> cyl5 = new osg::Cylinder(osg::Vec3d(-l[0]/2, l[1]/2, 0.02), 0.02, 0.04);
 			osg::ref_ptr<osg::Cylinder> cyl6 = new osg::Cylinder(osg::Vec3d(l[0]/2, l[1]/2, 0.02), 0.02, 0.04);
 			osg::ref_ptr<osg::Cylinder> cyl7 = new osg::Cylinder(osg::Vec3d(l[0]/2, -l[1]/2, 0.02), 0.02, 0.04);
-			body->addDrawable(new osg::ShapeDrawable(cyl0));
-			body->addDrawable(new osg::ShapeDrawable(cyl1));
-			body->addDrawable(new osg::ShapeDrawable(cyl2));
-			body->addDrawable(new osg::ShapeDrawable(cyl3));
-			body->addDrawable(new osg::ShapeDrawable(cyl4));
-			body->addDrawable(new osg::ShapeDrawable(cyl5));
-			body->addDrawable(new osg::ShapeDrawable(cyl6));
-			body->addDrawable(new osg::ShapeDrawable(cyl7));
+			body->addDrawable(new osg::ShapeDrawable(cyl0.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl1.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl2.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl3.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl4.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl5.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl6.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl7.get()));
 			break;
 		}
 		case rs::Cylinder:
@@ -450,11 +450,11 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			osg::ref_ptr<osg::Cylinder> cyl5 = new osg::Cylinder(osg::Vec3d(0, 0, 0.113137), 0.0125, 0.16);
 			cyl5->setRotation(osg::Quat(0.707107, 0, 0, 0.707107));
 			// add to body
-			body->addDrawable(new osg::ShapeDrawable(cyl));
-			body->addDrawable(new osg::ShapeDrawable(cyl2));
-			body->addDrawable(new osg::ShapeDrawable(cyl3));
-			body->addDrawable(new osg::ShapeDrawable(cyl4));
-			body->addDrawable(new osg::ShapeDrawable(cyl5));
+			body->addDrawable(new osg::ShapeDrawable(cyl.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl2.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl3.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl4.get()));
+			body->addDrawable(new osg::ShapeDrawable(cyl5.get()));
 			break;
 		}
 		case rs::Sphere:
@@ -498,10 +498,10 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 	obstacle->setName(std::string("obstacle").append(std::to_string(id)));
 
 	// add to scenegraph
-	_staging[0]->addChild(obstacle);
+	_staging[0]->addChild(obstacle.get());
 
 	// success
-	return obstacle;
+	return obstacle.get();
 }
 
 osgText::Text* Scene::getHUDText(void) {
@@ -651,7 +651,7 @@ void Scene::setMouseHandler(rsScene::MouseHandler *mh) {
 	osgViewer::View::EventHandlers eh = _viewer->getEventHandlers();
 	for (osgViewer::View::EventHandlers::iterator it = eh.begin(); it != eh.end(); it++) {
 		if (!(*it)->getName().compare(0, 5, "mouse")) {
-			_viewer->removeEventHandler((*it));
+			_viewer->removeEventHandler((*it).get());
 			break;
 		}
 	}
@@ -705,7 +705,7 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	cameraManipulator->setWheelZoomFactor(0);
 	cameraManipulator->setVerticalAxisFixed(true);
 	cameraManipulator->setElevation(0.5);
-	_viewer->setCameraManipulator(cameraManipulator);
+	_viewer->setCameraManipulator(cameraManipulator.get());
 	_viewer->getCameraManipulator()->setHomePosition(osg::Vec3f(0.6, -0.8, 0.5), osg::Vec3f(0.1, 0.3, 0), osg::Vec3f(0, 0, 1));
 
 	// outlining setup
@@ -758,7 +758,7 @@ int Scene::setupScene(double w, double h, bool pause) {
 
 	// create and add mouse handler
 	osg::ref_ptr<MouseHandler> mh = new MouseHandler(this);
-	_viewer->addEventHandler(mh);
+	_viewer->addEventHandler(mh.get());
 
 	// show scene
 	_viewer->setSceneData(_root);
@@ -822,7 +822,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 				outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
 				outline->getOrCreateStateSet()->setRenderBinDetails(90, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 				outline->addChild(parent->getChild(i)->asTransform()->getChild(0));
-				parent->getChild(i)->asTransform()->replaceChild(parent->getChild(i)->asTransform()->getChild(0), outline);
+				parent->getChild(i)->asTransform()->replaceChild(parent->getChild(i)->asTransform()->getChild(0), outline.get());
 			}
 		}
 		// already highlighted, take it away
@@ -841,7 +841,7 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 			outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
 			outline->getOrCreateStateSet()->setRenderBinDetails(90, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 			outline->addChild(parent->getChild(0)->asTransform()->getChild(0));
-			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), outline);
+			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), outline.get());
 		}
 		// already highlighted, take it away
 		else if (!on) {
@@ -886,14 +886,14 @@ void Scene::draw_board(double xsize, double ysize, double xoffset, double yoffse
 	coords->push_back(osg::Vec3(2*xsize - xoffset, 0 - yoffset, 0));
 	coords->push_back(osg::Vec3(2*xsize - xoffset, 2*ysize - yoffset, 0));
 	coords->push_back(osg::Vec3(0 - xoffset, 2*ysize - yoffset, 0));
-	geom->setVertexArray(coords);
+	geom->setVertexArray(coords.get());
 	// texture coordinates
 	osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();
 	tcoords->push_back(osg::Vec2(0, 0));
 	tcoords->push_back(osg::Vec2(1, 0));
 	tcoords->push_back(osg::Vec2(1, 1));
 	tcoords->push_back(osg::Vec2(0, 1));
-	geom->setTexCoordArray(0, tcoords);
+	geom->setTexCoordArray(0, tcoords.get());
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	// depth
 	osg::ref_ptr<osg::Depth> depth = new osg::Depth();
@@ -908,16 +908,16 @@ void Scene::draw_board(double xsize, double ysize, double xoffset, double yoffse
 	tex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
 	// create geode
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-	geode->addDrawable(geom);
-	geode->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
+	geode->addDrawable(geom.get());
+	geode->getOrCreateStateSet()->setAttributeAndModes(depth.get(), osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 	geode->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin");
 	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
-	geode->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
 	geode->setName("board");
 	// add to scene
-	_staging[2]->addChild(geode);
+	_staging[2]->addChild(geode.get());
 }
 
 void Scene::draw_grid(double tics, double hash, double minx, double maxx, double miny, double maxy, double enabled) {
@@ -964,25 +964,25 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		}
 		// add vertices
 		osg::ref_ptr<osg::Vec3Array> vertices3 = new osg::Vec3Array(4, myCoords3);
-		gridLines3->setVertexArray(vertices3);
+		gridLines3->setVertexArray(vertices3.get());
 		gridLines3->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 4));
 		// set color
 		osg::ref_ptr<osg::Vec4Array> colors3 = new osg::Vec4Array();
 		colors3->push_back(osg::Vec4(0, 0, 0, 1));
-		gridLines3->setColorArray(colors3);
+		gridLines3->setColorArray(colors3.get());
 		gridLines3->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
 		osg::ref_ptr<osg::LineWidth> linewidth3 = new osg::LineWidth();
 		linewidth3->setWidth(3.0f);
 		// set rendering properties
-		gridGeode3->getOrCreateStateSet()->setAttributeAndModes(linewidth3, osg::StateAttribute::ON);
+		gridGeode3->getOrCreateStateSet()->setAttributeAndModes(linewidth3.get(), osg::StateAttribute::ON);
 		gridGeode3->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// enable shadowing
 		//gridGeode3->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
-		gridGeode3->addDrawable(gridLines3);
+		gridGeode3->addDrawable(gridLines3.get());
 		gridGeode3->setName("axes");
-		group->addChild(gridGeode3);
+		group->addChild(gridGeode3.get());
 
 		// x grid numbering
 		osg::ref_ptr<osg::Billboard> xnum_billboard = new osg::Billboard();
@@ -994,7 +994,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xzero_text->setCharacterSize(30);
 		xzero_text->setColor(osg::Vec4(0, 0, 0, 1));
 		xzero_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-		xnum_billboard->addDrawable(xzero_text, osg::Vec3d(-0.5*tics, -0.5*tics, 0.0));
+		xnum_billboard->addDrawable(xzero_text.get(), osg::Vec3d(-0.5*tics, -0.5*tics, 0.0));
 		// positive
 		if (maxx > rs::Epsilon) {
 			for (int i = 1; i < static_cast<int>(1.01*maxx / hash + 1); i++) {
@@ -1007,7 +1007,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 				xnumpos_text->setCharacterSize(30);
 				xnumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
 				xnumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-				xnum_billboard->addDrawable(xnumpos_text, osg::Vec3d(i*hash, 0, 0));
+				xnum_billboard->addDrawable(xnumpos_text.get(), osg::Vec3d(i*hash, 0, 0));
 			}
 		}
 		// negative
@@ -1022,7 +1022,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 				xnumneg_text->setCharacterSize(30);
 				xnumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
 				xnumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-				xnum_billboard->addDrawable(xnumneg_text, osg::Vec3d(-i*hash, 0, 0));
+				xnum_billboard->addDrawable(xnumneg_text.get(), osg::Vec3d(-i*hash, 0, 0));
 			}
 		}
 		// drawing properties
@@ -1034,7 +1034,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xnum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		xnum_billboard->setName("xnumbering");
-		group->addChild(xnum_billboard);
+		group->addChild(xnum_billboard.get());
 
 		// y grid numbering
 		osg::ref_ptr<osg::Billboard> ynum_billboard = new osg::Billboard();
@@ -1050,7 +1050,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 				ynumpos_text->setCharacterSize(30);
 				ynumpos_text->setColor(osg::Vec4(0, 0, 0, 1));
 				ynumpos_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-				ynum_billboard->addDrawable(ynumpos_text, osg::Vec3d(0, i*hash, 0));
+				ynum_billboard->addDrawable(ynumpos_text.get(), osg::Vec3d(0, i*hash, 0));
 			}
 		}
 		// negative
@@ -1065,7 +1065,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 				ynumneg_text->setCharacterSize(30);
 				ynumneg_text->setColor(osg::Vec4(0, 0, 0, 1));
 				ynumneg_text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
-				ynum_billboard->addDrawable(ynumneg_text, osg::Vec3d(0, -i*hash, 0));
+				ynum_billboard->addDrawable(ynumneg_text.get(), osg::Vec3d(0, -i*hash, 0));
 			}
 		}
 		// drawing properties
@@ -1077,7 +1077,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ynum_billboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		ynum_billboard->setName("ynumbering");
-		group->addChild(ynum_billboard);
+		group->addChild(ynum_billboard.get());
 
 		// x-axis label
 		osg::ref_ptr<osg::Billboard> xbillboard = new osg::Billboard();
@@ -1091,15 +1091,15 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xtext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 		if ( fabs(maxx) > fabs(minx) ) {
 			if (maxx < rs::Epsilon)
-				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
+				xbillboard->addDrawable(xtext.get(), osg::Vec3d(0.1, 0.0, 0.0));
 			else
-				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
+				xbillboard->addDrawable(xtext.get(), osg::Vec3d(maxx + 0.1, 0.0, 0.0));
 		}
 		else {
 			if (minx < -rs::Epsilon)
-				xbillboard->addDrawable(xtext, osg::Vec3d(maxx + 0.1, 0.0, 0.0));
+				xbillboard->addDrawable(xtext.get(), osg::Vec3d(maxx + 0.1, 0.0, 0.0));
 			else
-				xbillboard->addDrawable(xtext, osg::Vec3d(0.1, 0.0, 0.0));
+				xbillboard->addDrawable(xtext.get(), osg::Vec3d(0.1, 0.0, 0.0));
 		}
 		// drawing properties
 		xbillboard->setMode(osg::Billboard::AXIAL_ROT);
@@ -1110,7 +1110,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		xbillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		xbillboard->setName("xlabel");
-		group->addChild(xbillboard);
+		group->addChild(xbillboard.get());
 
 		// y-axis label
 		osg::ref_ptr<osg::Billboard> ybillboard = new osg::Billboard();
@@ -1123,15 +1123,15 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ytext->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
 		if ( fabs(maxy) > fabs(miny) ) {
 			if (maxy < rs::Epsilon)
-				ybillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
+				ybillboard->addDrawable(ytext.get(), osg::Vec3d(0.0, 0.1, 0.0));
 			else
-				ybillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
+				ybillboard->addDrawable(ytext.get(), osg::Vec3d(0.0, maxy + 0.1, 0.0));
 		}
 		else {
 			if (miny < -rs::Epsilon)
-				ybillboard->addDrawable(ytext, osg::Vec3d(0.0, maxy + 0.1, 0.0));
+				ybillboard->addDrawable(ytext.get(), osg::Vec3d(0.0, maxy + 0.1, 0.0));
 			else
-				ybillboard->addDrawable(ytext, osg::Vec3d(0.0, 0.1, 0.0));
+				ybillboard->addDrawable(ytext.get(), osg::Vec3d(0.0, 0.1, 0.0));
 		}
 		// drawing properties
 		ybillboard->setMode(osg::Billboard::AXIAL_ROT);
@@ -1142,7 +1142,7 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		ybillboard->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// add to scene
 		ybillboard->setName("ylabel");
-		group->addChild(ybillboard);
+		group->addChild(ybillboard.get());
 
 		// grid lines for major markings
 		double minx2 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.01 : 0.99)*minx/hash))*hash;
@@ -1167,25 +1167,25 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		}
 		// add vertices
 		osg::ref_ptr<osg::Vec3Array> vertices2 = new osg::Vec3Array(numVertices2, myCoords2);
-		gridLines2->setVertexArray(vertices2);
+		gridLines2->setVertexArray(vertices2.get());
 		gridLines2->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices2));
 		// set color
 		osg::ref_ptr<osg::Vec4Array> colors2 = new osg::Vec4Array();
 		colors2->push_back(osg::Vec4(1, 0, 0, 1));
-		gridLines2->setColorArray(colors2);
+		gridLines2->setColorArray(colors2.get());
 		gridLines2->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
 		osg::ref_ptr<osg::LineWidth> linewidth2 = new osg::LineWidth();
 		linewidth2->setWidth(2.0f);
 		// set rendering properties
-		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(linewidth2, osg::StateAttribute::ON);
+		gridGeode2->getOrCreateStateSet()->setAttributeAndModes(linewidth2.get(), osg::StateAttribute::ON);
 		gridGeode2->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// enable shadowing
 		//gridGeode2->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
-		gridGeode2->addDrawable(gridLines2);
+		gridGeode2->addDrawable(gridLines2.get());
 		gridGeode2->setName("hash");
-		group->addChild(gridGeode2);
+		group->addChild(gridGeode2.get());
 
 		// grid lines for sub-markings
 		double minx1 = static_cast<int>(ceil(((minx < -rs::Epsilon) ? 1.001 : 0.999)*minx/tics))*tics;
@@ -1210,28 +1210,28 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 		}
 		// add vertices
 		osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array(numVertices, myCoords);
-		gridLines->setVertexArray(vertices);
+		gridLines->setVertexArray(vertices.get());
 		gridLines->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVertices));
 		// set color
 		osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
 		colors->push_back(osg::Vec4(1, 1, 1, 1));
-		gridLines->setColorArray(colors);
+		gridLines->setColorArray(colors.get());
 		gridLines->setColorBinding(osg::Geometry::BIND_OVERALL);
 		// set line width
 		osg::ref_ptr<osg::LineWidth> linewidth = new osg::LineWidth();
 		linewidth->setWidth(1);
 		// set rendering properties
-		gridGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+		gridGeode->getOrCreateStateSet()->setAttributeAndModes(linewidth.get(), osg::StateAttribute::ON);
 		gridGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 		// enable shadowing
 		//gridGeode->setNodeMask( (RECEIVES_SHADOW_MASK & ~IS_PICKABLE_MASK) );
 		// add to scene
-		gridGeode->addDrawable(gridLines);
+		gridGeode->addDrawable(gridLines.get());
 		gridGeode->setName("tics");
-		group->addChild(gridGeode);
+		group->addChild(gridGeode.get());
 
 		// add group to staging
-		_staging[2]->addChild(group);
+		_staging[2]->addChild(group.get());
 	}
 }
 
@@ -1245,19 +1245,21 @@ void Scene::draw_ground(void) {
 	osg::ref_ptr<osg::Node> geode = osgDB::readNodeFile(_path[rs::Ground]);
 
 	// rendering properties
-	geode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-	geode->getOrCreateStateSet()->setAttributeAndModes(depth, osg::StateAttribute::ON);
-	geode->getOrCreateStateSet()->setRenderBinDetails(0, "RenderBin");
-	geode->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(0.298, 0.424, 0.200, 1)), osg::StateAttribute::OVERRIDE);
+	osg::ref_ptr<osg::StateSet> ss = new osg::StateSet();
+	ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	ss->setAttributeAndModes(depth.get(), osg::StateAttribute::ON);
+	ss->setRenderBinDetails(0, "RenderBin");
+	ss->setAttribute(create_material(osg::Vec4(0.298, 0.424, 0.200, 1)), osg::StateAttribute::OVERRIDE);
+	geode->setStateSet(ss.get());
 
 	// transform
 	osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
 	transform->setScale(osg::Vec3d(10, 10, 0));
-	transform->addChild(geode);
+	transform->addChild(geode.get());
 	transform->setName("ground");
 
 	// add to scene
-	_staging[2]->addChild(transform);
+	_staging[2]->addChild(transform.get());
 }
 
 void Scene::draw_hud(double w, double h, bool paused) {
@@ -1272,20 +1274,20 @@ void Scene::draw_hud(double w, double h, bool paused) {
 
 	// set projection matrix
 	projection->setMatrix(osg::Matrix::ortho2D(0, w, 0, h));
-	projection->addChild(transform);
+	projection->addChild(transform.get());
 
 	// set view matrix
 	transform->setMatrix(osg::Matrix::identity());
 	transform->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-	transform->addChild(geode);
+	transform->addChild(geode.get());
 
 	// set rendering
 	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	geode->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin");
-	geode->addDrawable(text);
-	geode->addDrawable(geom);
+	geode->addDrawable(text.get());
+	geode->addDrawable(geom.get());
 
 	// text
 	text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
@@ -1316,19 +1318,19 @@ void Scene::draw_hud(double w, double h, bool paused) {
 	geom->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
 	// add to scene
-	_root->addChild(projection);
+	_root->addChild(projection.get());
 }
 
 void Scene::draw_skybox(void) {
 	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
 	osg::ref_ptr<osg::TexEnv> te = new osg::TexEnv();
 	te->setMode(osg::TexEnv::REPLACE);
-	stateset->setTextureAttributeAndModes(0, te, osg::StateAttribute::ON);
+	stateset->setTextureAttributeAndModes(0, te.get(), osg::StateAttribute::ON);
 	osg::ref_ptr<osg::TexGen> tg = new osg::TexGen();
 	tg->setMode(osg::TexGen::NORMAL_MAP);
-	stateset->setTextureAttributeAndModes(0, tg, osg::StateAttribute::ON);
+	stateset->setTextureAttributeAndModes(0, tg.get(), osg::StateAttribute::ON);
 	osg::ref_ptr<osg::TexMat> tm = new osg::TexMat();
-	stateset->setTextureAttribute(0, tm);
+	stateset->setTextureAttribute(0, tm.get());
 	osg::ref_ptr<osg::TextureCubeMap> skymap = new osg::TextureCubeMap();
 	osg::Image *imagePosX = osgDB::readImageFile(_path[rs::RightSide]);
 	osg::Image *imageNegX = osgDB::readImageFile(_path[rs::LeftSide]);
@@ -1350,26 +1352,26 @@ void Scene::draw_skybox(void) {
 		skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 		skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
 	}
-	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+	stateset->setTextureAttributeAndModes(0, skymap.get(), osg::StateAttribute::ON);
 	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 	stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 	osg::ref_ptr<osg::Depth> depth = new osg::Depth();
 	depth->setFunction(osg::Depth::ALWAYS);
 	depth->setRange(1.0, 1.0);
-	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON);
+	stateset->setAttributeAndModes(depth.get(), osg::StateAttribute::ON);
 	stateset->setRenderBinDetails(-1, "RenderBin");
 	stateset->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 	osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0, 0, 0), 1));
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 	geode->setCullingActive(false);
-	geode->setStateSet(stateset);
-	geode->addDrawable(drawable);
+	geode->setStateSet(stateset.get());
+	geode->addDrawable(drawable.get());
 	geode->setCullCallback(new TextureCallback(*tm));
 	osg::ref_ptr<osg::Transform> transform = new SkyTransform();
 	transform->setCullingActive(false);
-	transform->addChild(geode);
+	transform->addChild(geode.get());
 	transform->setName("skybox");
-	_staging[2]->addChild(transform);
+	_staging[2]->addChild(transform.get());
 }
 
 void* Scene::graphics_thread(void *arg) {

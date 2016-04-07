@@ -64,7 +64,7 @@ osg::Geode* Robot::create_hud(const rs::Pos &p) {
 	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
 	// set geode properties
-	geode->addDrawable(label);
+	geode->addDrawable(label.get());
 	geode->setNodeMask(NOT_VISIBLE_MASK);
 	geode->setName("robotHUD");
 
@@ -92,12 +92,12 @@ osg::Geode* Robot::create_trace(const rs::Pos &p, const rs::Vec &c, bool trace) 
 	// set vertices
 	osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array();
 	vertices->push_back(osg::Vec3(p[0], p[1], 0));
-	geom->setVertexArray(vertices);
+	geom->setVertexArray(vertices.get());
 
 	// set color
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
 	colors->push_back(osg::Vec4(c[0], c[1], c[2], c[3]));
-	geom->setColorArray(colors);
+	geom->setColorArray(colors.get());
 	geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 
 	// set rendering properties
@@ -107,7 +107,7 @@ osg::Geode* Robot::create_trace(const rs::Pos &p, const rs::Vec &c, bool trace) 
 	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 
 	// set geode properties
-	geode->addDrawable(geom);
+	geode->addDrawable(geom.get());
 	geode->setNodeMask(((trace) ? VISIBLE_MASK : NOT_VISIBLE_MASK));
 	geode->setName("robotTrace");
 

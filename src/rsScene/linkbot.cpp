@@ -27,7 +27,7 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 	// create transforms
 	for (int i = 0; i < Bodies::Num_Parts; i++) {
 		pat[i] = new osg::PositionAttitudeTransform();
-		group->addChild(pat[i]);
+		group->addChild(pat[i].get());
 	}
 
 	// draw body
@@ -38,10 +38,10 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 
 	// draw 'led'
 	osg::ref_ptr<osg::Cylinder> cyl = new osg::Cylinder(osg::Vec3d(0, -0.02, 0.0308), 0.01, 0.01);
-	osg::ref_ptr<osg::ShapeDrawable> led = new osg::ShapeDrawable(cyl);
+	osg::ref_ptr<osg::ShapeDrawable> led = new osg::ShapeDrawable(cyl.get());
 	led->setColor(osg::Vec4(c[0], c[1], c[2], 1));
 	osg::ref_ptr<osg::Geode> bodyled = new osg::Geode();
-	bodyled->addDrawable(led);
+	bodyled->addDrawable(led.get());
 	bodyled->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	bodyled->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	bodyled->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
@@ -96,10 +96,10 @@ void Linkbot::draw(Group *group, const rs::Pos &p, const rs::Quat &q, const rs::
 		body[i]->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
 		body[i]->computeBound();
 		body[i]->setCullingActive(false);
-		pat[i]->addChild(body[i]);
+		pat[i]->addChild(body[i].get());
 	}
 	// add 'led' as second child of body
-	pat[Bodies::Body]->addChild(bodyled);
+	pat[Bodies::Body]->addChild(bodyled.get());
 
 	// set masks
 	//this->setNodeMask(CASTS_SHADOW_MASK);
@@ -198,12 +198,12 @@ void Linkbot::drawConnector(Group *group, int type, int face, int orientation, d
 	node->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
 
 	// add body to pat
-	transform->addChild(node);
+	transform->addChild(node.get());
 
 	// set user properties of node
 	node->setName("connector");
 
 	// add to scenegraph
-	group->addChild(transform);
+	group->addChild(transform.get());
 }
 

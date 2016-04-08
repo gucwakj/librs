@@ -441,6 +441,29 @@ void Sim::mutexUnlock(int type) {
 	}
 }
 
+void Sim::setCollisions(int mode) {
+	if (mode == 0)
+		_collision = false;
+	else if (mode == 1)
+		_collision = true;
+	else if (mode == 2)
+		_collision = _collision ? false : true;
+}
+
+void Sim::setFriction(float ground, float body) {
+	// lock mutex
+	RS_MUTEX_LOCK(&_friction_mutex);
+
+	// set new values if not == -1
+	if (fabs(ground + 1) < rs::Epsilon)
+		_friction[0] = ground;
+	if (fabs(body + 1) < rs::Epsilon)
+		_friction[1] = body;
+
+	// unlock mutex
+	RS_MUTEX_UNLOCK(&_friction_mutex);
+}
+
 void Sim::setPause(int mode) {
 	// lock pause
 	RS_MUTEX_LOCK(&_pause_mutex);
@@ -494,15 +517,6 @@ rsResearch::Integrator* Sim::getIntegrator(void) {
 	return &_integ;
 }
 #endif
-
-void Sim::setCollisions(int mode) {
-	if (mode == 0)
-		_collision = false;
-	else if (mode == 1)
-		_collision = true;
-	else if (mode == 2)
-		_collision = _collision ? false : true;
-}
 
 /**********************************************************
 	private functions

@@ -41,12 +41,13 @@ namespace rsSim {
 			void mutexLock(int);
 			void mutexUnlock(int);
 			void run(unsigned int);
+			void setCollisions(int);
+			void setFriction(float = -1, float = -1);
+			void setPause(int);
 #ifdef RS_RESEARCH
 			void setCPG(int(*)(double, const double*, double*, void*), struct rsResearch::Params*);		// research
 			rsResearch::Integrator* getIntegrator(void);		// research
 #endif
-			void setCollisions(int);
-			void setPause(int);
 
 		// public enumerations
 		public:
@@ -83,6 +84,7 @@ namespace rsSim {
 			std::vector<RobotNode> _robot;		// list: robots
 			RS_COND_T _running_cond;			// condition: actively running simulation
 			RS_MUTEX_T _clock_mutex;			// mutex: getting the clock
+			RS_MUTEX_T _friction_mutex;			// mutex: friction values
 			RS_MUTEX_T _pause_mutex;			// mutex: paused simulation
 			RS_MUTEX_T _robot_mutex;			// mutex: ground collisions
 			RS_MUTEX_T _running_mutex;			// mutex: actively running program

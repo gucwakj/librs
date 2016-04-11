@@ -1232,6 +1232,10 @@ void Scene::draw_grid(double tics, double hash, double minx, double maxx, double
 
 		// add group to staging
 		_staging[2]->addChild(group.get());
+
+		// clean up
+		delete myCoords2;
+		delete myCoords;
 	}
 }
 

@@ -48,6 +48,12 @@ BackgroundReader::BackgroundReader(std::string dir) {
 }
 
 BackgroundReader::~BackgroundReader(void) {
+	for (unsigned int i = 0; i < _marker.size(); i++) {
+		delete _marker[i];
+	}
+	for (unsigned int i = 0; i < _obstacle.size(); i++) {
+		delete _obstacle[i];
+	}
 }
 
 /**********************************************************

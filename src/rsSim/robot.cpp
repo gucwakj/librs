@@ -13,15 +13,20 @@ Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	_sim = NULL;
 	_speed = 2;
 	_success = false;
+	_accel[0] = 0;
+	_accel[1] = 0;
+	_accel[2] = 0;
 
 	// private variables
 	_seed = time(NULL);
 
 	// threading
 	RS_MUTEX_INIT(&_goal_mutex);
+	RS_MUTEX_INIT(&_pause_mutex);
 	RS_MUTEX_INIT(&_success_mutex);
-	RS_COND_INIT(&_success_cond);
 	RS_MUTEX_INIT(&_theta_mutex);
+	RS_COND_INIT(&_pause_cond);
+	RS_COND_INIT(&_success_cond);
 
 #ifdef RS_RESEARCH
 	_next_goal = 0;		// research: next cpg values to hit
@@ -34,9 +39,11 @@ Robot::~Robot(void) {
 
 	// destroy mutexes
 	RS_MUTEX_DESTROY(&_goal_mutex);
+	RS_MUTEX_DESTROY(&_pause_mutex);
 	RS_MUTEX_DESTROY(&_success_mutex);
-	RS_COND_DESTROY(&_success_cond);
 	RS_MUTEX_DESTROY(&_theta_mutex);
+	RS_COND_DESTROY(&_pause_cond);
+	RS_COND_DESTROY(&_success_cond);
 }
 
 /**********************************************************
@@ -204,12 +211,8 @@ int Robot::fixBodyToGround(dBodyID cbody) {
 }
 
 double Robot::getCenter(int i) {
-	const double *pos = dBodyGetPosition(_body[0]);
-	const double *R = dBodyGetRotation(_body[0]);
-	double p[3] = {	R[0]*_center[0] + R[1]*_center[1] + R[2]*_center[2],
-					R[4]*_center[0] + R[5]*_center[1] + R[6]*_center[2],
-					R[8]*_center[0] + R[9]*_center[1] + R[10]*_center[2]};
-	return pos[i] + p[i];
+	rs::Pos p2 = this->getRobotBodyPosition(0, this->getPosition(), this->getQuaternion());
+	return p2[i];
 }
 
 const rs::Pos Robot::getPosition(void) {

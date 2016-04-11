@@ -270,29 +270,31 @@ void Linkbot::simPreCollisionThread(void) {
 				// check if done with acceleration
 				if (_motor[i].timeout) {
 					_motor[i].timeout--;
+
+					// set new theta
+					_motor[i].goal += step*_motor[i].omega;
+					if (_motor[i].omega <= _motor[i].omega_max) {
+						_motor[i].goal += _motor[i].alpha*step*step/2;
+					}
+
+					// move to new theta
+					dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
+
+					// update omega
+					_motor[i].omega += step * _motor[i].alpha;
+					if (_motor[i].omega > _motor[i].omega_max)
+						_motor[i].omega = _motor[i].omega_max;
+					else if (_motor[i].omega < -_motor[i].omega_max)
+						_motor[i].omega = -_motor[i].omega_max;
 				}
 				else {
 					_motor[i].mode = CONTINUOUS;
 					if (_motor[i].omega > 0) _motor[i].state = POSITIVE;
 					else if (_motor[i].omega < 0) _motor[i].state = NEGATIVE;
-					_motor[i].timeout = -1;
+					dJointSetAMotorParam(_motor[i].id, dParamVel, 0);
+					_motor[i].omega = 0;
+					_motor[i].timeout = 0;
 				}
-
-				// set new theta
-				_motor[i].goal += step*_motor[i].omega;
-				if (_motor[i].omega <= _motor[i].omega_max) {
-					_motor[i].goal += _motor[i].alpha*step*step/2;
-				}
-
-				// move to new theta
-				dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
-
-				// update omega
-				_motor[i].omega += step * _motor[i].alpha;
-				if (_motor[i].omega > _motor[i].omega_max)
-					_motor[i].omega = _motor[i].omega_max;
-				else if (_motor[i].omega < -_motor[i].omega_max)
-					_motor[i].omega = -_motor[i].omega_max;
 				break;
 			case ACCEL_CYCLOIDAL:
 			case ACCEL_HARMONIC:
@@ -304,29 +306,29 @@ void Linkbot::simPreCollisionThread(void) {
 					break;
 				}
 
-				// calculate new angle
-				h = _motor[i].goal - _motor[i].accel.init;
-				t = _sim->getClock();
-				dt = (t - _motor[i].accel.start)/_motor[i].accel.period;
-				if (_motor[i].mode == ACCEL_CYCLOIDAL)
-					angle = h*(dt - sin(2*rs::Pi*dt)/2/rs::Pi) + _motor[i].accel.init;
-				else if (_motor[i].mode == ACCEL_HARMONIC)
-					angle = h*(1 - cos(rs::Pi*dt))/2 + _motor[i].accel.init;
-
-				// set new omega
-				_motor[i].omega = (angle - _motor[i].theta)/step;
-
-				// give it an initial push
-				if (0 < _motor[i].omega && _motor[i].omega < 0.01)
-					_motor[i].omega = 0.01;
-				else if (-0.01 < _motor[i].omega && _motor[i].omega < 0)
-					_motor[i].omega = -0.01;
-
 				// move until timeout is reached
 				if (_motor[i].timeout) {
 					dJointEnable(_motor[i].id);
 					dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].omega);
 					_motor[i].timeout--;
+
+					// calculate new angle
+					h = _motor[i].goal - _motor[i].accel.init;
+					t = _sim->getClock();
+					dt = (t - _motor[i].accel.start)/_motor[i].accel.period;
+					if (_motor[i].mode == ACCEL_CYCLOIDAL)
+						angle = h*(dt - sin(2*rs::Pi*dt)/2/rs::Pi) + _motor[i].accel.init;
+					else if (_motor[i].mode == ACCEL_HARMONIC)
+						angle = h*(1 - cos(rs::Pi*dt))/2 + _motor[i].accel.init;
+
+					// set new omega
+					_motor[i].omega = (angle - _motor[i].theta)/step;
+
+					// give it an initial push
+					if (0 < _motor[i].omega && _motor[i].omega < 0.01)
+						_motor[i].omega = 0.01;
+					else if (-0.01 < _motor[i].omega && _motor[i].omega < 0)
+						_motor[i].omega = -0.01;
 				}
 				else {
 					_motor[i].mode = CONTINUOUS;
@@ -334,7 +336,8 @@ void Linkbot::simPreCollisionThread(void) {
 					else if (_motor[i].omega < 0) _motor[i].state = NEGATIVE;
 					dJointSetAMotorParam(_motor[i].id, dParamVel, 0);
 					_motor[i].accel.run = 0;
-					_motor[i].timeout = -1;
+					_motor[i].omega = 0;
+					_motor[i].timeout = 0;
 				}
 				break;
 			case CONTINUOUS:

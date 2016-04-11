@@ -47,14 +47,7 @@ BackgroundReader::BackgroundReader(std::string dir) {
 	this->read_graphics(&doc);
 }
 
-BackgroundReader::~BackgroundReader(void) {
-	for (unsigned int i = 0; i < _marker.size(); i++) {
-		delete _marker[i];
-	}
-	for (unsigned int i = 0; i < _obstacle.size(); i++) {
-		delete _obstacle[i];
-	}
-}
+BackgroundReader::~BackgroundReader(void) { }
 
 /**********************************************************
 	public functions

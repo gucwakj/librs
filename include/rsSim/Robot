@@ -125,7 +125,6 @@ namespace rsSim {
 			float _next_goal;			// research: next value to hit
 			bool _start;				// research: starting simulation
 #endif
-			float _speed;				// linear velocity of the robot
 			float _trackwidth;			// trackwidth of robot
 			short _dof;					// number of DOF
 			RS_MUTEX_T _goal_mutex;		// goal value being written

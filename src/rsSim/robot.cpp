@@ -11,7 +11,6 @@ Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	// protected variables
 	_connected = false;
 	_sim = NULL;
-	_speed = 2;
 	_success = false;
 	_accel[0] = 0;
 	_accel[1] = 0;

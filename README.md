@@ -123,15 +123,15 @@ mkdir build/
 cd build/
 // for win64
 cmake	-G "Visual Studio 12 2013 Win64"
-		-DCMAKE_PREFIX_PATH="C:/Qt/5.5.1/5.5/msvc2013_64/lib/cmake"
+		-DCMAKE_PREFIX_PATH="C:/Program Files/Qt/5.6/msvc2013_64/lib/cmake"
 		-DDESIRED_QT_VERSION=5
-		-DOSG_USE_REF_PRT_IMPLICIT_OUTPUT_CONVERSION=off
+		-DOSG_USE_REF_PTR_IMPLICIT_OUTPUT_CONVERSION=off
 		-DACTUAL_3RDPARTY_DIR="../3rd_party/x64" ..
 // for win32
 cmake	-G "Visual Studio 12 2013"
 		-DCMAKE_PREFIX_PATH="C:/Qt/5.6/msvc2013/lib/cmake"
 		-DDESIRED_QT_VERSION=5
-		-DOSG_USE_REF_PRT_IMPLICIT_OUTPUT_CONVERSION=off
+		-DOSG_USE_REF_PTR_IMPLICIT_OUTPUT_CONVERSION=off
 		-DACTUAL_3RDPARTY_DIR="../3rd_party/x86" ..
 open build/OpenSceneGraph.sln in visual studio
 build Release solution

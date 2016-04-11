@@ -118,12 +118,11 @@ namespace rsSim {
 			rsSim::Sim *_sim;			// simulation instance
 			std::vector<Motor> _motor;	// motors
 			BodyList _body;				// body parts
-			bool _success;				// all joints are done
 			bool _connected;			// connected to controller
+			bool _success;				// all joints are done
 			float _accel[3];			// accelerometer
 #ifdef RS_RESEARCH
 			float _next_goal;			// research: next value to hit
-			bool _start;				// research: starting simulation
 #endif
 			float _trackwidth;			// trackwidth of robot
 			short _dof;					// number of DOF

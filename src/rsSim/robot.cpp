@@ -15,6 +15,7 @@ Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	_accel[0] = 0;
 	_accel[1] = 0;
 	_accel[2] = 0;
+	_trackwidth = 0;
 
 	// private variables
 	_seed = time(NULL);

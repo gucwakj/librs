@@ -20,17 +20,15 @@ Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	// private variables
 	_seed = time(NULL);
 
-	// threading
-	RS_MUTEX_INIT(&_goal_mutex);
-	RS_MUTEX_INIT(&_pause_mutex);
-	RS_MUTEX_INIT(&_success_mutex);
-	RS_MUTEX_INIT(&_theta_mutex);
-	RS_COND_INIT(&_pause_cond);
-	RS_COND_INIT(&_success_cond);
-
 #ifdef RS_RESEARCH
 	_next_goal = 0;		// research: next cpg values to hit
 #endif
+
+	// threading
+	RS_COND_INIT(&_success_cond);
+	RS_MUTEX_INIT(&_goal_mutex);
+	RS_MUTEX_INIT(&_success_mutex);
+	RS_MUTEX_INIT(&_theta_mutex);
 }
 
 Robot::~Robot(void) {
@@ -39,10 +37,8 @@ Robot::~Robot(void) {
 
 	// destroy mutexes
 	RS_MUTEX_DESTROY(&_goal_mutex);
-	RS_MUTEX_DESTROY(&_pause_mutex);
 	RS_MUTEX_DESTROY(&_success_mutex);
 	RS_MUTEX_DESTROY(&_theta_mutex);
-	RS_COND_DESTROY(&_pause_cond);
 	RS_COND_DESTROY(&_success_cond);
 }
 
@@ -157,14 +153,8 @@ int Robot::moveJointWait(int id) {
 	return 0;
 }
 
-int Robot::pauseWait() {
-	// wait for pause to finish
-	RS_MUTEX_LOCK(&_pause_mutex);
-	while (_sim->getPause()) { RS_COND_WAIT(&_pause_cond, &_pause_mutex); }
-	RS_MUTEX_UNLOCK(&_pause_mutex);
-
-	// success
-	return 0;
+void Robot::pauseWait(void) {
+	_sim->pauseWait();
 }
 
 #ifdef RS_RESEARCH

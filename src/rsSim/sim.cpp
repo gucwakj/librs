@@ -41,12 +41,13 @@ Sim::Sim(bool pause, bool rt) {
 	_stop = 0;											// time at which to stop simulation
 
 	// thread variables
+	RS_COND_INIT(&_pause_cond);
+	RS_COND_INIT(&_running_cond);
 	RS_MUTEX_INIT(&_clock_mutex);
 	RS_MUTEX_INIT(&_pause_mutex);
 	RS_MUTEX_INIT(&_robot_mutex);
 	RS_MUTEX_INIT(&_running_mutex);
 	RS_MUTEX_INIT(&_step_mutex);
-	RS_COND_INIT(&_running_cond);
 	RS_THREAD_CREATE(&_simulation, (void* (*)(void *))&Sim::simulation_thread, this);
 }
 
@@ -56,6 +57,7 @@ Sim::~Sim(void) {
 	_running = false;
 	RS_MUTEX_UNLOCK(&_running_mutex);
 	RS_THREAD_JOIN(_simulation);
+	RS_COND_DESTROY(&_pause_cond);
 	RS_COND_DESTROY(&_running_cond);
 	RS_MUTEX_DESTROY(&_clock_mutex);
 	RS_MUTEX_DESTROY(&_pause_mutex);
@@ -441,6 +443,43 @@ void Sim::mutexUnlock(int type) {
 	}
 }
 
+void Sim::pauseWait(void) {
+	// wait for pause to finish
+	RS_MUTEX_LOCK(&_pause_mutex);
+	while (_pause) { RS_COND_WAIT(&_pause_cond, &_pause_mutex); }
+	RS_MUTEX_UNLOCK(&_pause_mutex);
+}
+
+void Sim::run(unsigned int time) {
+	// start simulation
+	RS_MUTEX_LOCK(&_pause_mutex);
+	_pause = false;
+	RS_COND_SIGNAL(&_pause_cond);
+	RS_MUTEX_UNLOCK(&_pause_mutex);
+
+	if (_rt) {
+		// sleep
+		rs::Timer timer(rs::Timer::MilliSeconds);
+		timer.sleep(time);
+
+		// ask sim to stop running
+		RS_MUTEX_LOCK(&_running_mutex);
+		_running = false;
+		RS_MUTEX_UNLOCK(&_running_mutex);
+	}
+	else {
+		// set stopping time
+		_stop = time/1000.0;
+	}
+
+	// wait for simulation loop to signal
+	RS_MUTEX_LOCK(&_running_mutex);
+	while (_running) {
+		RS_COND_WAIT(&_running_cond, &_running_mutex);
+	}
+	RS_MUTEX_UNLOCK(&_running_mutex);
+}
+
 void Sim::setCollisions(int mode) {
 	if (mode == 0)
 		_collision = false;
@@ -468,6 +507,7 @@ void Sim::setPause(int mode) {
 	// lock pause
 	RS_MUTEX_LOCK(&_pause_mutex);
 
+	// set new value
 	if (mode == 0)
 		_pause = false;
 	else if (mode == 1)
@@ -477,35 +517,9 @@ void Sim::setPause(int mode) {
 
 	// unlock pause
 	RS_MUTEX_UNLOCK(&_pause_mutex);
-}
 
-void Sim::run(unsigned int time) {
-	// start simulation
-	RS_MUTEX_LOCK(&_pause_mutex);
-	_pause = false;
-	RS_MUTEX_UNLOCK(&_pause_mutex);
-
-	if (_rt) {
-		// sleep
-		rs::Timer timer(rs::Timer::MilliSeconds);
-		timer.sleep(time);
-
-		// ask sim to stop running
-		RS_MUTEX_LOCK(&_running_mutex);
-		_running = false;
-		RS_MUTEX_UNLOCK(&_running_mutex);
-	}
-	else {
-		// set stopping time
-		_stop = time/1000.0;
-	}
-
-	// wait for simulation loop to signal
-	RS_MUTEX_LOCK(&_running_mutex);
-	while (_running) {
-		RS_COND_WAIT(&_running_cond, &_running_mutex);
-	}
-	RS_MUTEX_UNLOCK(&_running_mutex);
+	// signal waiting threads
+	RS_COND_SIGNAL(&_pause_cond);
 }
 
 #ifdef RS_RESEARCH
@@ -580,9 +594,7 @@ void* Sim::simulation_thread(void *arg) {
 	while (sim->_running) {
 		RS_MUTEX_UNLOCK(&(sim->_running_mutex));
 
-		// lock pause variable
-		RS_MUTEX_LOCK(&(sim->_pause_mutex));
-
+		// get start time
 		if (sim->_rt) {
 			// get starting times
 #ifdef RS_WIN32
@@ -593,6 +605,10 @@ void* Sim::simulation_thread(void *arg) {
 #endif
 		}
 
+		// lock pause variable
+		RS_MUTEX_LOCK(&(sim->_pause_mutex));
+
+		// sim loop: unpaused and running
 		while (!(sim->_pause) && sim->_running) {
 			// unlock pause variable
 			RS_MUTEX_UNLOCK(&(sim->_pause_mutex));

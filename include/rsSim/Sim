@@ -40,6 +40,7 @@ namespace rsSim {
 			float getStep(void);
 			void mutexLock(int);
 			void mutexUnlock(int);
+			void pauseWait(void);
 			void run(unsigned int);
 			void setCollisions(int);
 			void setFriction(float = -1, float = -1);
@@ -83,6 +84,7 @@ namespace rsSim {
 			dJointGroupID _group;				// ode: joint group
 			std::vector<RobotNode> _robot;		// list: robots
 			RS_COND_T _running_cond;			// condition: actively running simulation
+			RS_COND_T _pause_cond;				// condition: pause variable
 			RS_MUTEX_T _clock_mutex;			// mutex: getting the clock
 			RS_MUTEX_T _friction_mutex;			// mutex: friction values
 			RS_MUTEX_T _pause_mutex;			// mutex: paused simulation

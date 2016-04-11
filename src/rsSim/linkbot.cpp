@@ -204,6 +204,10 @@ int Linkbot::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const 
 	// build
 	this->build_robot(p, q, a);
 
+	// set wheels
+	this->setWheelLeft(w[0]);
+	this->setWheelRight(w[1]);
+
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);
 

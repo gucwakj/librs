@@ -647,10 +647,11 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			_obstacle.back()->setMass(0.060);		// 60 grams is average hacky sack weight
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
-				a = 0; b = 0;
+				a = 0; b = 0; c = 0.0275;
 				ele->QueryDoubleAttribute("x", &a);
 				ele->QueryDoubleAttribute("y", &b);
-				_obstacle.back()->setPosition(a, b, 0.0275);
+				ele->QueryDoubleAttribute("z", &c);
+				_obstacle.back()->setPosition(a, b, c);
 			}
 		}
 		else if ( !strcmp(node->Value(), "pullupbar") ) {

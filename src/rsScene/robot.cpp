@@ -104,6 +104,7 @@ osg::Geode* Robot::create_trace(const rs::Pos &p, const rs::Vec &c, bool trace) 
 	osg::Geode *geode = new osg::Geode();
 	geode->getOrCreateStateSet()->setAttribute(new osg::Point(3), osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setRenderBinDetails(20, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 
 	// set geode properties

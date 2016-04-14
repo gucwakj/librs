@@ -1,0 +1,21 @@
+<?RoboSim XML Configuration?>
+<config>
+    <background>2015RoboPlay</background>
+</config>
+
+<graphics>
+    <units>0</units>
+    <trace>1</trace>
+    <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
+</graphics>
+
+<ground/>
+
+<sim>
+    <bugclock id="0" form="2">
+        <name></name>
+        <led r="0" g="1" b="0" alpha="1"/>
+        <rotation x="0" y="-0.707107" z="0" w="0.707107"/>
+        <position x="0" y="0" z="0.051"/>
+    </bugclock>
+</sim>

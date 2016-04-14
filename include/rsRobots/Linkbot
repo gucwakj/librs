@@ -65,6 +65,7 @@ namespace rsLinkbot {
 		enum Type {
 			Individual,
 			Bow,
+			BugClock,
 			Explorer,
 			FourBotDrive,
 			FourWheelDrive,

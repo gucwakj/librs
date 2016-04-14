@@ -491,6 +491,9 @@ tinyxml2::XMLElement* Writer::getOrCreatePreconfig(int form, int shape, int id) 
 		case rsLinkbot::Preconfigs::Bow:
 			node = _doc.NewElement("bow");
 			break;
+		case rsLinkbot::Preconfigs::BugClock:
+			node = _doc.NewElement("bugclock");
+			break;
 		case rsLinkbot::Preconfigs::Explorer:
 			node = _doc.NewElement("explorer");
 			break;

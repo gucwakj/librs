@@ -607,7 +607,7 @@ void Linkbot::build_gripper(Connector &conn, int face) {
 	// set geometry 1
 	geom[1] = dCreateBox(_space, 0.062, 0.04, this->getConnDepth());
 	dGeomSetBody(geom[1], conn.body);
-	dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 - 0.062/2 - m.c[0], 3*this->getFaceRadius() - 0.02 - m.c[1], this->getConnDepth()/2 + 0.003 - m.c[2]);
+	dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 - 0.062/2 - m.c[0], 3*this->getFaceRadius() - 0.02 - m.c[1], -this->getConnDepth()/2 - 0.003 - m.c[2]);
 
 	// set geometry 2
 	geom[2] = dCreateBox(_space, 0.0344, 0.04, 0.003);

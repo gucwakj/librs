@@ -34,7 +34,7 @@ Linkbot::Linkbot(int form) : rsRobots::Robot(form), rsRobots::Linkbot(form) {
 		_motor[i].state = NEUTRAL;
 		_motor[i].stopping = 0;
 		_motor[i].success = true;
-		_motor[i].tau_max = 2;
+		_motor[i].tau_max = 4;
 		_motor[i].timeout = 0;
 		_motor[i].theta = 0;
 		RS_MUTEX_INIT(&_motor[i].success_mutex);

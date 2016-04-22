@@ -549,8 +549,10 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 	// if requested, do not intersect
 	if (!ptr->_collision && dGeomIsSpace(o1) && dGeomIsSpace(o2)) return;
 
+#ifdef RS_RESEARCH
 	// if geoms have user data, do not intersect
 	if ((char *)dGeomGetData(o1) && (char *)dGeomGetData(o2)) return;
+#endif
 
 	// special case for collision of spaces
 	if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {

@@ -88,7 +88,7 @@ namespace rsScene {
 			void draw_hud(double, double, bool);
 			void draw_skybox(void);
 			static void* graphics_thread(void*);
-			bool intersect_new_item(int id, const osg::BoundingBox&);
+			bool intersect_new_item(std::string, const osg::BoundingBox&);
 
 		// private data
 		private:

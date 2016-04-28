@@ -19,7 +19,6 @@
 #include <osgGA/OrbitManipulator>
 #include <osgShadow/ShadowedScene>
 #include <osgText/Text>
-#include <osgUtil/Optimizer>
 #include <osgUtil/SmoothingVisitor>
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
@@ -142,22 +141,22 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 			test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 			// get preconfig node
 			if (test && (!test->getName().compare(0, 3, "pre"))) {
-				if (!strcmp(test->getChild(0)->asGroup()->getChild(2)->asTransform()->getChild(0)->className(),"Outline"))
+				if (!strcmp(test->getChild(0)->asGroup()->getChild(2)->asTransform()->getChild(0)->className(), "Outline"))
 					this->toggleHighlight(test, test, c);
 			}
 			// get robot node
 			else if (test && (!test->getName().compare(0, 5, "robot"))) {
-				if (!strcmp(test->getChild(2)->asTransform()->getChild(0)->className(),"Outline"))
+				if (!strcmp(test->getChild(2)->asTransform()->getChild(0)->className(), "Outline"))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)), c);
 			}
 			// get obstacle node
 			else if (test && !test->getName().compare(0, 8, "obstacle")) {
-				if (!strcmp(test->getChild(0)->asTransform()->getChild(0)->className(),"Outline"))
-					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
+				if (!strcmp(test->getChild(0)->asGroup()->getChild(0)->asTransform()->getChild(0)->className(), "Outline"))
+					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asGroup()->getChild(0)->asTransform()->getChild(0)), c);
 			}
 			// get marker node
 			else if (test && !test->getName().compare(0, 6, "marker")) {
-				if (!strcmp(test->getChild(0)->asTransform()->getChild(0)->className(),"Outline"))
+				if (!strcmp(test->getChild(0)->asTransform()->getChild(0)->className(), "Outline"))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
 			}
 		}
@@ -171,10 +170,10 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 		if (robot && test && !test->getName().compare(std::string("pre").append(std::to_string(id)))) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
-			if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+			if (this->intersect_new_item(test->getName(), cbbv.getBoundingBox())) {
 				this->setHUD(true);
 				this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
-				this->getHUDText()->setText("Robots are Colliding!");
+				this->getHUDText()->setText("Objects are Possibly Colliding!");
 				this->toggleHighlight(test, test, rs::Vec(1, 0, 0), true);
 			}
 			else {
@@ -187,10 +186,10 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 			if (!preconfig) {
 				osg::ComputeBoundsVisitor cbbv;
 				test->accept(cbbv);
-				if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+				if (this->intersect_new_item(test->getName(), cbbv.getBoundingBox())) {
 					this->setHUD(true);
 					this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
-					this->getHUDText()->setText("Robots are Colliding!");
+					this->getHUDText()->setText("Objects are Possibly Colliding!");
 					this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
 				}
 				else {
@@ -202,36 +201,39 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 				this->setHUD(false);
 				this->toggleHighlight(test, test->getChild(2)->asTransform()->getChild(0), c, true);
 			}
-			break;
 		}
 		// get obstacle node
 		else if (!robot && test && !test->getName().compare(std::string("obstacle").append(std::to_string(id)))) {
-			int num = test->getChild(0)->asTransform()->getChild(0)->asGeode()->getNumChildren();
-			if (num > 1) {
-				for (int i = 0; i < num; i++) {
-					osg::ShapeDrawable *test2 = dynamic_cast<osg::ShapeDrawable *>(test->getChild(0)->asTransform()->getChild(0)->asGeode()->getChild(i));
+			if (test->getNumChildren() > 1) {
+				bool free = true;
+				osg::Group *test2;
+				for (unsigned int j = 0; j < test->getNumChildren(); j++) {
+					test2 = test->getChild(j)->asGroup();
 					osg::ComputeBoundsVisitor cbbv;
 					test2->accept(cbbv);
-					if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
-						this->setHUD(true);
-						this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
-						this->getHUDText()->setText("Objects are Colliding!");
-						this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
+					if (this->intersect_new_item(test->getName(), cbbv.getBoundingBox())) {
+						free = false;
+						break;
 					}
-					else {
-						this->setHUD(false);
-						this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), c);
-					}
-					break;
+				}
+				if (free) {
+					this->setHUD(false);
+					this->toggleHighlight(test, test->getChild(0)->asGroup()->getChild(0)->asTransform()->getChild(0), c);
+				}
+				else {
+					this->setHUD(true);
+					this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
+					this->getHUDText()->setText("Objects are Possibly Colliding!");
+					this->toggleHighlight(test, test->getChild(0)->asGroup()->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
 				}
 			}
 			else {
 				osg::ComputeBoundsVisitor cbbv;
 				test->accept(cbbv);
-				if (this->intersect_new_item(id, cbbv.getBoundingBox())) {
+				if (this->intersect_new_item(test->getName(), cbbv.getBoundingBox())) {
 					this->setHUD(true);
 					this->getHUDText()->setColor(osg::Vec4(1, 0, 0, 1));
-					this->getHUDText()->setText("Objects are Colliding!");
+					this->getHUDText()->setText("Objects are Possibly Colliding!");
 					this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0));
 				}
 				else {
@@ -239,13 +241,11 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 					this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), c);
 				}
 			}
-			break;
 		}
 		// get marker node
 		else if (!robot && test && !test->getName().compare(std::string("marker").append(std::to_string(id)))) {
 			this->setHUD(false);
 			this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), c);
-			break;
 		}
 	}
 }
@@ -384,10 +384,17 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 	// create obstacle objects
 	osg::ref_ptr<osg::Group> obstacle = new osg::Group();
 	osg::ref_ptr<osg::Geode> body = new osg::Geode();
+	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform();
 
 	switch (type) {
 		case rs::Box:
+			// create body
 			body->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3d(0, 0, 0), l[0], l[1], l[2])));
+			// add to pat
+			pat->addChild(body.get());
+			// position
+			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 			break;
 		case rs::CompetitionBorder: {
 			osg::ref_ptr<osg::Cylinder> cyl0 = new osg::Cylinder(osg::Vec3d(0, -l[1]/2, 0.04), l[2], l[0]);
@@ -413,7 +420,13 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			break;
 		}
 		case rs::Cylinder:
+			// create body
 			body->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[0], l[1])));
+			// add to pat
+			pat->addChild(body.get());
+			// position
+			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 			break;
 		case rs::HackySack: {
 			// create body
@@ -431,34 +444,100 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			body->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
 			body->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 			body->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
+			// add to pat
+			pat->addChild(body.get());
+			// position
+			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 			break;
 		}
 		case rs::PullupBar: {
-			// front left
-			osg::ref_ptr<osg::Cylinder> cyl = new osg::Cylinder(osg::Vec3d(-0.056569, -0.08, 0.056569), 0.0125, 0.16);
-			cyl->setRotation(osg::Quat(0, 0.382683, 0, 0.923880));
-			// front right
-			osg::ref_ptr<osg::Cylinder> cyl2 = new osg::Cylinder(osg::Vec3d(0.056569, -0.08, 0.056569), 0.0125, 0.16);
-			cyl2->setRotation(osg::Quat(0, -0.382683, 0, 0.923880));
 			// back left
-			osg::ref_ptr<osg::Cylinder> cyl3 = new osg::Cylinder(osg::Vec3d(-0.056569, 0.08, 0.056569), 0.0125, 0.16);
-			cyl3->setRotation(osg::Quat(0, 0.382683, 0, 0.923880));
+			osg::ref_ptr<osg::Geode> body0 = new osg::Geode();
+			body0->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.0125, 0.16)));
+			body0->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body0->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body0->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body0->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body0->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat0 = new osg::PositionAttitudeTransform();
+			pat0->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(-0.056569, -0.08, 0.056569) + osg::Vec3d(p[0], p[1], p[2]));
+			pat0->setAttitude(osg::Quat(0, 0.382683, 0, 0.923880) * osg::Quat(q[0], q[1], q[2], q[3]));
+			pat0->addChild(body0.get());
+			osg::ref_ptr<osg::Group> group0 = new osg::Group();
+			group0->addChild(pat0.get());
 			// back right
-			osg::ref_ptr<osg::Cylinder> cyl4 = new osg::Cylinder(osg::Vec3d(0.056569, 0.08, 0.056569), 0.0125, 0.16);
-			cyl4->setRotation(osg::Quat(0, -0.382683, 0, 0.923880));
-			// top
-			osg::ref_ptr<osg::Cylinder> cyl5 = new osg::Cylinder(osg::Vec3d(0, 0, 0.113137), 0.0125, 0.16);
-			cyl5->setRotation(osg::Quat(0.707107, 0, 0, 0.707107));
+			osg::ref_ptr<osg::Geode> body1 = new osg::Geode();
+			body1->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.0125, 0.16)));
+			body1->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body1->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body1->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body1->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body1->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat1 = new osg::PositionAttitudeTransform();
+			pat1->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(0.056569, -0.08, 0.056569) + osg::Vec3d(p[0], p[1], p[2]));
+			pat1->setAttitude(osg::Quat(0, -0.382683, 0, 0.923880) * osg::Quat(q[0], q[1], q[2], q[3]));
+			pat1->addChild(body1.get());
+			osg::ref_ptr<osg::Group> group1 = new osg::Group();
+			group1->addChild(pat1.get());
+			// front left
+			osg::ref_ptr<osg::Geode> body2 = new osg::Geode();
+			body2->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.0125, 0.16)));
+			body2->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body2->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body2->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body2->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body2->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat2 = new osg::PositionAttitudeTransform();
+			pat2->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(-0.056569, 0.08, 0.056569) + osg::Vec3d(p[0], p[1], p[2]));
+			pat2->setAttitude(osg::Quat(0, 0.382683, 0, 0.923880) * osg::Quat(q[0], q[1], q[2], q[3]));
+			pat2->addChild(body2.get());
+			osg::ref_ptr<osg::Group> group2 = new osg::Group();
+			group2->addChild(pat2.get());
+			// front right
+			osg::ref_ptr<osg::Geode> body3 = new osg::Geode();
+			body3->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.0125, 0.16)));
+			body3->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body3->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body3->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body3->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body3->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat3 = new osg::PositionAttitudeTransform();
+			pat3->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(0.056569, 0.08, 0.056569) + osg::Vec3d(p[0], p[1], p[2]));
+			pat3->setAttitude(osg::Quat(0, -0.382683, 0, 0.923880) * osg::Quat(q[0], q[1], q[2], q[3]));
+			pat3->addChild(body3.get());
+			osg::ref_ptr<osg::Group> group3 = new osg::Group();
+			group3->addChild(pat3.get());
+			// front right
+			osg::ref_ptr<osg::Geode> body4 = new osg::Geode();
+			body4->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.0125, 0.16)));
+			body4->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body4->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body4->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body4->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body4->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat4 = new osg::PositionAttitudeTransform();
+			pat4->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(0, 0, 0.113137) + osg::Vec3d(p[0], p[1], p[2]));
+			pat4->setAttitude(osg::Quat(0.707107, 0, 0, 0.707107) * osg::Quat(q[0], q[1], q[2], q[3]));
+			pat4->addChild(body4.get());
+			osg::ref_ptr<osg::Group> group4 = new osg::Group();
+			group4->addChild(pat4.get());
 			// add to body
-			body->addDrawable(new osg::ShapeDrawable(cyl.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl2.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl3.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl4.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl5.get()));
+			obstacle->addChild(group1.get());
+			obstacle->addChild(group0.get());
+			obstacle->addChild(group2.get());
+			obstacle->addChild(group3.get());
+			obstacle->addChild(group4.get());
 			break;
 		}
 		case rs::Sphere:
+			// create body
 			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0])));
+			// add to pat
+			pat->addChild(body.get());
+			// position
+			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 			break;
 		case rs::WoodBlock: {
 			// create body
@@ -476,6 +555,11 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			body->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex.get(), osg::StateAttribute::ON);
 			body->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 			body->getOrCreateStateSet()->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL), osg::StateAttribute::ON);
+			// add to pat
+			pat->addChild(body.get());
+			// position
+			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
+			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 			break;
 		}
 	}
@@ -487,12 +571,8 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 	body->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
 	body->setCullingActive(false);
 
-	// add positioning capability
-	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform();
-	pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
-	pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
-	pat->addChild(body.get());
-	obstacle->addChild(pat.get());
+	// add to obstacle
+	//obstacle->addChild(pat.get());
 
 	// set user properties of node
 	obstacle->setName(std::string("obstacle").append(std::to_string(id)));
@@ -840,13 +920,17 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 			outline->setWidth(20);
 			outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
 			outline->getOrCreateStateSet()->setRenderBinDetails(90, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-			outline->addChild(parent->getChild(0)->asTransform()->getChild(0));
-			parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), outline.get());
+			for (unsigned int i = 0; i < parent->getNumChildren(); i++) {
+				outline->addChild(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0));
+				parent->getChild(i)->asGroup()->getChild(0)->asTransform()->replaceChild(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0), outline.get());
+			}
 		}
 		// already highlighted, take it away
 		else if (!on) {
-			osgFX::Outline *parentOutline = dynamic_cast<osgFX::Outline *>(parent->getChild(0)->asTransform()->getChild(0));
-			parent->getChild(0)->asTransform()->replaceChild(parentOutline, parentOutline->getChild(0));
+			for (unsigned int i = 0; i < parent->getNumChildren(); i++) {
+				osgFX::Outline *parentOutline = dynamic_cast<osgFX::Outline *>(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0));
+				parent->getChild(i)->asGroup()->getChild(0)->asTransform()->replaceChild(parentOutline, parentOutline->getChild(0));
+			}
 		}
 	}
 }
@@ -1463,13 +1547,14 @@ void* Scene::graphics_thread(void *arg) {
 	return arg;
 }
 
-bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
+bool Scene::intersect_new_item(std::string name, const osg::BoundingBox &bb) {
 	// find nodes of intersection
 	osg::Group *test = NULL;
 	bool retval = false;
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
-		if (test && (!test->getName().compare(0, 3, "pre")) && (test->getName().compare(3, 1, std::to_string(id)))) {
+		// get preconfig node
+		if (test && (!test->getName().compare(0, 3, "pre")) && test->getName() != name) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
 			if (bb.intersects(cbbv.getBoundingBox())) {
@@ -1478,7 +1563,7 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 			}
 		}
 		// get robot node
-		else if (test && (!test->getName().compare(0, 5, "robot")) && (test->getName().compare(5, 1, std::to_string(id)))) {
+		else if (test && (!test->getName().compare(0, 5, "robot")) && (test->getName() != name)) {
 			osg::ComputeBoundsVisitor cbbv;
 			test->accept(cbbv);
 			osg::BoundingBox bb2 = cbbv.getBoundingBox();
@@ -1490,15 +1575,17 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 			}
 		}
 		// get obstacle node
-		else if (test && !test->getName().compare(0, 8, "obstacle") && (test->getName().compare(8, 1, std::to_string(id)))) {
-			int num = test->getChild(0)->asTransform()->getChild(0)->asGeode()->getNumChildren();
-			if (num > 1) {
-				for (int i = 0; i < num; i++) {
-					osg::ShapeDrawable *test2 = dynamic_cast<osg::ShapeDrawable *>(test->getChild(0)->asTransform()->getChild(0)->asGeode()->getChild(i));
+		else if (test && !test->getName().compare(0, 8, "obstacle") && (test->getName() != name)) {
+			if (test->getNumChildren() > 1) {
+				for (unsigned int i = 0; i < test->getNumChildren(); i++) {
+					osg::Group *test2 = test->getChild(i)->asGroup();
 					osg::ComputeBoundsVisitor cbbv;
 					test2->accept(cbbv);
-					if (bb.intersects(cbbv.getBoundingBox())) {
-						this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
+					osg::BoundingBox bb2 = cbbv.getBoundingBox();
+					if (	std::max(bb.xMin(), bb2.xMin()) + 0.001 <= std::min(bb.xMax(), bb2.xMax()) - 0.001 &&
+							std::max(bb.yMin(), bb2.yMin()) + 0.001 <= std::min(bb.yMax(), bb2.yMax()) - 0.001 &&
+							std::max(bb.zMin(), bb2.zMin()) + 0.001 <= std::min(bb.zMax(), bb2.zMax()) - 0.001) {
+						this->toggleHighlight(test, test->getChild(i), rs::Vec(1, 0, 0), true);
 						retval = true;
 						break;
 					}
@@ -1508,9 +1595,8 @@ bool Scene::intersect_new_item(int id, const osg::BoundingBox &bb) {
 				osg::ComputeBoundsVisitor cbbv;
 				test->accept(cbbv);
 				if (bb.intersects(cbbv.getBoundingBox())) {
-					this->toggleHighlight(test, test->getChild(0)->asTransform()->getChild(0), rs::Vec(1, 0, 0), true);
+					this->toggleHighlight(test, test->getChild(i), rs::Vec(1, 0, 0), true);
 					retval = true;
-					break;
 				}
 			}
 		}

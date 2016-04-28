@@ -397,26 +397,127 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
 			break;
 		case rs::CompetitionBorder: {
-			osg::ref_ptr<osg::Cylinder> cyl0 = new osg::Cylinder(osg::Vec3d(0, -l[1]/2, 0.04), l[2], l[0]);
-			cyl0->setRotation(osg::Quat(0, 0.707107, 0, 0.707107));
-			osg::ref_ptr<osg::Cylinder> cyl1 = new osg::Cylinder(osg::Vec3d(0, l[1]/2, 0.04), l[2], l[0]);
-			cyl1->setRotation(osg::Quat(0, 0.707107, 0, 0.707107));
-			osg::ref_ptr<osg::Cylinder> cyl2 = new osg::Cylinder(osg::Vec3d(-l[0]/2, 0, 0.04), l[2], l[1]);
-			cyl2->setRotation(osg::Quat(0.707107, 0, 0, 0.707107));
-			osg::ref_ptr<osg::Cylinder> cyl3 = new osg::Cylinder(osg::Vec3d(l[0]/2, 0, 0.04), l[2], l[1]);
-			cyl3->setRotation(osg::Quat(0.707107, 0, 0, 0.707107));
-			osg::ref_ptr<osg::Cylinder> cyl4 = new osg::Cylinder(osg::Vec3d(-l[0]/2, -l[1]/2, 0.02), 0.02, 0.04);
-			osg::ref_ptr<osg::Cylinder> cyl5 = new osg::Cylinder(osg::Vec3d(-l[0]/2, l[1]/2, 0.02), 0.02, 0.04);
-			osg::ref_ptr<osg::Cylinder> cyl6 = new osg::Cylinder(osg::Vec3d(l[0]/2, l[1]/2, 0.02), 0.02, 0.04);
-			osg::ref_ptr<osg::Cylinder> cyl7 = new osg::Cylinder(osg::Vec3d(l[0]/2, -l[1]/2, 0.02), 0.02, 0.04);
-			body->addDrawable(new osg::ShapeDrawable(cyl0.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl1.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl2.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl3.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl4.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl5.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl6.get()));
-			body->addDrawable(new osg::ShapeDrawable(cyl7.get()));
+			// front
+			osg::ref_ptr<osg::Geode> body0 = new osg::Geode();
+			body0->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[2], l[0])));
+			body0->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body0->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body0->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body0->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body0->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat0 = new osg::PositionAttitudeTransform();
+			pat0->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(0, -l[1]/2, 0.04) + osg::Vec3d(p[0], p[1], p[2]));
+			pat0->setAttitude(osg::Quat(0, 0.707107, 0, 0.707107) * osg::Quat(q[0], q[1], q[2], q[3]));
+			pat0->addChild(body0.get());
+			osg::ref_ptr<osg::Group> group0 = new osg::Group();
+			group0->addChild(pat0.get());
+			// back
+			osg::ref_ptr<osg::Geode> body1 = new osg::Geode();
+			body1->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[2], l[0])));
+			body1->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body1->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body1->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body1->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body1->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat1 = new osg::PositionAttitudeTransform();
+			pat1->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(0, l[1]/2, 0.04) + osg::Vec3d(p[0], p[1], p[2]));
+			pat1->setAttitude(osg::Quat(0, 0.707107, 0, 0.707107) * osg::Quat(q[0], q[1], q[2], q[3]));
+			pat1->addChild(body1.get());
+			osg::ref_ptr<osg::Group> group1 = new osg::Group();
+			group1->addChild(pat1.get());
+			// left
+			osg::ref_ptr<osg::Geode> body2 = new osg::Geode();
+			body2->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[2], l[1])));
+			body2->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body2->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body2->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body2->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body2->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat2 = new osg::PositionAttitudeTransform();
+			pat2->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(-l[0]/2, 0, 0.04) + osg::Vec3d(p[0], p[1], p[2]));
+			pat2->setAttitude(osg::Quat(0.707107, 0, 0, 0.707107) * osg::Quat(q[0], q[1], q[2], q[3]));
+			pat2->addChild(body2.get());
+			osg::ref_ptr<osg::Group> group2 = new osg::Group();
+			group2->addChild(pat2.get());
+			// right
+			osg::ref_ptr<osg::Geode> body3 = new osg::Geode();
+			body3->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), l[2], l[1])));
+			body3->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body3->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body3->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body3->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body3->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat3 = new osg::PositionAttitudeTransform();
+			pat3->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(l[0]/2, 0, 0.04) + osg::Vec3d(p[0], p[1], p[2]));
+			pat3->setAttitude(osg::Quat(0.707107, 0, 0, 0.707107) * osg::Quat(q[0], q[1], q[2], q[3]));
+			pat3->addChild(body3.get());
+			osg::ref_ptr<osg::Group> group3 = new osg::Group();
+			group3->addChild(pat3.get());
+			// corner
+			osg::ref_ptr<osg::Geode> body4 = new osg::Geode();
+			body4->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02, 0.04)));
+			body4->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body4->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body4->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body4->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body4->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat4 = new osg::PositionAttitudeTransform();
+			pat4->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(-l[0]/2, -l[1]/2, 0.02) + osg::Vec3d(p[0], p[1], p[2]));
+			pat4->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+			pat4->addChild(body4.get());
+			osg::ref_ptr<osg::Group> group4 = new osg::Group();
+			group4->addChild(pat4.get());
+			// corner
+			osg::ref_ptr<osg::Geode> body5 = new osg::Geode();
+			body5->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02, 0.04)));
+			body5->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body5->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body5->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body5->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body5->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat5 = new osg::PositionAttitudeTransform();
+			pat5->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(-l[0]/2, l[1]/2, 0.02) + osg::Vec3d(p[0], p[1], p[2]));
+			pat5->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+			pat5->addChild(body5.get());
+			osg::ref_ptr<osg::Group> group5 = new osg::Group();
+			group5->addChild(pat5.get());
+			// corner
+			osg::ref_ptr<osg::Geode> body6 = new osg::Geode();
+			body6->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02, 0.04)));
+			body6->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body6->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body6->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body6->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body6->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat6 = new osg::PositionAttitudeTransform();
+			pat6->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(l[0]/2, l[1]/2, 0.02) + osg::Vec3d(p[0], p[1], p[2]));
+			pat6->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+			pat6->addChild(body6.get());
+			osg::ref_ptr<osg::Group> group6 = new osg::Group();
+			group6->addChild(pat6.get());
+			// corner
+			osg::ref_ptr<osg::Geode> body7 = new osg::Geode();
+			body7->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.02, 0.04)));
+			body7->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+			body7->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			body7->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
+			body7->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
+			body7->setCullingActive(false);
+			osg::ref_ptr<osg::PositionAttitudeTransform> pat7 = new osg::PositionAttitudeTransform();
+			pat7->setPosition(osg::Quat(q[0], q[1], q[2], q[3]) * osg::Vec3d(l[0]/2, -l[1]/2, 0.02) + osg::Vec3d(p[0], p[1], p[2]));
+			pat7->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+			pat7->addChild(body7.get());
+			osg::ref_ptr<osg::Group> group7 = new osg::Group();
+			group7->addChild(pat7.get());
+			// add to body
+			obstacle->addChild(group0.get());
+			obstacle->addChild(group1.get());
+			obstacle->addChild(group2.get());
+			obstacle->addChild(group3.get());
+			obstacle->addChild(group4.get());
+			obstacle->addChild(group5.get());
+			obstacle->addChild(group6.get());
+			obstacle->addChild(group7.get());
 			break;
 		}
 		case rs::Cylinder:
@@ -508,7 +609,7 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			pat3->addChild(body3.get());
 			osg::ref_ptr<osg::Group> group3 = new osg::Group();
 			group3->addChild(pat3.get());
-			// front right
+			// top
 			osg::ref_ptr<osg::Geode> body4 = new osg::Geode();
 			body4->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3d(0, 0, 0), 0.0125, 0.16)));
 			body4->getOrCreateStateSet()->setRenderBinDetails(33, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
@@ -523,8 +624,8 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			osg::ref_ptr<osg::Group> group4 = new osg::Group();
 			group4->addChild(pat4.get());
 			// add to body
-			obstacle->addChild(group1.get());
 			obstacle->addChild(group0.get());
+			obstacle->addChild(group1.get());
 			obstacle->addChild(group2.get());
 			obstacle->addChild(group3.get());
 			obstacle->addChild(group4.get());
@@ -570,9 +671,6 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 	body->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
 	body->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
 	body->setCullingActive(false);
-
-	// add to obstacle
-	//obstacle->addChild(pat.get());
 
 	// set user properties of node
 	obstacle->setName(std::string("obstacle").append(std::to_string(id)));
@@ -916,11 +1014,11 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 	else if (!parent->getName().compare(0, 8, "obstacle") || !parent->getName().compare(0, 6, "marker")) {
 		// not highlighted yet, do that now
 		if (!(dynamic_cast<osgFX::Outline *>(child))) {
-			osg::ref_ptr<osgFX::Outline> outline = new osgFX::Outline();
-			outline->setWidth(20);
-			outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
-			outline->getOrCreateStateSet()->setRenderBinDetails(90, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 			for (unsigned int i = 0; i < parent->getNumChildren(); i++) {
+				osg::ref_ptr<osgFX::Outline> outline = new osgFX::Outline();
+				outline->setWidth(20);
+				outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
+				outline->getOrCreateStateSet()->setRenderBinDetails(90, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 				outline->addChild(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0));
 				parent->getChild(i)->asGroup()->getChild(0)->asTransform()->replaceChild(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0), outline.get());
 			}

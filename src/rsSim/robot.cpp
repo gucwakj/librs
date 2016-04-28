@@ -12,9 +12,12 @@ Robot::Robot(void) : rsRobots::Robot(rs::Robot) {
 	_connected = false;
 	_sim = NULL;
 	_success = false;
-	_accel[0] = 0;
-	_accel[1] = 0;
-	_accel[2] = 0;
+	_a[0] = 0;
+	_a[1] = 0;
+	_a[2] = 0;
+	_v[0] = 0;
+	_v[1] = 0;
+	_v[2] = 0;
 	_trackwidth = 0;
 
 	// private variables

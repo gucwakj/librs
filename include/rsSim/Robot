@@ -120,7 +120,8 @@ namespace rsSim {
 			BodyList _body;				// body parts
 			bool _connected;			// connected to controller
 			bool _success;				// all joints are done
-			float _accel[3];			// accelerometer
+			float _a[3];				// accelerometer
+			float _v[3];				// last velocity vector (for accel calc)
 #ifdef RS_RESEARCH
 			float _next_goal;			// research: next value to hit
 #endif

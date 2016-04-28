@@ -143,14 +143,15 @@ void Mindstorms::simPreCollisionThread(void) {
 	RS_MUTEX_LOCK(&_goal_mutex);
 	RS_MUTEX_LOCK(&_theta_mutex);
 
-	// get body rotation from world
-	const double *R = dBodyGetRotation(_body[Bodies::Body]);
-	// put into accel array
-	_accel[0] = R[8];
-	_accel[1] = R[9];
-	_accel[2] = R[10];
-	// add gaussian noise to accel
-	//this->noisy(_accel, 3, 0.005);
+	// calculate acceleration
+	//  a = (v_new - v_old)/time
+	if (_sim->getClock() > 0.1) {
+		const dReal *v = dBodyGetLinearVel(_body[Bodies::Body]);
+		for (int i = 0; i < _dof; i++) {
+			_a[i] = (v[i] - _v[i])/_sim->getStep();
+			_v[i] = v[i];
+		}
+	}
 
 	// update angle values for each degree of freedom
 	for (int i = 0; i < _dof; i++) {

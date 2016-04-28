@@ -149,10 +149,15 @@ void Scene::addHighlight(int id, bool robot, bool preconfig, bool exclusive, con
 				if (!strcmp(test->getChild(2)->asTransform()->getChild(0)->className(), "Outline"))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(2)->asTransform()->getChild(0)), c);
 			}
-			// get obstacle node
-			else if (test && !test->getName().compare(0, 8, "obstacle")) {
+			// get obstacle node - multi
+			else if (test && !test->getName().compare(0, 8, "obstacle") && test->getNumChildren() > 1) {
 				if (!strcmp(test->getChild(0)->asGroup()->getChild(0)->asTransform()->getChild(0)->className(), "Outline"))
 					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asGroup()->getChild(0)->asTransform()->getChild(0)), c);
+			}
+			// get obstacle node - single
+			else if (test && !test->getName().compare(0, 8, "obstacle") && test->getNumChildren() == 1) {
+				if (!strcmp(test->getChild(0)->asTransform()->getChild(0)->className(),"Outline"))
+					this->toggleHighlight(test, dynamic_cast<osg::Node *>(test->getChild(0)->asTransform()->getChild(0)), c);
 			}
 			// get marker node
 			else if (test && !test->getName().compare(0, 6, "marker")) {
@@ -395,6 +400,8 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			// position
 			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+			// add to obstacle
+			obstacle->addChild(pat.get());
 			break;
 		case rs::CompetitionBorder: {
 			// front
@@ -528,6 +535,8 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			// position
 			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+			// add to obstacle
+			obstacle->addChild(pat.get());
 			break;
 		case rs::HackySack: {
 			// create body
@@ -550,6 +559,8 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			// position
 			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+			// add to obstacle
+			obstacle->addChild(pat.get());
 			break;
 		}
 		case rs::PullupBar: {
@@ -639,6 +650,8 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			// position
 			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+			// add to obstacle
+			obstacle->addChild(pat.get());
 			break;
 		case rs::WoodBlock: {
 			// create body
@@ -661,6 +674,8 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			// position
 			pat->setPosition(osg::Vec3d(p[0], p[1], p[2]));
 			pat->setAttitude(osg::Quat(q[0], q[1], q[2], q[3]));
+			// add to obstacle
+			obstacle->addChild(pat.get());
 			break;
 		}
 	}
@@ -1012,22 +1027,40 @@ void Scene::toggleHighlight(osg::Group *parent, osg::Node *child, const rs::Vec 
 		}
 	}
 	else if (!parent->getName().compare(0, 8, "obstacle") || !parent->getName().compare(0, 6, "marker")) {
-		// not highlighted yet, do that now
-		if (!(dynamic_cast<osgFX::Outline *>(child))) {
-			for (unsigned int i = 0; i < parent->getNumChildren(); i++) {
+		if (parent->getNumChildren() > 1) {
+			// not highlighted yet, do that now
+			if (!(dynamic_cast<osgFX::Outline *>(child))) {
+				for (unsigned int i = 0; i < parent->getNumChildren(); i++) {
+					osg::ref_ptr<osgFX::Outline> outline = new osgFX::Outline();
+					outline->setWidth(20);
+					outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
+					outline->getOrCreateStateSet()->setRenderBinDetails(90, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+					outline->addChild(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0));
+					parent->getChild(i)->asGroup()->getChild(0)->asTransform()->replaceChild(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0), outline.get());
+				}
+			}
+			// already highlighted, take it away
+			else if (!on) {
+				for (unsigned int i = 0; i < parent->getNumChildren(); i++) {
+					osgFX::Outline *parentOutline = dynamic_cast<osgFX::Outline *>(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0));
+					parent->getChild(i)->asGroup()->getChild(0)->asTransform()->replaceChild(parentOutline, parentOutline->getChild(0));
+				}
+			}
+		}
+		else {
+			// not highlighted yet, do that now
+			if (!(dynamic_cast<osgFX::Outline *>(child))) {
 				osg::ref_ptr<osgFX::Outline> outline = new osgFX::Outline();
 				outline->setWidth(20);
 				outline->setColor(osg::Vec4(c[0], c[1], c[2], 1.0));
 				outline->getOrCreateStateSet()->setRenderBinDetails(90, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-				outline->addChild(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0));
-				parent->getChild(i)->asGroup()->getChild(0)->asTransform()->replaceChild(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0), outline.get());
+				outline->addChild(parent->getChild(0)->asTransform()->getChild(0));
+				parent->getChild(0)->asTransform()->replaceChild(parent->getChild(0)->asTransform()->getChild(0), outline.get());
 			}
-		}
-		// already highlighted, take it away
-		else if (!on) {
-			for (unsigned int i = 0; i < parent->getNumChildren(); i++) {
-				osgFX::Outline *parentOutline = dynamic_cast<osgFX::Outline *>(parent->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0));
-				parent->getChild(i)->asGroup()->getChild(0)->asTransform()->replaceChild(parentOutline, parentOutline->getChild(0));
+			// already highlighted, take it away
+			else if (!on) {
+				osgFX::Outline *parentOutline = dynamic_cast<osgFX::Outline *>(parent->getChild(0)->asTransform()->getChild(0));
+				parent->getChild(0)->asTransform()->replaceChild(parentOutline, parentOutline->getChild(0));
 			}
 		}
 	}

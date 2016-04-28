@@ -56,11 +56,11 @@ const rs::Quat Mindstorms::tiltForWheels(short type1, short type2, float &p2) {
 	}
 	else if (type1 == Connectors::Small && type2 == Connectors::Big) {
 		p2 = 0.035519;
-		return rs::Quat(0.027529, -0.053935, 0.033079, 0.997616);
+		return rs::Quat(0.027529, -0.053935, 0, 0.997616);
 	}
 	else if (type1 == Connectors::Big && type2 == Connectors::Small) {
 		p2 = 0.035519;
-		return rs::Quat(0.027529, 0.053935, -0.033079, 0.997616);
+		return rs::Quat(0.027529, 0.053935, 0, 0.997616);
 	}
 	else if (type1 == Connectors::Big && type2 == Connectors::Big) {
 		p2 = 0.040384;

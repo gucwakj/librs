@@ -241,7 +241,7 @@ void Linkbot::simPreCollisionThread(void) {
 	//  a = (v_new - v_old)/time
 	if (_sim->getClock() > 0.1) {
 		const dReal *v = dBodyGetLinearVel(_body[Bodies::Body]);
-		for (int i = 0; i < _dof; i++) {
+		for (int i = 0; i < 3; i++) {
 			_a[i] = (v[i] - _v[i])/_sim->getStep();
 			_v[i] = v[i];
 		}

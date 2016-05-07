@@ -57,7 +57,7 @@ const rs::Vec Integrator::runStep(float newtime) {
 			// flip right side legs for linkbots
 			if ( !((j - _params->num_body)%2) ) V[j] = -V[j];
 			// scale
-			V[j] *= 4;
+			V[j] *= 0.4;
 		}
 	}
 

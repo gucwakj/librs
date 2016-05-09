@@ -133,6 +133,7 @@ int Mindstorms::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, con
 	pos1 = dBodyGetPosition(_body[Bodies::Wheel1]);
 	pos2 = dBodyGetPosition(_body[Bodies::Wheel2]);
 	_trackwidth = sqrt(pow(pos2[0] - pos1[0], 2) + pow(pos2[1] - pos1[1], 2));
+	_trackwidth += 0.01;	// fudge
 
 	// success
 	return 0;

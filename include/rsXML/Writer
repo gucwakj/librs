@@ -42,6 +42,7 @@ namespace rsXML {
 			void setTrace(bool);
 			void setUnits(bool);
 			tinyxml2::XMLText* toText(bool);
+			tinyxml2::XMLText* toText(int);
 			tinyxml2::XMLText* toText(std::string);
 
 		// private data

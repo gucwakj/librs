@@ -1,0 +1,10 @@
+#ifndef RSXML_CONFIG_
+#define RSXML_CONFIG_
+
+#define RSXML_VER_BAD -1
+#define RSXML_VER_NONE 0
+#define RSXML_VER_OLD 1
+#define RSXML_VER_CURRENT 2
+
+#endif // RSXML_CONFIG_
+

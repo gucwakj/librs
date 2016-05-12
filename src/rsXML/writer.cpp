@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <config.h>
+#include <rsXML/Config>
 #include <rsXML/Writer>
 #ifdef RS_LINKBOT
 #include <rsXML/Linkbot>
@@ -53,6 +54,10 @@ Writer::Writer(std::string name, const std::string &orig) {
 		dec = _doc.NewDeclaration("RoboSim XML Configuration");
 		_doc.InsertFirstChild(dec);
 	}
+
+	// set version number
+	this->getOrCreateElement("config", "version")->DeleteChildren();
+	this->getOrCreateElement("config", "version")->InsertFirstChild(this->toText(RSXML_VER_CURRENT));
 
 	// write to disk
 	this->save();
@@ -642,6 +647,10 @@ tinyxml2::XMLElement* Writer::getOrCreateSide(tinyxml2::XMLElement *p, const cha
 
 tinyxml2::XMLText* Writer::toText(bool b) {
 	return _doc.NewText(std::to_string(b).c_str());
+}
+
+tinyxml2::XMLText* Writer::toText(int i) {
+	return _doc.NewText(std::to_string(i).c_str());
 }
 
 tinyxml2::XMLText* Writer::toText(std::string s) {

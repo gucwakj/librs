@@ -3,6 +3,7 @@
 
 #include <config.h>
 #include <rs/Enum>
+#include <rsXML/Config>
 #include <rsXML/Reader>
 #ifdef RS_DOF
 #include <rsXML/Dof>
@@ -23,7 +24,7 @@ Reader::Reader(const char *name, bool process) {
 	_preconfig = false;
 	_rt = true;
 	_trace = true;
-	_version = 0;
+	_version = RSXML_VER_NONE;
 	for (int i = 0; i < 2; i++) {
 		_friction.push_back(0);
 		_restitution.push_back(0);
@@ -296,9 +297,14 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 
-	// check if should start paused
+	// check version number
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("version")) ) {
 		node->QueryIntText(&_version);
+	}
+	if (_version != RSXML_VER_CURRENT) {
+		_version = RSXML_VER_BAD;
+		doc->FirstChildElement("config")->DeleteChildren();
+		return;
 	}
 
 	// check for custom mu params
@@ -333,6 +339,12 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 }
 
 void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
+	// check for compatible version
+	if (_version == RSXML_VER_BAD) {
+		doc->FirstChildElement("graphics")->DeleteChildren();
+		return;
+	}
+
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
@@ -472,6 +484,12 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 }
 
 void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
+	// check for compatible version
+	if (_version == RSXML_VER_BAD) {
+		doc->FirstChildElement("obstacles")->DeleteChildren();
+		return;
+	}
+
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
@@ -763,6 +781,12 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 }
 
 void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
+	// check for compatible version
+	if (_version == RSXML_VER_BAD) {
+		doc->FirstChildElement("sim")->DeleteChildren();
+		return;
+	}
+
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;

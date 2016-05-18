@@ -1,6 +1,7 @@
 <?RoboSim XML Configuration?>
 <config>
-    <background>/home/kgucwa/projects/librs/resources/background/2014RoboPlay</background>
+	<version>2</version>
+    <background>2014RoboPlay</background>
 </config>
 
 <graphics>

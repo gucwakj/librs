@@ -1,5 +1,6 @@
 <?RoboSim XML Configuration?>
 <config>
+	<version>2</version>
     <background>2014RoboPlay</background>
 </config>
 

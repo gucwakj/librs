@@ -303,7 +303,8 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	}
 	if (_version != RSXML_VER_CURRENT) {
 		_version = RSXML_VER_BAD;
-		doc->FirstChildElement("config")->DeleteChildren();
+		tinyxml2::XMLElement *element = doc->FirstChildElement("config");
+		if (element) element->DeleteChildren();
 		return;
 	}
 
@@ -341,7 +342,8 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 	// check for compatible version
 	if (_version == RSXML_VER_BAD) {
-		doc->FirstChildElement("graphics")->DeleteChildren();
+		tinyxml2::XMLElement *element = doc->FirstChildElement("graphics");
+		if (element) element->DeleteChildren();
 		return;
 	}
 
@@ -486,7 +488,8 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 	// check for compatible version
 	if (_version == RSXML_VER_BAD) {
-		doc->FirstChildElement("obstacles")->DeleteChildren();
+		tinyxml2::XMLElement *element = doc->FirstChildElement("obstacles");
+		if (element) element->DeleteChildren();
 		return;
 	}
 
@@ -783,7 +786,8 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 	// check for compatible version
 	if (_version == RSXML_VER_BAD) {
-		doc->FirstChildElement("sim")->DeleteChildren();
+		tinyxml2::XMLElement *element = doc->FirstChildElement("sim");
+		if (element) element->DeleteChildren();
 		return;
 	}
 

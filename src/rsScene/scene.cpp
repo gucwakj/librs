@@ -831,7 +831,7 @@ void Scene::setLevel(int level) {
 			this->draw_board(1.2192, 0.6858, rs::IN2M(6), rs::IN2M(6));
 			break;
 		case rs::Level::RPC2016:
-			this->draw_board(1.372, 0.762, rs::IN2M(6), rs::IN2M(6));
+			this->draw_board(1.2192, 0.6858, rs::IN2M(6), rs::IN2M(6));
 			break;
 	}
 

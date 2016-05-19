@@ -1,0 +1,42 @@
+<?RoboSim Background XML?>
+
+<level>RPC2016</level>
+
+<name>2016 RoboPlay Challenge Competition</name>
+
+<screenshot>screenshot.png</screenshot>
+
+<background>
+	<ground>board.png</ground>
+</background>
+
+<obstacles>
+	<!-- top -->
+	<box id="0" mass="0">
+		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
+		<rotation psi="0" theta="0" phi="0"/>
+		<position x="1.0668" y="1.2192" z="0.02"/>
+		<size x="2.4384" y="0.0254" z="0.04"/>
+	</box>
+	<!-- bottom -->
+	<box id="0" mass="0">
+		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
+		<rotation psi="0" theta="0" phi="0"/>
+		<position x="1.0668" y="-0.1524" z="0.02"/>
+		<size x="2.4384" y="0.0254" z="0.04"/>
+	</box>
+	<!-- left -->
+	<box id="0" mass="0">
+		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
+		<rotation psi="0" theta="0" phi="0"/>
+		<position x="-0.1524" y="0.5334" z="0.02"/>
+		<size x="0.0254" y="1.372" z="0.04"/>
+	</box>
+	<!-- right -->
+	<box id="0" mass="0">
+		<color r="0.7" g="0.7" b="0.7" alpha="0.8"/>
+		<rotation psi="0" theta="0" phi="0"/>
+		<position x="2.286" y="0.5334" z="0.02"/>
+		<size x="0.0254" y="1.372" z="0.04"/>
+	</box>
+</obstacles>

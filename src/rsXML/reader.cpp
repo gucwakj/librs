@@ -267,6 +267,13 @@ void Reader::load_file(const char *name, tinyxml2::XMLDocument *doc) {
 				_path.append("\\C-STEM Studio\\RoboSim\\");
 				_path.append(name);
 			}
+			if (PathFileExistsA(_path.c_str()) != 1) {
+				std::string dir(base);
+				dir.append("\\C-STEM Studio");
+				CreateDirectory(dir.c_str(), NULL);
+				dir.append("\\RoboSim");
+				CreateDirectory(dir.c_str(), NULL);
+			}
 		}
 #else
 		_path = getenv("HOME");
@@ -2182,6 +2189,13 @@ std::string rsXML::getDefaultPath(void) {
 	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, base))) {
 		path = base;
 		path.append("\\C-STEM Studio\\RoboSim\\robosim.xml");
+	}
+	if (PathFileExistsA(path.c_str()) != 1) {
+		std::string dir(base);
+		dir.append("\\C-STEM Studio");
+		CreateDirectory(dir.c_str(), NULL);
+		dir.append("\\RoboSim");
+		CreateDirectory(dir.c_str(), NULL);
 	}
 #else
 	path = getenv("HOME");

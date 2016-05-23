@@ -7,6 +7,11 @@ include_directories (
 	"${LibRS_BINARY_DIR}"
 )
 
+# include windows api
+if (WIN32)
+	set (EXTRA_LIBS ${EXTRA_LIBS} shlwapi)
+endif ()
+
 # add tinyxml2 library
 include_directories ("${LibRS_SOURCE_DIR}/deps/tinyxml2")
 link_directories ("${LibRS_SOURCE_DIR}/deps/tinyxml2/build/lib")

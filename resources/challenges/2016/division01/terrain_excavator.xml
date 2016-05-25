@@ -1,0 +1,28 @@
+<?RoboSim XML Configuration?>
+<config>
+    <version>2</version>
+    <background>2016RoboPlay</background>
+</config>
+
+<graphics>
+    <units>0</units>
+    <trace>1</trace>
+    <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
+</graphics>
+
+<ground>
+    <box id="1" form="0" mass="453.593">
+        <color r="1" g="1" b="1" alpha="1"/>
+        <size x="0.0254" y="0.1524" z="0.0254"/>
+        <rotation x="0" y="0" z="0" w="1"/>
+        <position x="1.1684" y="0.660401" z="0.0254"/>
+    </box>
+    <hackysack id="0" form="4" mass="0.06">
+        <color r="1" g="0" b="0" alpha="1"/>
+        <size/>
+        <rotation x="0" y="0" z="0" w="1"/>
+        <position x="1.0668" y="0.660401" z="0.0275"/>
+    </hackysack>
+</ground>
+
+<sim/>

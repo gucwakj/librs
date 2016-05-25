@@ -1,0 +1,32 @@
+<?RoboSim XML Configuration?>
+<config>
+    <version>2</version>
+    <background>2016RoboPlay</background>
+</config>
+
+<graphics>
+    <units>0</units>
+    <trace>1</trace>
+    <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
+</graphics>
+
+<ground/>
+
+<sim>
+    <linkboti form="2" id="0">
+        <wheels left="9" right="9"/>
+        <name></name>
+        <led r="0" g="1" b="0" alpha="1"/>
+        <joint f1="0" f2="0" f3="0"/>
+        <rotation x="0" y="0" z="0" w="1"/>
+        <position x="1.8288" y="0.812802" z="0"/>
+    </linkboti>
+    <linkboti form="2" id="1">
+        <wheels left="9" right="9"/>
+        <name></name>
+        <led r="0" g="1" b="0" alpha="1"/>
+        <joint f1="0" f2="0" f3="0"/>
+        <rotation x="0" y="0" z="0.707107" w="0.707107"/>
+        <position x="1.8288" y="1.0414" z="0"/>
+    </linkboti>
+</sim>

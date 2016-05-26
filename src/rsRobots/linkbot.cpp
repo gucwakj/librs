@@ -24,9 +24,9 @@ Linkbot::Linkbot(short form) : Robot(form) {
 	this->addBodyOffset(rs::Pos(this->getBodyWidth()/2 + _face_depth/2, 0, 0));		// face3
 
 	// connectors
-	this->setConnDepth(0.00570);
+	this->setConnDepth(0.00489);
 	this->setConnHeight(0.03715);
-	this->setWheelDepth(0.005);
+	this->setWheelDepth(0.0016);
 	this->setWheelRadius(0.04445);
 	_bigwheel_radius = 0.05080;
 	_bridge_length = 0.13750;

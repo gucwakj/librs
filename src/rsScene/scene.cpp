@@ -517,14 +517,14 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			osg::ref_ptr<osg::Group> group7 = new osg::Group();
 			group7->addChild(pat7.get());
 			// add to body
-			obstacle->addChild(group0.get());
-			obstacle->addChild(group1.get());
-			obstacle->addChild(group2.get());
-			obstacle->addChild(group3.get());
-			obstacle->addChild(group4.get());
-			obstacle->addChild(group5.get());
-			obstacle->addChild(group6.get());
 			obstacle->addChild(group7.get());
+			obstacle->addChild(group6.get());
+			obstacle->addChild(group5.get());
+			obstacle->addChild(group4.get());
+			obstacle->addChild(group3.get());
+			obstacle->addChild(group2.get());
+			obstacle->addChild(group1.get());
+			obstacle->addChild(group0.get());
 			break;
 		}
 		case rs::Cylinder:

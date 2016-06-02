@@ -146,28 +146,28 @@ Obstacle* Sim::addCompetitionBorder(const rs::Pos &p, const rs::Quat &q, const r
 	geom[0] = dCreateCylinder(_space, l[2], l[0]); // radius, x size
 	dGeomSetBody(geom[0], *body);
 	dGeomSetOffsetPosition(geom[0], 0, -l[1]/2, 0.04);
-	dRFromAxisAndAngle(R, 0, 1, 0, -rs::Pi/2);
+	dRFromAxisAndAngle(R, 0, 1, 0, rs::Pi/2);
 	dGeomSetOffsetRotation(geom[0], R);
 
 	// back
 	geom[1] = dCreateCylinder(_space, l[2], l[0]);
 	dGeomSetBody(geom[1], *body);
 	dGeomSetOffsetPosition(geom[1], 0, l[1]/2, 0.04);
-	dRFromAxisAndAngle(R, 0, 1, 0, -rs::Pi/2);
+	dRFromAxisAndAngle(R, 0, 1, 0, rs::Pi/2);
 	dGeomSetOffsetRotation(geom[1], R);
 
 	// left
 	geom[2] = dCreateCylinder(_space, l[2], l[1]); // radius, y size
 	dGeomSetBody(geom[2], *body);
 	dGeomSetOffsetPosition(geom[2], -l[0]/2, 0, 0.04);
-	dRFromAxisAndAngle(R, 1, 0, 0, -rs::Pi/2);
+	dRFromAxisAndAngle(R, 1, 0, 0, rs::Pi/2);
 	dGeomSetOffsetRotation(geom[2], R);
 
 	// right
 	geom[3] = dCreateCylinder(_space, l[2], l[1]);
 	dGeomSetBody(geom[3], *body);
 	dGeomSetOffsetPosition(geom[3], l[0]/2, 0, 0.04);
-	dRFromAxisAndAngle(R, 1, 0, 0, -rs::Pi/2);
+	dRFromAxisAndAngle(R, 1, 0, 0, rs::Pi/2);
 	dGeomSetOffsetRotation(geom[3], R);
 
 	// front left foot
@@ -309,34 +309,34 @@ Obstacle* Sim::addPullupBar(const rs::Pos &p, const rs::Quat &q, const rs::Vec &
 	geom[0] = dCreateCylinder(_space, 0.0125, 0.16);
 	dGeomSetBody(geom[0], *body);
 	dGeomSetOffsetPosition(geom[0], -0.056569, -0.08, 0.056569);
-	dRFromAxisAndAngle(R, 0, 1, 0, -rs::Pi/4);
+	dRFromAxisAndAngle(R, 0, 1, 0, rs::Pi/4);
 	dGeomSetOffsetRotation(geom[0], R);
 
 	// front right
 	geom[1] = dCreateCylinder(_space, 0.0125, 0.16);
 	dGeomSetBody(geom[1], *body);
 	dGeomSetOffsetPosition(geom[1], 0.056569, -0.08, 0.056569);
-	dRFromAxisAndAngle(R, 0, 1, 0, rs::Pi/4);
+	dRFromAxisAndAngle(R, 0, 1, 0, -rs::Pi/4);
 	dGeomSetOffsetRotation(geom[1], R);
 
 	// back left
 	geom[2] = dCreateCylinder(_space, 0.0125, 0.16);
 	dGeomSetBody(geom[2], *body);
 	dGeomSetOffsetPosition(geom[2], -0.056569, 0.08, 0.056569);
-	dRFromAxisAndAngle(R, 0, 1, 0, -rs::Pi/4);
+	dRFromAxisAndAngle(R, 0, 1, 0, rs::Pi/4);
 	dGeomSetOffsetRotation(geom[2], R);
 
 	// back right
 	geom[3] = dCreateCylinder(_space, 0.0125, 0.16);
 	dGeomSetBody(geom[3], *body);
 	dGeomSetOffsetPosition(geom[3], 0.056569, 0.08, 0.056569);
-	dRFromAxisAndAngle(R, 0, 1, 0, rs::Pi/4);
+	dRFromAxisAndAngle(R, 0, 1, 0, -rs::Pi/4);
 	dGeomSetOffsetRotation(geom[3], R);
 
 	// top
 	geom[4] = dCreateCylinder(_space, 0.0125, 0.16);
 	dGeomSetBody(geom[4], *body);
-	dGeomSetOffsetPosition(geom[4], 0.056569, 0.08, 0.056569);
+	dGeomSetOffsetPosition(geom[4], 0, 0, 0.113137);
 	dRFromAxisAndAngle(R, 1, 0, 0, rs::Pi/2);
 	dGeomSetOffsetRotation(geom[4], R);
 

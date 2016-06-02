@@ -1,0 +1,22 @@
+<?RoboSim XML Configuration?>
+<config>
+    <version>2</version>
+    <background>2016RoboPlay</background>
+</config>
+
+<graphics>
+    <units>0</units>
+    <trace>1</trace>
+    <grid tics="1" hash="12" minx="-48" maxx="48" miny="-48" maxy="48" enabled="1"/>
+</graphics>
+
+<ground>
+    <woodblock id="0" form="9" mass="453.593">
+        <color r="0" g="0" b="0" alpha="1"/>
+        <size x="0.0508001" y="0.0508001" z="0.0508001"/>
+        <rotation x="0" y="0" z="0" w="1"/>
+        <position x="0.558801" y="0.635001" z="0.0254"/>
+    </woodblock>
+</ground>
+
+<sim/>

@@ -44,7 +44,6 @@ void Mindstorms::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		// child 1: trace
 		if (_robot->getTrace()) {
 			osg::Geode *geode2 = dynamic_cast<osg::Geode *>(group->getChild(1));
-			geode2->setNodeMask(VISIBLE_MASK);
 			osg::Geometry *draw = dynamic_cast<osg::Geometry *>(geode2->getDrawable(0)->asGeometry());
 			osg::Vec4Array *colors = dynamic_cast<osg::Vec4Array *>(draw->getColorArray());
 			colors->pop_back();

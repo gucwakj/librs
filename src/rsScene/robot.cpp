@@ -6,7 +6,6 @@
 #include <osgText/Text>
 
 #include <rs/Macros>
-#include <rsScene/Scene>
 #include <rsScene/Robot>
 
 using namespace rsScene;

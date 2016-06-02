@@ -7,6 +7,9 @@
 #include <rs/Vec>
 #include <rsRobots/Robot>
 
+extern osg::Node::NodeMask NOT_VISIBLE_MASK;
+extern osg::Node::NodeMask VISIBLE_MASK;
+
 namespace osg {
 	class Geode;
 	class Group;

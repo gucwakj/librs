@@ -739,6 +739,11 @@ void Scene::reidRobot(int id) {
 	osg::Group *test = NULL;
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+		// preconfig robot
+		if (!test->getName().compare(std::string("pre").append(std::to_string(id)))) {
+			test->setName(std::string("pre").append(std::to_string(id - 1)));
+		}
+		// individual robot
 		if (!test->getName().compare(std::string("robot").append(std::to_string(id)))) {
 			test->setName(std::string("robot").append(std::to_string(id - 1)));
 		}

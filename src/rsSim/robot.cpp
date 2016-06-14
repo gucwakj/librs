@@ -247,7 +247,7 @@ double Robot::mod_angle(double past_ang, double cur_ang, double ang_rate) {
 	int stp = (int)( fabs(past_ang) / rs::Pi );
 	double past_ang_mod = fabs(past_ang) - stp*rs::Pi;
 
-	if ( (int)(ang_rate*1000) == 0 ) {
+	if ( ((int)(ang_rate*1000) == 0) ) {
 		new_ang = past_ang;
 	}
 	// positive angular velocity, positive angle

@@ -5,7 +5,7 @@
 using namespace rs;
 
 Vec::Vec(short size) {
-	_v.resize(size);
+	this->allocate(size);
 }
 
 Vec::Vec(float a) {
@@ -39,10 +39,9 @@ Vec::Vec(const Vec &v) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Vec::allocate(int size) {
-	_v.resize(size);
-	for (unsigned int i = 0; i < _v.size(); i++) {
-		_v[i] = 0;
+void Vec::allocate(short size) {
+	for (short i = 0; i < size; i++) {
+		_v.push_back(0.0);
 	}
 }
 

@@ -94,6 +94,7 @@ namespace rsSim {
 			RS_THREAD_T _simulation;			// thread: simulation
 #ifdef RS_RESEARCH
 			rsResearch::Integrator _integ;		// research: integrator class
+			bool _integ_config;					// research: configured integrator
 #endif
 	};
 

@@ -40,6 +40,10 @@ Sim::Sim(bool pause, bool rt) {
 	_step = 0.004;										// initial time step
 	_stop = 0;											// time at which to stop simulation
 
+#ifdef RS_RESEARCH
+	_integ_config = false;
+#endif
+
 	// thread variables
 	RS_COND_INIT(&_pause_cond);
 	RS_COND_INIT(&_running_cond);
@@ -525,6 +529,7 @@ void Sim::setPause(int mode) {
 #ifdef RS_RESEARCH
 void Sim::setCPG(int (*function)(double, const double[], double[], void*), struct rsResearch::Params *params) {
 	_integ.setup(function, params, _step);
+	_integ_config = true;
 }
 
 rsResearch::Integrator* Sim::getIntegrator(void) {
@@ -626,10 +631,12 @@ void* Sim::simulation_thread(void *arg) {
 			}
 
 #ifdef RS_RESEARCH
-			// research: cpg calculation
-			rs::Vec v = sim->_integ.runStep(sim->_clock + sim->_step);
-			for (unsigned int j = 0; j < sim->_robot.size(); j++) {
-				sim->_robot[j].robot->setCPGGoal(v[j]);
+			if (sim->_integ_config) {
+				// research: cpg calculation
+				const rs::Vec *v = sim->_integ.runStep(sim->_clock + sim->_step);
+				for (unsigned int j = 0; j < v->size(); j++) {
+					sim->_robot[j].robot->setCPGGoal(v->value(j));
+				}
 			}
 #endif
 

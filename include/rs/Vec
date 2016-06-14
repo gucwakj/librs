@@ -20,7 +20,7 @@ namespace rs {
 			Vec(const Vec&);
 			~Vec(void) {};
 
-			void allocate(int);
+			void allocate(short);
 			unsigned int size(void) const { return _v.size(); };
 
 			// output
@@ -28,8 +28,9 @@ namespace rs {
 			void print(const char* = "V") const;
 
 			// access operators
-			float& operator[](short s)			{ return _v[s]; }
-			float  operator[](short s) const	{ return _v[s]; }
+			float&	operator[](short s)			{ return _v[s]; }
+			float	operator[](short s) const	{ return _v[s]; }
+			float	value(short s) const		{ return _v[s]; }
 
 		// private data
 		private:

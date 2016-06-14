@@ -33,7 +33,7 @@ namespace rsResearch {
 			Integrator(void);
 			virtual ~Integrator(void);
 
-			const rs::Vec runStep(float);
+			const rs::Vec* runStep(float);
 			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
 			void turn(float);
 
@@ -45,6 +45,7 @@ namespace rsResearch {
 			std::vector<double> _array;		// array of values from cpg integration
 			gsl_odeiv2_driver *_driver;		// driver of cpg integration
 			gsl_odeiv2_system _system;		// system of ode equations
+			rs::Vec _v;						// array of output values
 	};
 
 } // namespace rsResearch

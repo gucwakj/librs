@@ -16,7 +16,7 @@ void Obstacle::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 	osg::Group *group = dynamic_cast<osg::Group *>(node);
 	if (group) {
 		if (group->getNumChildren() > 1) {
-			for (int i = 0; i < group->getNumChildren(); i++) {
+			for (unsigned int i = 0; i < group->getNumChildren(); i++) {
 				const double *pos;
 				dQuaternion quat;
 				dGeomID geom1, geom2;

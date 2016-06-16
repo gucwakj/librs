@@ -37,7 +37,7 @@ void Dof::operator()(osg::Node *node, osg::NodeVisitor *nv) {
 		if (_units)
 			text.append("\n\n(" + std::to_string(rs::M2CM(x)) + ", " + std::to_string(rs::M2CM(y)) + ") [cm]");
 		else
-			text.append("\n\n(" + std::to_string(rs::M2IN(y)) + ", " + std::to_string(rs::M2IN(y)) + ") [in]");
+			text.append("\n\n(" + std::to_string(rs::M2IN(x)) + ", " + std::to_string(rs::M2IN(y)) + ") [in]");
 		osgText::Text *label = dynamic_cast<osgText::Text *>(group->getChild(0)->asGeode()->getDrawable(0));
 		label->setText(text);
 		label->setPosition(osg::Vec3f(x, y, z));

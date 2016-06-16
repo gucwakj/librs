@@ -243,16 +243,36 @@ void Mindstorms::simPreCollisionThread(void) {
 				break;
 			case CONTINUOUS:
 				switch (_motor[i].state) {
-					case POSITIVE:
-						dJointSetAMotorParam(_motor[i].id, dParamVel, fabs(_motor[i].omega));
+					case POSITIVE: {
+						if (_motor[i].starting < 25)
+							dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].starting*fabs(_motor[i].omega)/50);
+						else if (_motor[i].starting < 50)
+							dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].starting*fabs(_motor[i].omega)/150 + 0.3*fabs(_motor[i].omega));
+						else if (_motor[i].starting < 100)
+							dJointSetAMotorParam(_motor[i].id, dParamVel, _motor[i].starting*fabs(_motor[i].omega)/150 + fabs(_motor[i].omega)/3);
+						else
+							dJointSetAMotorParam(_motor[i].id, dParamVel, fabs(_motor[i].omega));
+						_motor[i].starting++;
 						break;
-					case NEGATIVE:
-						dJointSetAMotorParam(_motor[i].id, dParamVel, -fabs(_motor[i].omega));
+					}
+					case NEGATIVE: {
+						if (_motor[i].starting < 25)
+							dJointSetAMotorParam(_motor[i].id, dParamVel, -_motor[i].starting*fabs(_motor[i].omega)/50);
+						else if (_motor[i].starting < 50)
+							dJointSetAMotorParam(_motor[i].id, dParamVel, -_motor[i].starting*fabs(_motor[i].omega)/150 - 0.3*fabs(_motor[i].omega));
+						else if (_motor[i].starting < 100)
+							dJointSetAMotorParam(_motor[i].id, dParamVel, -_motor[i].starting*fabs(_motor[i].omega)/150 - fabs(_motor[i].omega)/3);
+						else
+							dJointSetAMotorParam(_motor[i].id, dParamVel, -fabs(_motor[i].omega));
+						_motor[i].starting++;
 						break;
+					}
 					case HOLD:
+						_motor[i].starting = 0;
 						dJointSetAMotorParam(_motor[i].id, dParamVel, 0);
 						break;
 					case NEUTRAL:
+						_motor[i].starting = 0;
 						dJointDisable(_motor[i].id);
 						break;
 				}

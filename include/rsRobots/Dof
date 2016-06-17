@@ -35,6 +35,7 @@ namespace rsDof {
 			El,
 			Foot,
 			Plank,
+			Snap,
 			Num_Connectors
 		};
 

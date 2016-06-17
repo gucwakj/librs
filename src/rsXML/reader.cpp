@@ -2048,6 +2048,11 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				cnum = 2;
 				node->QueryIntAttribute("orientation", &orientation);
 			}
+			else if ( !strcmp(node->Value(), "snap") ) {
+				ctype = rsDof::Connectors::Snap;
+				cnum = 2;
+				node->QueryIntAttribute("orientation", &orientation);
+			}
 #endif
 #ifdef RS_LINKBOT
 			if ( !strcmp(node->Value(), "bigwheel") ) {

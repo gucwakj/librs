@@ -99,6 +99,9 @@ int Dof::addConnector(int type, int face, int orientation, double size, int side
 		case Connectors::Plank:
 			this->build_plank(_conn.back());
 			break;
+		case Connectors::Snap:
+			this->build_snap(_conn.back());
+			break;
 	}
 
 	// set body parameters
@@ -413,5 +416,17 @@ void Dof::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
 
 	// set damping on all bodies to 0.1
 	for (int i = 0; i < Bodies::Num_Parts; i++) dBodySetDamping(_body[i], 0.1, 0.1);
+}
+
+void Dof::build_snap(Connector &conn) {
+	// set mass of body
+	dMass m;
+	dMassSetBox(&m, 170, this->getConnDepth(), 2*this->getCapRadius(), this->getConnHeight());
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(conn.body, &m);
+
+	// set geometry
+	dGeomID geom = dCreateBox(_space, this->getConnDepth(), 2*this->getCapRadius(), this->getConnHeight());
+	dGeomSetBody(geom, conn.body);
 }
 

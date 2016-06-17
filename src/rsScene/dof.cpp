@@ -131,6 +131,9 @@ void Dof::drawConnector(Group *group, int type, int face, int orientation, doubl
 		case Connectors::Plank:
 			node = osgDB::readNodeFile(_model_path + "dof/plank.3ds");
 			break;
+		case Connectors::Snap:
+			node = osgDB::readNodeFile(_model_path + "dof/snap.3ds");
+			break;
 	}
 	node->computeBound();
 	node->setCullingActive(false);

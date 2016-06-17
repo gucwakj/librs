@@ -6,6 +6,7 @@ namespace rsResearch {
 	namespace Forms {
 		enum Form {
 			Dog,
+			Hexapod,
 			Individual,
 			Salamander,
 			Snake

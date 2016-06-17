@@ -53,6 +53,8 @@ const rs::Pos Dof::getConnFacePosition(short type, short side, short orientation
 	}
 	else if (type == Connectors::Plank)
 		return P.add(Q.multiply(0, _plank_length - 2*_cap_radius, 0));
+	else if (type == Connectors::Snap)
+		return P.add(Q.multiply(this->getConnDepth(), 0, 0));
 
 	// default return
 	return P;
@@ -78,6 +80,8 @@ const rs::Quat Dof::getConnFaceQuaternion(short type, short side, short orientat
 	}
 	else if (type == Connectors::Plank)
 		return Q.multiply(0, 0, sin(1.570796), cos(1.570796));
+	else if (type == Connectors::Snap)
+		return Q;
 
 	// default return
 	return Q;
@@ -97,6 +101,8 @@ const rs::Pos Dof::getConnBodyPosition(short type, short orientation, const rs::
 		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::Plank)
 		return P.add(Q.multiply(this->getConnDepth()/2, _plank_length/2 - _cap_radius, 0));
+	else if (type == Connectors::Snap)
+		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 
 	// default return
 	return P;

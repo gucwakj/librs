@@ -35,7 +35,7 @@ namespace rsSim {
 			int moveJointWait(int);
 			void pauseWait(void);
 #ifdef RS_RESEARCH
-			void setCPGGoal(double);		// research: set next goal value
+			void setCPGGoal(float);		// research: set next goal value
 #endif
 			int addToSim(dWorldID&, dSpaceID&, int, rsSim::Sim*);
 			virtual int build(const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, int) { return 0; };

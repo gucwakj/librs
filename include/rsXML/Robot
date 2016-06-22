@@ -26,6 +26,7 @@ namespace rsXML {
 			Conn* getBaseConnector(void);
 			ConnectorList& getConnectorList(void);
 			int getConnect(void);
+			int getEnabled(void);
 			int getGround(void);
 			int getID(void);
 			const rs::Vec getJoints(void);
@@ -40,6 +41,7 @@ namespace rsXML {
 			virtual void postProcess(void) {};
 			void printDebug(void);
 			void setConnect(int);
+			void setEnabled(int);
 			void setGround(int);
 			void setID(int);
 			void setJoints(double, double);
@@ -57,6 +59,7 @@ namespace rsXML {
 		protected:
 			bool _trace;
 			int _connected;
+			int _enabled;
 			int _ground;
 			int _id;
 			int _orientation;

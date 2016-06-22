@@ -811,9 +811,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 		node = node->FirstChildElement();
 	}
 
-	// check if individual vs preconfig
-	//node->QueryIntAttribute("type", reinterpret_cast<int *>(&_preconfig));
-
 	// loop over all nodes
 	while (node) {
 		if (node->ToComment()) {}
@@ -828,10 +825,16 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			i = 0;
 			node->QueryIntAttribute("id", &i);
 			_robot.back()->setID(i);
+			// query enabled joint
+			if ( (ele = node->FirstChildElement("enabled")) ) {
+				i = 1;
+				ele->QueryIntText(&i);
+				_robot.back()->setEnabled(i);
+			}
 			if ( (ele = node->FirstChildElement("joint")) ) {
-				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("j", &a);
-				_robot.back()->setJoints(a, b, c);
+				a = 0;
+				ele->QueryDoubleText(&a);
+				_robot.back()->setJoints(a, 0);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;

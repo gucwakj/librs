@@ -12,6 +12,7 @@ Robot::Robot(bool trace) : rsRobots::Robot(rs::Robot) {
 	_c[1] = 0;
 	_c[2] = 0;
 	_c[3] = 1;
+	_enabled = 1;
 	_ground = -1;
 	_id = -1;
 	_orientation = 0;
@@ -48,6 +49,10 @@ ConnectorList& Robot::getConnectorList(void) {
 
 int Robot::getConnect(void) {
 	return _connected;
+}
+
+int Robot::getEnabled(void) {
+	return _enabled;
 }
 
 int Robot::getGround(void) {
@@ -111,6 +116,10 @@ void Robot::setConnect(int a) {
 	_connected = a;
 }
 
+void Robot::setEnabled(int a) {
+	_enabled = a;
+}
+
 void Robot::setGround(int a) {
 	_ground = a;
 }
@@ -120,16 +129,14 @@ void Robot::setID(int a) {
 }
 
 void Robot::setJoints(double a, double b) {
-	_a.allocate(2);
-	_a[0] = a;
-	_a[1] = b;
+	if (_a.size() >= 1) _a[0] = a;
+	if (_a.size() >= 2) _a[1] = b;
 }
 
 void Robot::setJoints(double a, double b, double c) {
-	_a.allocate(3);
-	_a[0] = a;
-	_a[1] = b;
-	_a[2] = c;
+	if (_a.size()>= 1) _a[0] = a;
+	if (_a.size()>= 2) _a[1] = b;
+	if (_a.size()>= 3) _a[2] = c;
 }
 
 void Robot::setLED(double a, double b, double c, double d) {

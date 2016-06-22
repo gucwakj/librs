@@ -24,6 +24,7 @@ namespace rsResearch {
 		short num_robots;
 		short num_vars;
 		short form;
+		void *robot;
 	};
 
 	// class

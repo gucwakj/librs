@@ -161,7 +161,7 @@ void Robot::pauseWait(void) {
 }
 
 #ifdef RS_RESEARCH
-void Robot::setCPGGoal(double value) {
+void Robot::setCPGGoal(float value) {
 	_next_goal = value;
 }
 #endif

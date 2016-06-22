@@ -4,7 +4,7 @@
 
 using namespace rsXML;
 
-Obstacle::Obstacle(int type) {
+Obstacle::Obstacle(short type) {
 	_axis = 1;
 	_connected = 0;
 	_mass = 0.1;
@@ -23,7 +23,7 @@ Obstacle::Obstacle(int type) {
 /**********************************************************
 	public functions
  **********************************************************/
-int Obstacle::getAxis(void) {
+short Obstacle::getAxis(void) {
 	return _axis;
 }
 
@@ -31,7 +31,7 @@ const rs::Vec Obstacle::getColor(void) {
 	return _c;
 }
 
-int Obstacle::getConnect(void) {
+bool Obstacle::getConnect(void) {
 	return _connected;
 }
 
@@ -39,15 +39,15 @@ const rs::Vec Obstacle::getDimensions(void) {
 	return _l;
 }
 
-int Obstacle::getForm(void) {
+short Obstacle::getForm(void) {
 	return _type;
 }
 
-int Obstacle::getID(void) {
+short Obstacle::getID(void) {
 	return _id;
 }
 
-double Obstacle::getMass(void) {
+float Obstacle::getMass(void) {
 	return _mass;
 }
 
@@ -59,22 +59,22 @@ const rs::Quat Obstacle::getQuaternion(void) {
 	return _q;
 }
 
-void Obstacle::setAxis(int i) {
+void Obstacle::setAxis(short i) {
 	_axis = i;
 }
 
-void Obstacle::setColor(double a, double b, double c, double d) {
+void Obstacle::setColor(float a, float b, float c, float d) {
 	_c[0] = a;
 	_c[1] = b;
 	_c[2] = c;
 	_c[3] = d;
 }
 
-void Obstacle::setConnect(int a) {
-	_connected = a;
+void Obstacle::setConnect(bool b) {
+	_connected = b;
 }
 
-void Obstacle::setDimensions(double a, double b, double c) {
+void Obstacle::setDimensions(float a, float b, float c) {
 	if (fabs(a) > rs::Epsilon) _l[0] = a;
 	if (fabs(b) > rs::Epsilon) _l[1] = b;
 	if (fabs(c) > rs::Epsilon) _l[2] = c;
@@ -84,17 +84,17 @@ void Obstacle::setID(int a) {
 	_id = a;
 }
 
-void Obstacle::setMass(double a) {
+void Obstacle::setMass(float a) {
 	_mass = (fabs(a) < rs::Epsilon) ? 10000000 : a;
 }
 
-void Obstacle::setPosition(double a, double b, double c) {
+void Obstacle::setPosition(float a, float b, float c) {
 	_p[0] = a;
 	_p[1] = b;
 	_p[2] = c;
 }
 
-void Obstacle::setRotation(double a, double b, double c) {
+void Obstacle::setRotation(float a, float b, float c) {
 	double q1[4] = {sin(0.5*a), 0, 0, cos(0.5*a)};
 	double q2[4] = {0, sin(0.5*b), 0, cos(0.5*b)};
 	double q3[4] = {0, 0, sin(0.5*c), cos(0.5*c)};
@@ -117,7 +117,7 @@ void Obstacle::setRotation(double a, double b, double c) {
 			q3[2]*q2[3]*q1[2] - q3[2]*q2[0]*q1[1] + q3[2]*q2[1]*q1[0] - q3[2]*q2[2]*q1[3];
 }
 
-void Obstacle::setRotation(double a, double b, double c, double d) {
+void Obstacle::setRotation(float a, float b, float c, float d) {
 	_q[0] = a;
 	_q[1] = b;
 	_q[2] = c;

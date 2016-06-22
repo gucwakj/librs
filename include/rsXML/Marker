@@ -13,35 +13,35 @@ namespace rsXML {
 	class LIBRSEXPORT Marker {
 		// public functions
 		public:
-			Marker(int);
+			Marker(short);
 			virtual ~Marker(void) {};
 
 			const rs::Vec getColor(void);
-			int getConnect(void);
+			bool getConnect(void);
 			const rs::Pos getEnd(void);
-			int getID(void);
+			short getID(void);
 			const rs::Pos getStart(void);
-			int getSize(void);
-			int getForm(void);
+			short getSize(void);
+			short getForm(void);
 			std::string getLabel(void);
-			void setColor(double, double, double, double);
-			void setConnect(int);
-			void setEnd(double, double, double);
-			void setID(int);
+			void setColor(float, float, float, float);
+			void setConnect(bool);
+			void setEnd(float, float, float);
+			void setID(short);
 			void setLabel(std::string);
-			void setSize(int);
-			void setStart(double, double, double);
+			void setSize(short);
+			void setStart(float, float, float);
 
 		// private data
 		private:
-			int _connected;	// connect to view
-			int _id;		// id
-			int _size;		// size of object
-			int _type;		// type
-			std::string _l;	// label
-			rs::Pos _e;		// end position
-			rs::Pos _s;		// start position
-			rs::Vec _c;		// color
+			bool _connected;	// connect to view
+			short _id;			// id
+			short _size;		// size of object
+			short _type;		// type
+			std::string _l;		// label
+			rs::Pos _e;			// end position
+			rs::Pos _s;			// start position
+			rs::Vec _c;			// color
 	};
 
 } // namespace rsXML

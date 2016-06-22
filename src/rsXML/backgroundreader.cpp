@@ -54,16 +54,16 @@ BackgroundReader::~BackgroundReader(void) { }
 /**********************************************************
 	public functions
  **********************************************************/
-std::string BackgroundReader::getBackgroundImage(unsigned int pos) {
+std::string BackgroundReader::getBackgroundImage(unsigned short pos) {
 	if (_path.size() > pos) return _path[pos];
 	return std::string();
 }
 
-int BackgroundReader::getLevel(void) {
+short BackgroundReader::getLevel(void) {
 	return _level;
 }
 
-Marker* BackgroundReader::getMarker(int id) {
+Marker* BackgroundReader::getMarker(short id) {
 	return _marker[id];
 }
 
@@ -71,15 +71,15 @@ std::string BackgroundReader::getName(void) {
 	return _name;
 }
 
-int BackgroundReader::getNumObstacles(void) {
+short BackgroundReader::getNumObstacles(void) {
 	return _obstacle.size();
 }
 
-int BackgroundReader::getNumMarkers(void) {
+short BackgroundReader::getNumMarkers(void) {
 	return _marker.size();
 }
 
-Obstacle* BackgroundReader::getObstacle(int id) {
+Obstacle* BackgroundReader::getObstacle(short id) {
 	return _obstacle[id];
 }
 
@@ -146,7 +146,7 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
 	int i;
-	double a, b, c, d;
+	float a, b, c, d;
 
 	// check for existence of node
 	if ( (node = doc->FirstChildElement("graphics")) ) {
@@ -164,32 +164,32 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_marker.back()->setColor(a, b, c, d);
 			}
 			// end position
 			if ( (ele = node->FirstChildElement("end")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_marker.back()->setEnd(a, b, c);
 			}
 			// start position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
 			a = 0;
-			if ( !node->QueryDoubleAttribute("width", &a) ) {
-				_marker.back()->setSize(a);
+			if ( !node->QueryIntAttribute("width", &i) ) {
+				_marker.back()->setSize(i);
 			}
 		}
 		else if ( !strcmp(node->Value(), "dot") ) {
@@ -201,24 +201,24 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_marker.back()->setColor(a, b, c, d);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
 			a = 0;
-			if ( !node->QueryDoubleAttribute("radius", &a) ) {
-				_marker.back()->setSize(a);
+			if ( !node->QueryIntAttribute("radius", &i) ) {
+				_marker.back()->setSize(i);
 			}
 		}
 		else if ( !strcmp(node->Value(), "text") ) {
@@ -230,10 +230,10 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_marker.back()->setColor(a, b, c, d);
 			}
 			// label
@@ -245,9 +245,9 @@ void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
 			}
 		}
@@ -262,7 +262,7 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
 	int i;
-	double a, b, c, d;
+	float a, b, c, d;
 
 	// check for existence of node
 	if ( (node = doc->FirstChildElement("obstacles")) ) {
@@ -280,39 +280,39 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setDimensions(a, b, c);
 			}
 			// mass
 			a = 0;
-			if ( !node->QueryDoubleAttribute("mass", &a) ) {
+			if ( !node->QueryFloatAttribute("mass", &a) ) {
 				_obstacle.back()->setMass(a);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setPosition(a, b, c);
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("psi", &a);
-				ele->QueryDoubleAttribute("theta", &b);
-				ele->QueryDoubleAttribute("phi", &c);
+				ele->QueryFloatAttribute("psi", &a);
+				ele->QueryFloatAttribute("theta", &b);
+				ele->QueryFloatAttribute("phi", &c);
 				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
@@ -323,45 +323,45 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
 			// axis
-			a = 0;
-			if ( !node->QueryDoubleAttribute("axis", &a) ) {
-				_obstacle.back()->setAxis(a);
+			i = 0;
+			if ( !node->QueryIntAttribute("axis", &i) ) {
+				_obstacle.back()->setAxis(i);
 			}
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				a = 0; b = 0;
-				ele->QueryDoubleAttribute("radius", &a);
-				ele->QueryDoubleAttribute("length", &b);
+				ele->QueryFloatAttribute("radius", &a);
+				ele->QueryFloatAttribute("length", &b);
 				_obstacle.back()->setDimensions(a, b, 0);
 			}
 			// mass
 			a = 0;
-			if ( !node->QueryDoubleAttribute("mass", &a) ) {
+			if ( !node->QueryFloatAttribute("mass", &a) ) {
 				_obstacle.back()->setMass(a);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setPosition(a, b, c);
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("psi", &a);
-				ele->QueryDoubleAttribute("theta", &b);
-				ele->QueryDoubleAttribute("phi", &c);
+				ele->QueryFloatAttribute("psi", &a);
+				ele->QueryFloatAttribute("theta", &b);
+				ele->QueryFloatAttribute("phi", &c);
 				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
@@ -374,29 +374,29 @@ void BackgroundReader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				a = 0;
-				ele->QueryDoubleAttribute("radius", &a);
+				ele->QueryFloatAttribute("radius", &a);
 				_obstacle.back()->setDimensions(a, 0, 0);
 			}
 			// mass
 			a = 0;
-			if ( !node->QueryDoubleAttribute("mass", &a) ) {
+			if ( !node->QueryFloatAttribute("mass", &a) ) {
 				_obstacle.back()->setMass(a);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setPosition(a, b, c);
 			}
 		}

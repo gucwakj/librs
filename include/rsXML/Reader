@@ -23,23 +23,23 @@ namespace rsXML {
 			Reader(const char*, bool = true);
 			virtual ~Reader(void);
 
-			int addNewRobot(Robot*);
+			void addNewRobot(Robot*);
 			void addBackgroundObjects(void);
-			std::string getBackgroundImage(int);
-			int getLevel(void);
+			std::string getBackgroundImage(short);
+			short getLevel(void);
 			std::string getName(void);
-			Marker* getMarker(int);
-			Marker* getNextMarker(int = -1);
-			Obstacle* getObstacle(int);
-			Obstacle* getNextObstacle(int = -1);
-			Robot* getNextRobot(int);
-			std::vector<double> getFriction(void);
-			std::vector<double> getGrid(void);
-			std::vector<double> getRestitution(void);
+			Marker* getMarker(short);
+			Marker* getNextMarker(short = -1);
+			Obstacle* getObstacle(short);
+			Obstacle* getNextObstacle(short = -1);
+			Robot* getNextRobot(short = -1);
+			std::vector<float> getFriction(void);
+			std::vector<float> getGrid(void);
+			std::vector<float> getRestitution(void);
 			std::string getDoc(void);
-			int getNumObstacles(void);
-			int getNumMarkers(void);
-			int getNumRobots(void);
+			short getNumObstacles(void);
+			short getNumMarkers(void);
+			short getNumRobots(void);
 			bool getPause(void);
 			bool getRealTime(void);
 			bool getTrace(void);
@@ -62,9 +62,9 @@ namespace rsXML {
 			bool _units;						// flag: SI (true) or customary (false)
 			int _version;						// version of xml file being read
 			std::string _path;					// path of xml file
-			std::vector<double> _friction;		// coefficient of friction [body/ground, body/body]
-			std::vector<double> _grid;			// grid [tics, hash, minx, maxx, miny, maxy, enabled]
-			std::vector<double> _restitution;	// coefficient of restitution [body/ground, body/body]
+			std::vector<float> _friction;		// coefficient of friction [body/ground, body/body]
+			std::vector<float> _grid;			// grid [tics, hash, minx, maxx, miny, maxy, enabled]
+			std::vector<float> _restitution;	// coefficient of restitution [body/ground, body/body]
 			std::vector<Obstacle*> _obstacle;	// ground obstacles
 			std::vector<Marker*> _marker;		// graphical markers
 			std::vector<Robot*> _robot;			// simulation robots

@@ -758,7 +758,7 @@ void Scene::setFrameRate(int rate) {
 	_rate = (rate > 0) ? rate : _rate;
 }
 
-void Scene::setGrid(std::vector<double> grid, bool draw) {
+void Scene::setGrid(std::vector<float> grid, bool draw) {
 	// save new values
 	if (grid[0] != -1) _grid[0] = grid[0];
 	if (grid[1] != -1) _grid[1] = grid[1];

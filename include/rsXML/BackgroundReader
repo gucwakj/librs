@@ -20,13 +20,13 @@ namespace rsXML {
 			BackgroundReader(std::string);
 			virtual ~BackgroundReader(void);
 
-			std::string getBackgroundImage(unsigned int);
-			int getLevel(void);
-			Marker* getMarker(int);
+			std::string getBackgroundImage(unsigned short);
+			short getLevel(void);
+			Marker* getMarker(short);
 			std::string getName(void);
-			int getNumObstacles(void);
-			int getNumMarkers(void);
-			Obstacle* getObstacle(int);
+			short getNumObstacles(void);
+			short getNumMarkers(void);
+			Obstacle* getObstacle(short);
 			std::string getScreenshot(void);
 
 		// private functions
@@ -38,7 +38,7 @@ namespace rsXML {
 
 		// private data
 		private:
-			int _level;							// level to load
+			short _level;						// level to load
 			std::string _name;					// name of Scene
 			std::string _screenshot;			// path of screenshot
 			std::vector<Obstacle*> _obstacle;	// ground obstacles

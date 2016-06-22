@@ -6,7 +6,7 @@ using namespace rsXML;
 
 Robot::Robot(bool trace) : rsRobots::Robot(rs::Robot) {
 	_base = NULL;
-	_connected = 0;
+	_connected = false;
 	_c.allocate(4);
 	_c[0] = 1;
 	_c[1] = 0;
@@ -32,7 +32,7 @@ Robot::~Robot(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-int Robot::addConnector(Conn *conn) {
+short Robot::addConnector(Conn *conn) {
 	_conn.push_back(conn);
 
 	// success
@@ -47,19 +47,19 @@ ConnectorList& Robot::getConnectorList(void) {
 	return _conn;
 }
 
-int Robot::getConnect(void) {
+bool Robot::getConnect(void) {
 	return _connected;
 }
 
-int Robot::getEnabled(void) {
+short Robot::getEnabled(void) {
 	return _enabled;
 }
 
-int Robot::getGround(void) {
+short Robot::getGround(void) {
 	return _ground;
 }
 
-int Robot::getID(void) {
+short Robot::getID(void) {
 	return _id;
 }
 
@@ -75,7 +75,7 @@ std::string Robot::getName(void) {
 	return _name;
 }
 
-int Robot::getOrientation(void) {
+short Robot::getOrientation(void) {
 	return _orientation;
 }
 
@@ -87,7 +87,7 @@ const rs::Quat Robot::getQuaternion(void) {
 	return _q;
 }
 
-int Robot::getShape(void) {
+short Robot::getShape(void) {
 	return _shape;
 }
 
@@ -112,34 +112,34 @@ void Robot::printDebug(void) {
 	}
 }
 
-void Robot::setConnect(int a) {
-	_connected = a;
+void Robot::setConnect(bool b) {
+	_connected = b;
 }
 
-void Robot::setEnabled(int a) {
+void Robot::setEnabled(short a) {
 	_enabled = a;
 }
 
-void Robot::setGround(int a) {
+void Robot::setGround(short a) {
 	_ground = a;
 }
 
-void Robot::setID(int a) {
+void Robot::setID(short a) {
 	_id = a;
 }
 
-void Robot::setJoints(double a, double b) {
+void Robot::setJoints(float a, float b) {
 	if (_a.size() >= 1) _a[0] = a;
 	if (_a.size() >= 2) _a[1] = b;
 }
 
-void Robot::setJoints(double a, double b, double c) {
+void Robot::setJoints(float a, float b, float c) {
 	if (_a.size()>= 1) _a[0] = a;
 	if (_a.size()>= 2) _a[1] = b;
 	if (_a.size()>= 3) _a[2] = c;
 }
 
-void Robot::setLED(double a, double b, double c, double d) {
+void Robot::setLED(float a, float b, float c, float d) {
 	_c[0] = a;
 	_c[1] = b;
 	_c[2] = c;
@@ -150,34 +150,34 @@ void Robot::setName(std::string name) {
 	_name = name;
 }
 
-void Robot::setOrientation(int a) {
+void Robot::setOrientation(short a) {
 	_orientation = a;
 }
 
-void Robot::setPsi(double c) {
+void Robot::setPsi(float c) {
 	_q.multiply(0, 0, sin(0.5*c), cos(0.5*c));
 }
 
-void Robot::setPosition(double a, double b, double c) {
+void Robot::setPosition(float a, float b, float c) {
 	_p[0] = a;
 	_p[1] = b;
 	_p[2] = c;
 }
 
-void Robot::setRotation(double a, double b, double c) {
+void Robot::setRotation(float a, float b, float c) {
 	_q.multiply(sin(0.5*a), 0, 0, cos(0.5*a));
 	_q.multiply(0, sin(0.5*b), 0, cos(0.5*b));
 	_q.multiply(0, 0, sin(0.5*c), cos(0.5*c));
 }
 
-void Robot::setRotation(double a, double b, double c, double d) {
+void Robot::setRotation(float a, float b, float c, float d) {
 	_q[0] = a;
 	_q[1] = b;
 	_q[2] = c;
 	_q[3] = d;
 }
 
-void Robot::setWheels(int left, int right) {
+void Robot::setWheels(short left, short right) {
 	_wheels[0] = left;
 	_wheels[1] = right;
 }

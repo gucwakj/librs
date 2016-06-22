@@ -67,19 +67,18 @@ Reader::~Reader(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-std::string Reader::getBackgroundImage(int pos) {
+std::string Reader::getBackgroundImage(short pos) {
 	if (!_background) return std::string();
 	return _background->getBackgroundImage(pos);
 }
 
-int Reader::getLevel(void) {
+short Reader::getLevel(void) {
 	if (!_background) return -1;
 	return _background->getLevel();
 }
 
-int Reader::addNewRobot(Robot *bot) {
+void Reader::addNewRobot(Robot *bot) {
 	_robot.push_back(bot);
-	return 0;
 }
 
 void Reader::addBackgroundObjects(void) {
@@ -94,15 +93,15 @@ std::string Reader::getName(void) {
 	return _background->getName();
 }
 
-Obstacle* Reader::getObstacle(int id) {
+Obstacle* Reader::getObstacle(short id) {
 	return _obstacle[id];
 }
 
-Marker* Reader::getMarker(int id) {
+Marker* Reader::getMarker(short id) {
 	return _marker[id];
 }
 
-Marker* Reader::getNextMarker(int form) {
+Marker* Reader::getNextMarker(short form) {
 	// find next marker in xml list
 	unsigned int i = 0;
 	for (i = 0; i < _marker.size(); i++) {
@@ -121,7 +120,7 @@ Marker* Reader::getNextMarker(int form) {
 	return _marker[i];
 }
 
-Obstacle* Reader::getNextObstacle(int form) {
+Obstacle* Reader::getNextObstacle(short form) {
 	// find next obstacle in xml list
 	unsigned int i = 0;
 	for (i = 0; i < _obstacle.size(); i++) {
@@ -140,7 +139,7 @@ Obstacle* Reader::getNextObstacle(int form) {
 	return _obstacle[i];
 }
 
-Robot* Reader::getNextRobot(int form) {
+Robot* Reader::getNextRobot(short form) {
 	// find next robot in xml list
 	unsigned int i = 0;
 	for (i = 0; i < _robot.size(); i++) {
@@ -207,30 +206,30 @@ std::string Reader::getDoc(void) {
 	return _path;
 }
 
-std::vector<double> Reader::getFriction(void) {
+std::vector<float> Reader::getFriction(void) {
 	return _friction;
 }
 
-std::vector<double> Reader::getGrid(void) {
+std::vector<float> Reader::getGrid(void) {
 	for (int i = 0; i < 6; i++) {
 		_grid[i] = (_units) ? rs::CM2M(_grid[i]) : rs::IN2M(_grid[i]);
 	}
 	return _grid;
 }
 
-std::vector<double> Reader::getRestitution(void) {
+std::vector<float> Reader::getRestitution(void) {
 	return _restitution;
 }
 
-int Reader::getNumObstacles(void) {
+short Reader::getNumObstacles(void) {
 	return _obstacle.size();
 }
 
-int Reader::getNumMarkers(void) {
+short Reader::getNumMarkers(void) {
 	return _marker.size();
 }
 
-int Reader::getNumRobots(void) {
+short Reader::getNumRobots(void) {
 	return _robot.size();
 }
 
@@ -319,14 +318,14 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 
 	// check for custom mu params
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("mu")) ) {
-		node->QueryDoubleAttribute("ground", &(_friction[0]));
-		node->QueryDoubleAttribute("body", &(_friction[1]));
+		node->QueryFloatAttribute("ground", &(_friction[0]));
+		node->QueryFloatAttribute("body", &(_friction[1]));
 	}
 
 	// check for custom cor params
 	if ( (node = doc->FirstChildElement("config")->FirstChildElement("cor")) ) {
-		node->QueryDoubleAttribute("ground", &(_restitution[0]));
-		node->QueryDoubleAttribute("body", &(_restitution[1]));
+		node->QueryFloatAttribute("ground", &(_restitution[0]));
+		node->QueryFloatAttribute("body", &(_restitution[1]));
 	}
 
 	// check if should start paused
@@ -360,7 +359,7 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
 	int i;
-	double a, b, c, d;
+	float a, b, c, d;
 
 	// check for existence of node
 	if ( (node = doc->FirstChildElement("graphics")) ) {
@@ -379,26 +378,26 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_marker.back()->setColor(a, b, c, d);
 			}
 			// end position
 			if ( (ele = node->FirstChildElement("end")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_marker.back()->setEnd(a, b, c);
 			}
 			// start position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
@@ -417,18 +416,18 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_marker.back()->setColor(a, b, c, d);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
 			}
 			// size
@@ -438,13 +437,13 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			}
 		}
 		else if ( !strcmp(node->Value(), "grid") ) {
-			node->QueryDoubleAttribute("tics", &_grid[0]);
-			node->QueryDoubleAttribute("hash", &_grid[1]);
-			node->QueryDoubleAttribute("minx", &_grid[2]);
-			node->QueryDoubleAttribute("maxx", &_grid[3]);
-			node->QueryDoubleAttribute("miny", &_grid[4]);
-			node->QueryDoubleAttribute("maxy", &_grid[5]);
-			node->QueryDoubleAttribute("enabled", &_grid[6]);
+			node->QueryFloatAttribute("tics", &_grid[0]);
+			node->QueryFloatAttribute("hash", &_grid[1]);
+			node->QueryFloatAttribute("minx", &_grid[2]);
+			node->QueryFloatAttribute("maxx", &_grid[3]);
+			node->QueryFloatAttribute("miny", &_grid[4]);
+			node->QueryFloatAttribute("maxy", &_grid[5]);
+			node->QueryFloatAttribute("enabled", &_grid[6]);
 		}
 		else if ( !strcmp(node->Value(), "trace") ) {
 			node->QueryIntText(reinterpret_cast<int *>(&_trace));
@@ -464,10 +463,10 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_marker.back()->setColor(a, b, c, d);
 			}
 			// label
@@ -479,9 +478,9 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
 			}
 		}
@@ -506,7 +505,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
 	int i;
-	double a, b, c, d;
+	float a, b, c, d;
 
 	// check for existence of node
 	if ( (node = doc->FirstChildElement("ground")) ) {
@@ -525,39 +524,39 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setDimensions(a, b, c);
 			}
 			// mass
 			a = 0;
-			if ( !node->QueryDoubleAttribute("mass", &a) ) {
+			if ( !node->QueryFloatAttribute("mass", &a) ) {
 				_obstacle.back()->setMass(a);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setPosition(a, b, c);
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("psi", &a);
-				ele->QueryDoubleAttribute("theta", &b);
-				ele->QueryDoubleAttribute("phi", &c);
+				ele->QueryFloatAttribute("psi", &a);
+				ele->QueryFloatAttribute("theta", &b);
+				ele->QueryFloatAttribute("phi", &c);
 				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
@@ -571,9 +570,9 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("xlength", &a);
-				ele->QueryDoubleAttribute("ylength", &b);
-				ele->QueryDoubleAttribute("radius", &c);
+				ele->QueryFloatAttribute("xlength", &a);
+				ele->QueryFloatAttribute("ylength", &b);
+				ele->QueryFloatAttribute("radius", &c);
 				_obstacle.back()->setDimensions(a, b, c);
 			}
 			// mass
@@ -581,32 +580,32 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
 				_obstacle.back()->setPosition(a, b, 0);
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_obstacle.back()->setRotation(a, b, c, d);
 				}
 				else {
@@ -629,38 +628,38 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				a = 0; b = 0;
-				ele->QueryDoubleAttribute("radius", &a);
-				ele->QueryDoubleAttribute("length", &b);
+				ele->QueryFloatAttribute("radius", &a);
+				ele->QueryFloatAttribute("length", &b);
 				_obstacle.back()->setDimensions(a, b, 0);
 			}
 			// mass
 			a = 0;
-			if ( !node->QueryDoubleAttribute("mass", &a) ) {
+			if ( !node->QueryFloatAttribute("mass", &a) ) {
 				_obstacle.back()->setMass(a);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setPosition(a, b, c);
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("psi", &a);
-				ele->QueryDoubleAttribute("theta", &b);
-				ele->QueryDoubleAttribute("phi", &c);
+				ele->QueryFloatAttribute("psi", &a);
+				ele->QueryFloatAttribute("theta", &b);
+				ele->QueryFloatAttribute("phi", &c);
 				_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 			}
 		}
@@ -678,9 +677,9 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0.0275;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setPosition(a, b, c);
 			}
 		}
@@ -700,23 +699,23 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
 				_obstacle.back()->setPosition(a, b, 0);
 			}
 			// rotation
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_obstacle.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_obstacle.back()->setRotation(a, b, c, d);
 				}
 				else {
@@ -734,29 +733,29 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// color
 			if ( (ele = node->FirstChildElement("color")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_obstacle.back()->setColor(a, b, c, d);
 			}
 			// dimensions
 			if ((ele = node->FirstChildElement("size"))) {
 				a = 0;
-				ele->QueryDoubleAttribute("radius", &a);
+				ele->QueryFloatAttribute("radius", &a);
 				_obstacle.back()->setDimensions(a, 0, 0);
 			}
 			// mass
 			a = 0;
-			if ( !node->QueryDoubleAttribute("mass", &a) ) {
+			if ( !node->QueryFloatAttribute("mass", &a) ) {
 				_obstacle.back()->setMass(a);
 			}
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setPosition(a, b, c);
 			}
 		}
@@ -770,9 +769,9 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// dimensions
 			if ( (ele = node->FirstChildElement("size")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setDimensions(a, b, c);
 			}
 			// mass
@@ -780,9 +779,9 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			// position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_obstacle.back()->setPosition(a, b, c);
 			}
 		}
@@ -806,7 +805,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 	tinyxml2::XMLElement *side = NULL;
 	int *rtmp, *ftmp, *ntmp, *atmp, ctype = 0, cnum = 0;
 	int custom = 0, i = 0, j = 0, orientation = 0;
-	double size = 0, a, b, c, d;
+	float size = 0, a, b, c, d;
 
 	// check for existence of node
 	if ( (node = doc->FirstChildElement("sim")) ) {
@@ -820,7 +819,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 		else if ( !strcmp(node->Value(), "dof") ) {
 			// query scale
 			a = 1;
-			node->QueryDoubleAttribute("scale", &a);
+			node->QueryFloatAttribute("scale", &a);
 			// create robot
 			_robot.push_back(new Dof(a, _trace));
 			// query id
@@ -835,15 +834,15 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("joint")) ) {
 				a = 0;
-				ele->QueryDoubleText(&a);
+				ele->QueryFloatText(&a);
 				_robot.back()->setJoints(a, 0);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
@@ -864,23 +863,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot.back()->setRotation(a, b, c, d);
 				}
 				else {
@@ -898,17 +897,17 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("f1", &a);
-				ele->QueryDoubleAttribute("f2", &b);
-				ele->QueryDoubleAttribute("f3", &c);
+				ele->QueryFloatAttribute("f1", &a);
+				ele->QueryFloatAttribute("f2", &b);
+				ele->QueryFloatAttribute("f3", &c);
 				_robot.back()->setJoints(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
@@ -929,23 +928,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot.back()->setRotation(a, b, c, d);
 				}
 				else {
@@ -985,17 +984,17 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("f1", &a);
-				ele->QueryDoubleAttribute("f2", &b);
-				ele->QueryDoubleAttribute("f3", &c);
+				ele->QueryFloatAttribute("f1", &a);
+				ele->QueryFloatAttribute("f2", &b);
+				ele->QueryFloatAttribute("f3", &c);
 				_robot.back()->setJoints(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
@@ -1016,23 +1015,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot.back()->setRotation(a, b, c, d);
 				}
 				else {
@@ -1048,17 +1047,17 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("f1", &a);
-				ele->QueryDoubleAttribute("f2", &b);
-				ele->QueryDoubleAttribute("f3", &c);
+				ele->QueryFloatAttribute("f1", &a);
+				ele->QueryFloatAttribute("f2", &b);
+				ele->QueryFloatAttribute("f3", &c);
 				_robot.back()->setJoints(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
@@ -1079,23 +1078,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot.back()->setRotation(a, b, c, d);
 				}
 				else {
@@ -1119,10 +1118,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[second]->addConnector(new Conn(0, 0, -1, 2, 2, _robot[second]->getID(), 1, rsLinkbot::Connectors::Faceplate));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 			}
@@ -1134,23 +1133,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1177,10 +1176,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[third]->addConnector(new Conn(0, 0, -1, 3, 1, _robot[second]->getID(), 2, rsLinkbot::Connectors::Simple));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 				_robot[third]->setLED(a, b, c, d);
@@ -1194,23 +1193,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1257,10 +1256,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[fifth]->addConnector(new Conn(0, rs::Right, rsLinkbot::Connectors::Gripper, 3, 3, _robot[fifth]->getID(), 2, rsLinkbot::Connectors::Simple));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 				_robot[third]->setLED(a, b, c, d);
@@ -1278,23 +1277,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1330,10 +1329,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[fourth]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[fourth]->getID(), 2, rsLinkbot::Connectors::Simple));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 				_robot[third]->setLED(a, b, c, d);
@@ -1349,23 +1348,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1393,10 +1392,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[second]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 3, 3, _robot[second]->getID(), 2, rsLinkbot::Connectors::Simple));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 			}
@@ -1408,23 +1407,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1473,10 +1472,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[fifth]->addConnector(new Conn(0, rs::Right, rsLinkbot::Connectors::Gripper, 3, 3, _robot[fifth]->getID(), 2, rsLinkbot::Connectors::Simple));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 				_robot[third]->setLED(a, b, c, d);
@@ -1494,23 +1493,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1542,10 +1541,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[fourth]->addConnector(new Conn(0, 0, -1, 2, 2, _robot[fourth]->getID(), 1, rsLinkbot::Connectors::Faceplate));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 				_robot[third]->setLED(a, b, c, d);
@@ -1561,25 +1560,25 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 				_robot[third]->setPosition(a + 0.1524, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 					_robot[third]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 					_robot[third]->setRotation(a, b, c, d);
 				}
@@ -1603,10 +1602,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[second]->addConnector(new Conn(0, 0, -1, 2, 2, _robot[second]->getID(), 1, rsLinkbot::Connectors::Faceplate));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 			}
@@ -1618,23 +1617,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1668,10 +1667,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[fourth]->addConnector(new Conn(0, rs::Right, -1, 3, 3, _robot[third]->getID(), 2, rsLinkbot::Connectors::Bridge));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 				_robot[third]->setLED(a, b, c, d);
@@ -1687,23 +1686,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1741,10 +1740,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[fourth]->addConnector(new Conn(0, 0, rsLinkbot::Connectors::SmallWheel, 1, 1, _robot[fourth]->getID(), 2, rsLinkbot::Connectors::Simple));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 				_robot[third]->setLED(a, b, c, d);
@@ -1760,23 +1759,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1822,10 +1821,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[fifth]->addConnector(new Conn(0, rs::Right, rsLinkbot::Connectors::Caster, 2, 2, _robot[fifth]->getID(), 2, rsLinkbot::Connectors::Simple));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 				_robot[third]->setLED(a, b, c, d);
@@ -1843,23 +1842,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1881,10 +1880,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot[second]->addConnector(new Conn(0, 0, -1, 2, 2, _robot[second]->getID(), 1, rsLinkbot::Connectors::Faceplate));
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot[first]->setLED(a, b, c, d);
 				_robot[second]->setLED(a, b, c, d);
 			}
@@ -1896,23 +1895,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot[first]->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot[first]->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot[first]->setRotation(a, b, c, d);
 				}
 				else {
@@ -1928,16 +1927,16 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
 				a = 0; b = 0;
-				ele->QueryDoubleAttribute("w1", &a);
-				ele->QueryDoubleAttribute("w2", &b);
+				ele->QueryFloatAttribute("w1", &a);
+				ele->QueryFloatAttribute("w2", &b);
 				_robot.back()->setJoints(a, b);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
@@ -1947,23 +1946,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot.back()->setRotation(a, b, c, d);
 				}
 				else {
@@ -1985,16 +1984,16 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			_robot.back()->setID(i);
 			if ( (ele = node->FirstChildElement("joint")) ) {
 				a = 0; b = 0;
-				ele->QueryDoubleAttribute("w1", &a);
-				ele->QueryDoubleAttribute("w2", &b);
+				ele->QueryFloatAttribute("w1", &a);
+				ele->QueryFloatAttribute("w2", &b);
 				_robot.back()->setJoints(a, b);
 			}
 			if ( (ele = node->FirstChildElement("led")) ) {
 				a = 0; b = 0; c = 0; d = 0;
-				ele->QueryDoubleAttribute("r", &a);
-				ele->QueryDoubleAttribute("g", &b);
-				ele->QueryDoubleAttribute("b", &c);
-				ele->QueryDoubleAttribute("alpha", &d);
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
 				_robot.back()->setLED(a, b, c, d);
 			}
 			if ( (ele = node->FirstChildElement("name")) ) {
@@ -2004,23 +2003,23 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			}
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;
-				ele->QueryDoubleAttribute("x", &a);
-				ele->QueryDoubleAttribute("y", &b);
-				ele->QueryDoubleAttribute("z", &c);
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
 				_robot.back()->setPosition(a, b, c);
 			}
 			if ( (ele = node->FirstChildElement("rotation")) ) {
 				a = 0; b = 0; c = 0, d = 0;
-				if (ele->QueryDoubleAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("theta", &b);
-					ele->QueryDoubleAttribute("phi", &c);
+				if (ele->QueryFloatAttribute("psi", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("theta", &b);
+					ele->QueryFloatAttribute("phi", &c);
 					_robot.back()->setRotation(rs::D2R(a), rs::D2R(b), rs::D2R(c));
 				}
-				else if (ele->QueryDoubleAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
-					ele->QueryDoubleAttribute("x", &a);
-					ele->QueryDoubleAttribute("y", &b);
-					ele->QueryDoubleAttribute("z", &c);
-					ele->QueryDoubleAttribute("w", &d);
+				else if (ele->QueryFloatAttribute("x", &a) != tinyxml2::XML_NO_ATTRIBUTE) {
+					ele->QueryFloatAttribute("x", &a);
+					ele->QueryFloatAttribute("y", &b);
+					ele->QueryFloatAttribute("z", &c);
+					ele->QueryFloatAttribute("w", &d);
 					_robot.back()->setRotation(a, b, c, d);
 				}
 				else {
@@ -2109,7 +2108,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 			else if ( !strcmp(node->Value(), "wheel") ) {
 				ctype = rsLinkbot::Connectors::Wheel;
 				cnum = 1;
-				node->QueryDoubleAttribute("radius", &size);
+				node->QueryFloatAttribute("radius", &size);
 			}
 #endif
 			rtmp = new int[cnum];
@@ -2140,9 +2139,9 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 						side->QueryIntAttribute("conn", &atmp[i]);
 #ifdef RS_LINKBOT
 						if (atmp[i] == rsLinkbot::Connectors::Caster)
-							side->QueryDoubleAttribute("custom", &size);
+							side->QueryFloatAttribute("custom", &size);
 						else if (atmp[i] == rsLinkbot::Connectors::Wheel)
-							side->QueryDoubleAttribute("radius", &size);
+							side->QueryFloatAttribute("radius", &size);
 #endif
 					}
 					i++;

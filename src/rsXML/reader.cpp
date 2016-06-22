@@ -1,6 +1,8 @@
 #include <cmath>
 #include <iostream>
 
+#include <tinyxml2.h>
+
 #include <config.h>
 #include <rs/Enum>
 #include <rsXML/Config>

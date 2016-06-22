@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <tinyxml2.h>
+
 #include <rs/Enum>
 #include <rs/Macros>
 #include <rsXML/Marker>

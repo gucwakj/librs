@@ -4,13 +4,15 @@
 #include <string>
 #include <vector>
 
-#include <tinyxml2.h>
-
 #include <rs/Macros>
 #include <rsXML/Marker>
 #include <rsXML/Obstacle>
 #include <rsXML/Robot>
 #include <rsXML/BackgroundReader>
+
+namespace tinyxml2 {
+	class XMLDocument;
+};
 
 namespace rsXML {
 

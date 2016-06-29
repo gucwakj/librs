@@ -33,11 +33,9 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	}
 
 	// save output array
-	for (short i = 0, j = 1; i < _params->num_vars; i+=3, j++) {
+	for (short i = 0, j = 0; i < _params->num_vars; i+=3, j++) {
 		_v[j] = _array[i+1]*cos(_array[i]);
 	}
-	// dummy output for head robot
-	//_v[0] = 0;
 	// linearize the legs motion
 	if (_params->num_legs) {
 		float theta_up = -5*M_PI/6;
@@ -45,7 +43,7 @@ const rs::Vec* Integrator::runStep(float newtime) {
 		float a = theta_up - M_PI;
 		float b = (2*M_PI - theta_down + theta_up)/(M_PI);
 		float c = (theta_down - theta_up)/M_PI;
-		for (short i = _params->num_body*3, j = _params->num_body + 1; i < _params->num_robots*3; i+=3, j++) {
+		for (short i = _params->num_body*3, j = _params->num_body; i < _params->num_vars; i+=3, j++) {
 			// get continuous output vectors
 			if (_array[i] < theta_up)
 				_v[j] = theta_up + (_array[i] - theta_up)*b;
@@ -54,7 +52,7 @@ const rs::Vec* Integrator::runStep(float newtime) {
 			else
 				_v[j] = theta_down + (_array[i] - a)*b;
 			// flip right side legs for linkbots
-			if ( !((j - _params->num_body)%2) ) _v[j] = -1*_v[j];
+			if ( ((j - _params->num_body)%2) ) _v[j] = -1*_v[j];
 			// scale
 			_v[j] *= 0.4;
 		}

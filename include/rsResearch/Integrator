@@ -17,9 +17,6 @@ namespace rsResearch {
 		float w1;
 		float w2;
 		float a;
-		float v;
-		float R;
-		float phi;
 		short num_body;
 		short num_robots;
 		short num_vars;

@@ -59,13 +59,13 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	}
 
 	// turning
-	if (fabs(_delta) > rs::Epsilon) {
+	/*if (fabs(_delta) > rs::Epsilon) {
 		float a = (_delta > 0) ? -1*_params->R + _delta : -1*_params->R;
 		float b = (_delta < 0) ? _params->R + _delta : _params->R;
 		for (short i = 0; i < _params->num_body; i++) {
 			_v[i] = ((b-a)*(_v[i] - -1*_params->R))/(2*_params->R) + a;
 		}
-	}
+	}*/
 
 	// return output array
 	return &_v;

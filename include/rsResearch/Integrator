@@ -13,6 +13,7 @@ namespace rsResearch {
 
 	// integration struct
 	struct Params {
+		bool linearize;
 		float w1;
 		float w2;
 		float a;
@@ -20,10 +21,8 @@ namespace rsResearch {
 		float R;
 		float phi;
 		short num_body;
-		short num_legs;
 		short num_robots;
 		short num_vars;
-		short form;
 		void *robot;
 	};
 

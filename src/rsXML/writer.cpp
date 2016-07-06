@@ -337,7 +337,7 @@ void Writer::setBackground(std::string name) {
 	this->save();
 }
 
-void Writer::setGrid(std::vector<double> grid) {
+void Writer::setGrid(std::vector<float> grid) {
 	// clear old grid settings
 	tinyxml2::XMLElement *g = this->getOrCreateElement("graphics", "grid");
 	g->DeleteChildren();

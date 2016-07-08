@@ -1731,7 +1731,7 @@ bool Scene::intersect_new_item(std::string name, const osg::BoundingBox &bb) {
 				osg::ComputeBoundsVisitor cbbv;
 				test->accept(cbbv);
 				if (bb.intersects(cbbv.getBoundingBox())) {
-					this->toggleHighlight(test, test->getChild(i), rs::Vec(1, 0, 0), true);
+					this->toggleHighlight(test, test->getChild(0), rs::Vec(1, 0, 0), true);
 					retval = true;
 				}
 			}

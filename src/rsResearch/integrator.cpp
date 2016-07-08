@@ -28,7 +28,7 @@ const rs::Vec* Integrator::runStep(float newtime) {
 
 	// die if integration step fails and return empty vector
 	if (status != GSL_SUCCESS) {
-		std::cerr << "ERROR: return value = " << status << std::endl;
+		_v[0] = -1;
 		return &_v;
 	}
 

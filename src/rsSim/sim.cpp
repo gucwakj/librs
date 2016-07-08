@@ -634,6 +634,12 @@ void* Sim::simulation_thread(void *arg) {
 			if (sim->_integ_config) {
 				// research: cpg calculation
 				const rs::Vec *v = sim->_integ.runStep(sim->_clock + sim->_step);
+				// die if cpg integration fails
+				if (fabs(v->value(0) + 1) <= rs::Epsilon) {
+					sim->_running = false;
+					RS_COND_SIGNAL(&(sim->_running_cond));
+				}
+				// set new values
 				for (unsigned int j = 0; j < v->size(); j++) {
 					sim->_robot[j].robot->setCPGGoal(v->value(j));
 				}

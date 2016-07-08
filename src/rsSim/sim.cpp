@@ -119,7 +119,7 @@ void Sim::addRobot(rsSim::ModularRobot *robot, short id, rsSim::Robot *base, con
 	int conn_orientation = dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorOrientation(face1);
 	P = dynamic_cast<rsSim::ModularRobot*>(base)->getConnFacePosition(type, side, conn_orientation, P, Q);
 	Q = dynamic_cast<rsSim::ModularRobot*>(base)->getConnFaceQuaternion(type, side, conn_orientation, Q);
-	robot->build(P, Q, a, dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorBodyID(face1), face2, orientation, ground);
+	robot->build(P, Q, a, dynamic_cast<rsSim::ModularRobot*>(base)->getConnectorBodyID(face1 - 1), face2, orientation, ground);
 
 	// unlock robot data
 	RS_MUTEX_UNLOCK(&_robot_mutex);

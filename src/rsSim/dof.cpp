@@ -117,7 +117,7 @@ int Dof::addConnector(int type, int face, int orientation, double size, int side
 }
 
 double Dof::getAngle(int id) {
-	if (id == this->getEnabled()) return _motor[Bodies::Joint].theta;
+	if (id == this->getEnabled() - 1) return _motor[Bodies::Joint].theta;
 	return 0;
 }
 
@@ -196,7 +196,7 @@ int Dof::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, const rs::
 int Dof::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyID base, int face, int orientation, int ground) {
 	// calculate center of robot location
 	rs::Pos P = this->getRobotCenterPosition(face, p, q);
-	rs::Quat Q = this->getRobotCenterQuaternion(face, orientation, rs::D2R(a[0]), q);
+	rs::Quat Q = this->getRobotCenterQuaternion(face, orientation, (face == this->getEnabled()) ? rs::D2R(a[0]) : 0, q);
 
 	// build new module
 	this->build_robot(P, Q, a);
@@ -373,7 +373,8 @@ void Dof::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a) {
 	}
 
 	// convert input angle to radians
-	_motor[Bodies::Joint].goal = _motor[Bodies::Joint].theta = rs::D2R(a[0]);
+	_motor[Bodies::Joint].goal = rs::D2R(a[0]);
+	_motor[Bodies::Joint].theta = rs::D2R(a[0]);
 
 	// build robot bodies
 	this->build_body(p, q);

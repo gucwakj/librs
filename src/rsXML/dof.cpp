@@ -17,12 +17,9 @@ Dof::Dof(float scale, bool trace) : rsRobots::Robot(rs::Dof), rsRobots::Dof(-1, 
  **********************************************************/
 void Dof::postProcess(void) {
 	// find if i am connected to another robot
-	for (unsigned int i = 0; i < _conn.size(); i++) {
-		if (_conn[i]->getRobot() != _id) {
-			_base = _conn[i];
-			_conn.erase(_conn.begin() + i);
-			break;
-		}
+	if (_conn[0]->getRobot() != _id) {
+		_base = _conn[0];
+		_conn.erase(_conn.begin() + 0);
 	}
 
 	// reposition robot in space

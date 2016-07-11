@@ -41,7 +41,7 @@ namespace rsSim {
 			void mutexLock(int);
 			void mutexUnlock(int);
 			void pauseWait(void);
-			void run(unsigned int);
+			void run(unsigned int, unsigned int = 1000000);
 			void setCollisions(int);
 			void setFriction(float = -1, float = -1);
 			void setPause(int);

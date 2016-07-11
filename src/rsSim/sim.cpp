@@ -454,7 +454,7 @@ void Sim::pauseWait(void) {
 	RS_MUTEX_UNLOCK(&_pause_mutex);
 }
 
-void Sim::run(unsigned int time) {
+void Sim::run(unsigned int time, unsigned int killtime) {
 	// start simulation
 	RS_MUTEX_LOCK(&_pause_mutex);
 	_pause = false;
@@ -476,10 +476,18 @@ void Sim::run(unsigned int time) {
 		_stop = time/1000.0;
 	}
 
+	// kill if sim is taking too long
+	rs::Timer timer(rs::Timer::MilliSeconds);
+	unsigned int start = timer.now();
+
 	// wait for simulation loop to signal
 	RS_MUTEX_LOCK(&_running_mutex);
 	while (_running) {
 		RS_COND_WAIT(&_running_cond, &_running_mutex);
+		if (timer.now() - start > killtime) {
+			RS_THREAD_CANCEL(_simulation);
+			_running = false;
+		}
 	}
 	RS_MUTEX_UNLOCK(&_running_mutex);
 }

@@ -131,6 +131,8 @@ const rs::Pos Linkbot::getConnBodyPosition(short type, short orientation, const 
 		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::SmallWheel)
 		return P.add(Q.multiply(this->getWheelDepth()/2, 0, 0));
+	else if (type == Connectors::SoccerScoop)
+		return P.add(Q.multiply(this->getConnDepth()/2, 0, 0));
 	else if (type == Connectors::TinyWheel)
 		return P.add(Q.multiply(this->getWheelDepth()/2, 0, 0));
 	else if (type == Connectors::Wheel)

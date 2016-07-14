@@ -45,6 +45,7 @@ namespace rsLinkbot {
 			Omniplate,
 			Simple,
 			SmallWheel,
+			SoccerScoop,
 			TinyWheel,
 			Wheel,
 			Num_Connectors

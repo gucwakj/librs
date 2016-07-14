@@ -247,11 +247,12 @@ void Writer::setRobot(tinyxml2::XMLElement *robot, std::string name, const rs::P
 	this->save();
 }
 
-void Writer::setRobotWheels(tinyxml2::XMLElement *robot, int wheel1, double size1, int wheel2, double size2) {
+void Writer::setRobotWheels(tinyxml2::XMLElement *robot, int wheel1, double size1, int wheel2, double size2, int caster) {
 	// set wheel type
 	tinyxml2::XMLElement *wheel = getOrCreateChild(robot, "wheels");
 	wheel->SetAttribute("left", wheel1);
 	wheel->SetAttribute("right", wheel2);
+	wheel->SetAttribute("caster", caster);
 
 	// save custom size if applicable
 	if (size1) wheel->SetAttribute("radiusLeft", size1);

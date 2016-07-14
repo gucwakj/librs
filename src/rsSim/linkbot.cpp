@@ -119,6 +119,9 @@ int Linkbot::addConnector(int type, int face, int orientation, double size, int 
 		case Connectors::SmallWheel:
 			this->build_wheel(_conn.back(), this->getSmallWheelRadius());
 			break;
+		case Connectors::SoccerScoop:
+			this->build_scoop(_conn.back());
+			break;
 		case Connectors::TinyWheel:
 			this->build_wheel(_conn.back(), this->getTinyWheelRadius());
 			break;
@@ -741,6 +744,36 @@ void Linkbot::build_robot(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a)
 
 	// set damping on all bodies to 0.1
 	for (int i = 0; i < Bodies::Num_Parts; i++) dBodySetDamping(_body[i], 0.1, 0.1);
+}
+
+void Linkbot::build_scoop(Connector &conn) {
+	// set mass of body
+	dMass m, m1;
+	dMassSetBox(&m, 2000, 5*this->getConnDepth(), 1.5*this->getFaceRadius(), this->getBodyHeight());
+	dMassTranslate(&m, -m.c[0], -m.c[1], -m.c[2]);
+	dBodySetMass(conn.body, &m);
+
+	// build geometries
+	dGeomID geom[4];
+
+	// set geometry 0 - box
+	geom[0] = dCreateBox(_space, this->getConnDepth(), 1.5*this->getFaceRadius(), this->getBodyHeight());
+	dGeomSetBody(geom[0], conn.body);
+
+	// set geometry 1 - horizontal support
+	geom[1] = dCreateBox(_space, 0.0368, 0.022, 0.0032);
+	dGeomSetBody(geom[1], conn.body);
+	dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 + 0.01 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0016 - m.c[2]);
+
+	// set geometry 2 - ball support
+	geom[2] = dCreateCylinder(_space, 0.011, 0.003);
+	dGeomSetBody(geom[2], conn.body);
+	dGeomSetOffsetPosition(geom[2], this->getConnDepth()/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0001 - m.c[2]);
+
+	// set geometry 3 - sphere
+	geom[3] = dCreateSphere(_space, 0.006);
+	dGeomSetBody(geom[3], conn.body);
+	dGeomSetOffsetPosition(geom[3], this->getConnDepth()/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 - 0.004 - m.c[2]);
 }
 
 void Linkbot::build_simple(Connector &conn) {

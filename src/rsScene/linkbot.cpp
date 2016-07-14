@@ -179,6 +179,9 @@ void Linkbot::drawConnector(Group *group, int type, int face, int orientation, d
 		case Connectors::SmallWheel:
 			node = osgDB::readNodeFile(_model_path + "linkbot/smallwheel.3ds");
 			break;
+		case Connectors::SoccerScoop:
+			node = osgDB::readNodeFile(_model_path + "linkbot/soccerscoop.3ds");
+			break;
 		case Connectors::TinyWheel:
 			node = osgDB::readNodeFile(_model_path + "linkbot/tinywheel.3ds");
 			break;

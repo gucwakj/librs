@@ -25,6 +25,7 @@ namespace rsXML {
 			short addConnector(Conn*);
 			Conn* getBaseConnector(void);
 			ConnectorList& getConnectorList(void);
+			short getCaster(void);
 			bool getConnect(void);
 			short getEnabled(void);
 			short getGround(void);
@@ -40,6 +41,7 @@ namespace rsXML {
 			const rs::Vec getWheels(void);
 			virtual void postProcess(void) {};
 			void printDebug(void);
+			void setCaster(short);
 			void setConnect(bool);
 			void setEnabled(short);
 			void setGround(short);
@@ -59,6 +61,7 @@ namespace rsXML {
 		protected:
 			bool _trace;
 			bool _connected;
+			short _caster;
 			short _enabled;
 			short _ground;
 			short _id;

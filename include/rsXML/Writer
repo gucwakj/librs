@@ -38,7 +38,7 @@ namespace rsXML {
 			void setObstacle(tinyxml2::XMLElement*, std::string, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&, double);
 			void setPreconfig(tinyxml2::XMLElement*, std::string, const rs::Pos&, const rs::Quat&, const rs::Vec&);
 			void setRobot(tinyxml2::XMLElement*, std::string, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec&);
-			void setRobotWheels(tinyxml2::XMLElement*, int, double, int, double);
+			void setRobotWheels(tinyxml2::XMLElement*, int, double, int, double, int);
 			void setTrace(bool);
 			void setUnits(bool);
 			tinyxml2::XMLText* toText(bool);

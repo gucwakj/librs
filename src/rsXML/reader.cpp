@@ -804,7 +804,7 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 	tinyxml2::XMLElement *ele = NULL;
 	tinyxml2::XMLElement *side = NULL;
 	int *rtmp, *ftmp, *ntmp, *atmp, ctype = 0, cnum = 0;
-	int custom = 0, i = 0, j = 0, orientation = 0;
+	int custom = 0, i = 0, j = 0, k = 0, orientation = 0;
 	float size = 0, a, b, c, d;
 
 	// check for existence of node
@@ -952,9 +952,10 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				}
 			}
 			if ( (ele = node->FirstChildElement("wheels")) ) {
-				i = 0; j = 0;
+				i = 0; j = 0, k = 0;
 				ele->QueryIntAttribute("left", &i);
 				ele->QueryIntAttribute("right", &j);
+				ele->QueryIntAttribute("caster", &k);
 				if (i == rsLinkbot::Connectors::Wheel || j == rsLinkbot::Connectors::Wheel) {
 					std::cerr << "RoboSim currently only supports the default wheel sizes." << std::endl;
 					std::cerr << "Defaulting to small Linkbot wheels." << std::endl;
@@ -967,13 +968,14 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				}
 				if (i || j) {
 					_robot.back()->addConnector(new Conn(0, 0, -1, 2, 2, _robot.back()->getID(), 1, rsLinkbot::Connectors::Simple));
-					_robot.back()->addConnector(new Conn(0, 0, rsLinkbot::Connectors::Caster, 2, 2, _robot.back()->getID(), 2, rsLinkbot::Connectors::Simple));
+					_robot.back()->addConnector(new Conn(0, 0, k, 2, 2, _robot.back()->getID(), 2, rsLinkbot::Connectors::Simple));
 				}
 				if (j) {
 					_robot.back()->addConnector(new Conn(0, 0, -1, 3, 3, _robot.back()->getID(), 1, rsLinkbot::Connectors::Simple));
 					_robot.back()->addConnector(new Conn(0, 0, j, 3, 3, _robot.back()->getID(), 2, rsLinkbot::Connectors::Simple));
 				}
 				_robot.back()->setWheels(i, j);
+				_robot.back()->setCaster(k);
 			}
 			i = (node->QueryIntAttribute("ground", &i)) ? -1 : i;
 			_robot.back()->setGround(i);

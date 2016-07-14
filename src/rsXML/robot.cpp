@@ -47,6 +47,10 @@ ConnectorList& Robot::getConnectorList(void) {
 	return _conn;
 }
 
+short Robot::getCaster(void) {
+	return _caster;
+}
+
 bool Robot::getConnect(void) {
 	return _connected;
 }
@@ -110,6 +114,10 @@ void Robot::printDebug(void) {
 	for (unsigned int i = 0; i < _conn.size(); i++) {
 		_conn[i]->printDebug();
 	}
+}
+
+void Robot::setCaster(short a) {
+	_caster = a;
 }
 
 void Robot::setConnect(bool b) {

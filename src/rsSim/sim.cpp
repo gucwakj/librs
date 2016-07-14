@@ -594,6 +594,9 @@ void* Sim::simulation_thread(void *arg) {
 	// cast to type sim
 	Sim *sim = (Sim *)arg;
 
+	// set cancellability of thread
+	RS_THREAD_CANCEL_TYPE(RS_THREAD_ASYNCHRONOUS);
+
 	// initialize local variables
 	int i, num = 20;
 	unsigned int sum = 0, clock = 0, restart = 0;

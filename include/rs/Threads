@@ -11,8 +11,10 @@
 //   THREADS
 #define RS_THREAD_T HANDLE
 #define RS_THREAD_CANCEL(thread_handle) TerminateThread( thread_handle, 0)
+#define RS_THREAD_CANCEL_TYPE(type)
 #define RS_THREAD_CREATE(thread_handle, function, arg) *(thread_handle) = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)function, arg, 0, NULL)
 #define RS_THREAD_JOIN(thread_handle) WaitForSingleObject(thread_handle, INFINITE)
+#define RS_THREAD_ASYNCHRONOUS
 //   MUTEX
 #define RS_MUTEX_T HANDLE
 #define RS_MUTEX_INIT(mutex) *mutex = CreateMutex(NULL, FALSE, NULL)
@@ -30,11 +32,13 @@
 //   THREADS
 #define RS_THREAD_T pthread_t
 #define RS_THREAD_CANCEL(thread_handle) pthread_cancel(thread_handle)
+#define RS_THREAD_CANCEL_TYPE(type) pthread_setcanceltype(type, NULL)
 #define RS_THREAD_CREATE(thread_handle, function, arg) \
 	while (pthread_create(thread_handle, NULL, function, (void*) arg) < 0) { \
 		fprintf(stderr, "Error: pthread_create failed. Trying again...\n"); \
 	}
 #define RS_THREAD_JOIN(thread_handle) pthread_join(thread_handle, NULL)
+#define RS_THREAD_ASYNCHRONOUS PTHREAD_CANCEL_ASYNCHRONOUS
 //   MUTEX
 #define RS_MUTEX_T pthread_mutex_t
 #define RS_MUTEX_INIT(mutex) pthread_mutex_init(mutex, NULL)

@@ -58,6 +58,7 @@ namespace rsScene {
 			std::string getTexturePath(void);
 			void reidRobot(int);
 			void setBackgroundImage(int, std::string);
+			void setClock(bool);
 			void setFrameRate(int);
 			void setGrid(std::vector<float>, bool = false);
 			void setHighlight(bool);

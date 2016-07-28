@@ -767,6 +767,18 @@ void Scene::setBackgroundImage(int pos, std::string path) {
 	if (!path.empty()) _path[pos] = path;
 }
 
+void Scene::setClock(bool enable) {
+	for (unsigned int i = 0; i < _root->getNumChildren(); i++) {
+		if (!_root->getChild(i)->getName().compare("ClockProjection")) {
+			if (enable)
+				_root->getChild(i)->setNodeMask(VISIBLE_MASK);
+			else
+				_root->getChild(i)->setNodeMask(NOT_VISIBLE_MASK);
+			break;
+		}
+	}
+}
+
 void Scene::setFrameRate(int rate) {
 	_rate = (rate > 0) ? rate : _rate;
 }

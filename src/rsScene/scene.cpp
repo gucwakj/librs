@@ -710,6 +710,19 @@ osgText::Text* Scene::getHUDText(void) {
 	return NULL;
 }
 
+osgText::Text* Scene::getClockText(void) {
+	// get text geode
+	osg::Geode *geode = NULL;
+	for (unsigned int i = 0; i < _root->getNumChildren(); i++) {
+		if (!_root->getChild(i)->getName().compare("ClockProjection")) {
+			geode = _root->getChild(i)->asGroup()->getChild(0)->asTransform()->getChild(0)->asGeode();
+			return dynamic_cast<osgText::Text *>(geode->getDrawable(0));
+		}
+	}
+	// return
+	return NULL;
+}
+
 std::string Scene::getTexturePath(void) {
 	std::string path;
 #ifdef RS_WIN32
@@ -946,6 +959,9 @@ int Scene::setupScene(double w, double h, bool pause) {
 	// draw global HUD
 	this->draw_hud(w, h, pause);
 
+	// draw clock HUD
+	this->draw_clock(w, h);
+
 	// draw background pieces for levels
 	_background = new osg::Group();
 	_background->setName("background");
@@ -1138,6 +1154,66 @@ void Scene::draw_board(double xsize, double ysize, double xoffset, double yoffse
 	geode->setName("board");
 	// add to scene
 	_staging[2]->addChild(geode.get());
+}
+
+void Scene::draw_clock(double w, double h) {
+	// init variables
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
+	osg::ref_ptr<osg::Projection> projection = new osg::Projection();
+	projection->setName("ClockProjection");
+	osg::ref_ptr<osg::MatrixTransform> transform = new osg::MatrixTransform();
+	osg::ref_ptr<osgText::Text> text = new osgText::Text();
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+	double width = 0.25*w;
+	double height = 0.25*h;
+
+	// set projection matrix
+	projection->setMatrix(osg::Matrix::ortho2D(0, w, 0, h));
+	projection->addChild(transform.get());
+
+	// set view matrix
+	transform->setMatrix(osg::Matrix::identity());
+	transform->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+	transform->addChild(geode.get());
+
+	// set rendering
+	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	geode->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin");
+	geode->addDrawable(text.get());
+	geode->addDrawable(geom.get());
+
+	// text
+	text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+	text->setMaximumWidth(w);
+	text->setCharacterSize(20);
+	text->setThreadSafeRefUnref(true);
+	text->setDataVariance(osg::Object::DYNAMIC);
+	text->setText(std::string("0.000000"));
+	text->setAxisAlignment(osgText::Text::SCREEN);
+	text->setAlignment(osgText::Text::CENTER_CENTER);
+	text->setDrawMode(osgText::Text::TEXT);
+	text->setPosition(osg::Vec3(w-0.5*width, h-0.5*height, 0));
+	text->setColor(osg::Vec4(1, 1, 1, 1));
+	text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_CENTER);
+
+	// background rectangle
+	osg::Vec3Array *vertices = new osg::Vec3Array();
+	vertices->push_back(osg::Vec3(w-width, h-height, -0.1));
+	vertices->push_back(osg::Vec3(w, h-height, -0.1));
+	vertices->push_back(osg::Vec3(w, h, -0.1));
+	vertices->push_back(osg::Vec3(w-width, h, -0.1));
+	geom->setVertexArray(vertices);
+	osg::Vec4Array *colors = new osg::Vec4Array();
+	colors->push_back(osg::Vec4(0, 0, 0, 0.6));
+	geom->setColorArray(colors, osg::Array::BIND_OVERALL);
+	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+	geom->getOrCreateStateSet()->setMode(GL_BLEND,osg::StateAttribute::ON);
+	geom->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+	// add to scene
+	_root->addChild(projection.get());
 }
 
 void Scene::draw_grid(double tics, double hash, double minx, double maxx, double miny, double maxy, double enabled) {
@@ -1671,6 +1747,9 @@ void* Scene::graphics_thread(void *arg) {
 		osg::Timer_t endFrameTick = osg::Timer::instance()->tick();
 		double frameTime = osg::Timer::instance()->delta_s(startFrameTick, endFrameTick);
 		if (frameTime < minFrameTime) OpenThreads::Thread::microSleep(static_cast<unsigned int>(1000000.0*(minFrameTime - frameTime)));
+
+		// update clock
+		p->updateClock();
 
 		RS_MUTEX_LOCK(&(p->_thread_mutex));
 	}

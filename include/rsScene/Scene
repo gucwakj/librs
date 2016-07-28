@@ -53,6 +53,7 @@ namespace rsScene {
 			int deleteRobot(int);
 			int drawMarker(int, int, const rs::Pos&, const rs::Pos&, const rs::Vec&, int, std::string);
 			Obstacle* drawObstacle(int, int, const rs::Pos&, const rs::Vec&, const rs::Vec&, const rs::Quat&);
+			osgText::Text* getClockText(void);
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			void reidRobot(int);
@@ -78,12 +79,14 @@ namespace rsScene {
 		// virtual functions
 		protected:
 			virtual void keyPressed(int) {};
+			virtual void updateClock(void) {};
 
 		// private functions
 		private:
 			osg::Material* create_material(osg::Vec4);
 			void draw_grid(double, double, double, double, double, double, double);
 			void draw_board(double, double, double, double);
+			void draw_clock(double, double);
 			void draw_ground(void);
 			void draw_hud(double, double, bool);
 			void draw_skybox(void);

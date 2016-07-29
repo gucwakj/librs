@@ -494,6 +494,7 @@ tinyxml2::XMLElement* Writer::getOrCreatePreconfig(int form, int shape, int id) 
 
 	// create new node if one matching 'id' is not found
 	switch (shape) {
+#ifdef RS_LINKBOT
 		case rsLinkbot::Preconfigs::Bow:
 			node = _doc.NewElement("bow");
 			break;
@@ -530,6 +531,7 @@ tinyxml2::XMLElement* Writer::getOrCreatePreconfig(int form, int shape, int id) 
 		case rsLinkbot::Preconfigs::Stand:
 			node = _doc.NewElement("stand");
 			break;
+#endif
 	}
 	node->SetAttribute("id", id);
 	node->SetAttribute("form", form);

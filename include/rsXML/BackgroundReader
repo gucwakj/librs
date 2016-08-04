@@ -6,7 +6,7 @@
 
 namespace tinyxml2 {
 	class XMLDocument;
-};
+}
 
 namespace rsXML {
 

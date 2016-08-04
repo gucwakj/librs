@@ -10,7 +10,7 @@ Dof::Dof(float scale, bool trace) : rsRobots::Robot(rs::Dof), rsRobots::Dof(-1, 
 	for (unsigned int i = 0; i < _a.size(); i++) {
 		_a[i] = 0;
 	}
-};
+}
 
 /**********************************************************
 	public functions

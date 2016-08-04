@@ -36,7 +36,7 @@ cmake_policy (SET CMP0015 NEW)
 if (WIN32)
 	add_definitions (-D_CRT_SECURE_NO_WARNINGS)
 else ()
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wno-write-strings -pedantic")
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-write-strings")
 endif ()
 
 # set up a configure file

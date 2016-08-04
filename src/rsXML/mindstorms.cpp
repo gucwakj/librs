@@ -9,7 +9,7 @@ Mindstorms::Mindstorms(short form, bool trace) : rsRobots::Robot(form), rsRobots
 	for (unsigned int i = 0; i < _a.size(); i++) {
 		_a[i] = 0;
 	}
-};
+}
 
 /**********************************************************
 	public functions

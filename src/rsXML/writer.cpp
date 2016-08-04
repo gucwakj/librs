@@ -119,6 +119,11 @@ void Writer::setObstacle(tinyxml2::XMLElement *obstacle, std::string name, const
 	// set attributes
 	obstacle->SetAttribute("mass", mass);
 
+	// set name
+	tinyxml2::XMLElement *n = getOrCreateChild(obstacle, "position");
+	n->DeleteChildren();
+	n->InsertFirstChild(this->toText(name));
+
 	// set position
 	tinyxml2::XMLElement *pos = getOrCreateChild(obstacle, "position");
 	pos->SetAttribute("x", p[0]);

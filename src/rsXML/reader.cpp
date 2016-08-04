@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 #include <tinyxml2.h>
 
@@ -803,7 +804,12 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 	tinyxml2::XMLElement *node = NULL;
 	tinyxml2::XMLElement *ele = NULL;
 	tinyxml2::XMLElement *side = NULL;
-	int *rtmp, *ftmp, *ntmp, *atmp, ctype = 0, cnum = 0;
+	std::vector<int> rtmp, ftmp, ntmp, atmp;
+	rtmp.resize(5);
+	ftmp.resize(5);
+	ntmp.resize(5);
+	atmp.resize(5);
+	int ctype = 0, cnum = 0;
 	int custom = 0, i = 0, j = 0, k = 0, orientation = 0;
 	float size = 0, a, b, c, d;
 
@@ -2113,11 +2119,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 				node->QueryFloatAttribute("radius", &size);
 			}
 #endif
-			rtmp = new int[cnum];
-			ftmp = new int[cnum];
-			ntmp = new int[cnum];
-			atmp = new int[cnum];
-
 			// store connector to temp variables
 			int i = 0;
 			if (cnum == 1) {
@@ -2160,12 +2161,6 @@ void Reader::read_sim(tinyxml2::XMLDocument *doc, bool process) {
 					}
 				}
 			}
-
-			// delete temporary arrays
-			delete [] rtmp;
-			delete [] ftmp;
-			delete [] ntmp;
-			delete [] atmp;
 
 			// reset temporary variables
 			custom = 0;

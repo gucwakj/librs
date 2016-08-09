@@ -672,7 +672,7 @@ void Reader::read_obstacles(tinyxml2::XMLDocument *doc) {
 			node->QueryIntAttribute("id", &i);
 			_obstacle.back()->setID(i);
 			// dimensions
-			_obstacle.back()->setDimensions(0.0275, 0, 0);	// measured 5.5cm diameter
+			_obstacle.back()->setDimensions(0.055, 0.055, 0.055);	// measured 5.5cm diameter
 			// mass
 			_obstacle.back()->setMass(0.060);		// 60 grams is average hacky sack weight
 			// position

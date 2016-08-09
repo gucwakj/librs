@@ -540,7 +540,7 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 			break;
 		case rs::HackySack: {
 			// create body
-			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), l[0])));
+			body->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), 0.5*l[0])));
 			// create texture object
 			osg::ref_ptr<osg::Texture2D> tex = new osg::Texture2D(osgDB::readImageFile(_tex_path + "obstacles/hackysack.png"));
 			tex->setDataVariance(osg::Object::STATIC);

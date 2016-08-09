@@ -21,11 +21,11 @@
 
 <sim>
     <linkboti form="2" id="0">
-        <wheels left="9" right="9"/>
+        <wheels left="9" right="9" caster="10"/>
         <name></name>
         <led r="0" g="1" b="0" alpha="1"/>
         <joint f1="0" f2="0" f3="0"/>
-        <rotation x="0" y="0" z="0.707107" w="0.707107"/>
+        <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
         <position x="2.1717" y="1.016" z="0"/>
     </linkboti>
 </sim>

@@ -754,26 +754,21 @@ void Linkbot::build_scoop(Connector &conn) {
 	dBodySetMass(conn.body, &m);
 
 	// build geometries
-	dGeomID geom[4];
+	dGeomID geom[3];
 
 	// set geometry 0 - box
 	geom[0] = dCreateBox(_space, this->getConnDepth(), 1.5*this->getFaceRadius(), this->getBodyHeight());
 	dGeomSetBody(geom[0], conn.body);
 
-	// set geometry 1 - horizontal support
-	geom[1] = dCreateBox(_space, 0.0368, 0.022, 0.0032);
+	// set geometry 1 - edge
+	geom[1] = dCreateBox(_space, 0.1, 0.007, this->getBodyHeight());
 	dGeomSetBody(geom[1], conn.body);
-	dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 + 0.01 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0016 - m.c[2]);
+	dGeomSetOffsetPosition(geom[1], this->getConnDepth()/2 + 0.05 - m.c[0], this->getBodyWidth()/2 - 0.005 - m.c[1], -0.01 - m.c[2]);
 
-	// set geometry 2 - ball support
-	geom[2] = dCreateCylinder(_space, 0.011, 0.003);
+	// set geometry 2 - edge
+	geom[2] = dCreateBox(_space, 0.1, 0.007, this->getBodyHeight());
 	dGeomSetBody(geom[2], conn.body);
-	dGeomSetOffsetPosition(geom[2], this->getConnDepth()/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 + 0.0001 - m.c[2]);
-
-	// set geometry 3 - sphere
-	geom[3] = dCreateSphere(_space, 0.006);
-	dGeomSetBody(geom[3], conn.body);
-	dGeomSetOffsetPosition(geom[3], this->getConnDepth()/2 + 0.0368 - m.c[0], -m.c[1], -this->getBodyHeight()/2 - 0.004 - m.c[2]);
+	dGeomSetOffsetPosition(geom[2], this->getConnDepth()/2 + 0.05 - m.c[0], -this->getBodyWidth()/2 + 0.005 - m.c[1], -0.01 - m.c[2]);
 }
 
 void Linkbot::build_simple(Connector &conn) {

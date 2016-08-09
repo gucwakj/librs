@@ -804,7 +804,7 @@ void Scene::setGrid(std::vector<float> grid, bool draw) {
 	}
 
 	// draw grid if there is a background on which to draw
-	if (_level == rs::Level::Outdoors && static_cast<int>(_grid[6]) && draw) {
+	if (_level != rs::Level::None && static_cast<int>(_grid[6]) && draw) {
 		this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 	}
 

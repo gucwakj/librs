@@ -369,6 +369,28 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
 			break;
 		}
+		case rs::Polygon: {
+			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+			int n = rs::M2IN(p2[0] + 0.001);
+			double r = p1[2]*sin(rs::Pi/n);
+			vert->push_back(osg::Vec3(p1[0] + r*cos(0) - p1[0], p1[1] + r*sin(0) - p1[1], 0.001));
+			for (int i = 1; i < n; i++) {
+				double rad = i*(2*rs::Pi/n);
+				double x = p1[0] + r*cos(rad);
+				double y = p1[1] + r*sin(rad);
+				vert->push_back(osg::Vec3(x - p1[0], y - p1[1], 0.001));
+				vert->push_back(osg::Vec3(x - p1[0], y - p1[1], 0.001));
+			}
+			vert->push_back(osg::Vec3(p1[0] + r*cos(0) - p1[0], p1[1] + r*sin(0) - p1[1], 0.001));
+			geom->setVertexArray(vert.get());
+			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2 + 2*(n-1)));
+			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
+			width->setWidth(3*size);
+			geode->addDrawable(geom.get());
+			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
+			break;
+		}
 		case rs::Rectangle: {
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
@@ -430,6 +452,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform();
 	switch (type) {
 		case rs::Circle:
+		case rs::Polygon:
 		case rs::Rectangle:
 		case rs::Triangle:
 			pat->setPosition(osg::Vec3d(p1[0], p1[1], 0));

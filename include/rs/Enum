@@ -24,6 +24,7 @@ namespace rs {
 		Dot,
 		HackySack,
 		Line,
+		Polygon,
 		PullupBar,
 		Rectangle,
 		Sphere,

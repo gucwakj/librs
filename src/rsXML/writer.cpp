@@ -105,6 +105,9 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs:
 			this->getOrCreateChild(marker, "name")->InsertFirstChild(this->toText(name));
 			marker->SetAttribute("size", size);
 			break;
+		case rs::Triangle:
+			marker->SetAttribute("width", size);
+			break;
 	}
 
 	// set led
@@ -441,6 +444,9 @@ tinyxml2::XMLElement* Writer::getOrCreateMarker(int form, int id) {
 			break;
 		case rs::Text:
 			node = _doc.NewElement("text");
+			break;
+		case rs::Triangle:
+			node = _doc.NewElement("triangle");
 			break;
 	}
 	node->SetAttribute("id", id);

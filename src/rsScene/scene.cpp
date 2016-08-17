@@ -379,6 +379,23 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			geode->addDrawable(label.get());
 			break;
 		}
+		case rs::Triangle: {
+			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+			vert->push_back(osg::Vec3(0, 0, 0.001));
+			vert->push_back(osg::Vec3(p1[1] - p1[0], p2[1] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(p1[1] - p1[0], p2[1] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(p1[2] - p1[0], p2[2] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(p1[2] - p1[0], p2[2] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(0, 0, 0.001));
+			geom->setVertexArray(vert.get());
+			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 6));
+			geode->addDrawable(geom.get());
+			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
+			width->setWidth(3*size);
+			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
+			break;
+		}
 	}
 
 	// set rendering properties
@@ -390,7 +407,15 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 
 	// add positioning capability
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform();
-	pat->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+	switch (type) {
+		case rs::Rectangle:
+		case rs::Triangle:
+			pat->setPosition(osg::Vec3d(p1[0], p1[1], 0));
+			break;
+		default:
+			pat->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));
+			break;
+	}
 	pat->setAttitude(osg::Quat(0, 0, 0, 1));
 	pat->addChild(geode.get());
 	marker->addChild(pat.get());

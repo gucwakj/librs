@@ -27,6 +27,7 @@ namespace rs {
 		Rectangle,
 		Sphere,
 		Text,
+		Triangle,
 		WoodBlock
 	};
 

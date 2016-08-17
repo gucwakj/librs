@@ -348,6 +348,25 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
 			break;
 		}
+		case rs::Rectangle: {
+			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+			vert->push_back(osg::Vec3(0, 0, 0.001));
+			vert->push_back(osg::Vec3(p2[0] - p1[0], 0, 0.001));
+			vert->push_back(osg::Vec3(p2[0] - p1[0], 0, 0.001));
+			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], 0.001));
+			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], 0.001));
+			vert->push_back(osg::Vec3(0, p2[1] - p1[1], 0.001));
+			vert->push_back(osg::Vec3(0, p2[1] - p1[1], 0.001));
+			vert->push_back(osg::Vec3(0, 0, 0.001));
+			geom->setVertexArray(vert.get());
+			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 8));
+			geode->addDrawable(geom.get());
+			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
+			width->setWidth(3*size);
+			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
+			break;
+		}
 		case rs::Text: {
 			osg::ref_ptr<osgText::Text> label = new osgText::Text();
 			label->setAlignment(osgText::Text::CENTER_CENTER);

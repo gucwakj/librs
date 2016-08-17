@@ -24,6 +24,7 @@ namespace rs {
 		HackySack,
 		Line,
 		PullupBar,
+		Rectangle,
 		Sphere,
 		Text,
 		WoodBlock

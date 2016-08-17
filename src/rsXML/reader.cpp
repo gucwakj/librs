@@ -446,8 +446,43 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			node->QueryFloatAttribute("maxy", &_grid[5]);
 			node->QueryFloatAttribute("enabled", &_grid[6]);
 		}
-		else if ( !strcmp(node->Value(), "trace") ) {
-			node->QueryIntText(reinterpret_cast<int *>(&_trace));
+		else if ( !strcmp(node->Value(), "rectangle") ) {
+			// create object
+			_marker.push_back(new Marker(rs::Rectangle));
+			// id
+			i = 0;
+			node->QueryIntAttribute("id", &i);
+			_marker.back()->setID(i);
+			// color
+			if ( (ele = node->FirstChildElement("color")) ) {
+				a = 0; b = 0; c = 0; d = 0;
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
+				_marker.back()->setColor(a, b, c, d);
+			}
+			// end position
+			if ( (ele = node->FirstChildElement("end")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
+				_marker.back()->setEnd(a, b, c);
+			}
+			// start position
+			if ( (ele = node->FirstChildElement("position")) ) {
+				a = 0; b = 0; c = 0;
+				ele->QueryFloatAttribute("x", &a);
+				ele->QueryFloatAttribute("y", &b);
+				ele->QueryFloatAttribute("z", &c);
+				_marker.back()->setStart(a, b, c);
+			}
+			// size
+			i = 0;
+			if ( !node->QueryIntAttribute("width", &i) ) {
+				_marker.back()->setSize(i);
+			}
 		}
 		else if ( !strcmp(node->Value(), "text") ) {
 			// create object
@@ -484,6 +519,9 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				ele->QueryFloatAttribute("z", &c);
 				_marker.back()->setStart(a, b, c);
 			}
+		}
+		else if ( !strcmp(node->Value(), "trace") ) {
+			node->QueryIntText(reinterpret_cast<int *>(&_trace));
 		}
 		else if ( !strcmp(node->Value(), "units") ) {
 			node->QueryIntText(reinterpret_cast<int *>(&_units));

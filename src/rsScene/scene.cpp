@@ -1177,7 +1177,7 @@ void Scene::draw_clock(double w, double h) {
 	osg::ref_ptr<osgText::Text> text = new osgText::Text();
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	double width = 0.25*w;
-	double height = 0.25*h;
+	double height = 0.10*h;
 
 	// set projection matrix
 	projection->setMatrix(osg::Matrix::ortho2D(0, w, 0, h));

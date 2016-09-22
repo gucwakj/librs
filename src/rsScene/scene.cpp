@@ -356,6 +356,30 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			geode->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3d(0, 0, 0), size/500.0)));
 			break;
 		}
+		case rs::Ellipse: {
+			float w = p2[0]/2;
+			float h = p2[1]/2;
+			float a = p2[2];
+			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+			vert->push_back(osg::Vec3(p1[0] + w*cos(0)*cos(a) - p1[0], p1[1] + w*cos(0)*sin(a) + h*sin(0)*cos(a) - p1[1], 0.001));
+			int n = 50;
+			for (int i = 1; i < n; i++) {
+				double rad = i*(2*rs::Pi/n);
+				double x = p1[0] + w*cos(rad)*cos(a) - h*sin(rad)*sin(a);
+				double y = p1[1] + w*cos(rad)*sin(a) + h*sin(rad)*cos(a);
+				vert->push_back(osg::Vec3(x - p1[0], y - p1[1], 0.001));
+				vert->push_back(osg::Vec3(x - p1[0], y - p1[1], 0.001));
+			}
+			vert->push_back(osg::Vec3(p1[0] + w*cos(0)*cos(a) - p1[0], p1[1] + w*cos(0)*sin(a) + h*sin(0)*cos(a) - p1[1], 0.001));
+			geom->setVertexArray(vert.get());
+			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2 + 2*(n-1)));
+			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
+			width->setWidth(3*size);
+			geode->addDrawable(geom.get());
+			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
+			break;
+		}
 		case rs::Line: {
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
@@ -452,6 +476,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	osg::ref_ptr<osg::PositionAttitudeTransform> pat = new osg::PositionAttitudeTransform();
 	switch (type) {
 		case rs::Circle:
+		case rs::Ellipse:
 		case rs::Polygon:
 		case rs::Rectangle:
 		case rs::Triangle:

@@ -22,6 +22,7 @@ namespace rs {
 		CompetitionBorder,
 		Cylinder,
 		Dot,
+		Ellipse,
 		HackySack,
 		Line,
 		Polygon,

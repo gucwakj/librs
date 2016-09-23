@@ -76,7 +76,7 @@ void Writer::reidRobot(tinyxml2::XMLElement *robot) {
 	robot->SetAttribute("id", i - 1);
 }
 
-void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, int size) {
+void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, int size, const rs::Pos &pt) {
 	// set start position
 	tinyxml2::XMLElement *pos = getOrCreateChild(marker, "position");
 	pos->SetAttribute("x", p1[0]);
@@ -118,6 +118,14 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs:
 		case rs::Polygon:
 			marker->SetAttribute("width", size);
 			break;
+		case rs::Quad: {
+			marker->SetAttribute("width", size);
+			// set point position
+			tinyxml2::XMLElement *point = getOrCreateChild(marker, "pt");
+			point->SetAttribute("x", pt[0]);
+			point->SetAttribute("y", pt[1]);
+			break;
+		}
 		case rs::Rectangle:
 			marker->SetAttribute("width", size);
 			break;
@@ -480,6 +488,9 @@ tinyxml2::XMLElement* Writer::getOrCreateMarker(int form, int id) {
 			break;
 		case rs::Polygon:
 			node = _doc.NewElement("polygon");
+			break;
+		case rs::Quad:
+			node = _doc.NewElement("quad");
 			break;
 		case rs::Rectangle:
 			node = _doc.NewElement("rectangle");

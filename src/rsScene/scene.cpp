@@ -324,7 +324,7 @@ int Scene::deleteRobot(int id) {
 	return -1;
 }
 
-int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, int size, std::string s) {
+int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, const rs::Pos &pt, const rs::Vec &c, int size, std::string s) {
 	// create geode
 	osg::ref_ptr<osg::Group> marker = new osg::Group();
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
@@ -510,6 +510,25 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
 			break;
 		}
+		case rs::Quad: {
+			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+			vert->push_back(osg::Vec3(0, 0, 0.001));
+			vert->push_back(osg::Vec3(p1[1] - p1[0], p2[1] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(p1[1] - p1[0], p2[1] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(p1[2] - p1[0], p2[2] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(p1[2] - p1[0], p2[2] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(pt[0] - p1[0], pt[1] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(pt[0] - p1[0], pt[1] - p2[0], 0.001));
+			vert->push_back(osg::Vec3(0, 0, 0.001));
+			geom->setVertexArray(vert.get());
+			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 8));
+			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
+			width->setWidth(3*size);
+			geode->addDrawable(geom.get());
+			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
+			break;
+		}
 		case rs::Rectangle: {
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
@@ -580,6 +599,9 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 		case rs::Rectangle:
 		case rs::Triangle:
 			pat->setPosition(osg::Vec3d(p1[0], p1[1], 0));
+			break;
+		case rs::Quad:
+			pat->setPosition(osg::Vec3d(p1[0], p2[0], 0));
 			break;
 		default:
 			pat->setPosition(osg::Vec3d(p1[0], p1[1], p1[2]));

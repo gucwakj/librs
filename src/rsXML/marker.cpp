@@ -36,6 +36,10 @@ short Marker::getSize(void) {
 	return _size;
 }
 
+const rs::Pos Marker::getPoint(void) {
+	return _p;
+}
+
 short Marker::getForm(void) {
 	return _type;
 }
@@ -67,6 +71,11 @@ void Marker::setID(short id) {
 
 void Marker::setLabel(std::string l) {
 	_l = l;
+}
+
+void Marker::setPoint(float a, float b) {
+	_p[0] = a;
+	_p[1] = b;
 }
 
 void Marker::setSize(short size) {

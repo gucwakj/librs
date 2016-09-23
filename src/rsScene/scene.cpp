@@ -381,6 +381,26 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
 			break;
 		}
+		case rs::Arrow: {
+			float length = sqrt((p2[0] - p1[0])*(p2[0] - p1[0]) + (p2[1] - p1[1])*(p2[1] - p1[1]));
+			float angle = asin((p2[1] - p1[1])/length);
+			float bit = 0.25*length;
+			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+			vert->push_back(osg::Vec3(0, 0, 0.001));
+			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], 0.001));
+			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], 0.001));
+			vert->push_back(osg::Vec3(p2[0] + bit*cos(2.356 + angle) - p1[0], p2[1] + bit*sin(2.356 + angle) - p1[1], 0.001));
+			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], 0.001));
+			vert->push_back(osg::Vec3(p2[0] + bit*cos(3.927 + angle) - p1[0], p2[1] + bit*sin(3.927 + angle) - p1[1], 0.001));
+			geom->setVertexArray(vert.get());
+			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 6));
+			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
+			width->setWidth(3*size);
+			geode->addDrawable(geom.get());
+			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
+			break;
+		}
 		case rs::Circle: {
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
@@ -527,6 +547,7 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	switch (type) {
 		case rs::Arc:
 		case rs::ArcSector:
+		case rs::Arrow:
 		case rs::Circle:
 		case rs::Ellipse:
 		case rs::Polygon:

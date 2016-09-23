@@ -19,6 +19,7 @@ namespace rs {
 	enum Drawing {
 		Arc,
 		ArcSector,
+		Arrow,
 		Box,
 		Circle,
 		CompetitionBorder,

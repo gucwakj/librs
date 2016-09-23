@@ -94,6 +94,9 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs:
 		case rs::Arc:
 			marker->SetAttribute("width", size);
 			break;
+		case rs::ArcSector:
+			marker->SetAttribute("width", size);
+			break;
 		case rs::Circle:
 			marker->SetAttribute("width", size);
 			break;
@@ -447,6 +450,9 @@ tinyxml2::XMLElement* Writer::getOrCreateMarker(int form, int id) {
 	switch (form) {
 		case rs::Arc:
 			node = _doc.NewElement("arc");
+			break;
+		case rs::ArcSector:
+			node = _doc.NewElement("arcsector");
 			break;
 		case rs::Circle:
 			node = _doc.NewElement("circle");

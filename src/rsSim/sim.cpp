@@ -506,9 +506,9 @@ void Sim::setFriction(float ground, float body) {
 	RS_MUTEX_LOCK(&_friction_mutex);
 
 	// set new values if not == -1
-	if (fabs(ground + 1) < rs::Epsilon)
+	if (fabs(ground + 1) > rs::Epsilon)
 		_friction[0] = ground;
-	if (fabs(body + 1) < rs::Epsilon)
+	if (fabs(body + 1) > rs::Epsilon)
 		_friction[1] = body;
 
 	// unlock mutex

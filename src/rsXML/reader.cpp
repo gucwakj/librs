@@ -29,8 +29,8 @@ Reader::Reader(const char *name, bool process) {
 	_trace = true;
 	_version = RSXML_VER_NONE;
 	for (int i = 0; i < 2; i++) {
-		_friction.push_back(0);
-		_restitution.push_back(0);
+		_friction.push_back(-1);
+		_restitution.push_back(-1);
 	}
 
 	// default US units and grid

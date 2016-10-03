@@ -11,6 +11,7 @@ Integrator::Integrator(void) {
 	_delta = 0;
 	_time = 0;
 	_driver = NULL;
+	_rec_on = false;
 }
 
 Integrator::~Integrator(void) {
@@ -22,6 +23,35 @@ Integrator::~Integrator(void) {
 /**********************************************************
 	public functions
  **********************************************************/
+void Integrator::plot(std::string title) {
+	if (_rec_on) {
+		// store data
+		FILE *temp = fopen("temp", "w");
+		std::string str;
+		for (unsigned int i = 0; i < _rec_t.size(); i++) {
+			for (unsigned int j = 0; j < _v.size() - 1; j++) {
+				str.append(std::to_string(_rec_v[i][j])).append(", ");
+			}
+			str.append(std::to_string(_rec_v[i][_v.size() - 1]));
+			fprintf(temp, "%f, %s\n", _rec_t[i], str.c_str());
+			str.clear();
+		}
+
+		// create pipe
+		FILE *gnuplotPipe = popen("gnuplot -persistent", "w");
+
+		// plot
+		fprintf(gnuplotPipe, "set title '%s'\n", title.c_str());
+		fprintf(gnuplotPipe, "set xlabel 'Time [s]'\n");
+		fprintf(gnuplotPipe, "set ylabel 'Amplitude'\n");
+		fprintf(gnuplotPipe, "plot ");
+		for (unsigned int j = 0; j < _v.size() - 1; j++) {
+			fprintf(gnuplotPipe, "'temp' using 1:%d with lines title 'Module %d', ", j+2, j);
+		}
+		fprintf(gnuplotPipe, "'temp' using 1:%d with lines title 'Module %d'\n", _v.size() + 1, _v.size() - 1);
+	}
+}
+
 const rs::Vec* Integrator::runStep(float newtime) {
 	// integrate
 	int status = gsl_odeiv2_driver_apply(_driver, &_time, newtime, _array.data());
@@ -67,6 +97,12 @@ const rs::Vec* Integrator::runStep(float newtime) {
 		}
 	}*/
 
+	// record for plotting
+	if (_rec_on) {
+		_rec_v.push_back(_v);
+		_rec_t.push_back(newtime);
+	}
+
 	// return output array
 	return &_v;
 }
@@ -78,6 +114,10 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_array.resize(params->num_vars);
 	_params = params;
 	_v.allocate(_params->num_robots);
+}
+
+void Integrator::setRecording(bool enable) {
+	_rec_on = enable;
 }
 
 void Integrator::turn(float val) {

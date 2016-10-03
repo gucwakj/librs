@@ -30,8 +30,10 @@ namespace rsResearch {
 			Integrator(void);
 			virtual ~Integrator(void);
 
+			void plot(std::string);
 			const rs::Vec* runStep(float);
 			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
+			void setRecording(bool);
 			void turn(float);
 
 		// private data
@@ -43,6 +45,11 @@ namespace rsResearch {
 			gsl_odeiv2_driver *_driver;		// driver of cpg integration
 			gsl_odeiv2_system _system;		// system of ode equations
 			rs::Vec _v;						// array of output values
+
+			// recording
+			bool _rec_on;					// turn on recording
+			std::vector<rs::Vec> _rec_v;	// recorded outputs
+			std::vector<float> _rec_t;		// recorded times
 	};
 
 } // namespace rsResearch

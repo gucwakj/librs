@@ -14,9 +14,9 @@ namespace rsResearch {
 	// integration struct
 	struct Params {
 		bool linearize;
+		float a;
 		float w1;
 		float w2;
-		float a;
 		short num_body;
 		short num_robots;
 		short num_vars;
@@ -30,16 +30,16 @@ namespace rsResearch {
 			Integrator(void);
 			virtual ~Integrator(void);
 
-			void plot(std::string);
+			void plot(std::string, bool = false);
 			const rs::Vec* runStep(float);
 			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
 			void setRecording(bool);
-			void turn(float);
+			void setTurn(float);
 
 		// private data
 		private:
+			// integration
 			double _time;					// time of integration
-			float _delta;					// turn delta
 			Params *_params;				// all the parameters
 			std::vector<double> _array;		// array of values from cpg integration
 			gsl_odeiv2_driver *_driver;		// driver of cpg integration
@@ -50,6 +50,9 @@ namespace rsResearch {
 			bool _rec_on;					// turn on recording
 			std::vector<rs::Vec> _rec_v;	// recorded outputs
 			std::vector<float> _rec_t;		// recorded times
+
+			// turning
+			float _turn;					// turn delta
 	};
 
 } // namespace rsResearch

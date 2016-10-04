@@ -8,10 +8,10 @@
 using namespace rsResearch;
 
 Integrator::Integrator(void) {
-	_delta = 0;
-	_time = 0;
 	_driver = NULL;
 	_rec_on = false;
+	_time = 0;
+	_turn = 0;
 }
 
 Integrator::~Integrator(void) {
@@ -23,7 +23,7 @@ Integrator::~Integrator(void) {
 /**********************************************************
 	public functions
  **********************************************************/
-void Integrator::plot(std::string title) {
+void Integrator::plot(std::string name, bool file) {
 	if (_rec_on) {
 		// store data
 		FILE *temp = fopen("temp", "w");
@@ -40,10 +40,19 @@ void Integrator::plot(std::string title) {
 		// create pipe
 		FILE *gnuplotPipe = popen("gnuplot -persistent", "w");
 
+		// plot title
+		std::size_t pos = name.find("xml");
+		std::string title = name.substr(0, pos - 1);
+
 		// plot
 		fprintf(gnuplotPipe, "set title '%s'\n", title.c_str());
 		fprintf(gnuplotPipe, "set xlabel 'Time [s]'\n");
 		fprintf(gnuplotPipe, "set ylabel 'Amplitude'\n");
+		fprintf(gnuplotPipe, "set xrange [0:%lf]\n", _time);
+		if (file) {
+			fprintf(gnuplotPipe, "set terminal png size 1200,675 enhanced font 'Helvetica,20'\n");
+			fprintf(gnuplotPipe, "set output '%s.png'\n", title.c_str());
+		}
 		fprintf(gnuplotPipe, "plot ");
 		for (unsigned int j = 0; j < _v.size() - 1; j++) {
 			fprintf(gnuplotPipe, "'temp' using 1:%d with lines title 'Module %d', ", j+2, j);
@@ -89,13 +98,11 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	}
 
 	// turning
-	/*if (fabs(_delta) > rs::Epsilon) {
-		float a = (_delta > 0) ? -1*_params->R + _delta : -1*_params->R;
-		float b = (_delta < 0) ? _params->R + _delta : _params->R;
+	if (fabs(_turn) > rs::Epsilon) {
 		for (short i = 0; i < _params->num_body; i++) {
-			_v[i] = ((b-a)*(_v[i] - -1*_params->R))/(2*_params->R) + a;
+			_v[i] += _turn;
 		}
-	}*/
+	}
 
 	// record for plotting
 	if (_rec_on) {
@@ -116,11 +123,11 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_v.allocate(_params->num_robots);
 }
 
-void Integrator::setRecording(bool enable) {
-	_rec_on = enable;
+void Integrator::setRecording(bool b) {
+	_rec_on = b;
 }
 
-void Integrator::turn(float val) {
-	_delta = val;
+void Integrator::setTurn(float f) {
+	_turn = f;
 }
 

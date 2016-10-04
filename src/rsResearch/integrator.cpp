@@ -106,9 +106,9 @@ const rs::Vec* Integrator::runStep(float newtime) {
 
 	// record for plotting
 	if (_rec_on) {
-		static int count = 24;
+		static int count = 3;
 		count++;
-		if (count == 25) {
+		if (count == 4) {
 			_rec_v.push_back(_v);
 			_rec_t.push_back(newtime);
 			count = 0;

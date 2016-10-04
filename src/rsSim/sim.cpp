@@ -48,6 +48,7 @@ Sim::Sim(bool pause, bool rt) {
 	RS_COND_INIT(&_pause_cond);
 	RS_COND_INIT(&_running_cond);
 	RS_MUTEX_INIT(&_clock_mutex);
+	RS_MUTEX_INIT(&_friction_mutex);
 	RS_MUTEX_INIT(&_pause_mutex);
 	RS_MUTEX_INIT(&_robot_mutex);
 	RS_MUTEX_INIT(&_running_mutex);

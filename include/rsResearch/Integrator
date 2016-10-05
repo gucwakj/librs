@@ -34,7 +34,7 @@ namespace rsResearch {
 			const rs::Vec* runStep(float);
 			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
 			void setRecording(bool);
-			void setTurn(float);
+			void setTurn(float, float);
 
 		// private data
 		private:
@@ -52,7 +52,8 @@ namespace rsResearch {
 			std::vector<float> _rec_t;		// recorded times
 
 			// turning
-			float _turn;					// turn delta
+			float _turn_amp;				// turning signal amplitude
+			float _turn_time;				// turning signal duration
 	};
 
 } // namespace rsResearch

@@ -11,7 +11,8 @@ Integrator::Integrator(void) {
 	_driver = NULL;
 	_rec_on = false;
 	_time = 0;
-	_turn = 0;
+	_turn_amp = 0;
+	_turn_time = -1;
 }
 
 Integrator::~Integrator(void) {
@@ -98,9 +99,11 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	}
 
 	// turning
-	if (fabs(_turn) > rs::Epsilon) {
-		for (short i = 0; i < _params->num_body; i++) {
-			_v[i] += _turn;
+	if ((newtime - _turn_time) < rs::Epsilon) {
+		if (fabs(_turn_amp) > rs::Epsilon) {
+			for (short i = 0; i < _params->num_body; i++) {
+				_v[i] += _turn_amp;
+			}
 		}
 	}
 
@@ -132,7 +135,8 @@ void Integrator::setRecording(bool b) {
 	_rec_on = b;
 }
 
-void Integrator::setTurn(float f) {
-	_turn = f;
+void Integrator::setTurn(float amplitude, float time) {
+	_turn_amp = amplitude;
+	_turn_time = time;
 }
 

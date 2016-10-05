@@ -3,6 +3,10 @@
 #include <rs/Timer>
 #include <rsSim/Sim>
 
+#ifdef RS_RESEARCH
+#include <gsl/gsl_fit.h>
+#endif
+
 using namespace rsSim;
 
 Sim::Sim(bool pause, bool rt) {
@@ -375,20 +379,39 @@ float Sim::getClock(void) {
 	return clock;
 }
 
-void Sim::getCoM(double &x, double &y, double &z) {
+void Sim::getCoM(double &x, double &y, double &z, double &angle) {
+	// x,y,z location
 	double total = 0;
+	double mass = 0;
 	x = 0; y = 0; z = 0;
 	for (unsigned int i = 0; i < _robot.size(); i++) {
-		double m;
-		rs::Pos p = _robot[i].robot->getCoM(m);
-		x += m*p[0];
-		y += m*p[1];
-		z += m*p[2];
-		total += m;
+		rs::Pos p = _robot[i].robot->getCoM(mass);
+		x += mass*p[0];
+		y += mass*p[1];
+		z += mass*p[2];
+		total += mass;
 	}
 	x /= total;
 	y /= total;
 	z /= total;
+
+	// angle
+#ifdef RS_RESEARCH
+	unsigned int n = _robot.size();
+	double xdata[n], ydata[n];
+	for (unsigned int i = 0; i < _robot.size(); i++) {
+		rs::Pos p = _robot[i].robot->getCoM(mass);
+		xdata[i] = p[0];
+		ydata[i] = p[1];
+	}
+	double m, b, cov00, cov01, cov11, sumsq;
+	gsl_fit_linear(xdata, 1, ydata, 1, n, &b, &m, &cov00, &cov01, &cov11, &sumsq);
+	double a = atan(m);
+	if (a < rs::Epsilon) a += rs::Pi;
+#else
+	double a = 0;
+#endif
+	angle = a;
 }
 
 bool Sim::getPause(void) {

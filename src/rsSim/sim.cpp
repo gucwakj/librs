@@ -603,6 +603,9 @@ void Sim::collision(void *data, dGeomID o1, dGeomID o2) {
 			if ( dGeomGetSpace(o1) == ptr->_space || dGeomGetSpace(o2) == ptr->_space ) {
 				contact[i].surface.mu = ptr->_friction[0];
 				contact[i].surface.bounce = ptr->_restitution[0];
+#ifdef RS_RESEARCH
+				dBodyAddRelForce(dGeomGetBody(o1), 0, 0.07, 0);
+#endif
 			}
 			else {
 				contact[i].surface.mu = ptr->_friction[1];

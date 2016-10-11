@@ -76,6 +76,7 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	for (short i = 0, j = 0; i < _params->num_vars; i+=3, j++) {
 		_v[j] = _array[i+1]*cos(_array[i]);
 	}
+
 	// linearize the legs motion
 	if (_params->linearize) {
 		float theta_up = -5*M_PI/6;

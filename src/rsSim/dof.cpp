@@ -239,6 +239,7 @@ void Dof::simPreCollisionThread(void) {
 			// end
 			break;
 	}
+
 	// unlock angle and goal
 	RS_MUTEX_UNLOCK(&_theta_mutex);
 	RS_MUTEX_UNLOCK(&_goal_mutex);

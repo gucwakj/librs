@@ -33,8 +33,13 @@ namespace rsResearch {
 			void plot(std::string, bool = false);
 			const rs::Vec* runStep(float);
 			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
+			void setBrain(void(*)(void*));
 			void setRecording(bool);
 			void setTurn(float, float);
+
+		// typedefs
+		public:
+			typedef void (*PtrFunc)(void*);
 
 		// private data
 		private:
@@ -46,6 +51,9 @@ namespace rsResearch {
 			gsl_odeiv2_system _system;		// system of ode equations
 			rs::Vec _v;						// array of output values
 
+			// brain
+			PtrFunc pBrainFcn;				// pointer to brain function call
+			
 			// recording
 			bool _rec_on;					// turn on recording
 			std::vector<rs::Vec> _rec_v;	// recorded outputs

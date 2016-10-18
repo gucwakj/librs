@@ -108,6 +108,9 @@ const rs::Vec* Integrator::runStep(float newtime) {
 		}
 	}
 
+	// brain
+	pBrainFcn(_params->robot);
+
 	// record for plotting
 	if (_rec_on) {
 		static int count = 3;
@@ -130,6 +133,10 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 	_array.resize(params->num_vars);
 	_params = params;
 	_v.allocate(_params->num_robots);
+}
+
+void Integrator::setBrain(void (*function)(void*)) {
+	pBrainFcn = function;
 }
 
 void Integrator::setRecording(bool b) {

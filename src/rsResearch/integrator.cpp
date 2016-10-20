@@ -13,6 +13,7 @@ Integrator::Integrator(void) {
 	_time = 0;
 	_turn_amp = 0;
 	_turn_time = -1;
+	_p_brain = NULL;
 }
 
 Integrator::~Integrator(void) {
@@ -109,7 +110,7 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	}
 
 	// brain
-	pBrainFcn(_params->robot);
+	if (_p_brain) _p_brain(_params->robot);
 
 	// record for plotting
 	if (_rec_on) {
@@ -136,7 +137,7 @@ void Integrator::setup(int (*function)(double, const double[], double[], void*),
 }
 
 void Integrator::setBrain(void (*function)(void*)) {
-	pBrainFcn = function;
+	_p_brain = function;
 }
 
 void Integrator::setRecording(bool b) {

@@ -52,7 +52,7 @@ namespace rsResearch {
 			rs::Vec _v;						// array of output values
 
 			// brain
-			PtrFunc pBrainFcn;				// pointer to brain function call
+			PtrFunc _p_brain;				// pointer to brain function call
 			
 			// recording
 			bool _rec_on;					// turn on recording

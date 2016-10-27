@@ -597,10 +597,12 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 		case rs::Ellipse:
 		case rs::Polygon:
 		case rs::Rectangle:
-		case rs::Triangle:
 			pat->setPosition(osg::Vec3d(p1[0], p1[1], 0));
 			break;
 		case rs::Quad:
+			pat->setPosition(osg::Vec3d(p1[0], p2[0], 0));
+			break;
+		case rs::Triangle:
 			pat->setPosition(osg::Vec3d(p1[0], p2[0], 0));
 			break;
 		default:

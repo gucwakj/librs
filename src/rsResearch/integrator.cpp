@@ -50,7 +50,7 @@ void Integrator::plot(std::string name, bool file) {
 		fprintf(gnuplotPipe, "set title '%s'\n", title.c_str());
 		fprintf(gnuplotPipe, "set xlabel 'Time [s]'\n");
 		fprintf(gnuplotPipe, "set ylabel 'Amplitude'\n");
-		fprintf(gnuplotPipe, "set xrange [0:%lf]\n", _time);
+		fprintf(gnuplotPipe, "set xrange [%lf:%lf]\n", _rec_t[0], _time);
 		if (file) {
 			fprintf(gnuplotPipe, "set terminal png size 1200,675 enhanced font 'Helvetica,20'\n");
 			fprintf(gnuplotPipe, "set output '%s.png'\n", title.c_str());
@@ -114,13 +114,8 @@ const rs::Vec* Integrator::runStep(float newtime) {
 
 	// record for plotting
 	if (_rec_on) {
-		static int count = 3;
-		count++;
-		if (count == 4) {
-			_rec_v.push_back(_v);
-			_rec_t.push_back(newtime);
-			count = 0;
-		}
+		_rec_v.push_back(_v);
+		_rec_t.push_back(newtime);
 	}
 
 	// return output array

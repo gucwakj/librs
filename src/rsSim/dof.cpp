@@ -33,7 +33,7 @@ Dof::Dof(short joint, float scale) : rsRobots::Robot(rs::Dof), rsRobots::Dof(joi
 	_motor[Bodies::Joint].state = NEUTRAL;
 	_motor[Bodies::Joint].stopping = 0;
 	_motor[Bodies::Joint].success = true;
-	_motor[Bodies::Joint].tau_max = 2;
+	_motor[Bodies::Joint].tau_max = 4;
 	_motor[Bodies::Joint].timeout = 0;
 	_motor[Bodies::Joint].theta = 0;
 

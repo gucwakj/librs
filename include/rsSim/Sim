@@ -21,7 +21,7 @@ namespace rsSim {
 	class LIBRSEXPORT Sim {
 		// public functions
 		public:
-			Sim(bool, bool);
+			Sim(bool, bool, float = 0.004);
 			virtual ~Sim(void);
 
 			void addRobot(Robot*, short, const rs::Pos&, const rs::Quat&, const rs::Vec&, const rs::Vec& = rs::Vec(0,0), short = -1);

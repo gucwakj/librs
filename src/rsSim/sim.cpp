@@ -9,7 +9,7 @@
 
 using namespace rsSim;
 
-Sim::Sim(bool pause, bool rt) {
+Sim::Sim(bool pause, bool rt, float step) {
 	// create ODE simulation space
 	dInitODE2(0);										// initialized ode library
 	_world = dWorldCreate();							// create world for simulation
@@ -41,7 +41,7 @@ Sim::Sim(bool pause, bool rt) {
 	_pause = pause;										// start paused
 	_rt = rt;											// real time
 	_running = true;									// is simulation running
-	_step = 0.004;										// initial time step
+	_step = step;										// initial time step
 	_stop = 0;											// time at which to stop simulation
 
 #ifdef RS_RESEARCH

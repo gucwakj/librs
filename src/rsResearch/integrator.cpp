@@ -51,6 +51,11 @@ void Integrator::plot(std::string name, bool file) {
 		fprintf(gnuplotPipe, "set xlabel 'Time [s]'\n");
 		fprintf(gnuplotPipe, "set ylabel 'Amplitude'\n");
 		fprintf(gnuplotPipe, "set xrange [%lf:%lf]\n", _rec_t[0], _time);
+		fprintf(gnuplotPipe, "set title font ',20'\n");
+		fprintf(gnuplotPipe, "set xlabel font ',16'\n");
+		fprintf(gnuplotPipe, "set ylabel font ',16'\n");
+		fprintf(gnuplotPipe, "set tics font ',14'\n");
+		fprintf(gnuplotPipe, "set key font ',14'\n");
 		if (file) {
 			fprintf(gnuplotPipe, "set terminal png size 1200,675 enhanced font 'Helvetica,20'\n");
 			fprintf(gnuplotPipe, "set output '%s.png'\n", title.c_str());

@@ -37,6 +37,9 @@ Dof::Dof(short joint, float scale) : rsRobots::Robot(rs::Dof), rsRobots::Dof(joi
 	_motor[Bodies::Joint].timeout = 0;
 	_motor[Bodies::Joint].theta = 0;
 
+	// research
+	_flip = false;
+
 	// init threading
 	RS_MUTEX_INIT(&_motor[Bodies::Joint].success_mutex);
 	RS_COND_INIT(&_motor[Bodies::Joint].success_cond);
@@ -207,6 +210,10 @@ int Dof::build(const rs::Pos &p, const rs::Quat &q, const rs::Vec &a, dBodyID ba
 	// fix to ground
 	if (ground != -1) this->fixBodyToGround(_body[ground]);
 
+	// flip values for specific robots
+	const double *q1 = dBodyGetQuaternion(_body[Bodies::Joint]);
+	if (q1[0] <= -rs::Epsilon && q1[1] <= -rs::Epsilon && q1[2] <= -rs::Epsilon) { _flip = true; }
+
 	// success
 	return 0;
 }
@@ -228,7 +235,7 @@ void Dof::simPreCollisionThread(void) {
 			dBodyEnable(_body[0]);
 
 			// set new omega
-			_motor[Bodies::Joint].goal = _next_goal;
+			_motor[Bodies::Joint].goal = (_flip) ? -1*_next_goal : _next_goal;
 			_motor[Bodies::Joint].omega = (_motor[Bodies::Joint].goal - _motor[Bodies::Joint].theta)/step;
 			_motor[Bodies::Joint].state = NEUTRAL;
 

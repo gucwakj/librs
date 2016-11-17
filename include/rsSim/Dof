@@ -36,6 +36,10 @@ namespace rsSim {
 			void build_plank(Connector&);
 			void build_robot(const rs::Pos&, const rs::Quat&, const rs::Vec&);
 			void build_snap(Connector&);
+
+		// private variables
+		private:
+			bool _flip;		// research: flip input value
 	};
 
 } // namespace rsSim

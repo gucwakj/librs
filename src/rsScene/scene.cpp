@@ -9,6 +9,7 @@
 #include <osg/LineWidth>
 #include <osg/Material>
 #include <osg/MatrixTransform>
+#include <osg/Point>
 #include <osg/PositionAttitudeTransform>
 #include <osg/ShapeDrawable>
 #include <osg/TexMat>
@@ -932,6 +933,49 @@ Obstacle* Scene::drawObstacle(int id, int type, const rs::Pos &p, const rs::Vec 
 
 	// success
 	return obstacle.get();
+}
+
+void Scene::drawPath(std::vector<double> *xpts, std::vector<double> *ypts) {
+	// create line geometry
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+	geom->setDataVariance(osg::Object::DYNAMIC);
+	geom->setUseDisplayList(false);
+	geom->insertPrimitiveSet(0, new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2*xpts->size()-2));
+
+	// set vertices
+	osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array();
+	vertices->push_back(osg::Vec3(xpts->at(0), ypts->at(0), 0));
+	for (unsigned int i = 1; i < xpts->size()-2; i++) {
+		vertices->push_back(osg::Vec3(xpts->at(i), ypts->at(i), 0));
+		vertices->push_back(osg::Vec3(xpts->at(i), ypts->at(i), 0));
+	}
+	vertices->push_back(osg::Vec3(xpts->at(xpts->size()-1), ypts->at(ypts->size()-1), 0));
+	geom->setVertexArray(vertices.get());
+
+	// set color
+	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+	colors->push_back(osg::Vec4(0, 0, 1, 1));
+	geom->setColorArray(colors.get());
+	geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+	// set width
+	osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
+	width->setWidth(3);
+
+	// set rendering properties
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
+	geode->getOrCreateStateSet()->setRenderBinDetails(20, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+	geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
+
+	// set geode properties
+	geode->addDrawable(geom.get());
+	geode->setNodeMask(VISIBLE_MASK);
+	geode->setName("path");
+
+	// add to scenegraph
+	_staging[0]->addChild(geode.get());
 }
 
 osgText::Text* Scene::getHUDText(void) {

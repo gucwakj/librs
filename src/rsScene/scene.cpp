@@ -1267,6 +1267,10 @@ int Scene::setupScene(double w, double h, bool pause) {
 	osg::ref_ptr<MouseHandler> mh = new MouseHandler(this);
 	_viewer->addEventHandler(mh.get());
 
+	_sch = new osgViewer::ScreenCaptureHandler(new osgViewer::ScreenCaptureHandler::WriteToFile("screen_shot", "png"));
+	_viewer->addEventHandler(_sch);
+	//_sch->captureNextFrame(*_viewer);
+
 	// show scene
 	_viewer->setSceneData(_root);
 

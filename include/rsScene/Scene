@@ -28,6 +28,7 @@ namespace osgText {
 
 namespace osgViewer {
 	class Viewer;
+	class ScreenCaptureHandler;
 }
 
 namespace rsScene {
@@ -110,6 +111,7 @@ namespace rsScene {
 			osg::Group *_staging[3];			// temp variable for adding objects
 			osgViewer::Viewer *_viewer;			// viewer
 			osgShadow::ShadowedScene *_scene;	// shadow root of scene
+			osgViewer::ScreenCaptureHandler *_sch;	// screen capture handler
 			std::string _tex_path;				// path to texture objects
 			std::vector<double> _grid;			// grid
 			std::vector<std::string> _path;		// image paths

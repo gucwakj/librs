@@ -29,11 +29,11 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 		cv::flip(mat, mat2, 0);
 
 		// show image for testing
-		imshow("Mat", mat2);
-		cvWaitKey(0);
+		//imshow("Mat", mat2);
+		//cvWaitKey(0);
 
 		// save to disk for testing
-		cv::imwrite("output.png", mat2);
+		//cv::imwrite("output.png", mat2);
 	}
 }
 

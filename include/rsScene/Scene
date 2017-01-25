@@ -72,13 +72,20 @@ namespace rsScene {
 			void setRobotCallback(osg::Group*, osg::NodeCallback*);
 			void setUnits(bool);
 			int setupCamera(osg::GraphicsContext*, double, double);
-			void setupCamera2(osg::GraphicsContext*, double, double);
 			int setupScene(double, double, bool);
 			int setupViewer(osgViewer::Viewer*);
 			void stageChild(osg::Group*);
 			void start(int);
 			void toggleHighlight(osg::Group*, osg::Node*, const rs::Vec& = rs::Vec(1, 1, 0), bool = false);
 			void toggleLabel(osg::Group*, osg::Node*);
+
+		// public data
+		public:
+			enum Views {
+				FirstPerson,
+				ThirdPerson,
+				NumViews
+			};
 
 		// virtual functions
 		protected:
@@ -106,6 +113,7 @@ namespace rsScene {
 			bool _units;						// flag: SI (true) or customary (false)
 			int _level;							// level to load
 			int _rate;							// desired frame rate
+			int _view;							// view to create
 			osg::Camera *_camera;				// camera to view scene
 			osg::Group *_background;			// pieces of each level which are interchangeable
 			osg::Group *_root;					// root node of scene

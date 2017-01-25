@@ -82,6 +82,8 @@ Scene::Scene(void) : KeyboardHandler() {
 	// flags for graphical output options
 	_highlight = false;
 	_label = true;
+	//_view = Scene::ThirdPerson;
+	_view = Scene::FirstPerson;
 }
 
 Scene::~Scene(void) {
@@ -112,8 +114,8 @@ void Scene::addAndRemoveChildren(bool clean) {
 	while (_staging[0]->getNumChildren()) {
 		// add child to scene
 		_scene->addChild(_staging[0]->getChild(0));
-		// attach camera
-		if (_staging[0]->getChild(0)->getName() == "robot0") {
+		// attach camera for FirstPerson
+		if (_view == Scene::FirstPerson && _staging[0]->getChild(0)->getName() == "robot0") {
 			osg::Group *test = NULL;
 			for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 				test = dynamic_cast<osg::Group *>(_scene->getChild(i));
@@ -122,7 +124,8 @@ void Scene::addAndRemoveChildren(bool clean) {
 					manip = dynamic_cast<osgGA::NodeTrackerManipulator*>(_viewer->getCameraManipulator());
 					manip->setNode(test); 
 					manip->setTrackNode(test); 
-					manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_AZIM);
+					manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_ROTATION);
+					manip->setRotationMode(osgGA::NodeTrackerManipulator::ELEVATION_AZIM);
 					manip->setTransformation(osg::Vec3f(0, 0.2, 0), osg::Vec3f(0, 0.4, -0.1), osg::Vec3f(0, 0, 1));
 					break;
 				}
@@ -974,13 +977,13 @@ void Scene::drawPath(std::vector<double> *xpts, std::vector<double> *ypts) {
 
 	// set color
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
-	colors->push_back(osg::Vec4(0, 0, 1, 1));
+	colors->push_back(osg::Vec4(1, 0, 0, 1));
 	geom->setColorArray(colors.get());
 	geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 
 	// set width
 	osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
-	width->setWidth(3);
+	width->setWidth(50);
 
 	// set rendering properties
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
@@ -1105,7 +1108,7 @@ void Scene::setGrid(std::vector<float> grid, bool draw) {
 	}
 
 	// draw grid if there is a background on which to draw
-	if (_level != rs::Level::None && static_cast<int>(_grid[6]) && draw) {
+	if (_level != rs::Level::None && static_cast<int>(_grid[6]) && draw && _view != Scene::FirstPerson) {
 		this->draw_grid(_grid[0], _grid[1], _grid[2], _grid[3], _grid[4], _grid[5], _grid[6]);
 	}
 
@@ -1118,6 +1121,9 @@ void Scene::setHighlight(bool highlight) {
 }
 
 void Scene::setHUD(bool enable) {
+	if (_view == Scene::FirstPerson) return;
+
+	// change view
 	for (unsigned int i = 0; i < _root->getNumChildren(); i++) {
 		if (!_root->getChild(i)->getName().compare("HUDProjection")) {
 			if (enable)
@@ -1222,15 +1228,21 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	_camera->getOrCreateStateSet()->setGlobalDefaults();
 	_viewer->addSlave(_camera);
 
-	// viewer camera properties
-	osg::ref_ptr<osgGA::OrbitManipulator> cameraManipulator = new osgGA::OrbitManipulator();
-	cameraManipulator->setDistance(0.1);
-	cameraManipulator->setAllowThrow(false);
-	cameraManipulator->setWheelZoomFactor(0);
-	cameraManipulator->setVerticalAxisFixed(true);
-	cameraManipulator->setElevation(0.5);
-	_viewer->setCameraManipulator(cameraManipulator.get());
-	_viewer->getCameraManipulator()->setHomePosition(osg::Vec3f(0.6, -0.8, 0.5), osg::Vec3f(0.1, 0.3, 0), osg::Vec3f(0, 0, 1));
+	// camera manipulator
+	if (_view == Scene::ThirdPerson) {
+		osg::ref_ptr<osgGA::OrbitManipulator> cameraManipulator = new osgGA::OrbitManipulator();
+		cameraManipulator->setDistance(0.1);
+		cameraManipulator->setAllowThrow(false);
+		cameraManipulator->setWheelZoomFactor(0);
+		cameraManipulator->setVerticalAxisFixed(true);
+		cameraManipulator->setElevation(0.5);
+		_viewer->setCameraManipulator(cameraManipulator.get());
+		_viewer->getCameraManipulator()->setHomePosition(osg::Vec3f(0.6, -0.8, 0.5), osg::Vec3f(0.1, 0.3, 0), osg::Vec3f(0, 0, 1));
+	}
+	else if (_view == Scene::FirstPerson) {
+		osg::ref_ptr<osgGA::NodeTrackerManipulator> cameraManipulator = new osgGA::NodeTrackerManipulator();
+		_viewer->setCameraManipulator(cameraManipulator.get());
+	}
 
 	// outlining setup
 	osg::DisplaySettings::instance()->setMinimumNumStencilBits(1);
@@ -1240,33 +1252,6 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 
 	// success
 	return 0;
-}
-
-void Scene::setupCamera2(osg::GraphicsContext *gc, double w, double h) {
-	// camera properties
-	_camera = new osg::Camera();
-	_camera->setGraphicsContext(gc);
-	_camera->setClearColor(osg::Vec4(0, 0, 0, 1));
-	_camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	_camera->setViewport(new osg::Viewport(0, 0, w, h));
-	_camera->setDrawBuffer(GL_BACK);
-	_camera->setReadBuffer(GL_BACK);
-	_camera->setViewMatrixAsLookAt(osg::Vec3f(0, 0, 0), osg::Vec3f(0, 0, 0), osg::Vec3f(0, 0, 1));
-	_camera->setComputeNearFarMode(osgUtil::CullVisitor::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
-	_camera->setCullingMode(osgUtil::CullVisitor::NO_CULLING);
-	_camera->setNearFarRatio(0.00001);
-	_camera->getOrCreateStateSet()->setGlobalDefaults();
-	_viewer->addSlave(_camera);
-
-	// viewer camera properties
-	osg::ref_ptr<osgGA::NodeTrackerManipulator> cameraManipulator = new osgGA::NodeTrackerManipulator();
-	_viewer->setCameraManipulator(cameraManipulator.get());
-
-	// outlining setup
-	/*osg::DisplaySettings::instance()->setMinimumNumStencilBits(1);
-	unsigned int clearMask = _camera->getClearMask();
-	_camera->setClearMask(clearMask | GL_STENCIL_BUFFER_BIT);
-	_camera->setClearStencil(0);*/
 }
 
 int Scene::setupScene(double w, double h, bool pause) {
@@ -1555,6 +1540,9 @@ void Scene::draw_clock(double w, double h) {
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 	geom->getOrCreateStateSet()->setMode(GL_BLEND,osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+	// set visibility
+	projection->setNodeMask((_view == Scene::FirstPerson) ? NOT_VISIBLE_MASK : VISIBLE_MASK);
 
 	// add to scene
 	_root->addChild(projection.get());
@@ -1961,6 +1949,9 @@ void Scene::draw_hud(double w, double h, bool paused) {
 	geom->getOrCreateStateSet()->setMode(GL_BLEND,osg::StateAttribute::ON);
 	geom->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
+	// set visibility
+	projection->setNodeMask((_view == Scene::FirstPerson) ? NOT_VISIBLE_MASK : VISIBLE_MASK);
+
 	// add to scene
 	_root->addChild(projection.get());
 }
@@ -2058,11 +2049,10 @@ void* Scene::graphics_thread(void *arg) {
 	p->setupViewer(NULL);
 
 	// set up the camera
-	//p->setupCamera(gc.get(), traits->width, traits->height);
+	p->setupCamera(gc.get(), traits->width, traits->height);
 
 	// set up scene
 	p->setupScene(traits->width, traits->height, 1);
-	p->setupCamera2(gc.get(), traits->width, traits->height);
 
 	// thread is now running
 	p->_thread = true;

@@ -1,0 +1,20 @@
+#ifndef RSSCENE_FIXEDMANIPULATOR_
+#define RSSCENE_FIXEDMANIPULATOR_
+
+#include <osgGA/NodeTrackerManipulator>
+
+#include <rs/Macros>
+
+namespace rsScene {
+
+	class LIBRSEXPORT FixedManipulator : public osgGA::NodeTrackerManipulator {
+		protected:
+			virtual bool performMovementLeftMouseButton(const double eventTimeDelta, const double dx, const double dy) { return true; }
+			virtual bool performMovementMiddleMouseButton(const double eventTimeDelta, const double dx, const double dy) { return true; }
+			virtual bool performMovementRightMouseButton(const double eventTimeDelta, const double dx, const double dy) { return true; }
+	};
+
+} // namespace rsScene
+
+#endif // RSSCENE_FIXEDMANIPULATOR_
+

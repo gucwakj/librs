@@ -17,7 +17,6 @@
 #include <osgDB/FileUtils>
 #include <osgDB/ReadFile>
 #include <osgFX/Outline>
-#include <osgGA/NodeTrackerManipulator>
 #include <osgGA/OrbitManipulator>
 #include <osgShadow/ShadowedScene>
 #include <osgText/Text>
@@ -27,6 +26,7 @@
 
 #include <rs/Enum>
 #include <rs/Macros>
+#include <rsScene/FixedManipulator>
 #include <rsScene/MouseHandler>
 #include <rsScene/OpenCVOperation>
 #include <rsScene/Scene>
@@ -120,8 +120,8 @@ void Scene::addAndRemoveChildren(bool clean) {
 			for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 				test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 				if (test && (!test->getName().compare(0, 5, "robot"))) {
-					osgGA::NodeTrackerManipulator *manip;
-					manip = dynamic_cast<osgGA::NodeTrackerManipulator*>(_viewer->getCameraManipulator());
+					rsScene::FixedManipulator *manip;
+					manip = dynamic_cast<rsScene::FixedManipulator*>(_viewer->getCameraManipulator());
 					manip->setNode(test); 
 					manip->setTrackNode(test); 
 					manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_ROTATION);
@@ -1240,7 +1240,7 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 		_viewer->getCameraManipulator()->setHomePosition(osg::Vec3f(0.6, -0.8, 0.5), osg::Vec3f(0.1, 0.3, 0), osg::Vec3f(0, 0, 1));
 	}
 	else if (_view == Scene::FirstPerson) {
-		osg::ref_ptr<osgGA::NodeTrackerManipulator> cameraManipulator = new osgGA::NodeTrackerManipulator();
+		osg::ref_ptr<rsScene::FixedManipulator> cameraManipulator = new rsScene::FixedManipulator();
 		_viewer->setCameraManipulator(cameraManipulator.get());
 	}
 

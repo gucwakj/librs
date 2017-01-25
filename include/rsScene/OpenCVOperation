@@ -1,0 +1,18 @@
+#ifndef RSSCENE_OPENCVOPERATION_
+#define RSSCENE_OPENCVOPERATION_
+
+#include <osgViewer/ViewerEventHandlers>
+
+#include <rs/Macros>
+
+namespace rsScene {
+
+	class LIBRSEXPORT OpenCVOperation : public osgViewer::ScreenCaptureHandler::CaptureOperation {
+		public:
+			virtual void operator()(const osg::Image&, const unsigned int);
+	};
+
+} // namespace rsScene
+
+#endif // RSSCENE_OPENCVOPERATION_
+

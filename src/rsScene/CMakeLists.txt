@@ -33,6 +33,13 @@ if (OPENGL_FOUND)
 	set (EXTRA_LIBS ${EXTRA_LIBS} ${OPENGL_LIBRARIES})
 endif ()
 
+# add opencv
+find_package (OpenCV REQUIRED)
+if (OpenCV_FOUND)
+	include_directories (${OpenCV_INC})
+	set (EXTRA_LIBS ${EXTRA_LIBS} ${OpenCV_LIBS})
+endif ()
+
 # add threading
 find_package (Threads)
 set (EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
@@ -47,6 +54,7 @@ set (SRCS ${SRCS}
 	keyboardhandler.cpp
 	mousehandler.cpp
 	skytransform.cpp
+	opencvoperation.cpp
 	scene.cpp
 	robot.cpp
 )

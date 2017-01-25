@@ -72,6 +72,7 @@ namespace rsScene {
 			void setRobotCallback(osg::Group*, osg::NodeCallback*);
 			void setUnits(bool);
 			int setupCamera(osg::GraphicsContext*, double, double);
+			void setupCamera2(osg::GraphicsContext*, double, double);
 			int setupScene(double, double, bool);
 			int setupViewer(osgViewer::Viewer*);
 			void stageChild(osg::Group*);

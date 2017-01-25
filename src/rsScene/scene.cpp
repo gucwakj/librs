@@ -17,6 +17,7 @@
 #include <osgDB/FileUtils>
 #include <osgDB/ReadFile>
 #include <osgFX/Outline>
+#include <osgGA/NodeTrackerManipulator>
 #include <osgGA/OrbitManipulator>
 #include <osgShadow/ShadowedScene>
 #include <osgText/Text>
@@ -27,6 +28,7 @@
 #include <rs/Enum>
 #include <rs/Macros>
 #include <rsScene/MouseHandler>
+#include <rsScene/OpenCVOperation>
 #include <rsScene/Scene>
 #include <rsScene/SkyTransform>
 #include <rsScene/TextureCallback>
@@ -108,7 +110,25 @@ void Scene::addAndRemoveChildren(bool clean) {
 
 	// add new objects to scene
 	while (_staging[0]->getNumChildren()) {
+		// add child to scene
 		_scene->addChild(_staging[0]->getChild(0));
+		// attach camera
+		if (_staging[0]->getChild(0)->getName() == "robot0") {
+			osg::Group *test = NULL;
+			for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
+				test = dynamic_cast<osg::Group *>(_scene->getChild(i));
+				if (test && (!test->getName().compare(0, 5, "robot"))) {
+					osgGA::NodeTrackerManipulator *manip;
+					manip = dynamic_cast<osgGA::NodeTrackerManipulator*>(_viewer->getCameraManipulator());
+					manip->setNode(test); 
+					manip->setTrackNode(test); 
+					manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_AZIM);
+					manip->setTransformation(osg::Vec3f(0, 0.2, 0), osg::Vec3f(0, 0.4, -0.1), osg::Vec3f(0, 0, 1));
+					break;
+				}
+			}
+		}
+		// remove staged child
 		_staging[0]->removeChild(0, 1);
 	}
 
@@ -1222,6 +1242,33 @@ int Scene::setupCamera(osg::GraphicsContext *gc, double w, double h) {
 	return 0;
 }
 
+void Scene::setupCamera2(osg::GraphicsContext *gc, double w, double h) {
+	// camera properties
+	_camera = new osg::Camera();
+	_camera->setGraphicsContext(gc);
+	_camera->setClearColor(osg::Vec4(0, 0, 0, 1));
+	_camera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	_camera->setViewport(new osg::Viewport(0, 0, w, h));
+	_camera->setDrawBuffer(GL_BACK);
+	_camera->setReadBuffer(GL_BACK);
+	_camera->setViewMatrixAsLookAt(osg::Vec3f(0, 0, 0), osg::Vec3f(0, 0, 0), osg::Vec3f(0, 0, 1));
+	_camera->setComputeNearFarMode(osgUtil::CullVisitor::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
+	_camera->setCullingMode(osgUtil::CullVisitor::NO_CULLING);
+	_camera->setNearFarRatio(0.00001);
+	_camera->getOrCreateStateSet()->setGlobalDefaults();
+	_viewer->addSlave(_camera);
+
+	// viewer camera properties
+	osg::ref_ptr<osgGA::NodeTrackerManipulator> cameraManipulator = new osgGA::NodeTrackerManipulator();
+	_viewer->setCameraManipulator(cameraManipulator.get());
+
+	// outlining setup
+	/*osg::DisplaySettings::instance()->setMinimumNumStencilBits(1);
+	unsigned int clearMask = _camera->getClearMask();
+	_camera->setClearMask(clearMask | GL_STENCIL_BUFFER_BIT);
+	_camera->setClearStencil(0);*/
+}
+
 int Scene::setupScene(double w, double h, bool pause) {
 	// create the root node
 	_root = new osg::Group;
@@ -1267,9 +1314,9 @@ int Scene::setupScene(double w, double h, bool pause) {
 	osg::ref_ptr<MouseHandler> mh = new MouseHandler(this);
 	_viewer->addEventHandler(mh.get());
 
-	_sch = new osgViewer::ScreenCaptureHandler(new osgViewer::ScreenCaptureHandler::WriteToFile("screen_shot", "png"));
-	_viewer->addEventHandler(_sch);
-	//_sch->captureNextFrame(*_viewer);
+	// create and add screen capture handler
+	_sch = new osgViewer::ScreenCaptureHandler(new rsScene::OpenCVOperation());
+	_sch->captureNextFrame(*_viewer);
 
 	// show scene
 	_viewer->setSceneData(_root);
@@ -2011,10 +2058,11 @@ void* Scene::graphics_thread(void *arg) {
 	p->setupViewer(NULL);
 
 	// set up the camera
-	p->setupCamera(gc.get(), traits->width, traits->height);
+	//p->setupCamera(gc.get(), traits->width, traits->height);
 
 	// set up scene
 	p->setupScene(traits->width, traits->height, 1);
+	p->setupCamera2(gc.get(), traits->width, traits->height);
 
 	// thread is now running
 	p->_thread = true;

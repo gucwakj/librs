@@ -125,7 +125,6 @@ void Scene::addAndRemoveChildren(bool clean) {
 					manip->setNode(test); 
 					manip->setTrackNode(test); 
 					manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_ROTATION);
-					manip->setRotationMode(osgGA::NodeTrackerManipulator::ELEVATION_AZIM);
 					manip->setTransformation(osg::Vec3f(0, 0.2, 0), osg::Vec3f(0, 0.4, -0.1), osg::Vec3f(0, 0, 1));
 					break;
 				}

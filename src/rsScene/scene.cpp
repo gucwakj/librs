@@ -986,9 +986,11 @@ void Scene::drawPath(std::vector<double> *xpts, std::vector<double> *ypts) {
 
 	// set rendering properties
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-	geode->getOrCreateStateSet()->setRenderBinDetails(20, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
+	geode->getOrCreateStateSet()->setRenderBinDetails(200, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	geode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	geode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+	geode->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::OFF);
 	geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
 
 	// set geode properties
@@ -1300,7 +1302,6 @@ int Scene::setupScene(double w, double h, bool pause) {
 
 	// create and add screen capture handler
 	_sch = new osgViewer::ScreenCaptureHandler(new rsScene::OpenCVOperation());
-	_sch->captureNextFrame(*_viewer);
 
 	// show scene
 	_viewer->setSceneData(_root);
@@ -2084,6 +2085,9 @@ void* Scene::graphics_thread(void *arg) {
 
 		// update clock
 		p->updateClock();
+
+		// process next frame
+		p->_sch->captureNextFrame(*(p->_viewer));
 
 		RS_MUTEX_LOCK(&(p->_thread_mutex));
 	}

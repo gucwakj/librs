@@ -11,8 +11,6 @@ Integrator::Integrator(void) {
 	_driver = NULL;
 	_rec_on = false;
 	_time = 0;
-	_turn_amp = 0;
-	_turn_time = -1;
 	_p_brain = NULL;
 }
 
@@ -105,17 +103,13 @@ const rs::Vec* Integrator::runStep(float newtime) {
 		}
 	}
 
-	// turning
-	if ((newtime - _turn_time) < rs::Epsilon) {
-		if (fabs(_turn_amp) > rs::Epsilon) {
-			for (short i = 0; i < _params->num_body; i++) {
-				_v[i] += _turn_amp;
-			}
-		}
-	}
-
 	// brain
 	if (_p_brain) _p_brain(_params->robot);
+
+	// turning
+	for (short i = 0; i < _params->num_body; i++) {
+		_v[i] += _params->angle;
+	}
 
 	// record for plotting
 	if (_rec_on) {
@@ -142,10 +136,5 @@ void Integrator::setBrain(void (*function)(void*)) {
 
 void Integrator::setRecording(bool b) {
 	_rec_on = b;
-}
-
-void Integrator::setTurn(float amplitude, float time) {
-	_turn_amp = amplitude;
-	_turn_time = time;
 }
 

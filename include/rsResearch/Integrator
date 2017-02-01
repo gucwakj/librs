@@ -17,6 +17,7 @@ namespace rsResearch {
 		float a;
 		float w1;
 		float w2;
+		float angle;
 		short num_body;
 		short num_robots;
 		short num_vars;
@@ -35,7 +36,6 @@ namespace rsResearch {
 			void setup(int(*)(double, const double*, double*, void*), struct Params*, float = 0.004);
 			void setBrain(void(*)(void*));
 			void setRecording(bool);
-			void setTurn(float, float);
 
 		// typedefs
 		public:
@@ -58,10 +58,6 @@ namespace rsResearch {
 			bool _rec_on;					// turn on recording
 			std::vector<rs::Vec> _rec_v;	// recorded outputs
 			std::vector<float> _rec_t;		// recorded times
-
-			// turning
-			float _turn_amp;				// turning signal amplitude
-			float _turn_time;				// turning signal duration
 	};
 
 } // namespace rsResearch

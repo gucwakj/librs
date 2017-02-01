@@ -72,7 +72,7 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 		_scene->setTheta(theta);
 
 		// show image for testing
-		imshow("drawing", drawing); cvWaitKey(40);
+		//imshow("drawing", drawing); cvWaitKey(40);
 
 		// save to disk for testing
 		//cv::imwrite("output.png", mat);

@@ -2,8 +2,13 @@
 #include <opencv/highgui.h>
 
 #include <rsScene/OpenCVOperation>
+#include <rsScene/Scene>
 
 using namespace rsScene;
+
+OpenCVOperation::OpenCVOperation(Scene *scene) {
+	_scene = scene;
+}
 
 void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*context_id*/) {
 	// get rid of const qualifier
@@ -62,7 +67,9 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 			cv::Point pc(pt[4], pt[5]);
 			theta = asin((pc.x - c.x) / sqrt(pow(pc.x - c.x, 2) + pow(pc.y - c.y, 2)));
 		}
-		std::cerr << "theta: " << theta << std::endl;
+
+		// send back to scene 
+		_scene->setTheta(theta);
 
 		// show image for testing
 		imshow("drawing", drawing); cvWaitKey(40);

@@ -6,10 +6,18 @@
 #include <rs/Macros>
 
 namespace rsScene {
+	// forward declarations
+	class Scene;
 
 	class LIBRSEXPORT OpenCVOperation : public osgViewer::ScreenCaptureHandler::CaptureOperation {
+		// public functions
 		public:
+			OpenCVOperation(Scene*);
 			virtual void operator()(const osg::Image&, const unsigned int);
+
+		// private data
+		private:
+			Scene *_scene;
 	};
 
 } // namespace rsScene

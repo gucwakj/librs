@@ -84,6 +84,7 @@ Scene::Scene(void) : KeyboardHandler() {
 	_label = true;
 	//_view = Scene::ThirdPerson;
 	_view = Scene::FirstPerson;
+	RS_MUTEX_INIT(&_theta_mutex);
 }
 
 Scene::~Scene(void) {
@@ -97,6 +98,7 @@ Scene::~Scene(void) {
 		RS_MUTEX_DESTROY(&_graphics_mutex);
 		// clean mutexes
 		RS_MUTEX_DESTROY(&_thread_mutex);
+		RS_MUTEX_DESTROY(&_theta_mutex);
 	}
 }
 
@@ -1053,6 +1055,14 @@ std::string Scene::getTexturePath(void) {
 	return path;
 }
 
+double Scene::getTheta(void) {
+	double theta = 0;
+	RS_MUTEX_LOCK(&(_theta_mutex));
+	theta = _theta;
+	RS_MUTEX_UNLOCK(&(_theta_mutex));
+	return theta;
+}
+
 void Scene::reidRobot(int id) {
 	osg::Group *test = NULL;
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
@@ -1209,6 +1219,12 @@ void Scene::setRobotCallback(osg::Group *robot, osg::NodeCallback *nc) {
 	robot->setUpdateCallback(nc);
 }
 
+void Scene::setTheta(double theta) {
+	RS_MUTEX_LOCK(&(_theta_mutex));
+	_theta = theta;
+	RS_MUTEX_UNLOCK(&(_theta_mutex));
+}
+
 void Scene::setUnits(bool units) {
 	_units = units;
 }
@@ -1301,7 +1317,7 @@ int Scene::setupScene(double w, double h, bool pause) {
 	_viewer->addEventHandler(mh.get());
 
 	// create and add screen capture handler
-	_sch = new osgViewer::ScreenCaptureHandler(new rsScene::OpenCVOperation());
+	_sch = new osgViewer::ScreenCaptureHandler(new rsScene::OpenCVOperation(this));
 
 	// show scene
 	_viewer->setSceneData(_root);

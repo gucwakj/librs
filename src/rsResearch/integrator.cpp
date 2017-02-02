@@ -104,8 +104,8 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	}
 
 	// brain
-	static int count = 50;
-	if (count == 50) {
+	static int count = 500;
+	if (count == 500) {
 		if (_p_brain) _p_brain(_params->robot);
 		count = 0;
 	}

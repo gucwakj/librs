@@ -127,9 +127,9 @@ void Scene::addAndRemoveChildren(bool clean) {
 					manip->setNode(test);
 					manip->setTrackNode(test);
 					manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_ROTATION);
-					manip->setRotation(osg::Quat(0, 0, 0, 1));
+					osg::PositionAttitudeTransform *pat = dynamic_cast<osg::PositionAttitudeTransform *>(_staging[0]->getChild(0)->asGroup()->getChild(2 + i));
+					manip->setRotation(osg::Quat(0, sin(rs::Pi/4), 0, cos(rs::Pi/4))*pat->getAttitude()*osg::Quat(0, 0, sin(rs::Pi/2), cos(rs::Pi/2)));
 					manip->setDistance(0.5);
-					//manip->setTransformation(osg::Vec3f(0, 0.2, 0), osg::Vec3f(0, 0.4, -0.1), osg::Vec3f(0, 0, 1));
 					break;
 				}
 			}
@@ -2107,6 +2107,21 @@ void* Scene::graphics_thread(void *arg) {
 		// process next frame
 		p->_sch->captureNextFrame(*(p->_viewer));
 
+		// update camera
+		if (p->_view == Scene::FirstPerson) {
+			osg::Group *test = NULL;
+			for (unsigned int i = 0; i < p->_scene->getNumChildren(); i++) {
+				test = dynamic_cast<osg::Group *>(p->_scene->getChild(i));
+				if (test && (!test->getName().compare(0, 6, "robot0"))) {
+					osg::PositionAttitudeTransform *pat = dynamic_cast<osg::PositionAttitudeTransform *>(test->getChild(2 + i));
+					rsScene::FixedManipulator *manip = dynamic_cast<rsScene::FixedManipulator*>(p->_viewer->getCameraManipulator());
+					manip->setRotation(osg::Quat(0, sin(rs::Pi/4), 0, cos(rs::Pi/4))*pat->getAttitude()*osg::Quat(0, 0, sin(rs::Pi/2), cos(rs::Pi/2)));
+					break;
+				}
+			}
+		}
+
+		// unlock
 		RS_MUTEX_LOCK(&(p->_thread_mutex));
 	}
 	RS_MUTEX_UNLOCK(&(p->_thread_mutex));

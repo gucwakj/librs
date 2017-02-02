@@ -21,6 +21,7 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 	int width = img->s();
 	int height = img->t();
 	int depth = img->r();
+	bool output = false;
 	if (width > 0 && height > 0 && depth > 0) {
 		// convert image from osg -> opencv
 		IplImage *ipl = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 3);
@@ -57,22 +58,27 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 		}
 
 		// draw line and center
-		cv::line(drawing, cv::Point(pt[0], pt[1]), cv::Point(pt[2], pt[3]), cv::Scalar(0, 0, 255), 3, CV_AA);
-		cv::circle(drawing, cv::Point(pt[4], pt[5]), 5.0, cv::Scalar(0, 255, 0), -1, 8);
+		if (output) cv::line(drawing, cv::Point(pt[0], pt[1]), cv::Point(pt[2], pt[3]), cv::Scalar(0, 0, 255), 3, CV_AA);
+		if (output) cv::circle(drawing, cv::Point(pt[4], pt[5]), 5.0, cv::Scalar(0, 255, 0), -1, 8);
 
 		// calculate angle
 		double theta = CV_PI/2;
 		if (lines.size()) {
-			cv::Point c(mat.cols/2, mat.rows);
+			cv::Point c(mat.cols/2, mat.rows/2);
 			cv::Point pc(pt[4], pt[5]);
-			theta = asin((pc.x - c.x) / sqrt(pow(pc.x - c.x, 2) + pow(pc.y - c.y, 2)));
+			theta = asin((c.y - pc.y) / sqrt(pow(pc.x - c.x, 2) + pow(pc.y - c.y, 2)));
+			theta = CV_PI/2 - theta;
+			if (c.x > pc.x) { theta *= -1; }
 		}
+//std::cerr << "theta: " << theta << std::endl;
+		if (theta > rs::Pi/2) { theta = rs::Pi/2; }
+		if (theta < -rs::Pi/2) { theta = -rs::Pi/2; }
 
 		// send back to scene 
 		_scene->setTheta(theta);
 
 		// show image for testing
-		//imshow("drawing", drawing); cvWaitKey(40);
+		if (output) { imshow("drawing", drawing); cvWaitKey(40); }
 
 		// save to disk for testing
 		//cv::imwrite("output.png", mat);

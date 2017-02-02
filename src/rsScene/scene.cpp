@@ -124,10 +124,12 @@ void Scene::addAndRemoveChildren(bool clean) {
 				if (test && (!test->getName().compare(0, 5, "robot"))) {
 					rsScene::FixedManipulator *manip;
 					manip = dynamic_cast<rsScene::FixedManipulator*>(_viewer->getCameraManipulator());
-					manip->setNode(test); 
-					manip->setTrackNode(test); 
+					manip->setNode(test);
+					manip->setTrackNode(test);
 					manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_ROTATION);
-					manip->setTransformation(osg::Vec3f(0, 0.2, 0), osg::Vec3f(0, 0.4, -0.1), osg::Vec3f(0, 0, 1));
+					manip->setRotation(osg::Quat(0, 0, 0, 1));
+					manip->setDistance(0.5);
+					//manip->setTransformation(osg::Vec3f(0, 0.2, 0), osg::Vec3f(0, 0.4, -0.1), osg::Vec3f(0, 0, 1));
 					break;
 				}
 			}

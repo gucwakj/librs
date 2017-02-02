@@ -82,6 +82,7 @@ Scene::Scene(void) : KeyboardHandler() {
 	// flags for graphical output options
 	_highlight = false;
 	_label = true;
+	_rate = 20;
 	//_view = Scene::ThirdPerson;
 	_view = Scene::FirstPerson;
 	RS_MUTEX_INIT(&_theta_mutex);

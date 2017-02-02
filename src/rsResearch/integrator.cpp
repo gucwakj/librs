@@ -104,19 +104,25 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	}
 
 	// brain
+	if (_p_brain) _p_brain(_params->robot);
+
+	// wait to actually implement new control signal onto cpg
+	static double angle = 0, sum = 0;
 	static int count = 500;
 	if (count == 500) {
-		if (_p_brain) _p_brain(_params->robot);
+		angle = sum/count;
 		count = 0;
+		sum = 0;
 	}
 	else {
+		sum += _params->angle;
 		count++;
 	}
 
 	// turning
-	if (_params->angle < -0.05 || 0.05 < _params->angle) {
+	if (angle < -0.1 || 0.1 < angle) {
 		for (short i = 0; i < _params->num_body; i++) {
-			_v[i] += _params->angle;
+			_v[i] += angle;
 		}
 	}
 

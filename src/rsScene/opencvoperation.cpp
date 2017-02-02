@@ -20,9 +20,7 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 	// check image size
 	int width = img->s();
 	int height = img->t();
-	int depth = img->r();
-	bool output = false;
-	if (width > 0 && height > 0 && depth > 0) {
+	if (width > 0 && height > 0 && img->r() > 0) {
 		// convert image from osg -> opencv
 		IplImage *ipl = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 3);
 		cvSetData(ipl, img->data(), 3*width);
@@ -36,9 +34,6 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 
 		// threshold the HSV image
 		inRange(mat, cv::Scalar(120, 0, 0), cv::Scalar(179, 255, 255), mat);
-
-		// create output drawing
-		cv::Mat drawing = cv::Mat::zeros(mat.size(), CV_8UC3);
 
 		// use probabilistic hough line detector
 		cv::vector<cv::Vec4i> lines;
@@ -57,10 +52,6 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 			}
 		}
 
-		// draw line and center
-		if (output) cv::line(drawing, cv::Point(pt[0], pt[1]), cv::Point(pt[2], pt[3]), cv::Scalar(0, 0, 255), 3, CV_AA);
-		if (output) cv::circle(drawing, cv::Point(pt[4], pt[5]), 5.0, cv::Scalar(0, 255, 0), -1, 8);
-
 		// calculate angle
 		double theta = CV_PI/2;
 		if (lines.size()) {
@@ -70,15 +61,22 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 			theta = CV_PI/2 - theta;
 			if (c.x > pc.x) { theta *= -1; }
 		}
-//std::cerr << "theta: " << theta << std::endl;
-		if (theta > rs::Pi/2) { theta = rs::Pi/2; }
-		if (theta < -rs::Pi/2) { theta = -rs::Pi/2; }
 
 		// send back to scene 
 		_scene->setTheta(theta);
 
 		// show image for testing
-		if (output) { imshow("drawing", drawing); cvWaitKey(40); }
+		bool output = false;
+		if (output) {
+			// create output drawing
+			cv::Mat drawing = cv::Mat::zeros(mat.size(), CV_8UC3);
+			// draw line and center
+			cv::line(drawing, cv::Point(pt[0], pt[1]), cv::Point(pt[2], pt[3]), cv::Scalar(0, 0, 255), 3, CV_AA);
+			cv::circle(drawing, cv::Point(pt[4], pt[5]), 5.0, cv::Scalar(0, 255, 0), -1, 8);
+			// show output
+			imshow("drawing", drawing);
+			cvWaitKey(40);
+		}
 
 		// save to disk for testing
 		//cv::imwrite("output.png", mat);

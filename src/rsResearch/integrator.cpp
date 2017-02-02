@@ -114,8 +114,11 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	}
 
 	// turning
-	for (short i = 0; i < _params->num_body; i++) {
-		_v[i] += _params->angle;
+std::cerr << _params->angle << std::endl;
+	if (_params->angle < -0.05 || 0.05 < _params->angle) {
+		for (short i = 0; i < _params->num_body; i++) {
+			_v[i] += _params->angle;
+		}
 	}
 
 	// record for plotting

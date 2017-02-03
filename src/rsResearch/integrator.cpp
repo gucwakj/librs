@@ -110,7 +110,9 @@ const rs::Vec* Integrator::runStep(float newtime) {
 	static double angle = 0, sum = 0;
 	static int count = 500;
 	if (count == 500) {
-		angle = sum/count;
+		if ((sum/count - angle) > 0.08)			angle += 0.08;
+		else if ((sum/count - angle) < -0.08)	angle -= 0.08;
+		else angle = sum/count;
 		count = 0;
 		sum = 0;
 	}

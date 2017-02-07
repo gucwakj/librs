@@ -1,3 +1,4 @@
+#include <iostream>
 #include <rs/Macros>
 #include <rsSim/Sim>
 #include <rsSim/Dof>
@@ -258,6 +259,12 @@ void Dof::simPostCollisionThread(void) {
 	RS_MUTEX_LOCK(&_theta_mutex);
 	RS_MUTEX_LOCK(&_success_mutex);
 	RS_MUTEX_LOCK(&_motor[Bodies::Joint].success_mutex);
+
+	// spit out position data of robot0
+	if (this->getID() == 0) {
+		const double *pos = dBodyGetPosition(_body[Bodies::Body]);
+		std::cout << pos[0] << " " << pos[1] << std::endl;
+	}
 
 	// zero velocity == stopped
 	_motor[Bodies::Joint].stopping += (!(int)(dJointGetAMotorParam(_motor[Bodies::Joint].id, dParamVel)*1000) );

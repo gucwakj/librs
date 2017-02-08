@@ -108,8 +108,8 @@ const rs::Vec* Integrator::runStep(float newtime) {
 
 	// wait to actually implement new control signal onto cpg
 	static double angle = 0, sum = 0;
-	static int count = 500;
-	if (count == 500) {
+	static int count = 250;
+	if (count == 250) {
 		if ((sum/count - angle) > 0.08)			angle += 0.08;
 		else if ((sum/count - angle) < -0.08)	angle -= 0.08;
 		else angle = sum/count;

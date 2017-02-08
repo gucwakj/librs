@@ -62,7 +62,7 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 			if (c.x > pc.x) { theta *= -1; }
 		}
 
-		// send back to scene 
+		// send back to scene
 		_scene->setTheta(theta);
 
 		// show image for testing

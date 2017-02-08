@@ -747,7 +747,8 @@ void* Sim::simulation_thread(void *arg) {
 #ifdef RS_WIN32
 					Sleep((unsigned int)(sim->_clock*1000) - (end - start) - clock/1000);
 #else
-					usleep(sim->_clock*1000000 - ((end - start)*1000) - clock);
+					float sleeptime = sim->_clock*1000000 - ((end - start)*1000) - clock;
+					if (sleeptime > rs::Epsilon) usleep(sleeptime);
 #endif
 				}
 

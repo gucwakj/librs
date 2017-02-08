@@ -22,9 +22,10 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 	int height = img->t();
 	if (width > 0 && height > 0 && img->r() > 0) {
 		// convert image from osg -> opencv
-		IplImage *ipl = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 3);
+		IplImage *ipl = cvCreateImageHeader(cvSize(width, height), IPL_DEPTH_8U, 3);
 		cvSetData(ipl, img->data(), 3*width);
 		cv::Mat mat = cv::cvarrToMat(ipl);
+		cvReleaseImageHeader(&ipl);
 
 		// flip image
 		cv::flip(mat, mat, 0);

@@ -2097,19 +2097,8 @@ void* Scene::graphics_thread(void *arg) {
 		p->addAndRemoveChildren();
 		RS_MUTEX_UNLOCK(&(p->_thread_mutex));
 
-		// pause for proper frame rate
-		osg::Timer_t endFrameTick = osg::Timer::instance()->tick();
-		double frameTime = osg::Timer::instance()->delta_s(startFrameTick, endFrameTick);
-		if (frameTime < minFrameTime) OpenThreads::Thread::microSleep(static_cast<unsigned int>(1000000.0*(minFrameTime - frameTime)));
-
-		// update clock
-		p->updateClock();
-
-		// process next frame
-		p->_sch->captureNextFrame(*(p->_viewer));
-
-		// update camera
 		if (p->_view == Scene::FirstPerson) {
+			// update camera
 			osg::Group *test = NULL;
 			for (unsigned int i = 0; i < p->_scene->getNumChildren(); i++) {
 				test = dynamic_cast<osg::Group *>(p->_scene->getChild(i));
@@ -2120,7 +2109,19 @@ void* Scene::graphics_thread(void *arg) {
 					break;
 				}
 			}
+
+			// process next frame
+			p->_sch->captureNextFrame(*(p->_viewer));
 		}
+		else {
+			// update clock
+			p->updateClock();
+		}
+
+		// pause for proper frame rate
+		osg::Timer_t endFrameTick = osg::Timer::instance()->tick();
+		double frameTime = osg::Timer::instance()->delta_s(startFrameTick, endFrameTick);
+		if (frameTime < minFrameTime) OpenThreads::Thread::microSleep(static_cast<unsigned int>(1000000.0*(minFrameTime - frameTime)));
 
 		// unlock
 		RS_MUTEX_LOCK(&(p->_thread_mutex));

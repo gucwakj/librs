@@ -537,6 +537,15 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 				ele->QueryFloatAttribute("alpha", &d);
 				_marker.back()->setColor(a, b, c, d);
 			}
+			// fill
+			if ( (ele = node->FirstChildElement("fill")) ) {
+				a = 0; b = 0; c = 0; d = 0;
+				ele->QueryFloatAttribute("r", &a);
+				ele->QueryFloatAttribute("g", &b);
+				ele->QueryFloatAttribute("b", &c);
+				ele->QueryFloatAttribute("alpha", &d);
+				_marker.back()->setFill(a, b, c, d);
+			}
 			// start position
 			if ( (ele = node->FirstChildElement("position")) ) {
 				a = 0; b = 0; c = 0;

@@ -52,7 +52,7 @@ namespace rsScene {
 			int deleteObstacle(int);
 			int deletePreconfig(int);
 			int deleteRobot(int);
-			int drawMarker(int, int, const rs::Pos&, const rs::Pos&, const rs::Pos&, const rs::Vec&, int, std::string);
+			int drawMarker(int, int, const rs::Pos&, const rs::Pos&, const rs::Pos&, const rs::Vec&, const rs::Vec&, int, std::string);
 			Obstacle* drawObstacle(int, int, const rs::Pos&, const rs::Vec&, const rs::Vec&, const rs::Quat&);
 			void drawPath(std::vector<double>*, std::vector<double>*);
 			osgText::Text* getClockText(void);

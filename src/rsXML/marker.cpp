@@ -7,6 +7,7 @@ Marker::Marker(short type) {
 	_size = 1;
 	_type = type;
 	_c.allocate(4);
+	_f.allocate(4);
 }
 
 /**********************************************************
@@ -22,6 +23,10 @@ bool Marker::getConnect(void) {
 
 const rs::Pos Marker::getEnd(void) {
 	return _e;
+}
+
+const rs::Vec Marker::getFill(void) {
+	return _f;
 }
 
 short Marker::getID(void) {
@@ -63,6 +68,13 @@ void Marker::setEnd(float a, float b, float c) {
 	_e[0] = a;
 	_e[1] = b;
 	_e[2] = c;
+}
+
+void Marker::setFill(float a, float b, float c, float d) {
+	_f[0] = a;
+	_f[1] = b;
+	_f[2] = c;
+	_f[3] = d;
 }
 
 void Marker::setID(short id) {

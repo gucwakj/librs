@@ -458,6 +458,25 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::Circle: {
+			{ // fill
+				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+				osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+				colors->push_back(osg::Vec4(fill[0], fill[1], fill[2], fill[3]));
+				geom->setColorArray(colors.get());
+				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+				int num = 50;
+				double angle = 2*rs::Pi/num, angle1 = 0.0;
+				vert->push_back(osg::Vec3(p1[2]*cos(angle1), p1[2]*sin(angle1), 0.001));
+				for (int i = 0; i < num; i++) {
+					vert->push_back(osg::Vec3(p1[2]*cos(angle1), p1[2]*sin(angle1), 0.001));
+					angle1 += angle;
+				}
+				geom->setVertexArray(vert.get());
+				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num));
+				geom->getOrCreateStateSet()->setMode(GL_FILL, osg::StateAttribute::ON);
+				geode->addDrawable(geom.get());
+			}
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			vert->push_back(osg::Vec3(p1[0] + p1[2]*cos(0) - p1[0], p1[1] + p1[2]*sin(0) - p1[1], 0.001));
@@ -473,6 +492,10 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			geom->setVertexArray(vert.get());
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2 + 2*(n-1)));
 			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
+			osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+			colors->push_back(osg::Vec4(c[0], c[1], c[2], c[3]));
+			geom->setColorArray(colors.get());
+			geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 			width->setWidth(3*size);
 			geode->addDrawable(geom.get());
 			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);
@@ -614,7 +637,6 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 	geode->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 	geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	geode->getOrCreateStateSet()->setMode(GL_ALPHA_TEST, osg::StateAttribute::ON);
-	geode->getOrCreateStateSet()->setAttribute(create_material(osg::Vec4(c[0], c[1], c[2], c[3])));
 	geode->setCullingActive(false);
 
 	// add positioning capability

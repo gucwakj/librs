@@ -19,6 +19,7 @@ namespace rsXML {
 			const rs::Vec getColor(void);
 			bool getConnect(void);
 			const rs::Pos getEnd(void);
+			const rs::Vec getFill(void);
 			short getID(void);
 			const rs::Pos getStart(void);
 			short getSize(void);
@@ -28,6 +29,7 @@ namespace rsXML {
 			void setColor(float, float, float, float);
 			void setConnect(bool);
 			void setEnd(float, float, float);
+			void setFill(float, float, float, float);
 			void setID(short);
 			void setLabel(std::string);
 			void setPoint(float, float);
@@ -45,6 +47,7 @@ namespace rsXML {
 			rs::Pos _p;			// data point
 			rs::Pos _s;			// start position
 			rs::Vec _c;			// color
+			rs::Vec _f;			// fill
 	};
 
 } // namespace rsXML

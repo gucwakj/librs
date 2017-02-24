@@ -76,7 +76,7 @@ void Writer::reidRobot(tinyxml2::XMLElement *robot) {
 	robot->SetAttribute("id", i - 1);
 }
 
-void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, int size, const rs::Pos &pt) {
+void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, const rs::Vec &f, int size, const rs::Pos &pt) {
 	// set start position
 	tinyxml2::XMLElement *pos = getOrCreateChild(marker, "position");
 	pos->SetAttribute("x", p1[0]);
@@ -139,12 +139,19 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs:
 			break;
 	}
 
-	// set led
-	tinyxml2::XMLElement *led = getOrCreateChild(marker, "color");
-	led->SetAttribute("r", c[0]);
-	led->SetAttribute("g", c[1]);
-	led->SetAttribute("b", c[2]);
-	led->SetAttribute("alpha", c[3]);
+	// set color
+	tinyxml2::XMLElement *color = getOrCreateChild(marker, "color");
+	color->SetAttribute("r", c[0]);
+	color->SetAttribute("g", c[1]);
+	color->SetAttribute("b", c[2]);
+	color->SetAttribute("alpha", c[3]);
+
+	// set fill
+	tinyxml2::XMLElement *fill = getOrCreateChild(marker, "fill");
+	fill->SetAttribute("r", f[0]);
+	fill->SetAttribute("g", f[1]);
+	fill->SetAttribute("b", f[2]);
+	fill->SetAttribute("alpha", f[3]);
 
 	// write to disk
 	this->save();

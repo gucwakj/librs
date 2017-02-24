@@ -1135,17 +1135,17 @@ double Scene::getTheta(void) {
 	return theta;
 }
 
-void Scene::reidRobot(int id) {
+void Scene::reidRobot(int id, int num) {
 	osg::Group *test = NULL;
 	for (unsigned int i = 0; i < _scene->getNumChildren(); i++) {
 		test = dynamic_cast<osg::Group *>(_scene->getChild(i));
 		// preconfig robot
 		if (!test->getName().compare(std::string("pre").append(std::to_string(id)))) {
-			test->setName(std::string("pre").append(std::to_string(id - 1)));
+			test->setName(std::string("pre").append(std::to_string(id - num)));
 		}
 		// individual robot
 		if (!test->getName().compare(std::string("robot").append(std::to_string(id)))) {
-			test->setName(std::string("robot").append(std::to_string(id - 1)));
+			test->setName(std::string("robot").append(std::to_string(id - num)));
 		}
 	}
 }

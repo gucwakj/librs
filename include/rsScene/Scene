@@ -59,7 +59,7 @@ namespace rsScene {
 			osgText::Text* getHUDText(void);
 			std::string getTexturePath(void);
 			double getTheta(void);
-			void reidRobot(int);
+			void reidRobot(int, int);
 			void setBackgroundImage(int, std::string);
 			void setClock(bool);
 			void setFrameRate(int);

@@ -8,6 +8,7 @@ Marker::Marker(short type) {
 	_type = type;
 	_c.allocate(4);
 	_f.allocate(4);
+	_f[0] = 1; _f[1] = 1; _f[2] = 1; _f[3] = 0; // white w/ 0% opacity
 }
 
 /**********************************************************

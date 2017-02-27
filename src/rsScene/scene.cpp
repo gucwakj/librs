@@ -390,6 +390,25 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::ArcSector: {
+			{ // fill
+				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+				osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+				colors->push_back(osg::Vec4(fill[0], fill[1], fill[2], fill[3]));
+				geom->setColorArray(colors.get());
+				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+				int num = 30;
+				double angle = (p2[1] - p2[0])/(num-2), angle1 = 0.0;
+				vert->push_back(osg::Vec3(0, 0, 0.001));
+				for (int i = 0; i < num; i++) {
+					vert->push_back(osg::Vec3(p1[2]*cos(angle1), p1[2]*sin(angle1), 0.001));
+					angle1 += angle;
+				}
+				geom->setVertexArray(vert.get());
+				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num));
+				geom->getOrCreateStateSet()->setMode(GL_FILL, osg::StateAttribute::ON);
+				geode->addDrawable(geom.get());
+			}
 			float start = p2[0];
 			float end = p2[1];
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
@@ -421,6 +440,24 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::ArcSegment: {
+			{ // fill
+				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+				osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+				colors->push_back(osg::Vec4(fill[0], fill[1], fill[2], fill[3]));
+				geom->setColorArray(colors.get());
+				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+				int num = 30;
+				double angle = (p2[1] - p2[0])/(num-1), angle1 = 0.0;
+				for (int i = 0; i < num; i++) {
+					vert->push_back(osg::Vec3(p1[2]*cos(angle1), p1[2]*sin(angle1), 0.001));
+					angle1 += angle;
+				}
+				geom->setVertexArray(vert.get());
+				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num));
+				geom->getOrCreateStateSet()->setMode(GL_FILL, osg::StateAttribute::ON);
+				geode->addDrawable(geom.get());
+			}
 			float start = p2[0];
 			float end = p2[1];
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
@@ -529,6 +566,25 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			float w = p2[0]/2;
 			float h = p2[1]/2;
 			float a = p2[2];
+			{ // fill
+				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+				osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+				colors->push_back(osg::Vec4(fill[0], fill[1], fill[2], fill[3]));
+				geom->setColorArray(colors.get());
+				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+				int num = 30;
+				vert->push_back(osg::Vec3(0, 0, 0.001));
+				for (int i = 0; i < num; i++) {
+					double rad = i*(2*rs::Pi/(num-1));
+					vert->push_back(osg::Vec3(w*cos(rad)*cos(a) - h*sin(rad)*sin(a), w*cos(rad)*sin(a) + h*sin(rad)*cos(a), 0.001));
+				}
+				vert->push_back(osg::Vec3(0, 0, 0.001));
+				geom->setVertexArray(vert.get());
+				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num+2));
+				geom->getOrCreateStateSet()->setMode(GL_FILL, osg::StateAttribute::ON);
+				geode->addDrawable(geom.get());
+			}
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			vert->push_back(osg::Vec3(p1[0] + w*cos(0)*cos(a) - p1[0], p1[1] + w*cos(0)*sin(a) + h*sin(0)*cos(a) - p1[1], 0.001));
@@ -571,10 +627,30 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::Polygon: {
+			{ // fill
+				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+				osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+				colors->push_back(osg::Vec4(fill[0], fill[1], fill[2], fill[3]));
+				geom->setColorArray(colors.get());
+				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+				int num = rs::M2IN(p2[0] + 0.001);
+				float r = p1[2]*sin(rs::Pi/num);
+				vert->push_back(osg::Vec3(r, 0, 0.001));
+				for (int i = 0; i < num; i++) {
+					float rad = i*(2*rs::Pi/num);
+					vert->push_back(osg::Vec3(r*cos(rad), r*sin(rad), 0.001));
+				}
+				vert->push_back(osg::Vec3(r, 0, 0.001));
+				geom->setVertexArray(vert.get());
+				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num+2));
+				geom->getOrCreateStateSet()->setMode(GL_FILL, osg::StateAttribute::ON);
+				geode->addDrawable(geom.get());
+			}
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			int n = rs::M2IN(p2[0] + 0.001);
-			double r = p1[2]*sin(rs::Pi/n);
+			float r = p1[2]*sin(rs::Pi/n);
 			vert->push_back(osg::Vec3(p1[0] + r*cos(0) - p1[0], p1[1] + r*sin(0) - p1[1], 0.001));
 			for (int i = 1; i < n; i++) {
 				double rad = i*(2*rs::Pi/n);
@@ -597,6 +673,24 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::Quad: {
+			{ // fill
+				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+				osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+				colors->push_back(osg::Vec4(fill[0], fill[1], fill[2], fill[3]));
+				geom->setColorArray(colors.get());
+				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+				int num = 5;
+				vert->push_back(osg::Vec3(0, 0, 0.001));
+				vert->push_back(osg::Vec3(p1[1] - p1[0], p2[1] - p2[0], 0.001));
+				vert->push_back(osg::Vec3(p1[2] - p1[0], p2[2] - p2[0], 0.001));
+				vert->push_back(osg::Vec3(pt[0] - p1[0], pt[1] - p2[0], 0.001));
+				vert->push_back(osg::Vec3(0, 0, 0.001));
+				geom->setVertexArray(vert.get());
+				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num));
+				geom->getOrCreateStateSet()->setMode(GL_FILL, osg::StateAttribute::ON);
+				geode->addDrawable(geom.get());
+			}
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			vert->push_back(osg::Vec3(0, 0, 0.001));
@@ -620,15 +714,33 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::Rectangle: {
+			{ // fill
+				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+				osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+				colors->push_back(osg::Vec4(fill[0], fill[1], fill[2], fill[3]));
+				geom->setColorArray(colors.get());
+				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+				int num = 5;
+				vert->push_back(osg::Vec3(0, 0, 0.001));
+				vert->push_back(osg::Vec3(p2[0], 0, 0.001));
+				vert->push_back(osg::Vec3(p2[0], p2[1], 0.001));
+				vert->push_back(osg::Vec3(0, p2[1], 0.001));
+				vert->push_back(osg::Vec3(0, 0, 0.001));
+				geom->setVertexArray(vert.get());
+				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num));
+				geom->getOrCreateStateSet()->setMode(GL_FILL, osg::StateAttribute::ON);
+				geode->addDrawable(geom.get());
+			}
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			vert->push_back(osg::Vec3(0, 0, 0.001));
-			vert->push_back(osg::Vec3(p2[0] - p1[0], 0, 0.001));
-			vert->push_back(osg::Vec3(p2[0] - p1[0], 0, 0.001));
-			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], 0.001));
-			vert->push_back(osg::Vec3(p2[0] - p1[0], p2[1] - p1[1], 0.001));
-			vert->push_back(osg::Vec3(0, p2[1] - p1[1], 0.001));
-			vert->push_back(osg::Vec3(0, p2[1] - p1[1], 0.001));
+			vert->push_back(osg::Vec3(p2[0], 0, 0.001));
+			vert->push_back(osg::Vec3(p2[0], 0, 0.001));
+			vert->push_back(osg::Vec3(p2[0], p2[1], 0.001));
+			vert->push_back(osg::Vec3(p2[0], p2[1], 0.001));
+			vert->push_back(osg::Vec3(0, p2[1], 0.001));
+			vert->push_back(osg::Vec3(0, p2[1], 0.001));
 			vert->push_back(osg::Vec3(0, 0, 0.001));
 			geom->setVertexArray(vert.get());
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 8));
@@ -655,6 +767,23 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::Triangle: {
+			{ // fill
+				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
+				osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
+				colors->push_back(osg::Vec4(fill[0], fill[1], fill[2], fill[3]));
+				geom->setColorArray(colors.get());
+				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+				int num = 4;
+				vert->push_back(osg::Vec3(0, 0, 0.001));
+				vert->push_back(osg::Vec3(p1[1] - p1[0], p2[1] - p2[0], 0.001));
+				vert->push_back(osg::Vec3(p1[2] - p1[0], p2[2] - p2[0], 0.001));
+				vert->push_back(osg::Vec3(0, 0, 0.001));
+				geom->setVertexArray(vert.get());
+				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num));
+				geom->getOrCreateStateSet()->setMode(GL_FILL, osg::StateAttribute::ON);
+				geode->addDrawable(geom.get());
+			}
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			vert->push_back(osg::Vec3(0, 0, 0.001));

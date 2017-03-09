@@ -96,8 +96,6 @@ const rs::Vec* Integrator::runStep(float newtime) {
 				_v[j] = theta_up + (_array[i] - theta_up)*c;
 			else
 				_v[j] = theta_down + (_array[i] - a)*b;
-			// flip right side legs for linkbots
-			if ( ((j - _params->num_body)%2) ) _v[j] = -1*_v[j];
 			// scale
 			_v[j] *= 0.4;
 		}
@@ -108,8 +106,8 @@ const rs::Vec* Integrator::runStep(float newtime) {
 
 	// wait to actually implement new control signal onto cpg
 	static double angle = 0, sum = 0;
-	static int count = 250;
-	if (count == 250) {
+	static int count = 125;
+	if (count == 125) {
 		angle = sum/count;
 		count = 0;
 		sum = 0;
@@ -121,7 +119,7 @@ const rs::Vec* Integrator::runStep(float newtime) {
 
 	// turning
 	if (angle < -0.1 || 0.1 < angle) {
-		for (short i = 0; i < _params->num_body; i++) {
+		for (unsigned int i = 0; i < _v.size(); i++) {
 			_v[i] += angle;
 		}
 	}

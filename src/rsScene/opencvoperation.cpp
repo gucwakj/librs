@@ -8,6 +8,7 @@ using namespace rsScene;
 
 OpenCVOperation::OpenCVOperation(Scene *scene) {
 	_scene = scene;
+	_oldtheta = 0;
 }
 
 void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*context_id*/) {
@@ -53,14 +54,34 @@ void OpenCVOperation::operator()(const osg::Image &image, const unsigned int /*c
 			}
 		}
 
-		// calculate angle
-		double theta = CV_PI/2;
+		// inverse slope of line
+		float slope = (pt[2] - pt[0])/(pt[3] - pt[1]);
+
+		// distance of line from center of image
+		float dist = 2*(pt[4] - mat.cols/2)/mat.cols;
+
+		// turn angle
+		double theta = 0;
+
+		// check if lines are found
 		if (lines.size()) {
+			// calculate angle
 			cv::Point c(mat.cols/2, mat.rows/2);
 			cv::Point pc(pt[4], pt[5]);
 			theta = asin((c.y - pc.y) / sqrt(pow(pc.x - c.x, 2) + pow(pc.y - c.y, 2)));
 			theta = CV_PI/2 - theta;
+			// turn left or right
 			if (c.x > pc.x) { theta *= -1; }
+			// scale by dist
+			theta *= fabs(dist);
+			// scale by slope
+			theta *= fabs(slope);
+			// store
+			_oldtheta = theta;
+		}
+		else {
+			// use old value again
+			theta = _oldtheta;
 		}
 
 		// send back to scene

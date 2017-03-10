@@ -18,6 +18,7 @@ namespace rsScene {
 		// private data
 		private:
 			Scene *_scene;
+			float _oldtheta;
 	};
 
 } // namespace rsScene

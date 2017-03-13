@@ -9,11 +9,16 @@ Marker::Marker(short type) {
 	_c.allocate(4);
 	_f.allocate(4);
 	_f[0] = 1; _f[1] = 1; _f[2] = 1; _f[3] = 0; // white w/ 0% opacity
+	_angle = 0;
 }
 
 /**********************************************************
 	public functions
  **********************************************************/
+float Marker::getAngle(void) {
+	return _angle;
+}
+
 const rs::Vec Marker::getColor(void) {
 	return _c;
 }
@@ -52,6 +57,10 @@ short Marker::getForm(void) {
 
 std::string Marker::getLabel(void) {
 	return _l;
+}
+
+void Marker::setAngle(float a) {
+	_angle = a;
 }
 
 void Marker::setColor(float a, float b, float c, float d) {

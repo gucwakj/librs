@@ -76,7 +76,7 @@ void Writer::reidRobot(tinyxml2::XMLElement *robot, int num) {
 	robot->SetAttribute("id", i - num);
 }
 
-void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, const rs::Vec &f, int size, const rs::Pos &pt) {
+void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs::Pos &p1, const rs::Pos &p2, const rs::Vec &c, const rs::Vec &f, float angle, int size, const rs::Pos &pt) {
 	// set start position
 	tinyxml2::XMLElement *pos = getOrCreateChild(marker, "position");
 	pos->SetAttribute("x", p1[0]);
@@ -111,12 +111,14 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs:
 			break;
 		case rs::Ellipse:
 			marker->SetAttribute("width", size);
+			marker->SetAttribute("angle", angle);
 			break;
 		case rs::Line:
 			marker->SetAttribute("width", size);
 			break;
 		case rs::Polygon:
 			marker->SetAttribute("width", size);
+			marker->SetAttribute("angle", angle);
 			break;
 		case rs::Quad: {
 			marker->SetAttribute("width", size);
@@ -128,9 +130,11 @@ void Writer::setMarker(tinyxml2::XMLElement *marker, std::string name, const rs:
 		}
 		case rs::Rectangle:
 			marker->SetAttribute("width", size);
+			marker->SetAttribute("angle", angle);
 			break;
 		case rs::Star:
 			marker->SetAttribute("width", size);
+			marker->SetAttribute("angle", angle);
 			break;
 		case rs::Text:
 			this->getOrCreateChild(marker, "name")->DeleteChildren();

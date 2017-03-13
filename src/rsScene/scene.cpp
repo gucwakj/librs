@@ -563,6 +563,8 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::Ellipse: {
+			float ca = cos(rs::D2R(angle));
+			float sa = sin(rs::D2R(angle));
 			float w = p2[0]/2;
 			float h = p2[1]/2;
 			float a = p2[2];
@@ -577,7 +579,9 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 				vert->push_back(osg::Vec3(0, 0, 0.001));
 				for (int i = 0; i < num; i++) {
 					double rad = i*(2*rs::Pi/(num-1));
-					vert->push_back(osg::Vec3(w*cos(rad)*cos(a) - h*sin(rad)*sin(a), w*cos(rad)*sin(a) + h*sin(rad)*cos(a), 0.001));
+					double x = (w*cos(rad)*cos(a) - h*sin(rad)*sin(a))*ca - (w*cos(rad)*sin(a) + h*sin(rad)*cos(a))*sa;
+					double y = (w*cos(rad)*cos(a) - h*sin(rad)*sin(a))*sa + (w*cos(rad)*sin(a) + h*sin(rad)*cos(a))*ca;
+					vert->push_back(osg::Vec3(x, y, 0.001));
 				}
 				vert->push_back(osg::Vec3(0, 0, 0.001));
 				geom->setVertexArray(vert.get());
@@ -587,16 +591,16 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			}
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
-			vert->push_back(osg::Vec3(p1[0] + w*cos(0)*cos(a) - p1[0], p1[1] + w*cos(0)*sin(a) + h*sin(0)*cos(a) - p1[1], 0.001));
+			vert->push_back(osg::Vec3((w*cos(0)*cos(a))*ca - (w*cos(0)*sin(a) + h*sin(0)*cos(a))*sa, (w*cos(0)*cos(a))*sa + (w*cos(0)*sin(a) + h*sin(0)*cos(a))*ca, 0.001));
 			int n = 50;
 			for (int i = 1; i < n; i++) {
 				double rad = i*(2*rs::Pi/n);
-				double x = p1[0] + w*cos(rad)*cos(a) - h*sin(rad)*sin(a);
-				double y = p1[1] + w*cos(rad)*sin(a) + h*sin(rad)*cos(a);
-				vert->push_back(osg::Vec3(x - p1[0], y - p1[1], 0.001));
-				vert->push_back(osg::Vec3(x - p1[0], y - p1[1], 0.001));
+				double x = (w*cos(rad)*cos(a) - h*sin(rad)*sin(a))*ca - (w*cos(rad)*sin(a) + h*sin(rad)*cos(a))*sa;
+				double y = (w*cos(rad)*cos(a) - h*sin(rad)*sin(a))*sa + (w*cos(rad)*sin(a) + h*sin(rad)*cos(a))*ca;
+				vert->push_back(osg::Vec3(x, y, 0.001));
+				vert->push_back(osg::Vec3(x, y, 0.001));
 			}
-			vert->push_back(osg::Vec3(p1[0] + w*cos(0)*cos(a) - p1[0], p1[1] + w*cos(0)*sin(a) + h*sin(0)*cos(a) - p1[1], 0.001));
+			vert->push_back(osg::Vec3((w*cos(0)*cos(a))*ca - (w*cos(0)*sin(a) + h*sin(0)*cos(a))*sa, (w*cos(0)*cos(a))*sa + (w*cos(0)*sin(a) + h*sin(0)*cos(a))*ca, 0.001));
 			geom->setVertexArray(vert.get());
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2 + 2*(n-1)));
 			osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
@@ -627,6 +631,8 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::Polygon: {
+			float ca = cos(rs::D2R(angle));
+			float sa = sin(rs::D2R(angle));
 			{ // fill
 				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
@@ -636,12 +642,12 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 				int num = rs::M2IN(p2[0] + 0.001);
 				float r = p1[2]*sin(rs::Pi/num);
-				vert->push_back(osg::Vec3(r, 0, 0.001));
+				vert->push_back(osg::Vec3((r*cos(0))*ca - (r*sin(0))*sa, (r*cos(0))*sa + (r*sin(0))*ca, 0.001));
 				for (int i = 0; i < num; i++) {
 					float rad = i*(2*rs::Pi/num);
-					vert->push_back(osg::Vec3(r*cos(rad), r*sin(rad), 0.001));
+					vert->push_back(osg::Vec3((r*cos(rad))*ca - (r*sin(rad))*sa, (r*cos(rad))*sa + (r*sin(rad))*ca, 0.001));
 				}
-				vert->push_back(osg::Vec3(r, 0, 0.001));
+				vert->push_back(osg::Vec3((r*cos(0))*ca - (r*sin(0))*sa, (r*cos(0))*sa + (r*sin(0))*ca, 0.001));
 				geom->setVertexArray(vert.get());
 				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num+2));
 				geom->getOrCreateStateSet()->setMode(GL_FILL, osg::StateAttribute::ON);
@@ -651,15 +657,15 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			int n = rs::M2IN(p2[0] + 0.001);
 			float r = p1[2]*sin(rs::Pi/n);
-			vert->push_back(osg::Vec3(p1[0] + r*cos(0) - p1[0], p1[1] + r*sin(0) - p1[1], 0.001));
+			vert->push_back(osg::Vec3((r*cos(0))*ca - (r*sin(0))*sa, (r*cos(0))*sa + (r*sin(0))*ca, 0.001));
 			for (int i = 1; i < n; i++) {
 				double rad = i*(2*rs::Pi/n);
-				double x = p1[0] + r*cos(rad);
-				double y = p1[1] + r*sin(rad);
-				vert->push_back(osg::Vec3(x - p1[0], y - p1[1], 0.001));
-				vert->push_back(osg::Vec3(x - p1[0], y - p1[1], 0.001));
+				double x = (r*cos(rad))*ca - (r*sin(rad))*sa;
+				double y = (r*cos(rad))*sa + (r*sin(rad))*ca;
+				vert->push_back(osg::Vec3(x, y, 0.001));
+				vert->push_back(osg::Vec3(x, y, 0.001));
 			}
-			vert->push_back(osg::Vec3(p1[0] + r*cos(0) - p1[0], p1[1] + r*sin(0) - p1[1], 0.001));
+			vert->push_back(osg::Vec3((r*cos(0))*ca - (r*sin(0))*sa, (r*cos(0))*sa + (r*sin(0))*ca, 0.001));
 			geom->setVertexArray(vert.get());
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2 + 2*(n-1)));
 			osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
@@ -714,6 +720,9 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			break;
 		}
 		case rs::Rectangle: {
+			float ca = cos(rs::D2R(angle));
+			float sa = sin(rs::D2R(angle));
+			float diag = sqrt(p2[0]*p2[0] + p2[1]*p2[1]);
 			{ // fill
 				osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 				osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
@@ -723,9 +732,9 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 				geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 				int num = 5;
 				vert->push_back(osg::Vec3(0, 0, 0.001));
-				vert->push_back(osg::Vec3(p2[0], 0, 0.001));
-				vert->push_back(osg::Vec3(p2[0], p2[1], 0.001));
-				vert->push_back(osg::Vec3(0, p2[1], 0.001));
+				vert->push_back(osg::Vec3(p2[0]*ca, p2[0]*sa, 0.001));
+				vert->push_back(osg::Vec3(diag*cos(rs::D2R(angle) + atan2(p2[1], p2[0])), diag*sin(rs::D2R(angle) + atan2(p2[1], p2[0])), 0.001));
+				vert->push_back(osg::Vec3(p2[1]*cos(rs::D2R(angle) + rs::Pi/2), p2[1]*sin(rs::D2R(angle) + rs::Pi/2), 0.001));
 				vert->push_back(osg::Vec3(0, 0, 0.001));
 				geom->setVertexArray(vert.get());
 				geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON, 0, num));
@@ -735,12 +744,12 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 			osg::ref_ptr<osg::Vec3Array> vert = new osg::Vec3Array();
 			vert->push_back(osg::Vec3(0, 0, 0.001));
-			vert->push_back(osg::Vec3(p2[0], 0, 0.001));
-			vert->push_back(osg::Vec3(p2[0], 0, 0.001));
-			vert->push_back(osg::Vec3(p2[0], p2[1], 0.001));
-			vert->push_back(osg::Vec3(p2[0], p2[1], 0.001));
-			vert->push_back(osg::Vec3(0, p2[1], 0.001));
-			vert->push_back(osg::Vec3(0, p2[1], 0.001));
+			vert->push_back(osg::Vec3(p2[0]*ca, p2[0]*sa, 0.001));
+			vert->push_back(osg::Vec3(p2[0]*ca, p2[0]*sa, 0.001));
+			vert->push_back(osg::Vec3(diag*cos(rs::D2R(angle) + atan2(p2[1], p2[0])), diag*sin(rs::D2R(angle) + atan2(p2[1], p2[0])), 0.001));
+			vert->push_back(osg::Vec3(diag*cos(rs::D2R(angle) + atan2(p2[1], p2[0])), diag*sin(rs::D2R(angle) + atan2(p2[1], p2[0])), 0.001));
+			vert->push_back(osg::Vec3(p2[1]*cos(rs::D2R(angle) + rs::Pi/2), p2[1]*sin(rs::D2R(angle) + rs::Pi/2), 0.001));
+			vert->push_back(osg::Vec3(p2[1]*cos(rs::D2R(angle) + rs::Pi/2), p2[1]*sin(rs::D2R(angle) + rs::Pi/2), 0.001));
 			vert->push_back(osg::Vec3(0, 0, 0.001));
 			geom->setVertexArray(vert.get());
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 8));
@@ -767,8 +776,8 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 				float small = p1[2]/tan(ang)/cos(ang/2);
 				vert->push_back(osg::Vec3(p1[0], p1[1], 0.001));
 				for (int i = 0; i < 6; i++) {
-					vert->push_back(osg::Vec3(p1[0] + big*cos(1.57 - i*ang), p1[1] + big*sin(1.57 - i*ang), 0.001));
-					vert->push_back(osg::Vec3(p1[0] + small*cos(1.57 - (2*i + 1)*ang/2), p1[1] + small*sin(1.57 - (2*i + 1)*ang/2), 0.001));
+					vert->push_back(osg::Vec3(p1[0] + big*cos(1.57 - i*ang + rs::D2R(angle)) - big*sin(1.57 - i*ang + rs::D2R(angle)), p1[1] + big*cos(1.57 - i*ang + rs::D2R(angle)) + big*sin(1.57 - i*ang + rs::D2R(angle)), 0.001));
+					vert->push_back(osg::Vec3(p1[0] + small*cos(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)) - small*sin(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)), p1[1] + small*cos(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)) + small*sin(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)), 0.001));
 				}
 				vert->push_back(osg::Vec3(p1[0], p1[1], 0.001));
 				geom->setVertexArray(vert.get());
@@ -782,10 +791,10 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			float big = p1[2]/sin(ang);
 			float small = p1[2]/tan(ang)/cos(ang/2);
 			for (int i = 0; i < 6; i++) {
-				vert->push_back(osg::Vec3(p1[0] + big*cos(1.57 - i*ang), p1[1] + big*sin(1.57 - i*ang), 0.001));
-				vert->push_back(osg::Vec3(p1[0] + small*cos(1.57 - (2*i + 1)*ang/2), p1[1] + small*sin(1.57 - (2*i + 1)*ang/2), 0.001));
-				vert->push_back(osg::Vec3(p1[0] + small*cos(1.57 - (2*i + 1)*ang/2), p1[1] + small*sin(1.57 - (2*i + 1)*ang/2), 0.001));
-				vert->push_back(osg::Vec3(p1[0] + big*cos(1.57 - (i+1)*ang), p1[1] + big*sin(1.57 - (i+1)*ang), 0.001));
+				vert->push_back(osg::Vec3(p1[0] + big*cos(1.57 - i*ang + rs::D2R(angle)) - big*sin(1.57 - i*ang + rs::D2R(angle)), p1[1] + big*cos(1.57 - i*ang + rs::D2R(angle)) + big*sin(1.57 - i*ang + rs::D2R(angle)), 0.001));
+				vert->push_back(osg::Vec3(p1[0] + small*cos(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)) - small*sin(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)), p1[1] + small*cos(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)) + small*sin(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)), 0.001));
+				vert->push_back(osg::Vec3(p1[0] + small*cos(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)) - small*sin(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)), p1[1] + small*cos(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)) + small*sin(1.57 - (2*i + 1)*ang/2 + rs::D2R(angle)), 0.001));
+				vert->push_back(osg::Vec3(p1[0] + big*cos(1.57 - (i+1)*ang + rs::D2R(angle)) - big*sin(1.57 - (i+1)*ang + rs::D2R(angle)), p1[1] + big*cos(1.57 - (i+1)*ang + rs::D2R(angle)) + big*sin(1.57 - (i+1)*ang + rs::D2R(angle)), 0.001));
 			}
 			geom->setVertexArray(vert.get());
 			geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 24));

@@ -624,6 +624,11 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			if ( !node->QueryIntAttribute("width", &i) ) {
 				_marker.back()->setSize(i);
 			}
+			// angle
+			a = 0;
+			if ( !node->QueryFloatAttribute("angle", &a) ) {
+				_marker.back()->setAngle(a);
+			}
 		}
 		else if ( !strcmp(node->Value(), "line") ) {
 			// create object
@@ -748,6 +753,11 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			if ( !node->QueryIntAttribute("width", &i) ) {
 				_marker.back()->setSize(i);
 			}
+			// angle
+			a = 0;
+			if ( !node->QueryFloatAttribute("angle", &a) ) {
+				_marker.back()->setAngle(a);
+			}
 		}
 		if ( !strcmp(node->Value(), "quad") ) {
 			// create object
@@ -849,6 +859,11 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			if ( !node->QueryIntAttribute("width", &i) ) {
 				_marker.back()->setSize(i);
 			}
+			// angle
+			a = 0;
+			if ( !node->QueryFloatAttribute("angle", &a) ) {
+				_marker.back()->setAngle(a);
+			}
 		}
 		else if ( !strcmp(node->Value(), "star") ) {
 			// create object
@@ -887,6 +902,11 @@ void Reader::read_graphics(tinyxml2::XMLDocument *doc) {
 			i = 0;
 			if ( !node->QueryIntAttribute("width", &i) ) {
 				_marker.back()->setSize(i);
+			}
+			// angle
+			a = 0;
+			if ( !node->QueryFloatAttribute("angle", &a) ) {
+				_marker.back()->setAngle(a);
 			}
 		}
 		else if ( !strcmp(node->Value(), "text") ) {

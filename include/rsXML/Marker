@@ -16,6 +16,7 @@ namespace rsXML {
 			Marker(short);
 			virtual ~Marker(void) {};
 
+			float getAngle(void);
 			const rs::Vec getColor(void);
 			bool getConnect(void);
 			const rs::Pos getEnd(void);
@@ -26,6 +27,7 @@ namespace rsXML {
 			const rs::Pos getPoint(void);
 			short getForm(void);
 			std::string getLabel(void);
+			void setAngle(float);
 			void setColor(float, float, float, float);
 			void setConnect(bool);
 			void setEnd(float, float, float);
@@ -39,6 +41,7 @@ namespace rsXML {
 		// private data
 		private:
 			bool _connected;	// connect to view
+			float _angle;		// angle
 			short _id;			// id
 			short _size;		// size of object
 			short _type;		// type

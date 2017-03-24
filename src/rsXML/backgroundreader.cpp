@@ -425,7 +425,7 @@ std::string rsXML::getDefaultBackgroundPath(void) {
 		path = base;
 	path += "/package/chrobosim/data/background/";
 #else
-	path = "/home/kgucwa/projects/librs/resources/background/";
+	path = "/usr/local/ch/package/chrobosim/data/background/";
 #endif
 	return path;
 }
@@ -449,7 +449,7 @@ std::string rsXML::getDefaultChallengePath(void) {
 		path = base;
 	path += "/package/chrobosim/data/challenges/";
 #else
-	path = "/home/kgucwa/projects/librs/resources/challenges/";
+	path = "/usr/local/ch/package/chrobosim/data/challenges/";
 #endif
 	return path;
 }

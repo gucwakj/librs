@@ -34,10 +34,12 @@ if (OPENGL_FOUND)
 endif ()
 
 # add opencv
-find_package (OpenCV REQUIRED)
-if (OpenCV_FOUND)
-	include_directories (${OpenCV_INC})
-	set (EXTRA_LIBS ${EXTRA_LIBS} ${OpenCV_LIBS})
+if (RS_RESEARCH)
+	find_package (OpenCV REQUIRED)
+	if (OpenCV_FOUND)
+		include_directories (${OpenCV_INC})
+		set (EXTRA_LIBS ${EXTRA_LIBS} ${OpenCV_LIBS})
+	endif ()
 endif ()
 
 # add threading
@@ -54,7 +56,6 @@ set (SRCS ${SRCS}
 	keyboardhandler.cpp
 	mousehandler.cpp
 	skytransform.cpp
-	opencvoperation.cpp
 	scene.cpp
 	robot.cpp
 )
@@ -66,6 +67,9 @@ if (RS_LINKBOT)
 endif ()
 if (RS_MINDSTORMS)
 	set (SRCS ${SRCS} mindstorms.cpp)
+endif ()
+if (RS_RESEARCH)
+	set (SRCS ${SRCS} opencvoperation.cpp)
 endif ()
 
 # add the library

@@ -28,10 +28,13 @@
 #include <rs/Macros>
 #include <rsScene/FixedManipulator>
 #include <rsScene/MouseHandler>
-#include <rsScene/OpenCVOperation>
 #include <rsScene/Scene>
 #include <rsScene/SkyTransform>
 #include <rsScene/TextureCallback>
+
+#ifdef RS_RESEARCH
+#include <rsScene/OpenCVOperation>
+#endif
 
 using namespace rsScene;
 
@@ -83,8 +86,8 @@ Scene::Scene(void) : KeyboardHandler() {
 	_highlight = false;
 	_label = true;
 	_rate = 20;
-	//_view = Scene::ThirdPerson;
-	_view = Scene::FirstPerson;
+	_view = Scene::ThirdPerson;
+	//_view = Scene::FirstPerson;
 	RS_MUTEX_INIT(&_theta_mutex);
 }
 
@@ -1052,8 +1055,8 @@ std::string Scene::getTexturePath(void) {
 		path = base;
 	path += "/package/chrobosim/data/";
 #else
-	osgDB::setLibraryFilePathList("/home/kgucwa/projects/librs/deps/osg3.4.0/build/lib/");
-	path = "/home/kgucwa/projects/librs/resources/";
+	osgDB::setLibraryFilePathList("/usr/local/ch/package/chrobosim/bin/");
+	path = "/usr/local/ch/package/chrobosim/data/";
 #endif
 	return path;
 }
@@ -1319,8 +1322,12 @@ int Scene::setupScene(double w, double h, bool pause) {
 	osg::ref_ptr<MouseHandler> mh = new MouseHandler(this);
 	_viewer->addEventHandler(mh.get());
 
+#ifdef RS_RESEARCH
 	// create and add screen capture handler
-	_sch = new osgViewer::ScreenCaptureHandler(new rsScene::OpenCVOperation(this));
+	if (_view == Scene::FirstPerson) {
+		_sch = new osgViewer::ScreenCaptureHandler(new rsScene::OpenCVOperation(this));
+	}
+#endif
 
 	// show scene
 	_viewer->setSceneData(_root);

@@ -340,12 +340,17 @@ void Reader::read_config(tinyxml2::XMLDocument *doc) {
 	}
 
 	// check for the background node
-	if ( (node = doc->FirstChildElement("config")->FirstChildElement("background")) ) {
-		std::string name(node->GetText());
-		_background = new BackgroundReader(name);
+	std::string path("CHHOME"), name("outdoors");
+	if ( (node = doc->FirstChildElement("config")->FirstChildElement("bkgd_path")) ) {
+		path = node->GetText();
 	}
-	else
-		_background = new BackgroundReader("outdoors");
+	if ( (node = doc->FirstChildElement("config")->FirstChildElement("bkgd_name")) ) {
+		name = node->GetText();
+	}
+	_background = new BackgroundReader(path, name);
+	/*else {
+		_background = new BackgroundReader(path, name);
+	}*/
 }
 
 void Reader::read_graphics(tinyxml2::XMLDocument *doc) {

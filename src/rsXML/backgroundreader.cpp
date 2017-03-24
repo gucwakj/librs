@@ -10,10 +10,10 @@
 
 using namespace rsXML;
 
-BackgroundReader::BackgroundReader(std::string dir) {
+BackgroundReader::BackgroundReader(std::string path, std::string folder) {
 	// read XML file
 	tinyxml2::XMLDocument doc;
-	std::string path = this->load_file(dir, &doc);
+	_path = this->load_file(path, folder, &doc);
 
 	// declare local variables
 	tinyxml2::XMLElement *node = NULL;
@@ -42,9 +42,9 @@ BackgroundReader::BackgroundReader(std::string dir) {
 
 	// get screenshot
 	if ( (node = doc.FirstChildElement("screenshot")) )
-		_screenshot.append(path).append(node->GetText());
+		_screenshot.append(_path).append(folder).append("/").append(node->GetText());
 
-	this->read_background(&doc, path);
+	this->read_background(&doc, _path, folder);
 	this->read_obstacles(&doc);
 	this->read_graphics(&doc);
 }
@@ -55,7 +55,7 @@ BackgroundReader::~BackgroundReader(void) { }
 	public functions
  **********************************************************/
 std::string BackgroundReader::getBackgroundImage(unsigned short pos) {
-	if (_path.size() > pos) return _path[pos];
+	if (_imgs.size() > pos) return _imgs[pos];
 	return std::string();
 }
 
@@ -83,6 +83,10 @@ Obstacle* BackgroundReader::getObstacle(short id) {
 	return _obstacle[id];
 }
 
+std::string BackgroundReader::getPath(void) {
+	return _path;
+}
+
 std::string BackgroundReader::getScreenshot(void) {
 	return _screenshot;
 }
@@ -90,55 +94,53 @@ std::string BackgroundReader::getScreenshot(void) {
 /**********************************************************
 	private functions
  **********************************************************/
-std::string BackgroundReader::load_file(std::string dir, tinyxml2::XMLDocument *doc) {
-	std::string directory(dir);
-
+std::string BackgroundReader::load_file(std::string path, std::string folder, tinyxml2::XMLDocument *doc) {
 	// get file name to load
 	std::string file;
-	file.append(directory).append("/background.xml");
+	file.append(path).append(folder).append("/background.xml");
 
 	// if full path, open and return
 	FILE *fp = fopen(file.c_str(), "r");
 	if (fp) {
 		int output = doc->LoadFile(file.c_str());
 		if (output) std::cerr << "Warning: Could not find RoboSim background file.  Using default settings." << std::endl;
-		else return directory.append("/");
+		else return path;
 	}
 
 	// get default file location
-	std::string path = rsXML::getDefaultBackgroundPath();
+	path = rsXML::getDefaultBackgroundPath();
 	std::string filepath(path);
-	filepath.append(directory).append("/background.xml");
+	filepath.append(folder).append("/background.xml");
 
 	// load file
 	doc->LoadFile(filepath.c_str());
 
 	// return path of file
-	return path.append(directory).append("/");
+	return path;
 }
 
-void BackgroundReader::read_background(tinyxml2::XMLDocument *doc, std::string path) {
+void BackgroundReader::read_background(tinyxml2::XMLDocument *doc, std::string path, std::string folder) {
 	// check for existence of node
 	tinyxml2::XMLElement *node = doc->FirstChildElement("background");
 	if (!node) return;
 
 	// read background images
-	_path.resize(7);
+	_imgs.resize(7);
 	tinyxml2::XMLElement *ele = NULL;
 	ele = node->FirstChildElement("ground");
-	if (ele) _path[rs::Ground].append(path).append(ele->GetText());
+	if (ele) _imgs[rs::Ground].append(path).append(folder).append("/").append(ele->GetText());
 	ele = node->FirstChildElement("front");
-	if (ele) _path[rs::Front].append(path).append(ele->GetText());
+	if (ele) _imgs[rs::Front].append(path).append(folder).append("/").append(ele->GetText());
 	ele = node->FirstChildElement("left");
-	if (ele) _path[rs::LeftSide].append(path).append(ele->GetText());
+	if (ele) _imgs[rs::LeftSide].append(path).append(folder).append("/").append(ele->GetText());
 	ele = node->FirstChildElement("back");
-	if (ele) _path[rs::Back].append(path).append(ele->GetText());
+	if (ele) _imgs[rs::Back].append(path).append(folder).append("/").append(ele->GetText());
 	ele = node->FirstChildElement("right");
-	if (ele) _path[rs::RightSide].append(path).append(ele->GetText());
+	if (ele) _imgs[rs::RightSide].append(path).append(folder).append("/").append(ele->GetText());
 	ele = node->FirstChildElement("top");
-	if (ele) _path[rs::Top].append(path).append(ele->GetText());
+	if (ele) _imgs[rs::Top].append(path).append(folder).append("/").append(ele->GetText());
 	ele = node->FirstChildElement("bottom");
-	if (ele) _path[rs::Bottom].append(path).append(ele->GetText());
+	if (ele) _imgs[rs::Bottom].append(path).append(folder).append("/").append(ele->GetText());
 }
 
 void BackgroundReader::read_graphics(tinyxml2::XMLDocument *doc) {

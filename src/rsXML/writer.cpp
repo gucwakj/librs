@@ -372,9 +372,11 @@ bool Writer::deleteRobot(int id) {
 	return false;
 }
 
-void Writer::setBackground(std::string name) {
-	this->getOrCreateElement("config", "background")->DeleteChildren();
-	this->getOrCreateElement("config", "background")->InsertFirstChild(this->toText(name));
+void Writer::setBackground(std::string path, std::string name) {
+	this->getOrCreateElement("config", "bkgd_name")->DeleteChildren();
+	this->getOrCreateElement("config", "bkgd_name")->InsertFirstChild(this->toText(name));
+	this->getOrCreateElement("config", "bkgd_path")->DeleteChildren();
+	this->getOrCreateElement("config", "bkgd_path")->InsertFirstChild(this->toText(path));
 	this->save();
 }
 

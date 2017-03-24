@@ -31,7 +31,7 @@ namespace rsXML {
 			void reidRobot(tinyxml2::XMLElement*);
 			int save(void);
 			int saveFile(std::string);
-			void setBackground(std::string);
+			void setBackground(std::string, std::string);
 			void setConnectorSide(tinyxml2::XMLElement*, int, int, int, int, double = 0);
 			void setGrid(std::vector<float>);
 			void setMarker(tinyxml2::XMLElement*, std::string, const rs::Pos&, const rs::Pos&, const rs::Vec&, int, const rs::Pos&);

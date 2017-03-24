@@ -17,33 +17,35 @@ namespace rsXML {
 	class LIBRSEXPORT BackgroundReader {
 		// public functions
 		public:
-			BackgroundReader(std::string);
+			BackgroundReader(std::string, std::string);
 			virtual ~BackgroundReader(void);
 
 			std::string getBackgroundImage(unsigned short);
 			short getLevel(void);
 			Marker* getMarker(short);
 			std::string getName(void);
-			short getNumObstacles(void);
 			short getNumMarkers(void);
+			short getNumObstacles(void);
 			Obstacle* getObstacle(short);
+			std::string getPath(void);
 			std::string getScreenshot(void);
 
 		// private functions
 		private:
-			std::string load_file(std::string, tinyxml2::XMLDocument*);
-			void read_background(tinyxml2::XMLDocument*, std::string);
+			std::string load_file(std::string, std::string, tinyxml2::XMLDocument*);
+			void read_background(tinyxml2::XMLDocument*, std::string, std::string);
 			void read_graphics(tinyxml2::XMLDocument*);
 			void read_obstacles(tinyxml2::XMLDocument*);
 
 		// private data
 		private:
 			short _level;						// level to load
-			std::string _name;					// name of Scene
+			std::string _name;					// name of scene
+			std::string _path;					// path to dir
 			std::string _screenshot;			// path of screenshot
 			std::vector<Obstacle*> _obstacle;	// ground obstacles
 			std::vector<Marker*> _marker;		// graphical markers
-			std::vector<std::string> _path;		// image paths
+			std::vector<std::string> _imgs;		// image paths
 	};
 
 	std::string LIBRSEXPORT getDefaultBackgroundPath(void);

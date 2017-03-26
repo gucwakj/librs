@@ -355,7 +355,7 @@ int Scene::deleteRobot(int id) {
 	return -1;
 }
 
-int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, const rs::Pos &pt, const rs::Vec &c, int size, std::string s) {
+int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, const rs::Pos &pt, const rs::Vec &c, const rs::Vec &fill, float angle, int size, std::string s) {
 	// create geode
 	osg::ref_ptr<osg::Group> marker = new osg::Group();
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
@@ -549,10 +549,6 @@ int Scene::drawMarker(int id, int type, const rs::Pos &p1, const rs::Pos &p2, co
 			geom->setColorArray(colors.get());
 			geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 			osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth();
-			osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array();
-			colors->push_back(osg::Vec4(c[0], c[1], c[2], c[3]));
-			geom->setColorArray(colors.get());
-			geom->setColorBinding(osg::Geometry::BIND_OVERALL);
 			width->setWidth(3*size);
 			geode->addDrawable(geom.get());
 			geode->getOrCreateStateSet()->setAttributeAndModes(width.get(), osg::StateAttribute::ON);

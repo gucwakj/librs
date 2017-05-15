@@ -1,7 +1,8 @@
 <?RoboSim XML Configuration?>
 <config>
 	<version>2</version>
-    <background>2014RoboPlay</background>
+    <bkgd_path>CHHOME</bkgd_path>
+    <bkgd_name>2014RoboPlay</bkgd_name>
 </config>
 
 <graphics>

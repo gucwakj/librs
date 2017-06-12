@@ -1434,6 +1434,9 @@ void Scene::setLevel(int level) {
 		case rs::Level::RPC2016:
 			this->draw_board(1.2192, 0.6858, rs::IN2M(6), rs::IN2M(6));
 			break;
+		case rs::Level::RPC2017:
+			this->draw_board(1.2192, 0.6858, rs::IN2M(6), rs::IN2M(6));
+			break;
 	}
 
 	// unlock threaded add/remove

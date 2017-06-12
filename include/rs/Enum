@@ -58,6 +58,7 @@ namespace rs {
 			RPC2014,
 			RPC2015,
 			RPC2016,
+			RPC2017,
 			Num_Levels
 		};
 	} // namespace Level

@@ -38,6 +38,8 @@ BackgroundReader::BackgroundReader(std::string path, std::string folder) {
 			_level = rs::Level::RPC2015;
 		else if ( !strcmp(node->GetText(), "RPC2016") )
 			_level = rs::Level::RPC2016;
+		else if ( !strcmp(node->GetText(), "RPC2017") )
+			_level = rs::Level::RPC2017;
 	}
 
 	// get screenshot

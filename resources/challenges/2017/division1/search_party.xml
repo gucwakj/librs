@@ -1,0 +1,24 @@
+<?RoboSim XML Configuration?>
+<config>
+    <bkgd_path>CHHOME</bkgd_path>
+    <bkgd_name>2017RoboPlay</bkgd_name>
+    <version>2</version>
+</config>
+
+<graphics>
+    <trace>1</trace>
+    <grid tics="1" hash="12" minx="0" maxx="84" miny="0" maxy="42" enabled="1"/>
+</graphics>
+
+<ground/>
+
+<sim>
+    <linkboti form="2" id="0">
+        <wheels left="9" right="9" caster="3"/>
+        <name></name>
+        <led r="0" g="1" b="0" alpha="1"/>
+        <joint f1="0" f2="0" f3="0"/>
+        <rotation x="0" y="0" z="-1" w="-3.82857e-016"/>
+        <position x="0.685801" y="1.016" z="0"/>
+    </linkboti>
+</sim>

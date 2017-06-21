@@ -1,0 +1,39 @@
+<?RoboSim XML Configuration?>
+<config>
+    <bkgd_path>CHHOME</bkgd_path>
+    <bkgd_name>2017RoboPlay</bkgd_name>
+    <version>2</version>
+</config>
+
+<graphics>
+    <trace>1</trace>
+    <grid tics="1" hash="12" minx="0" maxx="84" miny="0" maxy="42" enabled="1"/>
+</graphics>
+
+<ground>
+    <box id="0" form="4" mass="0.453593">
+        <color r="0" g="0" b="1" alpha="1"/>
+        <size x="0.0254" y="0.0254" z="0.0254"/>
+        <rotation x="0" y="0" z="0" w="1"/>
+        <position x="0.990602" y="0.635001" z="0">HI</position>
+    </box>
+</ground>
+
+<sim>
+    <linkboti form="2" id="0">
+        <wheels left="9" right="9" caster="3"/>
+        <name></name>
+        <led r="0" g="1" b="0" alpha="1"/>
+        <joint f1="0" f2="0" f3="0"/>
+        <rotation x="0" y="0" z="0.707107" w="0.707107"/>
+        <position x="1.651" y="0.863602" z="0"/>
+    </linkboti>
+    <linkboti form="2" id="1">
+        <wheels left="9" right="9" caster="3"/>
+        <name></name>
+        <led r="0" g="1" b="0" alpha="1"/>
+        <joint f1="0" f2="0" f3="0"/>
+        <rotation x="0" y="0" z="-0.707107" w="0.707107"/>
+        <position x="0.838202" y="0.635001" z="0"/>
+    </linkboti>
+</sim>

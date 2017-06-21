@@ -1,0 +1,31 @@
+<?RoboSim XML Configuration?>
+<config>
+    <bkgd_path>CHHOME</bkgd_path>
+    <bkgd_name>2017RoboPlay</bkgd_name>
+    <version>2</version>
+</config>
+
+<graphics/>
+
+<ground>
+    <sphere id="3" form="16" mass="0.453593">
+        <color r="0" g="0" b="1" alpha="1"/>
+        <size radius="0.0254"/>
+        <rotation x="0" y="0" z="0" w="1"/>
+        <position x="0.762002" y="0.558801" z="0.127508">HI</position>
+    </sphere>
+    <woodblock id="1" form="20" mass="0.453593">
+        <color r="0" g="0" b="0" alpha="1"/>
+        <size x="0.0508001" y="0.0508001" z="0.0508001"/>
+        <rotation x="0" y="0" z="0" w="1"/>
+        <position x="0.762002" y="0.558801" z="0.0764542">HI</position>
+    </woodblock>
+    <woodblock id="0" form="20" mass="0.453593">
+        <color r="0" g="0" b="0" alpha="1"/>
+        <size x="0.0508001" y="0.0508001" z="0.0508001"/>
+        <rotation x="0" y="0" z="0" w="1"/>
+        <position x="0.762002" y="0.558801" z="0.0254">HI</position>
+    </woodblock>
+</ground>
+
+<sim/>
